@@ -10,3 +10,144 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum SuperRoleName {
+  ADMIN
+}
+
+enum HospitalRoleName {
+  ADMIN
+  DOCTOR
+  STAFF
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHERS
+}
+
+model User {
+  id            Int                @id @default(autoincrement())
+  email         String             @unique
+  phoneNumber   String?            @map("phone_number")
+  firstName     String             @map("first_name")
+  lastName      String             @map("last_name")
+  isActive      Boolean            @default(true) @map("is_active")
+  password      String?
+  token         String?
+  superRoles    UserSuperRole[]
+  hospitalRoles UserHospitalRole[]
+
+  @@map("users")
+}
+
+model UserSuperRole {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  superRoleId Int       @map("super_role_id")
+  user        User      @relation(fields: [userId], references: [id])
+  superRole   SuperRole @relation(fields: [superRoleId], references: [id])
+
+  @@map("users_super_roles")
+}
+
+model UserHospitalRole {
+  id             Int          @id @default(autoincrement())
+  userId         Int          @map("user_id")
+  hospitalRoleId Int          @map("hospital_role_id")
+  hospitalId     Int          @map("hospital_id")
+  isPrimary      Boolean      @default(false) @map("is_primary")
+  user           User         @relation(fields: [userId], references: [id])
+  hospitalRole   HospitalRole @relation(fields: [hospitalRoleId], references: [id])
+  hospital       Hospital     @relation(fields: [hospitalId], references: [id])
+
+  @@map("users_hospital_roles")
+}
+
+model SuperRole {
+  id    Int             @id @default(autoincrement())
+  name  SuperRoleName   @unique
+  users UserSuperRole[]
+
+  @@map("super_roles")
+}
+
+model HospitalRole {
+  id    Int                @id @default(autoincrement())
+  name  HospitalRoleName   @unique
+  users UserHospitalRole[]
+
+  @@map("hospital_roles")
+}
+
+model Hospital {
+  id           Int       @id @default(autoincrement()) @map("id")
+  name         String    @map("name")
+  addressLine1 String    @map("address_line_1")
+  addressLine2 String?   @map("address_line_2")
+  city         String
+  postalCode   String    @map("postal_code")
+  countryCode  String    @map("country_code")
+  stateCode    String?   @map("state_code")
+  email        String?   @map("email")
+  phoneNumber  String?   @map("phone_number")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt    DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
+  isActive     Boolean   @map("is_active")
+  code         String    @map("code")
+
+  patients Patient[]
+  doctors  Doctor[]
+  users    UserHospitalRole[]
+
+  @@unique([code])
+  @@map("hospitals")
+}
+
+model Doctor {
+  id          Int     @id @default(autoincrement())
+  email       String  @unique
+  gender      Gender  @map("gender")
+  doctorCode  String  @map("doctor_code")
+  speciality  String  @map("speciality")
+  phoneNumber String? @map("phone_number")
+  firstName   String  @map("first_name")
+  lastName    String  @map("last_name")
+  isActive    Boolean @default(true) @map("is_active")
+  password    String?
+  token       String?
+
+  hospital   Hospital @relation(fields: [hospitalId], references: [id])
+  hospitalId Int      @map("hospital_id")
+
+  @@unique([doctorCode])
+  @@map("doctors")
+}
+
+model Patient {
+  id                Int       @id @default(autoincrement())
+  email             String    @unique
+  gender            Gender    @map("gender")
+  bloodgroup        String    @map("blood_group")
+  dob               DateTime  @map("dob") @db.Timestamptz()
+  digitalHealthCode String    @map("digital_health_code")
+  phoneNumber       String?   @map("phone_number")
+  firstName         String    @map("first_name")
+  lastName          String    @map("last_name")
+  addressLine1      String    @map("address_line_1")
+  addressLine2      String?   @map("address_line_2")
+  city              String
+  postalCode        String    @map("postal_code")
+  countryCode       String    @map("country_code")
+  stateCode         String?   @map("state_code")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt         DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
+  isActive          Boolean   @map("is_active")
+
+  hospital   Hospital @relation(fields: [hospitalId], references: [id])
+  hospitalId Int      @map("hospital_id")
+
+  @@unique([digitalHealthCode])
+  @@map("patients")
+}
