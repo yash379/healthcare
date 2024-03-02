@@ -1,34 +1,38 @@
 import { Page } from './page';
+import {  HospitalRoleName, SuperRoleName } from '@prisma/client';
+
 
 export interface User {
   id: number;
-  referenceId: string;
-  name:string;
+  firstName: string;
+  lastName: string;
   email: string;
   phoneNumber: string;
-  role:any[];
-  isActive: boolean;
+  HospitalRole?: HospitalRoleName;
+  superRole?: SuperRoleName;
 }
 
 export interface ViewUser {
-    id: number;
-    name:string;
-    email: string;
-    phoneNumber: string;
-    role:any[];
-    isActive: boolean;
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  superRole?: SuperRoleName;
 }
 
+
+
 export type ListUser = Pick<
-  ViewUser,
+ViewUser,
   | 'id'
-  | 'name'
-  | 'role'
   | 'email'
   | 'phoneNumber'
-  | 'isActive'
+  | 'firstName'
+  | 'lastName'
+  | 'superRole'
 >;
 
-export type AddUser = Pick<User, 'referenceId' >;
+export type AddUser = Omit<User, 'id'>;
 
 export type ListUserPage = Page<ListUser>;
