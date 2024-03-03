@@ -19,6 +19,7 @@
       "@healthcare/data-transfer-types": [
         "libs/data-transfer-types/src/index.ts"
       ],
+      "@healthcare/my-prisma-client": ["libs/my-prisma-client/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
