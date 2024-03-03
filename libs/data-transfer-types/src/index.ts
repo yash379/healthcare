@@ -6,4 +6,4 @@ export * from './lib/doctor';
 export * from './lib/hospital';
 export * from './lib/patient';
 
-// export * from './lib/users';
+export * from './lib/login';

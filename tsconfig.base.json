@@ -16,7 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@healthcare/my-prisma-client": ["libs/my-prisma-client/src/index.ts"],
-      "@fnt-flsy/data-transfer-types": [
+      "@healthcare/data-transfer-types": [
         "libs/data-transfer-types/src/index.ts"
       ],
     }

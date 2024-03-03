@@ -1,4 +1,4 @@
-import { Gender } from '@prisma/client/public';
+import { Gender } from '@prisma/client';
 import { Page } from './page';
 
 export interface Doctor {

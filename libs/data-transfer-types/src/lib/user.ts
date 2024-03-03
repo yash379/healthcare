@@ -1,5 +1,5 @@
 import { Page } from './page';
-import {  HospitalRoleName, SuperRoleName } from '@prisma/client';
+import { OrganizationRoleName, HospitalRoleName, SuperRoleName } from '@prisma/client';
 
 
 export interface User {
@@ -9,7 +9,12 @@ export interface User {
   email: string;
   phoneNumber: string;
   HospitalRole?: HospitalRoleName;
+  organizationRoles?: OrganizationRoleDto[];
   superRole?: SuperRoleName;
+}
+export interface OrganizationRoleDto  {
+  organizationId: number;
+  organizationRole: OrganizationRoleName;
 }
 
 export interface ViewUser {
@@ -18,9 +23,13 @@ export interface ViewUser {
   lastName: string;
   email: string;
   phoneNumber: string;
+  organizationRoles: ViewOrganizationRoleDto[];
   superRole?: SuperRoleName;
 }
-
+export interface ViewOrganizationRoleDto  {
+  name: string;
+  organizationRole: OrganizationRoleName;
+}
 
 
 export type ListUser = Pick<
@@ -30,6 +39,7 @@ ViewUser,
   | 'phoneNumber'
   | 'firstName'
   | 'lastName'
+  | 'organizationRoles'
   | 'superRole'
 >;
 

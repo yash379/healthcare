@@ -14,6 +14,10 @@ enum SuperRoleName {
   ADMIN
 }
 
+enum OrganizationRoleName {
+  ADMIN
+}
+
 enum HospitalRoleName {
   ADMIN
   DOCTOR
@@ -27,20 +31,58 @@ enum Gender {
 }
 
 model User {
-  id            Int                @id @default(autoincrement())
-  email         String             @unique
-  phoneNumber   String?            @map("phone_number")
-  firstName     String             @map("first_name")
-  lastName      String             @map("last_name")
-  isActive      Boolean            @default(true) @map("is_active")
-  password      String?
-  token         String?
-  superRoles    UserSuperRole[]
-  hospitalRoles UserHospitalRole[]
+  id                Int                    @id @default(autoincrement())
+  email             String                 @unique
+  phoneNumber       String?                @map("phone_number")
+  firstName         String                 @map("first_name")
+  lastName          String                 @map("last_name")
+  isActive          Boolean                @default(true) @map("is_active")
+  password          String?
+  token             String?
+  superRoles        UserSuperRole[]
+  organizationRoles UserOrganizationRole[]
+  hospitalRoles     UserHospitalRole[]
 
   @@map("users")
 }
 
+
+model Organization {
+  id           Int                    @id @default(autoincrement())
+  name         String
+  type         String
+  email        String                 @unique
+  phoneNumber  String                 @map("phone_number")
+  addressLine1 String                 @map("address_line_1")
+  addressLine2 String?                @map("address_line_2")
+  city         String
+  postalCode   String                 @map("postal_code")
+  countryCode  String                 @map("country_code")
+  stateCode    String?                @map("state_code")
+  siteGroups   SiteGroup[]
+  users        UserOrganizationRole[]
+
+  @@map("organizations")
+}
+
+model SiteGroup {
+  id             Int          @id @default(autoincrement())
+  name           String
+  organizationId Int          @map("organization_id")
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  sites          Site[]
+
+  @@map("site_groups")
+}
+
+model Site {
+  id          Int       @id @default(autoincrement())
+  name        String
+  siteGroupId Int       @map("site_group_id")
+  siteGroup   SiteGroup @relation(fields: [siteGroupId], references: [id])
+
+  @@map("sites")
+}
 model UserSuperRole {
   id          Int       @id @default(autoincrement())
   userId      Int       @map("user_id")
@@ -62,6 +104,27 @@ model UserHospitalRole {
   hospital       Hospital     @relation(fields: [hospitalId], references: [id])
 
   @@map("users_hospital_roles")
+}
+
+model UserOrganizationRole {
+  id                 Int              @id @default(autoincrement())
+  userId             Int              @map("user_id")
+  organizationRoleId Int              @map("organization_role_id")
+  organizationId     Int              @map("organization_id")
+  user               User             @relation(fields: [userId], references: [id])
+  organizationRole   OrganizationRole @relation(fields: [organizationRoleId], references: [id])
+  organization       Organization     @relation(fields: [organizationId], references: [id])
+
+  @@map("users_organization_roles")
+}
+
+
+model OrganizationRole {
+  id    Int                    @id @default(autoincrement())
+  name  OrganizationRoleName   @unique
+  users UserOrganizationRole[]
+
+  @@map("organization_roles")
 }
 
 model SuperRole {
