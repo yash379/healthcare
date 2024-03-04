@@ -36,71 +36,71 @@ import { Gender } from '@prisma/client';
 export class DoctorsController {
   constructor(private doctorsService: DoctorsService) {}
 
-  @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Get('/hospitals/:hospitalId/doctors')
-  @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: ListDoctorPageDto })
-  async getDoctorForHospital(
-    @Request() req,
-    @Param('doctorId') doctorId: number,
-    @Query('pageSize') pageSize?: number,
-    @Query('pageOffset') pageOffset?: number,
-    @Query('firstName') firstName?: string,
-    @Query('lastName') lastName?: string,
-    @Query('email') email?: string,
-    @Query('phoneNumber') phoneNumber?: string,
-    @Query('speciality') speciality?: string,
-    @Query('doctorCode') doctorCode?: string,
-    @Query('gender') gender?: Gender,
-    @Query('sortBy') sortBy?: string,
-    @Query('sortOrder') sortOrder?: 'asc' | 'desc'
-  ): Promise<ListDoctorPageDto> {
-    const { user } = req;
-    const listdoc = await this.doctorsService.getFilteredDoctors(
-      +pageSize,
-      +pageOffset,
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      speciality,
-      doctorCode,
-      gender,
-      sortBy,
-      sortOrder,
-      user.id,
-      +doctorId,undefined,undefined,undefined,
-      false
-    );
-    return listdoc;
-  }
+  // @UseGuards(AuthGuard,RolesGuard)
+  // @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+  // @Get('/hospitals/:hospitalId/doctors')
+  // @HttpCode(HttpStatus.OK)
+  // @ApiOkResponse({ type: ListDoctorPageDto })
+  // async getDoctorForHospital(
+  //   @Request() req,
+  //   @Param('doctorId') doctorId: number,
+  //   @Query('pageSize') pageSize?: number,
+  //   @Query('pageOffset') pageOffset?: number,
+  //   @Query('firstName') firstName?: string,
+  //   @Query('lastName') lastName?: string,
+  //   @Query('email') email?: string,
+  //   @Query('phoneNumber') phoneNumber?: string,
+  //   @Query('speciality') speciality?: string,
+  //   @Query('doctorCode') doctorCode?: string,
+  //   @Query('gender') gender?: Gender,
+  //   @Query('sortBy') sortBy?: string,
+  //   @Query('sortOrder') sortOrder?: 'asc' | 'desc'
+  // ): Promise<ListDoctorPageDto> {
+  //   const { user } = req;
+  //   const listdoc = await this.doctorsService.getFilteredDoctors(
+  //     +pageSize,
+  //     +pageOffset,
+  //     firstName,
+  //     lastName,
+  //     email,
+  //     phoneNumber,
+  //     speciality,
+  //     doctorCode,
+  //     gender,
+  //     sortBy,
+  //     sortOrder,
+  //     user.id,
+  //     +doctorId,undefined,undefined,undefined,
+  //     false
+  //   );
+  //   return listdoc;
+  // }
 
-  @ApiOperation({summary: "export doctors data by hospital"})
-  @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Get('/hospitals/:hospitalId/doctors/export')
-  @HttpCode(HttpStatus.OK)
-  async exportVehicleData(@Param('hospitalId') hospitalId: number,@Res() res) {
-    const data = await this.doctorsService.exportDoctorsDetailsForHospital(+hospitalId);
+  // @ApiOperation({summary: "export doctors data by hospital"})
+  // @UseGuards(AuthGuard,RolesGuard)
+  // @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+  // @Get('/hospitals/:hospitalId/doctors/export')
+  // @HttpCode(HttpStatus.OK)
+  // async exportVehicleData(@Param('hospitalId') hospitalId: number,@Res() res) {
+  //   const data = await this.doctorsService.exportDoctorsDetailsForHospital(+hospitalId);
 
-    // Create a workbook and add a worksheet
-    const ws = xlsx.utils.aoa_to_sheet(data);
-    const wb = xlsx.utils.book_new();
-    xlsx.utils.book_append_sheet(wb, ws, 'Sheet 1');
+  //   // Create a workbook and add a worksheet
+  //   const ws = xlsx.utils.aoa_to_sheet(data);
+  //   const wb = xlsx.utils.book_new();
+  //   xlsx.utils.book_append_sheet(wb, ws, 'Sheet 1');
 
-    // Save the workbook to a buffer
-    const buffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
+  //   // Save the workbook to a buffer
+  //   const buffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
 
-    // Set the response headers
-    res.set({
-      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'Content-Disposition': 'attachment; filename=doctorDetails.xlsx',
-    });
+  //   // Set the response headers
+  //   res.set({
+  //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  //     'Content-Disposition': 'attachment; filename=doctorDetails.xlsx',
+  //   });
 
-    // Send the buffer as the response
-    res.send(buffer);
-  }
+  //   // Send the buffer as the response
+  //   res.send(buffer);
+  // }
 
   
   // @ApiOperation({summary:'Doctor bulk data upload'})
@@ -181,95 +181,95 @@ export class DoctorsController {
     return this.doctorsService.add(+hospitalId, addDoctorDto);
   }
 
-  @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Get('/hospitals/:hospitalId/doctors/:id')
-  @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: ViewDoctorDto })
-  findById(
-    @Param('hospitalId') hospitalId: number,
-    @Param('id') id: number,
-    @Request() req
-  ): Promise<ViewDoctorDto> {
-    const { user } = req;
-    return this.doctorsService.findById(+hospitalId, +id, user.id);
-  }
+//   @UseGuards(AuthGuard,RolesGuard)
+//   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+//   @Get('/hospitals/:hospitalId/doctors/:id')
+//   @HttpCode(HttpStatus.OK)
+//   @ApiOkResponse({ type: ViewDoctorDto })
+//   findById(
+//     @Param('hospitalId') hospitalId: number,
+//     @Param('id') id: number,
+//     @Request() req
+//   ): Promise<ViewDoctorDto> {
+//     const { user } = req;
+//     return this.doctorsService.findById(+hospitalId, +id, user.id);
+//   }
 
-  @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Put('/hospitals/:hospitalId/doctors/:id')
-  @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: DoctorDto })
-  edit(
-    @Param('hospitalId') hospitalId: number,
-    @Body() doctorDto: AddDoctorDto,
-    @Param('id') id: number
-  ): Promise<DoctorDto> {
-    return this.doctorsService.edit(+hospitalId, doctorDto, id);
-  }
+//   @UseGuards(AuthGuard,RolesGuard)
+//   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+//   @Put('/hospitals/:hospitalId/doctors/:id')
+//   @HttpCode(HttpStatus.OK)
+//   @ApiOkResponse({ type: DoctorDto })
+//   edit(
+//     @Param('hospitalId') hospitalId: number,
+//     @Body() doctorDto: AddDoctorDto,
+//     @Param('id') id: number
+//   ): Promise<DoctorDto> {
+//     return this.doctorsService.edit(+hospitalId, doctorDto, id);
+//   }
 
 
 
-  @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Get('/hospitals/:hospitalId/doctors')
-  @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: ListDoctorPageDto })
-  async getFilteredPosts(
-    @Request() req,
-    @Param('hospitalId') hospitalId: number,
-    @Query('pageSize') pageSize?: number,
-    @Query('pageOffset') pageOffset?: number,
-    @Query('firstName') firstName?: string,
-    @Query('lastName') lastName?: string,
-    @Query('email') email?: string,
-    @Query('phoneNumber') phoneNumber?: string,
-    @Query('speciality') speciality?: string,
-    @Query('doctorCode') doctorCode?: string,
-    @Query('gender') gender?: Gender,
-    @Query('sortBy') sortBy?: string,
-    @Query('sortOrder') sortOrder?: 'asc' | 'desc'
-  ): Promise<ListDoctorPageDto> {
-    const { user } = req;
-    const listsite = await this.doctorsService.getFilteredDoctors(
-      +pageSize,
-      +pageOffset,
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      speciality,
-      doctorCode,
-      gender,
-      sortBy,
-      sortOrder,
-      user.id,
-      +hospitalId,
-      true
-    );
-    return listsite;
-  }
+//   @UseGuards(AuthGuard,RolesGuard)
+//   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+//   @Get('/hospitals/:hospitalId/doctors')
+//   @HttpCode(HttpStatus.OK)
+//   @ApiOkResponse({ type: ListDoctorPageDto })
+//   async getFilteredPosts(
+//     @Request() req,
+//     @Param('hospitalId') hospitalId: number,
+//     @Query('pageSize') pageSize?: number,
+//     @Query('pageOffset') pageOffset?: number,
+//     @Query('firstName') firstName?: string,
+//     @Query('lastName') lastName?: string,
+//     @Query('email') email?: string,
+//     @Query('phoneNumber') phoneNumber?: string,
+//     @Query('speciality') speciality?: string,
+//     @Query('doctorCode') doctorCode?: string,
+//     @Query('gender') gender?: Gender,
+//     @Query('sortBy') sortBy?: string,
+//     @Query('sortOrder') sortOrder?: 'asc' | 'desc'
+//   ): Promise<ListDoctorPageDto> {
+//     const { user } = req;
+//     const listsite = await this.doctorsService.getFilteredDoctors(
+//       +pageSize,
+//       +pageOffset,
+//       firstName,
+//       lastName,
+//       email,
+//       phoneNumber,
+//       speciality,
+//       doctorCode,
+//       gender,
+//       sortBy,
+//       sortOrder,
+//       user.id,
+//       +hospitalId,
+//       true
+//     );
+//     return listsite;
+//   }
 
-  @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Delete('/hospitals/:hospitalId/doctors/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOkResponse()
-  delete( @Param('hospitalId') hospitalId: number,
- @Param('id') id: number) {
-    return this.doctorsService.deleteDoctor(+hospitalId, +id);
-  }
+//   @UseGuards(AuthGuard,RolesGuard)
+//   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+//   @Delete('/hospitals/:hospitalId/doctors/:id')
+//   @HttpCode(HttpStatus.NO_CONTENT)
+//   @ApiOkResponse()
+//   delete( @Param('hospitalId') hospitalId: number,
+//  @Param('id') id: number) {
+//     return this.doctorsService.deleteDoctor(+hospitalId, +id);
+//   }
 
-  @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Post('/hospitals/:hospitalId/doctors/:id/:status')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOkResponse()
-  softDelete(
-    @Param('hospitalId') hospitalId: number,
-    @Param('id') id: number,
-    @Param('status') status: string
-  ) {
-    return this.doctorsService.softDeleteDoctor(+hospitalId, +id, status);
-  }
+//   @UseGuards(AuthGuard,RolesGuard)
+//   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+//   @Post('/hospitals/:hospitalId/doctors/:id/:status')
+//   @HttpCode(HttpStatus.NO_CONTENT)
+//   @ApiOkResponse()
+//   softDelete(
+//     @Param('hospitalId') hospitalId: number,
+//     @Param('id') id: number,
+//     @Param('status') status: string
+//   ) {
+//     return this.doctorsService.softDeleteDoctor(+hospitalId, +id, status);
+//   }
 }
