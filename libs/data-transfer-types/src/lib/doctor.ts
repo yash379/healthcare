@@ -20,7 +20,7 @@ export interface ViewDoctor {
   phoneNumber: string;
   gender: Gender;
   speciality: string;
-  isChild: boolean;
+  doctorCode: string;
   isActive: boolean;
 
 }

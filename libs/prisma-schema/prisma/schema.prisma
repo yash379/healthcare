@@ -46,7 +46,6 @@ model User {
   @@map("users")
 }
 
-
 model Organization {
   id           Int                    @id @default(autoincrement())
   name         String
@@ -83,6 +82,7 @@ model Site {
 
   @@map("sites")
 }
+
 model UserSuperRole {
   id          Int       @id @default(autoincrement())
   userId      Int       @map("user_id")
@@ -117,7 +117,6 @@ model UserOrganizationRole {
 
   @@map("users_organization_roles")
 }
-
 
 model OrganizationRole {
   id    Int                    @id @default(autoincrement())
@@ -160,11 +159,25 @@ model Hospital {
   code         String    @map("code")
 
   patients Patient[]
-  doctors  Doctor[]
+  // doctors        Doctor[]
   users    UserHospitalRole[]
+  doctors  DoctorHospital[]
 
   @@unique([code])
   @@map("hospitals")
+}
+
+model DoctorHospital {
+  id         Int      @id @default(autoincrement()) @map("id")
+  hospitalId Int      @map("hospital_id")
+  doctorId   Int      @map("doctor_id")
+  isPrimary  Boolean  @default(false) @map("is_primary")
+  speciality String   @map("speciality")
+  hospital   Hospital @relation(fields: [hospitalId], references: [id])
+  doctor     Doctor   @relation(fields: [doctorId], references: [id])
+
+  @@unique([hospitalId, doctorId])
+  @@map("doctor_hospitals")
 }
 
 model Doctor {
@@ -180,8 +193,10 @@ model Doctor {
   password    String?
   token       String?
 
-  hospital   Hospital @relation(fields: [hospitalId], references: [id])
-  hospitalId Int      @map("hospital_id")
+  // hospital   Hospital @relation(fields: [hospitalId], references: [id])
+  // hospitalId Int      @map("hospital_id")
+
+  hospitals DoctorHospital[]
 
   @@unique([doctorCode])
   @@map("doctors")
