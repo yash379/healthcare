@@ -7,7 +7,7 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
-// import session from 'express-session';
+import session from 'express-session';
 import passport = require('passport');
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -35,13 +35,13 @@ async function bootstrap() {
   // }
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('swagger', app, document);
-  // app.use(
-  //   session({
-  //     secret: 'my-secret',
-  //     resave: false,
-  //     saveUninitialized: false,
-  //   })
-  // );
+  app.use(
+    session({
+      secret: 'my-secret',
+      resave: false,
+      saveUninitialized: false,
+    })
+  );
   app.useGlobalPipes(new ValidationPipe());
 
 
