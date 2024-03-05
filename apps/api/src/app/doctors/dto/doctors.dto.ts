@@ -31,6 +31,10 @@ export class DoctorDto implements Doctor {
   @ApiProperty()
   @IsNotEmpty()
   speciality: string;
+  
+  @ApiProperty()
+  @IsNotEmpty()
+  doctorCode: string;
 
   @ApiProperty()
   @IsBoolean()

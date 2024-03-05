@@ -1,4 +1,14 @@
-import { Controller, Post, UseGuards, Request, Body, Get, HttpStatus, Param, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  Body,
+  Get,
+  HttpStatus,
+  Param,
+  HttpCode,
+} from '@nestjs/common';
 import { LocalAuthGuard } from './../auth/local-auth.guard';
 import { LoginDto } from '../core/dto/user-login.dto';
 import { ApiOkResponse } from '@nestjs/swagger';
@@ -6,14 +16,23 @@ import { UsersService } from '../users/users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { UserDto } from '../users/dto/user.dto';
 import { ViewUserDto } from '../users/dto/view-user.dto';
+import { DoctorsService } from '../doctors/doctors.service';
 
 @Controller('')
 export class LoginController {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private doctorsService: DoctorsService
+  ) {}
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  login(@Body() loginDto:LoginDto, @Request() req) {
-    return this.usersService.findByIdForSwitch(req.user.id);
+  login(@Body() loginDto: LoginDto, @Request() req) {
+    console.log(req.user);
+    console.log(req.doctor);
+    return (
+      this.usersService.findByIdForSwitch(req.user.id)||
+      this.doctorsService.findByIdForSwitch(req.doctor.id)
+    );
   }
 
   @UseGuards(AuthGuard)
@@ -21,7 +40,7 @@ export class LoginController {
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: UserDto })
   findByIdForSwitch(@Request() req): Promise<UserDto> {
-    const UserId = req.user.id
+    const UserId = req.user.id;
     return this.usersService.findByIdForSwitch(UserId);
   }
 
@@ -29,6 +48,6 @@ export class LoginController {
   @ApiOkResponse()
   logout(@Request() req): string {
     req.session.destroy();
-    return 'You are logged out'
+    return 'You are logged out';
   }
 }

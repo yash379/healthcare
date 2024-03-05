@@ -60,7 +60,6 @@ export class DoctorsService {
   //   }
   //   )
 
-
   //   const data = [
   //     ['Id', 'FirstName', 'LastName', 'Email', "Phone Number", "Is Child", "Is Active"],
   //   ];
@@ -79,7 +78,6 @@ export class DoctorsService {
   //     }
   //   })
   //   if (!society) throw new HttpException("society not found", HttpStatus.NOT_FOUND);
-
 
   //   const workbook = xlsx.read(file.buffer);
   //   const sheetNames = workbook.SheetNames;
@@ -120,7 +118,6 @@ export class DoctorsService {
   //         } else {
   //           buildingId = building.id;
   //         }
-
 
   //         //section for creating floor if not exist.
 
@@ -207,12 +204,9 @@ export class DoctorsService {
   //     throw new HttpException(error, HttpStatus.NOT_IMPLEMENTED)
   //   }
 
-
   //   return 'accepted';
 
-
   // }
-
 
   // async bulkUploadResidentsData(societyId: number, buildingId: number, floorId: number, flatId: number, fileDto: FileDto, file) {
   //   const society = await this.prisma.society.findFirst({
@@ -257,7 +251,6 @@ export class DoctorsService {
 
   //   const jsonData = xlsx.utils.sheet_to_json(sheet);
 
-
   //   jsonData.map(async (resident) => {
   //     const res = await this.prisma.resident.create({
   //       data: {
@@ -280,7 +273,6 @@ export class DoctorsService {
   //   })
 
   //   return "ok";
-
 
   // }
 
@@ -310,7 +302,7 @@ export class DoctorsService {
         id: hospitalId,
       },
     });
-    console.log(hospital)
+    console.log(hospital);
     if (!hospital) {
       throw new HttpException(
         'hospital not found check hospitalId',
@@ -337,8 +329,8 @@ export class DoctorsService {
         gender: addDoctordto.gender,
         email: addDoctordto.email,
         phoneNumber: addDoctordto.phoneNumber,
-        isActive: addDoctordto.isActive
-      }
+        isActive: addDoctordto.isActive,
+      },
     });
     if (doctor) {
       const doctorHospital = await this.prisma.doctorHospital.findFirst({
@@ -362,19 +354,19 @@ export class DoctorsService {
       if (!checkHospital) {
         throw new NotFoundException();
       } else {
-        // const { gender } = addDoctordto;
+        const { gender } = addDoctordto;
         const addDoctorData = {
           hospitalId: hospitalId,
           doctorId: doctor.id,
-          firstName: doctor.firstName,
-          lastName: doctor.lastName,
-          email: doctor.email,
-          phoneNumber: doctor.phoneNumber,
+          // firstName: doctor.firstName,
+          // lastName: doctor.lastName,
+          // email: doctor.email,
+          // phoneNumber: doctor.phoneNumber,
           speciality: doctor.speciality,
-          doctorCode: doctor.doctorCode,
-          gender: doctor.gender,
-
+          // doctorCode: doctor.doctorCode,
+          // gender: doctor.gender,
         };
+        console.log(addDoctorData);
         const addDoctorHospital = await this.prisma.doctorHospital.create({
           data: addDoctorData,
         });
@@ -393,6 +385,8 @@ export class DoctorsService {
           phoneNumber: doctor.phoneNumber,
           speciality: doctor.speciality,
           gender: doctor.gender,
+          doctorCode: doctor.doctorCode,
+          // hospitalId:addDoctorHospital.hospitalId,
           isActive: doctor.isActive,
         };
       }
@@ -407,28 +401,36 @@ export class DoctorsService {
       const { gender, ...addDoctorDto } = addDoctordto;
       const addDoctor = await this.prisma.doctor.create({
         data: {
-          firstName: doctor.firstName,
-          lastName: doctor.lastName,
-          email: doctor.email,
-          phoneNumber: doctor.phoneNumber,
-          doctorCode: doctor.doctorCode,
-          speciality: doctor.speciality,
-          gender: doctor.gender,
-          isActive: addDoctorDto.isActive
+          firstName: addDoctorDto.firstName,
+          lastName: addDoctorDto.lastName,
+          email: addDoctorDto.email,
+          phoneNumber: addDoctorDto.phoneNumber,
+          doctorCode: addDoctorDto.doctorCode,
+          gender: gender,
+          speciality: addDoctorDto.speciality,
+          isActive: addDoctorDto.isActive,
+          hospitals: {
+            create: [
+              {
+                hospitalId: hospitalId,
+                speciality: addDoctorDto.speciality,
+              },
+            ],
+          },
         },
       });
       const addDoctorData = {
         hospitalId: hospitalId,
         doctorId: addDoctor.id,
-        gender: gender,
-        firstName: addDoctorDto.firstName,
-        lastName: addDoctorDto.lastName,
-        email: addDoctorDto.email,
-        phoneNumber: addDoctorDto.phoneNumber,
+        // gender: gender,
+        // firstName: addDoctorDto.firstName,
+        // lastName: addDoctorDto.lastName,
+        // email: addDoctorDto.email,
+        // phoneNumber: addDoctorDto.phoneNumber,
         // doctorCode: addDoctorDto.doctorCode,
         speciality: addDoctorDto.speciality,
-        // gender:doctor.gender,
-        isActive: addDoctorDto.isActive
+        // gender:gender,
+        // isActive: addDoctorDto.isActive
       };
       const addDoctorHospital = await this.prisma.doctorHospital.create({
         data: addDoctorData,
@@ -447,287 +449,228 @@ export class DoctorsService {
         email: addDoctor.email,
         phoneNumber: addDoctor.phoneNumber,
         gender: addDoctor.gender,
-        speciality: addDoctor.speciality,
+        speciality: addDoctorHospital.speciality,
+        doctorCode: addDoctor.doctorCode,
         isActive: addDoctor.isActive,
       };
     }
   }
 
-  //   async findById(
-  //     societyId: number,
-  //     buildingId: number,
-  //     floorId: number,
-  //     flatId: number,
-  //     id: number,
-  //     userId: number
-  //   ): Promise<ViewResidentDto> {
-  //     if (Number.isNaN(societyId) || Number.isNaN(id)) {
-  //       throw new HttpException(
-  //         'society id is missing in params',
-  //         HttpStatus.BAD_REQUEST
-  //       );
-  //     }
+  async findByIdForSwitch(id: number): Promise<DoctorDto> {
+    const doctor = await this.prisma.doctor.findUnique({
+      where: { id: Number(id) },
+      select: {
+        id: true,
+        email: true,
+        phoneNumber: true,
+        firstName: true,
+        lastName: true,
+        isActive: true,
+        speciality: true,
+        doctorCode: true,
+        gender: true,
+      },
+    });
+    console.log(doctor)
+    if (!doctor) {
+      throw new NotFoundException();
+    }
+    if (!doctor.isActive)
+      throw new HttpException('doctor is inactive', HttpStatus.BAD_REQUEST);
 
-  //     const society = await this.prisma.society.findUnique({
-  //       where: {
-  //         id: societyId,
-  //       },
-  //       select: {
-  //         buildings: {
-  //           where: {
-  //             id: buildingId,
-  //           },
-  //           select: {
-  //             floors: {
-  //               where: {
-  //                 id: floorId,
-  //               },
-  //               select: {
-  //                 flats: {
-  //                   where: {
-  //                     id: flatId,
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     });
-  //     if (society) {
-  //       if (society.buildings[0] != undefined) {
-  //         if (society.buildings[0].floors[0] != undefined) {
-  //           if (society.buildings[0].floors[0].flats[0] != undefined) {
-  //             console.log('all set');
-  //           } else {
-  //             throw new HttpException(
-  //               'flat not found check FlatId',
-  //               HttpStatus.NOT_FOUND
-  //             );
-  //           }
-  //         } else {
-  //           throw new HttpException(
-  //             'floor not found check floorId',
-  //             HttpStatus.NOT_FOUND
-  //           );
-  //         }
-  //       } else {
-  //         throw new HttpException(
-  //           'building not found check buildingId',
-  //           HttpStatus.NOT_FOUND
-  //         );
-  //       }
-  //     } else {
-  //       throw new HttpException(
-  //         'society not found check societyId',
-  //         HttpStatus.NOT_FOUND
-  //       );
-  //     }
+    const viewDoctor = {
+      id: doctor.id,
+      email: doctor.email,
+      phoneNumber: doctor.phoneNumber,
+      firstName: doctor.firstName,
+      lastName: doctor.lastName,
+      isActive: doctor.isActive,
+      speciality: doctor.speciality,
+      doctorCode: doctor.doctorCode,
+      gender: doctor.gender,
+    };
+    return viewDoctor;
+  }
 
-  //     const residentview = await this.prisma.resident.findUnique({
-  //       where: { id: Number(id) },
-  //       select: {
-  //         id: true,
-  //         name: true,
-  //         email: true,
-  //         phoneNumber: true,
-  //         isChild: true,
-  //         isActive: true,
-  //         flats: {
-  //           select: {
-  //             isPrimary: true,
-  //             type: true,
-  //             flat: {
-  //               select: {
-  //                 id: true,
-  //                 number: true,
-  //                 floor: {
-  //                   select: {
-  //                     id: true,
-  //                     number: true,
-  //                     building: {
-  //                       select: {
-  //                         id: true,
-  //                         name: true,
-  //                         society: {
-  //                           select: {
-  //                             id: true,
-  //                             name: true,
-  //                           },
-  //                         },
-  //                       },
-  //                     },
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     });
-  //     if (!residentview) {
-  //       throw new NotFoundException();
-  //     } else {
-  //       if (residentview.isActive) {
-  //         return residentview;
-  //       } else {
-  //         throw new NotFoundException();
-  //       }
-  //     }
-  //   }
+    async findById(
+      hospitalId: number,
+      id: number,
+      // userId: number
+    ): Promise<ViewDoctorDto> {
+      if (Number.isNaN(hospitalId) || Number.isNaN(id)) {
+        throw new HttpException(
+          'hospital id is missing in params',
+          HttpStatus.BAD_REQUEST
+        );
+      }
 
-  //   async edit(
-  //     societyId: number,
-  //     buildingId: number,
-  //     floorId: number,
-  //     flatId: number,
-  //     residentDto: AddResidentDto,
-  //     id: number
-  //   ): Promise<ResidentDto & { flatId: number }> {
-  //     if (Number.isNaN(societyId) || Number.isNaN(id)) {
-  //       throw new HttpException(
-  //         'society id is missing in params',
-  //         HttpStatus.BAD_REQUEST
-  //       );
-  //     }
+      const hospital = await this.prisma.hospital.findUnique({
+        where: {
+          id: hospitalId,
+        },
+        select: {
+          doctors: {
+            where: {
+              id: id,
+            },
+                
+          },
+        },
+      });
+      if (!hospital) {
+        throw new HttpException(
+          'hospital not found check hospitalId',
+          HttpStatus.NOT_FOUND
+        );
+      }
 
-  //     const society = await this.prisma.society.findUnique({
-  //       where: {
-  //         id: societyId,
-  //       },
-  //       select: {
-  //         buildings: {
-  //           where: {
-  //             id: buildingId,
-  //           },
-  //           select: {
-  //             floors: {
-  //               where: {
-  //                 id: floorId,
-  //               },
-  //               select: {
-  //                 flats: {
-  //                   where: {
-  //                     id: flatId,
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     });
-  //     if (society) {
-  //       if (society.buildings[0] != undefined) {
-  //         if (society.buildings[0].floors[0] != undefined) {
-  //           if (society.buildings[0].floors[0].flats[0] != undefined) {
-  //             console.log('all set');
-  //           } else {
-  //             throw new HttpException(
-  //               'flat not found check FlatId',
-  //               HttpStatus.NOT_FOUND
-  //             );
-  //           }
-  //         } else {
-  //           throw new HttpException(
-  //             'floor not found check floorId',
-  //             HttpStatus.NOT_FOUND
-  //           );
-  //         }
-  //       } else {
-  //         throw new HttpException(
-  //           'building not found check buildingId',
-  //           HttpStatus.NOT_FOUND
-  //         );
-  //       }
-  //     } else {
-  //       throw new HttpException(
-  //         'society not found check societyId',
-  //         HttpStatus.NOT_FOUND
-  //       );
-  //     }
+      const doctorview = await this.prisma.doctor.findUnique({
+        where: { id: Number(id) },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phoneNumber: true,
+          speciality: true,
+          gender: true,
+          doctorCode: true,
+          isActive: true,
+         
+           
+        },
+      });
+      if (!doctorview) {
+        throw new NotFoundException();
+      } else {
+        if (doctorview.isActive) {
+          return doctorview;
+        } else {
+          throw new NotFoundException();
+        }
+      }
+    }
 
-  //     const isPhoneNumberValid = this.isValidMobileNumber(
-  //       residentDto.phoneNumber
-  //     );
+    async edit(
+      hospitalId: number,
+      doctorDto: AddDoctorDto,
+      id: number
+    ): Promise<DoctorDto & { hospitalId: number }> {
+      if (Number.isNaN(hospitalId) || Number.isNaN(id)) {
+        throw new HttpException(
+          'hospital id is missing in params',
+          HttpStatus.BAD_REQUEST
+        );
+      }
 
-  //     if (!isPhoneNumberValid) {
-  //       throw new HttpException(
-  //         `${residentDto.phoneNumber} is a valid 10-digit mobile number.`,
-  //         HttpStatus.BAD_REQUEST
-  //       );
-  //     }
+      const hospital = await this.prisma.hospital.findUnique({
+        where: {
+          id: hospitalId,
+        },
+        select: {
+          doctors: {
+            where: {
+              id: id,
+            },
+            
+          },
+        },
+      });
+      if (!hospital) {
+        throw new HttpException(
+          'hospital not found check hospitalId',
+          HttpStatus.NOT_FOUND
+        );
+      }
 
-  //     const checkresident = await this.prisma.resident.findUnique({
-  //       where: { id: Number(id) },
-  //     });
-  //     const resident = await this.prisma.resident.findFirst({
-  //       where: {
-  //         name: residentDto.name,
-  //         email: residentDto.email,
-  //         phoneNumber: residentDto.phoneNumber,
-  //         isChild: residentDto.isChild,
-  //         isActive: residentDto.isActive
-  //       },
-  //     });
+      const isPhoneNumberValid = this.isValidMobileNumber(
+        doctorDto.phoneNumber
+      );
 
-  //     if (!checkresident) {
-  //       throw new NotFoundException();
-  //     } else {
-  //       const residentFlat = await this.createResidentFlat(
-  //         residentDto,
-  //         id,
-  //         flatId
-  //       );
+      if (!isPhoneNumberValid) {
+        throw new HttpException(
+          `${doctorDto.phoneNumber} is a valid 10-digit mobile number.`,
+          HttpStatus.BAD_REQUEST
+        );
+      }
 
-  //       const checkflat = await this.prisma.flat.findFirst({
-  //         where: { id: flatId },
-  //       });
-  //       if (!checkflat) {
-  //         throw new NotFoundException();
-  //       } else {
-  //         if (resident && resident.id != id) {
-  //           throw new HttpException(
-  //             'User with same email already exists',
-  //             HttpStatus.BAD_REQUEST
-  //           );
-  //         }
-  //         const { type, ...addResidentDto } = residentDto;
-  //         const updateResident = await this.prisma.resident.update({
-  //           where: { id: Number(id) },
-  //           data: {
-  //             name: addResidentDto.name,
-  //             email: addResidentDto.email,
-  //             phoneNumber: addResidentDto.phoneNumber,
-  //             isChild: addResidentDto.isChild
-  //           },
-  //         });
+      const checkdoctor = await this.prisma.doctor.findUnique({
+        where: { id: Number(id) },
+      });
+      const doctor = await this.prisma.doctor.findFirst({
+        where: {
+          firstName: doctorDto.firstName,
+          lastName: doctorDto.lastName,
+          email: doctorDto.email,
+          phoneNumber: doctorDto.phoneNumber,
+          speciality: doctorDto.speciality,
+          gender: doctorDto.gender,
+          doctorCode: doctorDto.doctorCode,
+          isActive: doctorDto.isActive
+        },
+      });
 
-  //         if (addResidentDto.isPrimary) {
-  //           // set other residents of this flat as not primary
-  //           await this.prisma.residentFlat.updateMany({
-  //             where: { flatId: flatId, residentId: { not: updateResident.id } },
-  //             data: { isPrimary: false },
-  //           });
-  //         }
-  //         await this.prisma.residentFlat.updateMany({
-  //           where: { residentId: updateResident.id, flatId: flatId },
-  //           data: { isPrimary: addResidentDto.isPrimary, type: type },
-  //         });
-  //         return {
-  //           id: updateResident.id,
-  //           name: updateResident.name,
-  //           type: residentFlat.type,
-  //           email: updateResident.email,
-  //           phoneNumber: updateResident.phoneNumber,
-  //           isChild: updateResident.isChild,
-  //           flatId: flatId,
-  //           isPrimary: addResidentDto.isPrimary,
-  //           isActive: updateResident.isActive,
-  //         };
-  //       }
-  //     }
-  //   }
+      if (!checkdoctor) {
+        throw new NotFoundException();
+      } else {
+        // const doctorHospital = await this.createDoctorHospital(
+        //   doctorDto,
+        //   id,
+        //   hospitalId
+        // );
+
+        const checkhospital = await this.prisma.hospital.findFirst({
+          where: { id: hospitalId },
+        });
+        if (!checkhospital) {
+          throw new NotFoundException();
+        } else {
+          if (doctor && doctor.id != id) {
+            throw new HttpException(
+              'Doctor with same email already exists',
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          const { gender, ...addDoctorDto } = doctorDto;
+          const updateDoctor = await this.prisma.doctor.update({
+            where: { id: Number(id) },
+            data: {
+              firstName: addDoctorDto.firstName,
+              lastName: addDoctorDto.lastName,
+              email: addDoctorDto.email,
+              phoneNumber: addDoctorDto.phoneNumber,
+              speciality: addDoctorDto.speciality,
+              // gender: addDoctorDto.gender,
+              doctorCode: addDoctorDto.doctorCode,
+            },
+          });
+
+          // if (addResidentDto.isPrimary) {
+          //   // set other residents of this flat as not primary
+          //   await this.prisma.residentFlat.updateMany({
+          //     where: { flatId: flatId, residentId: { not: updateResident.id } },
+          //     data: { isPrimary: false },
+          //   });
+          // }
+          // await this.prisma.residentFlat.updateMany({
+          //   where: { residentId: updateResident.id, flatId: flatId },
+          //   data: { isPrimary: addResidentDto.isPrimary, type: type },
+          // });
+          return {
+            id: updateDoctor.id,
+            firstName: updateDoctor.firstName,
+            lastName: updateDoctor.lastName,
+            gender: updateDoctor.gender,
+            email: updateDoctor.email,
+            phoneNumber: updateDoctor.phoneNumber,
+            hospitalId: hospitalId,
+            speciality: updateDoctor.speciality,
+            doctorCode: updateDoctor.doctorCode,
+            isActive: updateDoctor.isActive,
+          };
+        }
+      }
+    }
 
   //   async getFilteredResidents(
   //     pageSize: number,

@@ -181,32 +181,32 @@ export class DoctorsController {
     return this.doctorsService.add(+hospitalId, addDoctorDto);
   }
 
-//   @UseGuards(AuthGuard,RolesGuard)
-//   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-//   @Get('/hospitals/:hospitalId/doctors/:id')
-//   @HttpCode(HttpStatus.OK)
-//   @ApiOkResponse({ type: ViewDoctorDto })
-//   findById(
-//     @Param('hospitalId') hospitalId: number,
-//     @Param('id') id: number,
-//     @Request() req
-//   ): Promise<ViewDoctorDto> {
-//     const { user } = req;
-//     return this.doctorsService.findById(+hospitalId, +id, user.id);
-//   }
+  @UseGuards(AuthGuard,RolesGuard)
+  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+  @Get('/hospitals/:hospitalId/doctors/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: ViewDoctorDto })
+  findById(
+    @Param('hospitalId') hospitalId: number,
+    @Param('id') id: number,
+    @Request() req
+  ): Promise<ViewDoctorDto> {
+    // const { user } = req;
+    return this.doctorsService.findById(+hospitalId, +id);
+  }
 
-//   @UseGuards(AuthGuard,RolesGuard)
-//   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-//   @Put('/hospitals/:hospitalId/doctors/:id')
-//   @HttpCode(HttpStatus.OK)
-//   @ApiOkResponse({ type: DoctorDto })
-//   edit(
-//     @Param('hospitalId') hospitalId: number,
-//     @Body() doctorDto: AddDoctorDto,
-//     @Param('id') id: number
-//   ): Promise<DoctorDto> {
-//     return this.doctorsService.edit(+hospitalId, doctorDto, id);
-//   }
+  @UseGuards(AuthGuard,RolesGuard)
+  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+  @Put('/hospitals/:hospitalId/doctors/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: DoctorDto })
+  edit(
+    @Param('hospitalId') hospitalId: number,
+    @Body() doctorDto: AddDoctorDto,
+    @Param('id') id: number
+  ): Promise<DoctorDto> {
+    return this.doctorsService.edit(+hospitalId, doctorDto, id);
+  }
 
 
 

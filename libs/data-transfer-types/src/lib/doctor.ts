@@ -9,6 +9,7 @@ export interface Doctor {
   phoneNumber?: string;
   gender: Gender;
   speciality: string;
+  doctorCode: string;
   isActive: boolean;
 }
 
