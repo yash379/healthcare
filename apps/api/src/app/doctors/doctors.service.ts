@@ -952,173 +952,135 @@ export class DoctorsService {
   //     };
   //   }
 
-  //   async deleteResident(
-  //     societyId: number,
-  //     buildingId: number,
-  //     floorId: number,
-  //     flatId: number,
-  //     id: number
-  //   ): Promise<void> {
-  //     if (Number.isNaN(societyId) || Number.isNaN(id)) {
-  //       throw new HttpException(
-  //         'society id is missing in params',
-  //         HttpStatus.BAD_REQUEST
-  //       );
-  //     }
+    async deleteResident(
+      hospitalId: number,
+      id: number
+    ): Promise<void> {
+      if (Number.isNaN(hospitalId) || Number.isNaN(id)) {
+        throw new HttpException(
+          'hospital id is missing in params',
+          HttpStatus.BAD_REQUEST
+        );
+      }
 
-  //     const society = await this.prisma.society.findUnique({
-  //       where: {
-  //         id: societyId,
-  //       },
-  //       select: {
-  //         buildings: {
-  //           where: {
-  //             id: buildingId,
-  //           },
-  //           select: {
-  //             floors: {
-  //               where: {
-  //                 id: floorId,
-  //               },
-  //               select: {
-  //                 flats: {
-  //                   where: {
-  //                     id: flatId,
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     });
-  //     if (society) {
-  //       if (society.buildings[0] != undefined) {
-  //         if (society.buildings[0].floors[0] != undefined) {
-  //           if (society.buildings[0].floors[0].flats[0] != undefined) {
-  //             console.log('all set');
-  //           } else {
-  //             throw new HttpException(
-  //               'flat not found check FlatId',
-  //               HttpStatus.NOT_FOUND
-  //             );
-  //           }
-  //         } else {
-  //           throw new HttpException(
-  //             'floor not found check floorId',
-  //             HttpStatus.NOT_FOUND
-  //           );
-  //         }
-  //       } else {
-  //         throw new HttpException(
-  //           'building not found check buildingId',
-  //           HttpStatus.NOT_FOUND
-  //         );
-  //       }
-  //     } else {
-  //       throw new HttpException(
-  //         'society not found check societyId',
-  //         HttpStatus.NOT_FOUND
-  //       );
-  //     }
+      const hospital = await this.prisma.hospital.findUnique({
+        where: {
+          id: hospitalId,
+        },
+        select: {
+          doctors: {
+            where: {
+              id: id,
+            },
+           
+            
+          },
+        },
+      });
+      if (!hospital) {
+        throw new HttpException(
+          'hospital not found check hospitalId',
+          HttpStatus.NOT_FOUND
+        );
+      }
 
-  //     const residentFlatRelation = await this.prisma.residentFlat.findFirst({
-  //       where: {
-  //         residentId: id,
-  //         flatId: flatId,
-  //       },
-  //     });
-  //     if (residentFlatRelation) {
-  //       await this.prisma.residentFlat.delete({
-  //         where: {
-  //           id: residentFlatRelation.id,
-  //         },
-  //       });
-  //     }
+      const doctorHospitalRelation = await this.prisma.doctorHospital.findFirst({
+        where: {
+          doctorId: id,
+          hospitalId: hospitalId,
+        },
+      });
+      if (doctorHospitalRelation) {
+        await this.prisma.doctorHospital.delete({
+          where: {
+            id: doctorHospitalRelation.id,
+          },
+        });
+      }
 
-  //     const resident = await this.prisma.resident.delete({
-  //       where: { id: Number(id) },
-  //     });
-  //     if (!resident) {
-  //       throw new NotFoundException();
-  //     } else {
-  //       return;
-  //     }
-  //   }
+      const doctor = await this.prisma.doctor.delete({
+        where: { id: Number(id) },
+      });
+      if (!doctor) {
+        throw new NotFoundException();
+      } else {
+        return;
+      }
+    }
 
-  //   async softDeleteResident(
-  //     societyId: number,
-  //     id: number,
-  //     status: string
-  //   ): Promise<void> {
-  //     if (Number.isNaN(societyId) || Number.isNaN(id)) {
-  //       throw new HttpException(
-  //         'society id is missing in params',
-  //         HttpStatus.BAD_REQUEST
-  //       );
-  //     }
+    async softDeleteDoctor(
+      hospitalId: number,
+      id: number,
+      status: string
+    ): Promise<void> {
+      if (Number.isNaN(hospitalId) || Number.isNaN(id)) {
+        throw new HttpException(
+          'hospitalId id is missing in params',
+          HttpStatus.BAD_REQUEST
+        );
+      }
 
-  //     const society = await this.prisma.society.findUnique({
-  //       where: {
-  //         id: societyId,
-  //       },
-  //     });
-  //     if (!society) {
-  //       throw new HttpException('society not found', HttpStatus.NOT_FOUND);
-  //     }
+      const hospital = await this.prisma.hospital.findUnique({
+        where: {
+          id: hospitalId,
+        },
+      });
+      if (!hospital) {
+        throw new HttpException('hospital not found', HttpStatus.NOT_FOUND);
+      }
 
-  //     const checkresident = await this.prisma.resident.findUnique({
-  //       where: { id: Number(id) },
-  //     });
-  //     if (!checkresident) {
-  //       throw new NotFoundException();
-  //     } else {
-  //       const flag = status === 'true';
-  //       if (checkresident.isActive != flag) {
-  //         const dele = await this.prisma.resident.update({
-  //           where: { id: Number(id) },
-  //           data: { isActive: flag },
-  //         });
-  //         if (!dele) {
-  //           throw new NotFoundException();
-  //         } else {
-  //           return;
-  //         }
-  //       }
-  //     }
-  //   }
+      const checkdoctor = await this.prisma.doctor.findUnique({
+        where: { id: Number(id) },
+      });
+      if (!checkdoctor) {
+        throw new NotFoundException();
+      } else {
+        const flag = status === 'true';
+        if (checkdoctor.isActive != flag) {
+          const dele = await this.prisma.doctor.update({
+            where: { id: Number(id) },
+            data: { isActive: flag },
+          });
+          if (!dele) {
+            throw new NotFoundException();
+          } else {
+            return;
+          }
+        }
+      }
+    }
 
-  //   async createResidentFlat(
-  //     addResidentDto: AddResidentDto,
-  //     id: number,
-  //     flatId: number
-  //   ): Promise<ResidentFlat> {
-  //     const residentFlat = await this.prisma.residentFlat.findFirst({
-  //       where: {
-  //         flatId: flatId,
-  //         residentId: Number(id),
-  //       },
-  //     });
-  //     if (!residentFlat) {
-  //       const addResidentData = {
-  //         flatId: flatId,
-  //         residentId: Number(id),
-  //         type: addResidentDto.type,
-  //       };
-  //       const addResidentFlat = await this.prisma.residentFlat.create({
-  //         data: addResidentData,
-  //       });
-  //       return addResidentFlat;
-  //     }
-  //     if (residentFlat) {
-  //       if (residentFlat.type != addResidentDto.type) {
-  //         const residentflat = await this.prisma.residentFlat.update({
-  //           where: { id: residentFlat.id },
-  //           data: { type: addResidentDto.type },
-  //         });
-  //         return residentflat;
-  //       }
-  //     }
-  //     return residentFlat;
-  //   }
+    async createdoctorHospital(
+      addDoctorDto: AddDoctorDto,
+      id: number,
+      hospitalId: number
+    ): Promise<DoctorHospital> {
+      const doctorHospital = await this.prisma.doctorHospital.findFirst({
+        where: {
+          hospitalId: hospitalId,
+          doctorId: Number(id),
+        },
+      });
+      if (!doctorHospital) {
+        const addDoctorData = {
+          hospitalId: hospitalId,
+          doctorId: Number(id),
+          speciality: addDoctorDto.speciality,
+        };
+        const addDoctorHospital = await this.prisma.doctorHospital.create({
+          data: addDoctorData,
+        });
+        return addDoctorHospital;
+      }
+      if (doctorHospital) {
+        if (doctorHospital.speciality != addDoctorDto.speciality) {
+          const doctorhospital = await this.prisma.doctorHospital.update({
+            where: { id: doctorHospital.id },
+            data: { speciality: doctorHospital.speciality },
+          });
+          return doctorhospital;
+        }
+      }
+      return doctorHospital;
+    }
 }
