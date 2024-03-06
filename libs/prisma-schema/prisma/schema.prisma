@@ -190,6 +190,8 @@ model Doctor {
   firstName   String  @map("first_name")
   lastName    String  @map("last_name")
   isActive    Boolean @default(true) @map("is_active")
+   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt         DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
   password    String?
   token       String?
 

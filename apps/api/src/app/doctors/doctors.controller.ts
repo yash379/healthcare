@@ -210,66 +210,66 @@ export class DoctorsController {
 
 
 
-//   @UseGuards(AuthGuard,RolesGuard)
-//   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-//   @Get('/hospitals/:hospitalId/doctors')
-//   @HttpCode(HttpStatus.OK)
-//   @ApiOkResponse({ type: ListDoctorPageDto })
-//   async getFilteredPosts(
-//     @Request() req,
-//     @Param('hospitalId') hospitalId: number,
-//     @Query('pageSize') pageSize?: number,
-//     @Query('pageOffset') pageOffset?: number,
-//     @Query('firstName') firstName?: string,
-//     @Query('lastName') lastName?: string,
-//     @Query('email') email?: string,
-//     @Query('phoneNumber') phoneNumber?: string,
-//     @Query('speciality') speciality?: string,
-//     @Query('doctorCode') doctorCode?: string,
-//     @Query('gender') gender?: Gender,
-//     @Query('sortBy') sortBy?: string,
-//     @Query('sortOrder') sortOrder?: 'asc' | 'desc'
-//   ): Promise<ListDoctorPageDto> {
-//     const { user } = req;
-//     const listsite = await this.doctorsService.getFilteredDoctors(
-//       +pageSize,
-//       +pageOffset,
-//       firstName,
-//       lastName,
-//       email,
-//       phoneNumber,
-//       speciality,
-//       doctorCode,
-//       gender,
-//       sortBy,
-//       sortOrder,
-//       user.id,
-//       +hospitalId,
-//       true
-//     );
-//     return listsite;
-//   }
+  @UseGuards(AuthGuard,RolesGuard)
+  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+  @Get('/hospitals/:hospitalId/doctors')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: ListDoctorPageDto })
+  async getFilteredPosts(
+    @Request() req,
+    @Param('hospitalId') hospitalId: number,
+    @Query('pageSize') pageSize?: number,
+    @Query('pageOffset') pageOffset?: number,
+    @Query('firstName') firstName?: string,
+    @Query('lastName') lastName?: string,
+    @Query('email') email?: string,
+    @Query('phoneNumber') phoneNumber?: string,
+    @Query('speciality') speciality?: string,
+    @Query('doctorCode') doctorCode?: string,
+    // @Query('gender') gender?: Gender,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc'
+  ): Promise<ListDoctorPageDto> {
+    const { doctor } = req;
+    const listdoctor = await this.doctorsService.getFilteredDoctors(
+      +pageSize,
+      +pageOffset,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      speciality,
+      doctorCode,
+      // gender,
+      sortBy,
+      sortOrder,
+      doctor.id,
+      +hospitalId,
+      true
+    );
+    return listdoctor;
+  }
 
-//   @UseGuards(AuthGuard,RolesGuard)
-//   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-//   @Delete('/hospitals/:hospitalId/doctors/:id')
-//   @HttpCode(HttpStatus.NO_CONTENT)
-//   @ApiOkResponse()
-//   delete( @Param('hospitalId') hospitalId: number,
-//  @Param('id') id: number) {
-//     return this.doctorsService.deleteDoctor(+hospitalId, +id);
-//   }
+  @UseGuards(AuthGuard,RolesGuard)
+  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+  @Delete('/hospitals/:hospitalId/doctors/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOkResponse()
+  delete( @Param('hospitalId') hospitalId: number,
+ @Param('id') id: number) {
+    return this.doctorsService.deleteDoctor(+hospitalId, +id);
+  }
 
-//   @UseGuards(AuthGuard,RolesGuard)
-//   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-//   @Post('/hospitals/:hospitalId/doctors/:id/:status')
-//   @HttpCode(HttpStatus.NO_CONTENT)
-//   @ApiOkResponse()
-//   softDelete(
-//     @Param('hospitalId') hospitalId: number,
-//     @Param('id') id: number,
-//     @Param('status') status: string
-//   ) {
-//     return this.doctorsService.softDeleteDoctor(+hospitalId, +id, status);
-//   }
+  @UseGuards(AuthGuard,RolesGuard)
+  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+  @Post('/hospitals/:hospitalId/doctors/:id/:status')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOkResponse()
+  softDelete(
+    @Param('hospitalId') hospitalId: number,
+    @Param('id') id: number,
+    @Param('status') status: string
+  ) {
+    return this.doctorsService.softDeleteDoctor(+hospitalId, +id, status);
+  }
 }
