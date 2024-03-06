@@ -1,0 +1,30 @@
+import { Hospital } from "@healthcare/data-transfer-types";
+import { OrganizationRoleName, SuperRoleName } from "@prisma/client";
+import React from "react";
+// import { User } from "@fnt-flsy/data-transfer-types";
+
+interface User {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    hospitalRoles: {
+        hospitalId: number;
+        hospitalName: string;
+        hospitalRole: string;
+    }[],
+    organizationRoles?: OrganizationRoleDto[];
+    superRole?: SuperRoleName;
+}
+
+
+
+export interface OrganizationRoleDto {
+    organizationId: number;
+    organizationRole: OrganizationRoleName;
+}
+
+
+export const UserContext = React.createContext<User | null>(null);
+export const HospitalContext=React.createContext<Hospital | null>(null);

@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-import { enqueueSnackbar } from 'notistack';
+import { enqueueSnackbar } from  'notistack';
 
 export interface LoginProps {
   onLogin: (user: any) => void;
@@ -42,17 +42,18 @@ export function Login({ onLogin }: LoginProps) {
       enqueueSnackbar('Login successfully', { variant: 'success' });
       // console
 
-      // if(user || null){
-      //   navigate("/dashboard")
-      // }
-      // if (user.organizationRoles[0].organizationRole === 'ADMIN') {
-      //   // Only log in if the user has the 'ADMIN' superRole
-      //   onLogin(user);
-      //   // navigate("/dashboard");
-      // } else {
-      //   // Handle the case where the user doesn't have the 'ADMIN' superRole
-      //   console.log('User does not have the required superRole to log in');
-      // }
+      if (user || null) {
+        navigate("/dashboard")
+        
+      }
+      if (user.organizationRoles[0].organizationRole === 'ADMIN') {
+        // Only log in if the user has the 'ADMIN' superRole
+        onLogin(user);
+        // navigate("/dashboard");
+      } else {
+        // Handle the case where the user doesn't have the 'ADMIN' superRole
+        console.log('User does not have the required superRole to log in');
+      }
       onLogin(user);
       console.log('res', res);
     } catch (error) {
@@ -102,7 +103,7 @@ export function Login({ onLogin }: LoginProps) {
               variant="outlined"
               {...register('password')}
               error={!!errors.password}
-              // helperText={errors.password?.message}
+            // helperText={errors.password?.message}
             />
             <Button
               type="submit"
@@ -110,7 +111,7 @@ export function Login({ onLogin }: LoginProps) {
               color="primary"
               sx={{ mt: '20px', }}
               className={styles.button}
-              // sx={{backgroundColor:"#054B7D"}}
+            // sx={{backgroundColor:"#054B7D"}}
             >
               Log In
             </Button>
