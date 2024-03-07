@@ -19,12 +19,12 @@
 }
 
 .button-tabs:hover{
-  border-radius: 50px;
+  border-radius: 5px;
   border: 1px solid;
   background-color: #6B7587 !important;
 
   .drawertab{
-    color:white;
+    color:black;
   }
 
   .drawer-icons{
@@ -33,17 +33,17 @@
 }
 
 .active-tab{
-  border-radius: 50px !important;
+  border-radius: 5px !important;
   border: 1px solid !important;
   background-color: #6B7587 !important;
 
-  .drawertab{
-    color:white;
-  }
+  // .drawertab{
+  //   color:white;
+  // }
 
-  .drawer-icons{
-    color:white;
-  }
+//   .drawer-icons{
+//     color:white;
+//   }
 }
 
  .side-drawer{
@@ -52,9 +52,28 @@
  }
 
  .drawertab{
-   color:white !important;
+   color:black !important;
  }
 
  .drawer-icons{
-   color: white;
+   color: black;
  }
+
+ .active-tab {
+
+  background: linear-gradient(90deg, #139C94 95%, #94127F 5%) !important;
+  border-top: var(--none, 0px) solid #054B7D !important;
+  border-right: var(--none, 0px) solid #054B7D !important;
+  border-bottom: var(--none, 0px) solid #054B7D !important;
+  border-left: var(--none, 0px) solid #054B7D !important;
+  // border-left: 7px solid #054B7D !important;
+
+
+  .drawertab{
+    color:white !important;
+  }
+ 
+  .drawer-icons{
+    color: white;
+  }
+}

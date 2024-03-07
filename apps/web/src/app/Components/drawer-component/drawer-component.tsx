@@ -34,16 +34,16 @@ const drawerWidth = 200;
 
 export function DrawerComponent(props: DrawerComponentProps) {
   // const [menudata, setMenudata] = useState("home")
-  const [selectedComponent, setSelectedComponent] = useState(null);
+  const [selectedComponent, setSelectedComponent] = useState("dashboard");
 
-  const handleComponentChange = (componentName:any) => {
+  const handleComponentChange = (componentName: any) => {
     setSelectedComponent(componentName);
   };
   const { id } = useParams();
 
-  const hospitalcontext=useContext(HospitalContext);
-  console.log("hospital context:",hospitalcontext);
-  console.log("hospital id:",hospitalcontext?.id);
+  const hospitalcontext = useContext(HospitalContext);
+  console.log("hospital context:", hospitalcontext);
+  console.log("hospital id:", hospitalcontext?.id);
 
 
   return (
@@ -51,10 +51,11 @@ export function DrawerComponent(props: DrawerComponentProps) {
       <Drawer
         sx={{
           '& .MuiDrawer-paper': {
-            width: '200px', 
+            width: '225px',
             boxSizing: 'border-box',
             // marginTop: '64px',
-            backgroundColor: '#2B3445',
+            backgroundColor: '#FFFFFF',
+            color: "black"
           },
           '@media (max-width: 600px)': {
             '& .MuiDrawer-paper': {
@@ -69,11 +70,10 @@ export function DrawerComponent(props: DrawerComponentProps) {
 
         {/* <Toolbar sx={{height:"59px"}}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></Toolbar> */}
         {/* <Divider /> */}
-        <List sx={{mt:"70px"}} className={styles['Nav']}>
+        <List sx={{ mt: "100px" }} className={styles['Nav']}>
 
           <Link style={{ textDecoration: "none" }} to={`/dashboard/${hospitalcontext?.id}`} onClick={() => handleComponentChange('dashboard')}>
-            <ListItemButton className={`${styles['button-tabs']} ${
-                selectedComponent === 'dashboard' && styles['active-tab']
+            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
               }`}>
               <ListItemIcon>
                 <DashboardIcon className={styles['drawer-icons']} />
@@ -82,8 +82,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             </ListItemButton>
           </Link>
           <Link style={{ textDecoration: "none" }} to={`/hospital/${hospitalcontext?.id}/appointments`} onClick={() => handleComponentChange('appointments')}>
-            <ListItemButton  className={`${styles['button-tabs']} ${
-                selectedComponent === 'appointment' && styles['active-tab']
+            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'appointments' && styles['active-tab']
               }`}>
               <ListItemIcon>
                 <AssignmentIcon className={styles['drawer-icons']} />
@@ -91,10 +90,9 @@ export function DrawerComponent(props: DrawerComponentProps) {
               <ListItemText className={styles["drawertab"]} primary="Appointment" />
             </ListItemButton>
           </Link>
-  
+
           <Link style={{ textDecoration: "none" }} to={`/hospital/${hospitalcontext?.id}/doctors`} onClick={() => handleComponentChange('doctors')}>
-            <ListItemButton  className={`${styles['button-tabs']} ${
-                selectedComponent === 'doctor' && styles['active-tab']
+            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'doctors' && styles['active-tab']
               }`}>
               <ListItemIcon>
                 <MedicalServicesIcon className={styles['drawer-icons']} />
@@ -103,8 +101,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             </ListItemButton>
           </Link>
           <Link style={{ textDecoration: "none" }} to={`/hospital/${hospitalcontext?.id}/patients`} onClick={() => handleComponentChange('patients')}>
-            <ListItemButton className={`${styles['button-tabs']} ${
-                selectedComponent === 'patient' && styles['active-tab']
+            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'patients' && styles['active-tab']
               }`}>
               <ListItemIcon >
                 <GroupIcon className={styles['drawer-icons']} />
@@ -113,8 +110,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             </ListItemButton>
           </Link>
           <Link style={{ textDecoration: "none" }} to="/reports" onClick={() => handleComponentChange('reports')}>
-            <ListItemButton  className={`${styles['button-tabs']} ${
-                selectedComponent === 'report' && styles['active-tab']
+            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'reports' && styles['active-tab']
               }`}>
               <ListItemIcon >
                 <AssessmentIcon className={styles['drawer-icons']} />
@@ -123,8 +119,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             </ListItemButton>
           </Link>
           <Link style={{ textDecoration: "none" }} to="/settings" onClick={() => handleComponentChange('settings')}>
-            <ListItemButton  className={`${styles['button-tabs']} ${
-                selectedComponent === 'setting' && styles['active-tab']
+            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'settings' && styles['active-tab']
               }`}>
               <ListItemIcon >
                 <SettingsIcon className={styles['drawer-icons']} />

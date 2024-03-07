@@ -13,6 +13,7 @@ import SelectHospital from './pages/select-hospital/select-hospital';
 import LogOut from './Components/log-out/log-out';
 import ForgotPassword from './pages/forgot-password/forgot-password';
 import UpdatePassword from './pages/update-password/update-password';
+import Security from './Components/security/security';
 export function App() {
 
   const location = useLocation();
@@ -20,8 +21,8 @@ export function App() {
 
   const navigate = useNavigate();
 
-  const usercontext=useContext(UserContext);
-  console.log('User context:',usercontext);
+  const usercontext = useContext(UserContext);
+  console.log('User context:', usercontext);
 
   const onLogout = async () => {
     localStorage.removeItem('user');
@@ -47,32 +48,32 @@ export function App() {
   }
 
   useEffect(() => {
-    const userFromStorage = localStorage.getItem('user');  
+    const userFromStorage = localStorage.getItem('user');
     if (userFromStorage !== null) {
-      const user: User = JSON.parse(userFromStorage);     
-      setUser(user);                                       
+      const user: User = JSON.parse(userFromStorage);
+      setUser(user);
     }
   }, []);
   return (
     <UserContext.Provider value={user}>
-    <SnackbarProvider maxSnack={3}>
-    <Routes>
-    <Route  element={<HospitalLayout />}>
-          <Route path="/" element={<Layout />}>
-          
-          <Route path="/dashboard/:hospitalId" element={<Dashboard />} />
-          <Route path="/profile" element={<Profile />}/>
-      </Route>
+      <SnackbarProvider maxSnack={3}>
+        <Routes>
+          <Route element={<HospitalLayout />}>
+            <Route path="/" element={<Layout />}>
+
+              <Route path="/dashboard/:hospitalId" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+            </Route>
           </Route>
           <Route path="/selectHospital" element={<SelectHospital />} />
-                    
-          <Route path="/forgot-password" element={<ForgotPassword/>}/>
-          <Route path="/update-password/email/:emailId/token/:token" element={<UpdatePassword/>} />
+
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/update-password/email/:emailId/token/:token" element={<UpdatePassword />} />
           <Route path="/login" element={<Login onLogin={onLogin} />} />
           <Route path="/logout" element={<LogOut onLogout={onLogout} />} />
-           <Route path="*" element={<PageNotFound/>}/>
-    </Routes>
-    </SnackbarProvider>
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </SnackbarProvider>
     </UserContext.Provider>
   );
 }
