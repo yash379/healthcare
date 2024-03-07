@@ -5,6 +5,12 @@
  * .container {
  * }
 */
+
+.main_root{
+ 
+  
+  
+}
 .main_container {
     display: flex;
     justify-content: space-between;
@@ -15,6 +21,7 @@
     // margin-bottom: 10px;
     margin-right: 320px;
     margin-left: 320px;
+    border-radius: 40px;
   }
   
   .first_container {
@@ -23,7 +30,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-  
+   
   }
   
   .second_container {
@@ -32,8 +39,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-   margin-right: 40px;
-   margin-left: 40px;
+   margin-right: 120px;
+   margin-left: 120px;
   background-color: #FFFFFF;
     border-radius: 20px;
     padding-bottom: 20px;
@@ -89,3 +96,36 @@
     }
   }
   
+
+  .password{
+    margin-bottom: 10px;
+}
+
+.forgot-password{
+    color: var(--Link, #1E4AE9);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    text-align: right;
+}
+
+.login-form{
+  margin:10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.email{
+  margin-bottom: 20px;
+
+}
+.password{
+  margin-bottom: 20px;
+
+}
+
+.submit_btn{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

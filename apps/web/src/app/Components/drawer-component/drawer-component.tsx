@@ -13,16 +13,19 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { Box } from '@mui/material';
 import { useContext, useState } from 'react';
-import Home from '../../pages/home/home';
-import ListBuildings from '../../pages/list-buildings/list-buildings';
+// import Home from '../../pages/home/home';
 import { Link, useParams } from 'react-router-dom';
-import ListController from '../../pages/list-controller/list-controller';
 import DeviceHubIcon from '@mui/icons-material/DeviceHub';
 import barrier from '../../../assets/parking_1057371.png';
 import fountlab from "../../../assets/fount-lab-logo.png"
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import { SocietyContext } from '../../contexts/user-context';
+import { HospitalContext } from '../../contexts/user-context';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+import GroupIcon from '@mui/icons-material/Group';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 /* eslint-disable-next-line */
 export interface DrawerComponentProps { };
@@ -38,9 +41,9 @@ export function DrawerComponent(props: DrawerComponentProps) {
   };
   const { id } = useParams();
 
-  const societycontext=useContext(SocietyContext);
-  console.log("society context:",societycontext);
-  console.log("society id:",societycontext?.id);
+  const hospitalcontext=useContext(HospitalContext);
+  console.log("hospital context:",hospitalcontext);
+  console.log("hospital id:",hospitalcontext?.id);
 
 
   return (
@@ -50,7 +53,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
           '& .MuiDrawer-paper': {
             width: '200px', 
             boxSizing: 'border-box',
-            marginTop: '64px',
+            // marginTop: '64px',
             backgroundColor: '#2B3445',
           },
           '@media (max-width: 600px)': {
@@ -66,9 +69,9 @@ export function DrawerComponent(props: DrawerComponentProps) {
 
         {/* <Toolbar sx={{height:"59px"}}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></Toolbar> */}
         {/* <Divider /> */}
-        <List className={styles['Nav']}>
-          {/* <ListItem disablePadding> */}
-          <Link style={{ textDecoration: "none" }} to={`/dashboard/${societycontext?.id}`} onClick={() => handleComponentChange('dashboard')}>
+        <List sx={{mt:"70px"}} className={styles['Nav']}>
+
+          <Link style={{ textDecoration: "none" }} to={`/dashboard/${hospitalcontext?.id}`} onClick={() => handleComponentChange('dashboard')}>
             <ListItemButton className={`${styles['button-tabs']} ${
                 selectedComponent === 'dashboard' && styles['active-tab']
               }`}>
@@ -78,65 +81,55 @@ export function DrawerComponent(props: DrawerComponentProps) {
               <ListItemText className={styles["drawertab"]} primary="Dashboard" />
             </ListItemButton>
           </Link>
-          <Link style={{ textDecoration: "none" }} to={`/society/${societycontext?.id}/buildings`} onClick={() => handleComponentChange('buildings')}>
+          <Link style={{ textDecoration: "none" }} to={`/hospital/${hospitalcontext?.id}/appointments`} onClick={() => handleComponentChange('appointments')}>
             <ListItemButton  className={`${styles['button-tabs']} ${
-                selectedComponent === 'buildings' && styles['active-tab']
+                selectedComponent === 'appointment' && styles['active-tab']
               }`}>
               <ListItemIcon>
-                <ApartmentIcon className={styles['drawer-icons']} />
+                <AssignmentIcon className={styles['drawer-icons']} />
               </ListItemIcon>
-              <ListItemText className={styles["drawertab"]} primary="Buildings" />
+              <ListItemText className={styles["drawertab"]} primary="Appointment" />
             </ListItemButton>
           </Link>
-          {/* </ListItem> */}
-
-          <Link style={{ textDecoration: "none" }} to={`/society/${societycontext?.id}/flats`} onClick={() => handleComponentChange('flats')}>
+  
+          <Link style={{ textDecoration: "none" }} to={`/hospital/${hospitalcontext?.id}/doctors`} onClick={() => handleComponentChange('doctors')}>
             <ListItemButton  className={`${styles['button-tabs']} ${
-                selectedComponent === 'flats' && styles['active-tab']
+                selectedComponent === 'doctor' && styles['active-tab']
               }`}>
               <ListItemIcon>
-                <MapsHomeWorkIcon className={styles['drawer-icons']} />
+                <MedicalServicesIcon className={styles['drawer-icons']} />
               </ListItemIcon>
-              <ListItemText className={styles["drawertab"]} primary="Flats" />
+              <ListItemText className={styles["drawertab"]} primary="Doctor" />
             </ListItemButton>
           </Link>
-
-          {/* <Link style={{ textDecoration: "none" }} to="/residents">
-            <ListItemButton>
-              <ListItemIcon>
-                <GroupsIcon  className={styles['drawer-icons']}/>
-              </ListItemIcon>
-              <ListItemText className={styles["drawertab"]} primary="Residents" />
-            </ListItemButton>
-          </Link>
-
-          <Link style={{ textDecoration: "none" }} to="/vehicles">
-            <ListItemButton>
-              <ListItemIcon>
-                <DirectionsCarIcon  className={styles['drawer-icons']}/>
-              </ListItemIcon>
-              <ListItemText className={styles["drawertab"]} primary="Vehicles" />
-            </ListItemButton>
-          </Link> */}
-
-          <Link style={{ textDecoration: "none" }} to={`/society/${societycontext?.id}/devices`} onClick={() => handleComponentChange('devices')}>
+          <Link style={{ textDecoration: "none" }} to={`/hospital/${hospitalcontext?.id}/patients`} onClick={() => handleComponentChange('patients')}>
             <ListItemButton className={`${styles['button-tabs']} ${
-                selectedComponent === 'devices' && styles['active-tab']
+                selectedComponent === 'patient' && styles['active-tab']
               }`}>
               <ListItemIcon >
-                <DeviceHubIcon className={styles['drawer-icons']} />
+                <GroupIcon className={styles['drawer-icons']} />
               </ListItemIcon>
-              <ListItemText className={styles["drawertab"]} primary="Devices" />
+              <ListItemText className={styles["drawertab"]} primary="Patient" />
             </ListItemButton>
           </Link>
           <Link style={{ textDecoration: "none" }} to="/reports" onClick={() => handleComponentChange('reports')}>
             <ListItemButton  className={`${styles['button-tabs']} ${
-                selectedComponent === 'reports' && styles['active-tab']
+                selectedComponent === 'report' && styles['active-tab']
               }`}>
               <ListItemIcon >
-                <LibraryBooksIcon className={styles['drawer-icons']} />
+                <AssessmentIcon className={styles['drawer-icons']} />
               </ListItemIcon>
-              <ListItemText className={styles["drawertab"]} primary="Reports" />
+              <ListItemText className={styles["drawertab"]} primary="Report" />
+            </ListItemButton>
+          </Link>
+          <Link style={{ textDecoration: "none" }} to="/settings" onClick={() => handleComponentChange('settings')}>
+            <ListItemButton  className={`${styles['button-tabs']} ${
+                selectedComponent === 'setting' && styles['active-tab']
+              }`}>
+              <ListItemIcon >
+                <SettingsIcon className={styles['drawer-icons']} />
+              </ListItemIcon>
+              <ListItemText className={styles["drawertab"]} primary="Setting" />
             </ListItemButton>
           </Link>
 

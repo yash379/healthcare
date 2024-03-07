@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import SelectSociety from './select-society';
+import HospitalLayout from './hospital-layout';
 
-describe('SelectSociety', () => {
+describe('HospitalLayout', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<SelectSociety />);
+    const { baseElement } = render(<HospitalLayout />);
     expect(baseElement).toBeTruthy();
   });
 });

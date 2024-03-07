@@ -5,7 +5,6 @@ import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Device } from '@fnt-flsy/data-transfer-types';
 import EditProfile from '../edit-profile/edit-profile';
 import Security from '../security/security';
 import EditIcon from '@mui/icons-material/Edit';

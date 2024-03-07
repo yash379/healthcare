@@ -1,12 +1,18 @@
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Login from './pages/login/login';
-import Layout from './Component/layout/layout';
+import Layout from './Components/layout/layout';
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 import { UserContext } from './contexts/user-context';
 import { useContext, useState, useEffect } from 'react';
 import { User } from '@healthcare/data-transfer-types';
 import Dashboard from './pages/dashboard/dashboard';
 import PageNotFound from './Components/page-not-found/page-not-found';
+import HospitalLayout from './Routes/hospital-layout/hospital-layout';
+import Profile from './Components/profile/profile';
+import SelectHospital from './pages/select-hospital/select-hospital';
+import LogOut from './Components/log-out/log-out';
+import ForgotPassword from './pages/forgot-password/forgot-password';
+import UpdatePassword from './pages/update-password/update-password';
 export function App() {
 
   const location = useLocation();
@@ -29,7 +35,7 @@ export function App() {
     // setUser(user);
     // console.log("onLogin", user);
     // // navigate("/dashboard");
-    // navigate("/selectSociety");
+    // navigate("/selectHospital");
     if (user.HospitalRole?.length === 0) {
       enqueueSnackbar("User does not have a hospital manager role.", { variant: 'warning' });
       navigate("/login");
@@ -51,14 +57,19 @@ export function App() {
     <UserContext.Provider value={user}>
     <SnackbarProvider maxSnack={3}>
     <Routes>
-    <Route  element={<HopitalLayout/>}>
+    <Route  element={<HospitalLayout />}>
           <Route path="/" element={<Layout />}>
-          <Route path="/login" element={<Login onLogin={onLogin} />} />
+          
           <Route path="/dashboard/:hospitalId" element={<Dashboard />} />
-        
+          <Route path="/profile" element={<Profile />}/>
       </Route>
           </Route>
-           {/* <Route path="/selectSociety" element={<SelectHospital />} /> */}
+          <Route path="/selectHospital" element={<SelectHospital />} />
+                    
+          <Route path="/forgot-password" element={<ForgotPassword/>}/>
+          <Route path="/update-password/email/:emailId/token/:token" element={<UpdatePassword/>} />
+          <Route path="/login" element={<Login onLogin={onLogin} />} />
+          <Route path="/logout" element={<LogOut onLogout={onLogout} />} />
            <Route path="*" element={<PageNotFound/>}/>
     </Routes>
     </SnackbarProvider>

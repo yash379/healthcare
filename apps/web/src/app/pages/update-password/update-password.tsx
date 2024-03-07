@@ -3,11 +3,11 @@ import { environment } from '../../../environments/environment';
 import { UserContext } from '../../contexts/user-context';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { User } from '@fnt-flsy/data-transfer-types';
+import { User } from '@healthcare/data-transfer-types';
 import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios, { AxiosError } from 'axios';
-import fountlab from "../../../assets/fount-lab-logo.png";
+// import fountlab from "../../../assets/fount-lab-logo.png";
 import { enqueueSnackbar } from 'notistack';
 import { Button, TextField, CircularProgress } from '@mui/material';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -72,7 +72,7 @@ export function UpdatePassword(props: UpdatePasswordProps) {
       <div className={styles['login-img']}></div>
       <div className={styles['form-container']}>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-      <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></div>
+      {/* <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></div> */}
       <h1 style={{display:'flex',}}>Update Password</h1>
       <div className={styles['subtitle']}>Set New Password</div>
         <div className={styles['password']}>

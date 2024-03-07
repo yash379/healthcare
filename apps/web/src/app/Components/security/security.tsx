@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../contexts/user-context';
 import { enqueueSnackbar } from 'notistack';
-import { ViewUser } from '@fnt-flsy/data-transfer-types';
+import { ViewUser } from '@healthcare/data-transfer-types';
 
 /* eslint-disable-next-line */
 export interface SecurityProps { }

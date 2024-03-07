@@ -6,13 +6,12 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Box, IconButton, Chip, Button, CardActionArea, CardActions, Grid, Divider, Modal } from '@mui/material';
 import { environment } from '../../../environments/environment';
-import { assetCount, assetPerBuilding } from '@fnt-flsy/data-transfer-types';
-import { Society } from '@fnt-flsy/data-transfer-types';
+
+import { Hospital } from '@healthcare/data-transfer-types';
 import axios from "axios";
 import { Link, useParams } from 'react-router-dom';
-import { SocietyContext, UserContext } from "../../contexts/user-context";
+import { HospitalContext, UserContext } from "../../contexts/user-context";
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import AllVehicleLogs from '../../Component/all-vehicle-logs/all-vehicle-logs';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CircularProgress from '@mui/material/CircularProgress';
 import EditIcon from '@mui/icons-material/Edit';
@@ -22,7 +21,7 @@ import AddAdmin from './add-admin/add-admin';
 import EditAdmin from './edit-admin/edit-admin';
 import DeleteAdmin from './delete-admin/delete-admin';
 import { enqueueSnackbar } from 'notistack';
-import Loading from '../../Component/loading/loading';
+import Loading from '../../Components/loading/loading';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import EmailIcon from '@mui/icons-material/Email';
 import HomeIcon from '@mui/icons-material/Home';
@@ -36,10 +35,10 @@ import TemplateOptions from './template-options/template-options';
 /* eslint-disable-next-line */
 export interface DashboardProps { }
 
-interface SocietyDetails {
+interface HospitalDetails {
   id: string;
   isActive: boolean;
-  assetCount: assetCount[];
+  // assetCount: assetCount[];
   name: string
 }
 
@@ -47,7 +46,7 @@ interface SocietyDetails {
 interface Manager {
   id: number;
   isPrimary: boolean;
-  societyRole: {
+  hospitalRole: {
     name: string;
   },
   user: {
@@ -113,10 +112,9 @@ const columns: GridColDef[] = [
 
 
 export function Dashboard(props: DashboardProps) {
-  const [count, setCount] = useState<assetPerBuilding[]>([]);
-  const [societydata, setsocietyData] = useState<SocietyDetails[]>([]);
-  const [societyId, setsocietyId] = useState<string>('');
-  const [society, setSociety] = useState<Society[]>([]);
+  const [hospitaldata, setHospitalData] = useState<HospitalDetails[]>([]);
+  const [hospitalId, setHospitalId] = useState<string>('');
+  const [hospital, setHospital] = useState<Hospital>();
   const apiUrl = environment.apiUrl;
   const user = useContext(UserContext);
   const [refreshLogs, setRefreshLogs] = useState(false);
@@ -145,34 +143,24 @@ export function Dashboard(props: DashboardProps) {
   const [selectedOption, setSelectedOption] = useState('');
 
   const params = useParams();
-  console.log("params:", params.societyId);
+  console.log("params:", params.hospitalId);
 
-  const societycontext = useContext(SocietyContext);
-  console.log("society context:", societycontext);
-  console.log("society id:", societycontext?.id);
+  const hospitalcontext = useContext(HospitalContext);
+  console.log("hospital context:", hospitalcontext);
+  console.log("hospital id:", hospitalcontext?.id);
 
-  useEffect(() => {
-    getCount();
-  }, [user, societycontext]);
-
-  useEffect(() => {
-    getSocietydetails();
-  }, [societycontext]);
-
-  useEffect(() => {
-    getSocietydetails();
-  }, [user]);
+ 
 
 
   const getAllAdmin = async () => {
     try {
       setLoadingAllAdmin(true);
       // await new Promise((resolve) => setTimeout(resolve, 2000));
-      const response = await axios.get(`${apiUrl}/societies/${societycontext?.id}/managers`, {
+      const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.id}/managers`, {
         withCredentials: true,
       });
       // console.log(response.data[0].user)
-      const sortedResidents = response.data.sort((a: any, b: any) => {
+      const sortedDoctors = response.data.sort((a: any, b: any) => {
         if (a.isPrimary && !b.isPrimary) {
           return -1;
         }
@@ -183,12 +171,12 @@ export function Dashboard(props: DashboardProps) {
           return 0;
         }
       });
-      setAdminData(sortedResidents);
+      setAdminData(sortedDoctors);
       console.log("Admin Data", response.data);
       setadminlength(response.data.length);
       setLoadingAllAdmin(false);
     } catch (error) {
-      console.error('Error fetching society data:', error);
+      console.error('Error fetching hospital data:', error);
       setLoadingAllAdmin(false);
     }
   };
@@ -196,7 +184,7 @@ export function Dashboard(props: DashboardProps) {
 
   useEffect(() => {
     getAllAdmin();
-  }, [societycontext?.id]);
+  }, [hospitalcontext?.id]);
 
   console.log("user details", user)
   const dashboardCards = ["Buildings", "Flats", "Residents", "Vehicles", "Devices"];
@@ -229,36 +217,36 @@ export function Dashboard(props: DashboardProps) {
   const getCount = async () => {
     try {
       setLoadingCount(true);
-      const response = await axios.get(`${apiUrl}/societies/${societycontext?.id}/asset-count`, {
+      const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.id}/asset-count`, {
         withCredentials: true,
       });
 
       console.log("assestcount:", response.data.assestcount);
-      console.log("societyid:", response.data.id);
-      setCount(response.data.assetcount);
-      setsocietyData(response.data);
-      setsocietyId(response.data.id);
+      console.log("hospitalid:", response.data.id);
+      // setCount(response.data.assetcount);
+      setHospitalData(response.data);
+      setHospitalId(response.data.id);
       setLoadingCount(false);
     } catch (error) {
       console.log("Error in Fetching assetCount", error);
       setLoadingCount(false);
     }
   };
-  console.log("Response Data of AssetCount:", societydata);
+  console.log("Response Data of AssetCount:", hospitaldata);
 
-  const getSocietydetails = async () => {
-    console.log("societyId:", societyId);
+  const getHospitaldetails = async () => {
+    console.log("hospitalId:", hospitalId);
     try {
       setLoadingDetails(true);
       // await new Promise((resolve) => setTimeout(resolve, 2000));
-      const response = await axios.get(`${apiUrl}/societies/${societycontext?.id}`, {
+      const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.id}`, {
         withCredentials: true,
       });
-      console.log("Society Details:", response.data);
-      setSociety(response.data);
+      console.log("Hospital Details:", response.data);
+      setHospital(response.data);
       setLoadingDetails(false);
     } catch (error) {
-      console.log("Error in fetching society details:", error);
+      console.log("Error in fetching hospital details:", error);
       setLoadingDetails(false);
     }
   };
@@ -277,8 +265,8 @@ export function Dashboard(props: DashboardProps) {
 
   const data = Array.from({ length: 10 }, (_, index) => generateRandomData());
 
-  const countArray = Object.entries(count);
-  console.log(countArray);
+  // const countArray = Object.entries(count);
+  // console.log(countArray);
 
   const handleRefresh = () => {
     console.log("Refreshed clicked");
@@ -290,7 +278,7 @@ export function Dashboard(props: DashboardProps) {
     try {
       await setIsAddModalOpen(false);
       setIsLoadingModalOpen(true);
-      const { data } = await axios.post(`${apiUrl}/societies/${societycontext?.id}/manager`,
+      const { data } = await axios.post(`${apiUrl}/hospitals/${hospitalcontext?.id}/manager`,
         formData,
         {
           withCredentials: true,
@@ -318,7 +306,7 @@ export function Dashboard(props: DashboardProps) {
   const handleUpdate = async (formData: Manager) => {
     console.log("in handleupadte");
     try {
-      const res = await axios.put(`${apiUrl}/societies/${societycontext?.id}/managers/${selectedAdminId}`,
+      const res = await axios.put(`${apiUrl}/hospitals/${hospitalcontext?.id}/managers/${selectedAdminId}`,
         { firstName: formData.user.firstName, lastName: formData.user.lastName, email: formData.user.email, phoneNumber: formData.user.phoneNumber, isPrimary: formData.isPrimary },
         { withCredentials: true }
       );
@@ -347,7 +335,7 @@ export function Dashboard(props: DashboardProps) {
   const handleDelete = async (Admin: { id: number } | null) => {
     try {
       setIsLoadingModalOpen(true);
-      const { data } = await axios.delete(`${apiUrl}/societies/${societycontext?.id}/managers/${Admin?.id}`, {
+      const { data } = await axios.delete(`${apiUrl}/hospitals/${hospitalcontext?.id}/managers/${Admin?.id}`, {
         withCredentials: true,
       }
       );
@@ -365,6 +353,17 @@ export function Dashboard(props: DashboardProps) {
     }
   }
 
+  useEffect(() => {
+    getCount();
+  }, [user, hospitalcontext]);
+
+  useEffect(() => {
+    getHospitaldetails();
+  }, [hospitalcontext]);
+
+  useEffect(() => {
+    getHospitaldetails();
+  }, [user]);
 
   // Function to close the delete confirmation modal
   const closeDeleteModal = () => {
@@ -412,10 +411,10 @@ export function Dashboard(props: DashboardProps) {
     let apiUrls;
     switch (exportType) {
       case 'residents':
-        apiUrls = `${apiUrl}/societies/${societycontext?.id}/residents/export`;
+        apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/residents/export`;
         break;
       case 'vehicles':
-        apiUrls = `${apiUrl}/societies/${societycontext?.id}/vehicles/export`;
+        apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/vehicles/export`;
         break;
       default:
         console.error('Invalid import type');
@@ -462,13 +461,13 @@ export function Dashboard(props: DashboardProps) {
     let apiUrls;
     switch (exportType) {
       case 'flats':
-        apiUrls = `${apiUrl}/societies/${societycontext?.id}/flats`;
+        apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/flats`;
         break;
       case 'residents':
-        apiUrls = `${apiUrl}/societies/${societycontext?.id}/residents/export`;
+        apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/residents/export`;
         break;
       case 'vehicles':
-        apiUrls = `${apiUrl}/societies/${societycontext?.id}/vehicles/export`;
+        apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/vehicles/export`;
         break;
       default:
         console.error('Invalid import type');
@@ -480,12 +479,12 @@ export function Dashboard(props: DashboardProps) {
     if (response) {
 
       try {
-        // const response = await axios.get(`${apiUrl}/societies/${societycontext?.id}/flats`, {
+        // const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.id}/flats`, {
         //   withCredentials: true
         // });
-        const societiesData = response.data.content;
+        const hospitalsData = response.data.content;
         const excludedFields = ['id', 'isActive'];
-        const exportData = convertDataToExcel(societiesData, excludedFields);
+        const exportData = convertDataToExcel(hospitalsData, excludedFields);
     
         const blob = new Blob([exportData], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -525,9 +524,9 @@ const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, an
     const pre = prefix.length ? prefix + '.' : '';
     
     if (typeof obj[key] === 'object' && obj[key] !== null) {
-      if (key !== 'id' && key !== 'society') {
+      if (key !== 'id' && key !== 'hospital') {
         // Recursively flatten nested objects
-        //traverse recursively till we reach society after that move to else part
+        //traverse recursively till we reach hospital after that move to else part
         Object.assign(acc, flattenObject(obj[key], pre + key));
       }
     } else {
@@ -680,13 +679,13 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
       // Set the API URL based on the import type
       switch (importType) {
         case 'flats':
-          apiUrls = `${apiUrl}/societies/${societycontext?.id}/flats/bulkupload`;
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/flats/bulkupload`;
           break;
         case 'residents':
-          apiUrls = `${apiUrl}/societies/${societycontext?.id}/residents/bulkupload`;
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/residents/bulkupload`;
           break;
         case 'vehicles':
-          apiUrls = `${apiUrl}/societies/${societycontext?.id}/vehicles/bulkupload`;
+          apiUrls = `${apiUrl}/hospital/${hospitalcontext?.id}/vehicles/bulkupload`;
           break;
         default:
           console.error('Invalid import type');
@@ -775,25 +774,25 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
         <div className={styles['main_container']}>
           <div className={styles['first_container']}>
             <div className={styles['header']}>
-              <h1 style={{ marginLeft: '0px' }}>{society?.name}</h1>  
+              <h1 style={{ marginLeft: '0px' }}>{hospital?.name}</h1>  
             </div>
 
             <div className={styles['dashboard-card-container']}>
-            <Card sx={{ minWidth: '40% '}} className={styles['society-details']}>
+            <Card sx={{ minWidth: '40% '}} className={styles['hospital-details']}>
                 <CardContent>
                   <Typography variant="body2">
-                   <div className={styles['soc-detail-add']}><LocalPhoneIcon sx={{marginRight:"4px"}}/>{society?.phoneNumber}</div>
+                   <div className={styles['soc-detail-add']}><LocalPhoneIcon sx={{marginRight:"4px"}}/>{hospital?.phoneNumber}</div>
                     <br />
-                    <div className={styles['soc-detail-add']}><EmailIcon sx={{marginRight:"4px"}}/>{society?.email}</div>
+                    <div className={styles['soc-detail-add']}><EmailIcon sx={{marginRight:"4px"}}/>{hospital?.email}</div>
                     <br/>
-                    <div className={styles['soc-detail-add']}><HomeIcon sx={{marginRight:"4px"}}/>{society?.addressLine1}, {society?.addressLisne2}, {society?.city}, {society?.stateCode}, {society?.countryCode}, {society?.postalCode}</div>
+                    <div className={styles['soc-detail-add']}><HomeIcon sx={{marginRight:"4px"}}/>{hospital?.addressLine1}, {hospital?.addressLine2}, {hospital?.city}, {hospital?.stateCode}, {hospital?.countryCode}, {hospital?.postalCode}</div>
                   </Typography>
                 </CardContent>
               </Card>
-              <div className={styles['dashboard-cards']}>
+              {/* <div className={styles['dashboard-cards']}>
                 {countArray.map(([item, value]) => (
                   <Card className={styles['cards']}>
-                    <Link style={{ textDecoration: "none", cursor: item === "Residents" || item === "Vehicles" ? "default" : "pointer", }} to={`/society/${societycontext?.id}/${item === "Floors" ? "Buildings" : item.toLowerCase()}`} onClick={(e) => {
+                    <Link style={{ textDecoration: "none", cursor: item === "Residents" || item === "Vehicles" ? "default" : "pointer", }} to={`/hospital/${hospitalcontext?.id}/${item === "Floors" ? "Buildings" : item.toLowerCase()}`} onClick={(e) => {
                       if (item === "Residents" || item === "Vehicles") {
                         e.preventDefault();
 
@@ -823,10 +822,10 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
                         </Typography>
                       </CardContent>
                   </Card>
-              </div>
+              </div> */}
             </div>
 
-            <div className={styles['horizontal-line']} />
+            {/* <div className={styles['horizontal-line']} /> */}
             
 
             {/* <div>
@@ -881,26 +880,26 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
   />
 </Box> */}
 
-            <Box className={styles['logs']}>
+            {/* <Box className={styles['logs']}>
               <Box style={{ margin: '9px', float: 'right', display: 'flex', justifyContent: 'flex-end' }}>
                 <RefreshIcon onClick={handleRefresh} style={{ cursor: 'pointer' }} />
-              </Box>
-              <AllVehicleLogs refreshLogs={refreshLogs} />
-            </Box>
+              </Box> */}
+              {/* <AllVehicleLogs refreshLogs={refreshLogs} /> */}
+            {/* </Box> */}
 
           </div>
 
-          <div className={styles['vertical-line']} />
+          {/* <div className={styles['vertical-line']} /> */}
 
           <div className={styles['rightColumn']}>
           
-          <Box className={styles['import-export']}>
-            <Button startIcon={<InsertDriveFileIcon/>} color="info"
+          {/* <Box className={styles['import-export']}> */}
+            {/* <Button startIcon={<InsertDriveFileIcon/>} color="info"
               variant="contained"  onClick={handleOpenModal} className={styles['import-export-button']}>Template</Button>
 
-        <TemplateOptions open={isModalOpen} onClose={handleCloseTemplateModal} onSelect={handleOptionSelect} />
+        <TemplateOptions open={isModalOpen} onClose={handleCloseTemplateModal} onSelect={handleOptionSelect} /> */}
 
-            <>
+            {/* <>
                   <Button
                     startIcon={<FileUploadIcon />}
                     color="info"
@@ -910,7 +909,6 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
                   >
                     Import
                   </Button>
-                  {/* Modal for choosing import type */}
                   <Modal open={modalOpen} onClose={handleCloseModal}>
                     <Box  className={styles['modal-container']}>
                     <div>
@@ -918,25 +916,25 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
                         <Button color="info" variant="contained" onClick={() => handleImportType('flats')}>Import Flats</Button>
                         <Button color="info" variant="contained" onClick={() => handleImportType('residents')}>Import Residents</Button>
                         <Button color="info" variant="contained" onClick={() => handleImportType('vehicles')}>Import Vehicles</Button>
-                      {/* </div> */}
+                      
                     </div>
                     </Box>
                   </Modal>
-                </>
+                </> */}
 
             {/* {showFileInput && ( */}
-            <input
+            {/* <input
                     type="file"
                     id="excel-file-input"
                     accept=".xls, .xlsx"
                     style={{ display: 'none' }}
                     onChange={handleImport}
-                  />
+                  /> */}
                 {/* )} */}
 
 
 
-            <Button
+            {/* <Button
               startIcon={<DownloadIcon/>}
               color="info"
               variant="contained"
@@ -944,26 +942,26 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
               className={styles['import-export-button']}
             >
               Export
-            </Button>
-            <Modal open={modalExportOpen} onClose={handleCloseExportModal}>
+            </Button> */}
+            {/* <Modal open={modalExportOpen} onClose={handleCloseExportModal}>
                     <Box  className={styles['modal-container']}>
                     <div>
                       <h2 className={styles['h2_tag']}>Select Export Type</h2>
                         <Button color="info" variant="contained" onClick={() => handleExportFlatType('flats')}>Export Flats</Button>
                         <Button color="info" variant="contained" onClick={() => handleExportType('residents')}>Export Residents</Button>
                         <Button color="info" variant="contained" onClick={() => handleExportType('vehicles')}>Export Vehicles</Button>
-                      {/* </div> */}
+              
                     </div>
                     </Box>
-            </Modal>      
+            </Modal>       */}
 
             
 
-            </Box>
+            {/* </Box> */}
 
-          <div className={styles['column_second']}>
+          {/* <div className={styles['column_second']}> */}
            
-            <Grid container className={styles['headerStyles']}>
+            {/* <Grid container className={styles['headerStyles']}>
               <Grid item sx={{width:'100%'}}>
                 <div className={styles['grid-header']}>
                   <h3 id={styles['grid_detail']}>Managers</h3>
@@ -997,14 +995,14 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
 
               ) : (Array.isArray(adminData) && adminData.length > 0 ? (
                 adminData.map((response: Manager, index: number) => (
-                  <Grid container key={index} columnGap={3} className={styles['grid-container']}>
+                  <Grid container key={index} columnGap={3} className={styles['grid-container']}> */}
                     {/* <Grid item xs={12} md={1}><div className={styles['resident-primary']}>{response.isPrimary === true ? (<Chip label="primary" color="primary" variant="outlined" />) : (<></>)}</div></Grid> */}
-                    <Grid item xs={3} md={1.5} ><div className={styles['resident-name']}>{response.user.firstName}</div></Grid>
-                    <Grid item xs={2}> <div className={styles['resident-phone']}>{response.user.lastName}</div></Grid>
+                    {/* <Grid item xs={3} md={1.5} ><div className={styles['resident-name']}>{response.user.firstName}</div></Grid> */}
+                    {/* <Grid item xs={2}> <div className={styles['resident-phone']}>{response.user.lastName}</div></Grid> */}
                     {/* <Grid item xs={2}> <div className={styles['resident-phone']}>{response.user.email}</div></Grid>
                   <Grid item xs={2}> <div className={styles['resident-phone']}>+91-{response.user.phoneNumber}</div></Grid> */}
-                    <Grid item xs={1} className={styles['resident-actions']}>
-                      {/* <div > */}
+                    {/* <Grid item xs={1} className={styles['resident-actions']}>
+                      
                       <IconButton onClick={(e) => {
                         e.stopPropagation()
                         handleEditClick(response.user.id)
@@ -1021,34 +1019,33 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
                           Delete
                         </DeleteIcon>
                       </IconButton>
-                    {/* </div> */}
                     </Grid>
-                  </Grid>
-                ))
+                  </Grid> */}
+                {/* ))
               ) : (
                 <div className={styles['no-data']}>No Admin found</div>
               )
-              )}
-            </Box>
-            <EditAdmin
+              )} */}
+            {/* </Box> */}
+            {/* <EditAdmin
               open={isEditModalOpen}
               onClose={closeEditModal}
               onUpdate={(data) => {
                 handleUpdate(data);
                 closeEditModal();
               }}
-              initialData={editData} />
+              initialData={editData} /> */}
 
-            <DeleteAdmin
+            {/* <DeleteAdmin
               open={isDeleteModalOpen}
               onClose={closeDeleteModal}
               onDelete={() => {
                 handleDelete(adminToDeleteId);
                 closeDeleteModal();
               }}
-              adminData={deleteData} />
+              adminData={deleteData} /> */}
 
-          </div>
+          {/* </div> */}
           </div>
         </div>
       )

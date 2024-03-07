@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import styles from './select-society.module.scss';
+import styles from './select-hospital.module.scss';
 import { UserContext } from '../../contexts/user-context';
 import { useNavigate } from 'react-router-dom';
 import List from '@mui/material/List';
@@ -12,21 +12,21 @@ import Checkbox from '@mui/material/Checkbox';
 import { Box } from '@mui/material';
 
 /* eslint-disable-next-line */
-export interface SelectSocietyProps {}
+export interface SelectHospitalProps {}
 
-export function SelectSociety(props: SelectSocietyProps) {
+export function SelectHospital(props: SelectHospitalProps) {
   const [selected, setSelected] = useState<number | null>(null);
   const [checked, setChecked] = useState([0]);
   const user=useContext(UserContext);
   const navigate=useNavigate();
 
   useEffect(()=>{
-    if(user?.societyRoles.length > 1){
+    if(user?.hospitalRoles?.length > 1){
       return;
     }else{
-      navigate(`/dashboard/${user?.societyRoles[0].societyId}`);
+      navigate(`/dashboard/${user?.hospitalRoles[0].hospitalId}`);
     }
-  },[user?.societyRoles.length, navigate]);
+  },[user?.hospitalRoles.length, navigate]);
 
   const handleToggle = (value: number) => () => {
     const currentIndex = checked.indexOf(value);
@@ -41,7 +41,7 @@ export function SelectSociety(props: SelectSocietyProps) {
     setChecked(newChecked);
     console.log("value:",value)
 
-    // Navigate to society dashboard when the checkbox is checked
+    // Navigate to hospital dashboard when the checkbox is checked
     if (currentIndex === -1) {
       navigate(`/dashboard/${value}`); // Adjust the route as needed
     }
@@ -53,35 +53,35 @@ export function SelectSociety(props: SelectSocietyProps) {
   };
 
   console.log("user context:",user);
-  console.log("user context scoietty:",user?.societyRoles);
-  console.log("user context scoietty length:",user?.societyRoles.length);
+  console.log("user context scoietty:",user?.hospitalRoles);
+  console.log("user context scoietty length:",user?.hospitalRoles.length);
 
 
   return (
     
       <div className={styles['login-page']}>
-        {/* <h1>Welcome to SelectSociety!</h1> */}
+        {/* <h1>Welcome to SelectHospital!</h1> */}
         <div className={styles['form-container']}>
-          <Box className={styles['society-header']}>
-             <h1 >Select Society</h1>
+          <Box className={styles['hospital-header']}>
+             <h1 >Select Hospital</h1>
           </Box>
-          <div className={styles['society-list']}>
+          <div className={styles['hospital-list']}>
             <List sx={{ bgcolor: 'background.paper' }}>
-                {user?.societyRoles.map((value) => {
-                    const labelId = `checkbox-list-label-${value.societyId}`;
+                {user?.hospitalRoles.map((value) => {
+                    const labelId = `checkbox-list-label-${value.hospitalId}`;
 
                     return (
-                      <ListItem key={value.societyId} disablePadding className={styles['society-list-item']}>
-                        <ListItemButton role={undefined} onClick={handleRadioChange(value.societyId)} dense>
+                      <ListItem key={value.hospitalId} disablePadding className={styles['hospital-list-item']}>
+                        <ListItemButton role={undefined} onClick={handleRadioChange(value.hospitalId)} dense>
                           <ListItemIcon>
                           <Radio
-                            checked={selected === value.societyId}
+                            checked={selected === value.hospitalId}
                             tabIndex={-1}
                             disableRipple
                             inputProps={{ 'aria-labelledby': labelId }}
                           />
                           </ListItemIcon>
-                          <ListItemText id={labelId} primary={` ${value.societyName}`} />
+                          <ListItemText id={labelId} primary={` ${value.hospitalName}`} />
                         </ListItemButton>
                       </ListItem>
                     );
@@ -95,4 +95,4 @@ export function SelectSociety(props: SelectSocietyProps) {
 
 }
 
-export default SelectSociety;
+export default SelectHospital;

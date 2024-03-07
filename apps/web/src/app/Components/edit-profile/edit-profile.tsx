@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import styles from './edit-profile.module.scss';
-import { SocietyContext, UserContext } from "../../contexts/user-context";
+import { HospitalContext, UserContext } from "../../contexts/user-context";
 import { Box, Button, Card, CardContent, Checkbox, CircularProgress, Grid, InputAdornment, TextField, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
@@ -19,7 +19,7 @@ export interface EditProfileProps {
 interface Manager {
   id: number;
   isPrimary: boolean;
-  societyRole: {
+  hospitalRole: {
     name: string;
   },
   user: {
@@ -42,7 +42,7 @@ export interface ViewUser {
 
 export function EditProfile({ editUser, userEdit }: EditProfileProps) {
   const user = useContext(UserContext);
-  const societycontext = useContext(SocietyContext);
+  const hospitalcontext = useContext(HospitalContext);
   const apiUrl = environment.apiUrl;
   const [data, setData] = useState<ViewUser | null>(null);
   const [loadingUserInfo, setLoadingUserInfo] = useState(true);
@@ -95,13 +95,13 @@ export function EditProfile({ editUser, userEdit }: EditProfileProps) {
       setValue('user.phoneNumber', data?.phoneNumber as string);
       // setValue('isPrimary',initialData.isPrimary);
     }
-  }, [editUser, setValue, societycontext?.id]);
+  }, [editUser, setValue, hospitalcontext?.id]);
 
   //Update a Manager
 
   const handleUpdate = async (formData: Manager) => {
     try {
-      const res = await axios.put(`${apiUrl}/societies/${societycontext?.id}/managers/${user?.id}`,
+      const res = await axios.put(`${apiUrl}/hospitals/${hospitalcontext?.id}/managers/${user?.id}`,
         { firstName: formData.user.firstName, lastName: formData.user.lastName, email: formData.user.email, phoneNumber: formData.user.phoneNumber },
         { withCredentials: true }
       );

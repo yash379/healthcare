@@ -4,12 +4,12 @@ import { AppBar, Box, Button, IconButton, Paper, Typography } from '@mui/materia
 import PersonIcon from '@mui/icons-material/Person';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { UserContext } from "../../contexts/user-context";
-import { User } from "@fnt-flsy/data-transfer-types";
+import { User } from "@healthcare/data-transfer-types";
 import { Link, useNavigate } from 'react-router-dom';
 // import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import fountlab from "../../../assets/fount-lab-logo.png";
+// import fountlab from "../../../assets/fount-lab-logo.png";
 import UserImg from "../../../assets/User.png";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -72,7 +72,7 @@ export function TopBar() {
           <div>
           {/* <Link to="/logout"><Button className={styles['person_icon']} color="primary">LogOut</Button></Link> */}
           
-          <img src={fountlab} alt="font lab logo" width="150px" height="23px" className={styles['logo']} />
+          {/* <img src={fountlab} alt="font lab logo" width="150px" height="23px" className={styles['logo']} /> */}
 
           <Box >
             <div className={styles["userbox"]} >
@@ -82,7 +82,7 @@ export function TopBar() {
               <div className={styles["usertext"]}>
                 <h3>{user?.firstName}  {user?.lastName}</h3>
                 <h6>{user?.superRole}</h6>
-                <h6 className={styles["user-role"]}>{user?.societyRoles[0]?.societyRole}</h6>
+                <h6 className={styles["user-role"]}>{user?.hospitalRoles?.hospitalRole}</h6>
               </div>
               <IconButton onClick={handleMenu} className={styles['Icon_box']}>
                 {!openProfile ? <KeyboardArrowDownIcon className={styles['dropdown_icon']} /> : <KeyboardArrowUpIcon className={styles['dropdown_icon']} />}
@@ -98,7 +98,7 @@ export function TopBar() {
                   vertical: 'center',
                   horizontal: 'left',
                 }}
-                
+                sx={{left:"-15px"}}
                 keepMounted
                 transformOrigin={{
                   vertical:'bottom',
