@@ -70,7 +70,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
 
         {/* <Toolbar sx={{height:"59px"}}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></Toolbar> */}
         {/* <Divider /> */}
-        <List sx={{ mt: "100px" }} className={styles['Nav']}>
+        <List sx={{ mt: "100px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
 
           <Link style={{ textDecoration: "none" }} to={`/dashboard/${hospitalcontext?.id}`} onClick={() => handleComponentChange('dashboard')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
