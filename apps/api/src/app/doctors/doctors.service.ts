@@ -492,6 +492,17 @@ export class DoctorsService {
     return viewDoctor;
   }
 
+  async findByEmail(email: string) {
+    const user = await this.prisma.user.findFirst({
+      where: { email },
+      select: { id: true, email: true, password: true, firstName: true },
+    });
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return user;
+  }
+
   async findById(
     hospitalId: number,
     id: number

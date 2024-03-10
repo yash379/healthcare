@@ -7,14 +7,16 @@ import { UsersService } from '../users/users.service';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
 import { NotificationsService } from '../notifications/notifications.service';
+import { DoctorsModule } from '../doctors/doctors.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, DoctorsModule],
   providers: [
     AuthService,
     LocalStrategy,
     SessionSerializer,
     UsersService,
+    DoctorsModule,
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

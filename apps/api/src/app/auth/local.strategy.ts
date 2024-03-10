@@ -1,3 +1,25 @@
+// import { Injectable, UnauthorizedException } from '@nestjs/common';
+// import { PassportStrategy } from '@nestjs/passport';
+// import { Strategy } from 'passport-local';
+// import { AuthService } from './auth.service';
+
+// @Injectable()
+// export class LocalStrategy extends PassportStrategy(Strategy) {
+//   constructor(private authService: AuthService) {
+//     super({
+//       usernameField: 'email',
+//     });
+//   }
+//   async validate(email: string, hashP: string) {
+//     const user = await this.authService.validateUser(email, hashP);
+//     if (!user) {
+//       throw new UnauthorizedException();
+//     }
+//     return user;
+//   }
+// }
+
+
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
@@ -10,11 +32,19 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       usernameField: 'email',
     });
   }
-  async validate(email: string, hashP: string) {
-    const user = await this.authService.validateUser(email, hashP);
-    if (!user) {
-      throw new UnauthorizedException();
+
+  async validate(email: string, password: string, done: (error: any, user?: any) => void): Promise<void> {
+    try {
+      const user = await this.authService.validateUserOrDoctor(email, password, 'user'); // or 'doctor'
+
+      if (!user) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      done(null, user);
+    } catch (error) {
+      done(error, false);
     }
-    return user;
   }
 }
+
