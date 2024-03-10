@@ -26,7 +26,7 @@ import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import GroupIcon from '@mui/icons-material/Group';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import SettingsIcon from '@mui/icons-material/Settings';
-
+import mediPlus from "../../../assets/Mediplus.png"
 /* eslint-disable-next-line */
 export interface DrawerComponentProps { };
 
@@ -69,8 +69,9 @@ export function DrawerComponent(props: DrawerComponentProps) {
       >
 
         {/* <Toolbar sx={{height:"59px"}}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></Toolbar> */}
+        <Toolbar sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}><img src={mediPlus} alt="medi plus logo" width="100px" height="38px" /></Toolbar>
         {/* <Divider /> */}
-        <List sx={{ mt: "100px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
+        <List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
 
           <Link style={{ textDecoration: "none" }} to={`/dashboard/${hospitalcontext?.id}`} onClick={() => handleComponentChange('dashboard')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']

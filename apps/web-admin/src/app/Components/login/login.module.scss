@@ -1,0 +1,131 @@
+/*
+ * Replace this with your own classes
+ *
+ * e.g.
+ * .container {
+ * }
+*/
+
+.main_root{
+ 
+  
+  
+}
+.main_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    // min-height:100vh;
+    background-color: #DAEBF0;
+    margin-top: 150px;
+    // margin-bottom: 10px;
+    margin-right: 320px;
+    margin-left: 320px;
+    border-radius: 40px !important;
+  }
+  
+  .first_container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 40px;
+  }
+  
+  .second_container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+   margin-right: 40px;
+   margin-left: 40px;
+  background-color: #FFFFFF;
+    border-radius: 40px;
+    padding-bottom: 20px;
+  }
+  
+  h1, h2 {
+    text-align: center;
+  }
+  
+  h1 {
+    color: rgb(61, 124, 235);
+  }
+  
+  h2 {
+    color: rgb(17, 17, 17) !important;
+  }
+  
+  .image {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 400px;
+    margin-top: 20px;
+    // margin-left: 10px;
+  
+    .MuiTextField-root {
+      margin-bottom: 20px;
+    }
+  
+    .MuiButton-root {
+      margin-top: 20px;
+      width: 100px;
+    }
+  }
+  
+  // Media Query for smaller screens (e.g., mobile)
+  @media (max-width: 768px) {
+    .main_container {
+      flex-direction: column; /* Stack containers vertically */
+    }
+  
+    .second_container {
+      margin-left: 0; /* Remove margin for smaller screens */
+    }
+  
+    .form {
+      max-width: 100%; /* Take full width on smaller screens */
+    }
+  }
+  
+
+  .password{
+    margin-bottom: 10px;
+}
+
+.forgot-password{
+    color: var(--Link, #1E4AE9);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    text-align: right;
+}
+
+.login-form{
+  margin:10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.email{
+  margin-bottom: 20px;
+
+}
+.password{
+  margin-bottom: 20px;
+
+}
+
+.submit_btn{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
