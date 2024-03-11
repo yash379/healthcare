@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from './../users/users.module';
-import { LocalStrategy } from './local.strategy';
-import { SessionSerializer } from './session.serializer';
+import { DoctorAuthService } from './doctor-auth.service';
+import { UsersModule } from '../users/users.module';
+import { DoctorLocalStrategy } from './doctor-local.strategy';
+import { DoctorSessionSerializer } from './doctor-session.serializer';
 import { UsersService } from '../users/users.service';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
@@ -11,18 +11,18 @@ import { DoctorsModule } from '../doctors/doctors.module';
 import { DoctorsService } from '../doctors/doctors.service';
 
 @Module({
-  imports: [UsersModule],
+  imports: [ DoctorsModule],
   providers: [
-    AuthService,
-    LocalStrategy,
-    SessionSerializer,
-    UsersService,
+    DoctorAuthService,
+    DoctorLocalStrategy,
+    DoctorSessionSerializer,
+    DoctorsService,
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
     NotificationsService
   ],
-  exports: [AuthService],
+  exports: [DoctorAuthService],
 })
-export class AuthModule {}
+export class DoctorAuthModule {}

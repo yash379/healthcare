@@ -493,7 +493,8 @@ export class DoctorsService {
   }
 
   async findByEmail(email: string) {
-    const user = await this.prisma.user.findFirst({
+    console.log(email)
+    const user = await this.prisma.doctor.findFirst({
       where: { email },
       select: { id: true, email: true, password: true, firstName: true },
     });

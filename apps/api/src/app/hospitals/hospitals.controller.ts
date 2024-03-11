@@ -35,7 +35,7 @@ export class HospitalsController {
   constructor(private hospitalService: HospitalsService) {}
 
   @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN, Role.HOSPITAL_ADMIN)  
   @ApiOperation({summary: "add hospital"})
   @Post()
   @HttpCode(HttpStatus.CREATED)

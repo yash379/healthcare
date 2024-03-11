@@ -1,0 +1,6 @@
+export enum Role {
+  POYV_ADMIN,
+  ORGANIZATION_ADMIN,
+  HOSPITAL_ADMIN,
+  STAFF
+}
