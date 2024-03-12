@@ -220,7 +220,7 @@ export class UsersService {
         adminLoginLink: ADMIN_URL,
       });
 
-      const sentMail = await this.notificationService.sendEmail(user.email, "You have been added in Fountlab", message);
+      const sentMail = await this.notificationService.sendEmail(user.email, "You have been added in POYV Team", message);
 
       if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
 
