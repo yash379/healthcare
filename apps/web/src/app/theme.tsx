@@ -6,7 +6,7 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#D23F57'
+      main: '#139C94'
     },
     secondary: {
       main: '#fffff',
@@ -17,20 +17,20 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
-          backgroundColor: '#D23F57',
+          backgroundColor: '#139C94',
           width: '127px',
           height: '44px',
           marginTop:'17px',
           color:'white',
           '&:hover': {
-            backgroundColor: '#D23F57',
+            backgroundColor: '#139C94',
             color:'white'
           },
         },
         containedPrimary: {
-          backgroundColor: '#D23F57',
+          backgroundColor: '#139C94',
           '&:hover': {
-            backgroundColor: '#D23F57',
+            backgroundColor: '#139C94',
           },
         },
         containedSecondary: {
