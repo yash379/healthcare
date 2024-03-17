@@ -5,8 +5,8 @@ import { DoctorsModule } from '../doctors/doctors.module';
 import { DoctorsService } from '../doctors/doctors.service';
 
 @Module({
-    imports:[UsersModule ],
-    controllers: [LoginController],
-    providers: [],
-  })
-export class LoginModule {}
+  imports: [UsersModule],
+  controllers: [LoginController],
+  providers: [],
+})
+export class LoginModule { }

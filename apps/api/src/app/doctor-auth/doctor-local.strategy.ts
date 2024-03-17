@@ -7,15 +7,15 @@ import { DoctorAuthService } from './doctor-auth.service';
 export class DoctorLocalStrategy extends PassportStrategy(Strategy) {
   constructor(private doctorAuthService: DoctorAuthService) {
     super({
-      usernameField: 'email',
+      doctornameField: 'email',
     });
   }
   async validate(email: string, hashP: string) {
-    const user = await this.doctorAuthService.validateUser(email, hashP);
-    if (!user) {
+    const doctor = await this.doctorAuthService.validateDoctor(email, hashP);
+    if (!doctor) {
       throw new UnauthorizedException();
     }
-    return user;
+    return doctor;
   }
 }
 
