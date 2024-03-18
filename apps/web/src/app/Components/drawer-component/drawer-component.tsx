@@ -21,12 +21,13 @@ import fountlab from "../../../assets/fount-lab-logo.png"
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { HospitalContext } from '../../contexts/user-context';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
-import GroupIcon from '@mui/icons-material/Group';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import SettingsIcon from '@mui/icons-material/Settings';
-import mediPlus from "../../../assets/Mediplus.png"
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import MedicalServicesOutlinedIcon from '@mui/icons-material/MedicalServicesOutlined';
+import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
+import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import mediPlus from "../../../assets/Mediplus.png";
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 /* eslint-disable-next-line */
 export interface DrawerComponentProps { };
 
@@ -86,7 +87,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'appointments' && styles['active-tab']
               }`}>
               <ListItemIcon>
-                <AssignmentIcon className={styles['drawer-icons']} />
+                <AssignmentOutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon>
               <ListItemText className={styles["drawertab"]} primary="Appointment" />
             </ListItemButton>
@@ -96,7 +97,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'doctors' && styles['active-tab']
               }`}>
               <ListItemIcon>
-                <MedicalServicesIcon className={styles['drawer-icons']} />
+                <MedicalServicesOutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon>
               <ListItemText className={styles["drawertab"]} primary="Doctor" />
             </ListItemButton>
@@ -105,7 +106,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'patients' && styles['active-tab']
               }`}>
               <ListItemIcon >
-                <GroupIcon className={styles['drawer-icons']} />
+                <Groups2OutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon>
               <ListItemText className={styles["drawertab"]} primary="Patient" />
             </ListItemButton>
@@ -114,7 +115,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'reports' && styles['active-tab']
               }`}>
               <ListItemIcon >
-                <AssessmentIcon className={styles['drawer-icons']} />
+                <AssessmentOutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon>
               <ListItemText className={styles["drawertab"]} primary="Report" />
             </ListItemButton>
@@ -123,9 +124,18 @@ export function DrawerComponent(props: DrawerComponentProps) {
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'settings' && styles['active-tab']
               }`}>
               <ListItemIcon >
-                <SettingsIcon className={styles['drawer-icons']} />
+                <SettingsOutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon>
               <ListItemText className={styles["drawertab"]} primary="Setting" />
+            </ListItemButton>
+          </Link>
+          <Link style={{ textDecoration: "none" }} to="/logout" onClick={() => handleComponentChange('logout')}>
+            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'logout' && styles['active-tab']
+              }`}>
+              <ListItemIcon >
+                <LogoutOutlinedIcon className={styles['drawer-icons']} />
+              </ListItemIcon>
+              <ListItemText className={styles["drawertab"]} primary="Logout" />
             </ListItemButton>
           </Link>
 

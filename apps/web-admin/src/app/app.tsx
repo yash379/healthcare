@@ -24,6 +24,7 @@ import Profile from './Components/profile/profile';
 import { Dashboard } from './pages/dashboard/dashboard';
 import UpdatePassword from './pages/update-password/update-password';
 import ForgetPassword from './pages/forget-password/forget-password';
+import ListDoctors from './pages/list-doctor/list-doctor';
 
 export function App() {
 
@@ -84,6 +85,7 @@ export function App() {
               <Route path="/hospitals/:hospitalId/edit" element={<EditHospitalPage/>}/> 
               <Route path="/hospitals/:hospitalId" element={<View/>}/>
               <Route path="/hospitals/:hospitalId/details" element={<ViewHospitalPage/>}/>
+              <Route path="/hospitals/:hospitalId/doctors" element={<ListDoctors/>}/>
 
               <Route path="/profile" element={<Profile />}/>
             </Route>

@@ -707,6 +707,7 @@ export class DoctorsService {
           id: hospitalId,
         },
         select: {
+          id: true,
           doctors: {
             where: {
               id: doctorId,

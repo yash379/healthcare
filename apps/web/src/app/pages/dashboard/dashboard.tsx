@@ -1,16 +1,26 @@
 import styles from './dashboard.module.scss';
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { Box, IconButton, Chip, Button, CardActionArea, CardActions, Grid, Divider, Modal } from '@mui/material';
+import {
+  Box,
+  IconButton,
+  Chip,
+  Button,
+  CardActionArea,
+  CardActions,
+  Grid,
+  Divider,
+  Modal,
+} from '@mui/material';
 import { environment } from '../../../environments/environment';
 
 import { Hospital } from '@healthcare/data-transfer-types';
-import axios from "axios";
+import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
-import { HospitalContext, UserContext } from "../../contexts/user-context";
+import { HospitalContext, UserContext } from '../../contexts/user-context';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -31,33 +41,35 @@ import * as XLSX from 'xlsx';
 import DownloadIcon from '@mui/icons-material/Download';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import TemplateOptions from './template-options/template-options';
+import CurrencyRupeeOutlinedIcon from '@mui/icons-material/CurrencyRupeeOutlined';
+import PersonIcon from '@mui/icons-material/Person';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
 /* eslint-disable-next-line */
-export interface DashboardProps { }
+export interface DashboardProps {}
 
 interface HospitalDetails {
   id: string;
   isActive: boolean;
   // assetCount: assetCount[];
-  name: string
+  name: string;
 }
-
 
 interface Manager {
   id: number;
   isPrimary: boolean;
   hospitalRole: {
     name: string;
-  },
+  };
   user: {
     id: number;
     email: string;
     phoneNumber: string;
     firstName: string;
     lastName: string;
-  }
+  };
 }
-
 
 interface AddForm {
   email: string;
@@ -65,7 +77,6 @@ interface AddForm {
   firstName: string;
   lastName: string;
 }
-
 
 const columns: GridColDef[] = [
   { field: 'vehicle', headerName: 'Vehcile', width: 100, flex: 1 },
@@ -75,21 +86,21 @@ const columns: GridColDef[] = [
     headerName: 'Device',
     width: 100,
     editable: false,
-    flex: 1
+    flex: 1,
   },
   {
     field: 'date',
     headerName: 'Date',
     width: 100,
     editable: false,
-    flex: 1
+    flex: 1,
   },
   {
     field: 'type',
     headerName: 'Type',
     width: 100,
     editable: false,
-    flex: 1
+    flex: 1,
   },
   {
     field: 'direction',
@@ -108,8 +119,7 @@ const columns: GridColDef[] = [
     flex: 1,
     // maxWidth:200
   },
-];  
-
+];
 
 export function Dashboard(props: DashboardProps) {
   const [hospitaldata, setHospitalData] = useState<HospitalDetails[]>([]);
@@ -126,53 +136,53 @@ export function Dashboard(props: DashboardProps) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [adminToDeleteId, setAdminToDeleteId] = useState<{ id: number } | null>(null);
+  const [adminToDeleteId, setAdminToDeleteId] = useState<{ id: number } | null>(
+    null
+  );
   const [editData, setEditData] = useState<Manager | null>(null);
   const [deleteData, setDeleteData] = useState<Manager | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedAdminId, setSelectedAdminId] = useState<number | null>(null);
-  const [adminlength, setadminlength]=useState();
+  const [adminlength, setadminlength] = useState();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [importType, setImportType] = useState('');
-  const [modalExportOpen, setModalExportOpen]=useState(false);
-  const [exportType, setExportType]=useState('');
+  const [modalExportOpen, setModalExportOpen] = useState(false);
+  const [exportType, setExportType] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showFileInput, setShowFileInput] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
 
   const params = useParams();
-  console.log("params:", params.hospitalId);
+  console.log('params:', params.hospitalId);
 
   const hospitalcontext = useContext(HospitalContext);
-  console.log("hospital context:", hospitalcontext);
-  console.log("hospital id:", hospitalcontext?.id);
-
- 
-
+  console.log('hospital context:', hospitalcontext);
+  console.log('hospital id:', hospitalcontext?.id);
 
   const getAllAdmin = async () => {
     try {
       setLoadingAllAdmin(true);
       // await new Promise((resolve) => setTimeout(resolve, 2000));
-      const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.id}/managers`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${apiUrl}/hospitals/${hospitalcontext?.id}/managers`,
+        {
+          withCredentials: true,
+        }
+      );
       // console.log(response.data[0].user)
       const sortedDoctors = response.data.sort((a: any, b: any) => {
         if (a.isPrimary && !b.isPrimary) {
           return -1;
-        }
-        else if (!a.isPrimary && b.isPrimary) {
+        } else if (!a.isPrimary && b.isPrimary) {
           return 1;
-        }
-        else {
+        } else {
           return 0;
         }
       });
       setAdminData(sortedDoctors);
-      console.log("Admin Data", response.data);
+      console.log('Admin Data', response.data);
       setadminlength(response.data.length);
       setLoadingAllAdmin(false);
     } catch (error) {
@@ -181,15 +191,18 @@ export function Dashboard(props: DashboardProps) {
     }
   };
 
-
   useEffect(() => {
     getAllAdmin();
   }, [hospitalcontext?.id]);
 
-  console.log("user details", user)
-  const dashboardCards = ["Buildings", "Flats", "Residents", "Vehicles", "Devices"];
-
-
+  console.log('user details', user);
+  const dashboardCards = [
+    'Buildings',
+    'Flats',
+    'Residents',
+    'Vehicles',
+    'Devices',
+  ];
 
   const getRandomName = () => {
     // Replace this with a function that generates random names
@@ -217,41 +230,45 @@ export function Dashboard(props: DashboardProps) {
   const getCount = async () => {
     try {
       setLoadingCount(true);
-      const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.id}/asset-count`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${apiUrl}/hospitals/${hospitalcontext?.id}/asset-count`,
+        {
+          withCredentials: true,
+        }
+      );
 
-      console.log("assestcount:", response.data.assestcount);
-      console.log("hospitalid:", response.data.id);
+      console.log('assestcount:', response.data.assestcount);
+      console.log('hospitalid:', response.data.id);
       // setCount(response.data.assetcount);
       setHospitalData(response.data);
       setHospitalId(response.data.id);
       setLoadingCount(false);
     } catch (error) {
-      console.log("Error in Fetching assetCount", error);
+      console.log('Error in Fetching assetCount', error);
       setLoadingCount(false);
     }
   };
-  console.log("Response Data of AssetCount:", hospitaldata);
+  console.log('Response Data of AssetCount:', hospitaldata);
 
   const getHospitaldetails = async () => {
-    console.log("hospitalId:", hospitalId);
+    console.log('hospitalId:', hospitalId);
     try {
       setLoadingDetails(true);
       // await new Promise((resolve) => setTimeout(resolve, 2000));
-      const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.id}`, {
-        withCredentials: true,
-      });
-      console.log("Hospital Details:", response.data);
+      const response = await axios.get(
+        `${apiUrl}/hospitals/${hospitalcontext?.id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log('Hospital Details:', response.data);
       setHospital(response.data);
       setLoadingDetails(false);
     } catch (error) {
-      console.log("Error in fetching hospital details:", error);
+      console.log('Error in fetching hospital details:', error);
       setLoadingDetails(false);
     }
   };
-
-
 
   const generateRandomData = () => ({
     id: Math.floor(Math.random() * 1000),
@@ -269,89 +286,97 @@ export function Dashboard(props: DashboardProps) {
   // console.log(countArray);
 
   const handleRefresh = () => {
-    console.log("Refreshed clicked");
+    console.log('Refreshed clicked');
     setRefreshLogs(true);
   };
-
 
   const addadmin = async (formData: AddForm) => {
     try {
       await setIsAddModalOpen(false);
       setIsLoadingModalOpen(true);
-      const { data } = await axios.post(`${apiUrl}/hospitals/${hospitalcontext?.id}/manager`,
+      const { data } = await axios.post(
+        `${apiUrl}/hospitals/${hospitalcontext?.id}/manager`,
         formData,
         {
           withCredentials: true,
-        })
+        }
+      );
       if (data) {
         getAllAdmin();
         setIsAddModalOpen(false);
         setIsLoadingModalOpen(false);
-        enqueueSnackbar("Manager added successfully!", { variant: 'success' });
+        enqueueSnackbar('Manager added successfully!', { variant: 'success' });
       } else {
-        console.log("Something went wrong");
+        console.log('Something went wrong');
         setIsLoadingModalOpen(false);
       }
-      console.log("Manager added successfully", data);
+      console.log('Manager added successfully', data);
     } catch (error) {
-      console.log("Something went wrong in input form", error);
-      enqueueSnackbar("Something went wrong!", { variant: 'error' });
+      console.log('Something went wrong in input form', error);
+      enqueueSnackbar('Something went wrong!', { variant: 'error' });
       setIsLoadingModalOpen(false);
     }
   };
 
-
   //Update a Manager
 
   const handleUpdate = async (formData: Manager) => {
-    console.log("in handleupadte");
+    console.log('in handleupadte');
     try {
-      const res = await axios.put(`${apiUrl}/hospitals/${hospitalcontext?.id}/managers/${selectedAdminId}`,
-        { firstName: formData.user.firstName, lastName: formData.user.lastName, email: formData.user.email, phoneNumber: formData.user.phoneNumber, isPrimary: formData.isPrimary },
+      const res = await axios.put(
+        `${apiUrl}/hospitals/${hospitalcontext?.id}/managers/${selectedAdminId}`,
+        {
+          firstName: formData.user.firstName,
+          lastName: formData.user.lastName,
+          email: formData.user.email,
+          phoneNumber: formData.user.phoneNumber,
+          isPrimary: formData.isPrimary,
+        },
         { withCredentials: true }
       );
 
       if (res.data) {
         getAllAdmin();
         console.log('Manager Updated Successfully');
-        enqueueSnackbar("Manager updated successfully!", { variant: 'success' });
+        enqueueSnackbar('Manager updated successfully!', {
+          variant: 'success',
+        });
         console.log(res.data);
-        // setIsModalOpen(false);  
+        // setIsModalOpen(false);
       } else {
         console.log('Update data not received');
-        enqueueSnackbar("Error in Manager updation!", { variant: 'error' });
+        enqueueSnackbar('Error in Manager updation!', { variant: 'error' });
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.log('Something went wrong in Update', error);
-      enqueueSnackbar("Something went wrong in update", { variant: 'error' });
+      enqueueSnackbar('Something went wrong in update', { variant: 'error' });
     }
   };
-
-
 
   //delete a Manager
 
   const handleDelete = async (Admin: { id: number } | null) => {
     try {
       setIsLoadingModalOpen(true);
-      const { data } = await axios.delete(`${apiUrl}/hospitals/${hospitalcontext?.id}/managers/${Admin?.id}`, {
-        withCredentials: true,
-      }
+      const { data } = await axios.delete(
+        `${apiUrl}/hospitals/${hospitalcontext?.id}/managers/${Admin?.id}`,
+        {
+          withCredentials: true,
+        }
       );
       // getAllAdmin();
-      console.log("delete:", data);
+      console.log('delete:', data);
       console.log('Manager DeActive successfully');
       setIsLoadingModalOpen(false);
-      enqueueSnackbar("Manager deleted successfully!", { variant: 'success' });
+      enqueueSnackbar('Manager deleted successfully!', { variant: 'success' });
       getAllAdmin();
     } catch (error) {
-      console.log(error)
-      console.log("Something went wrong");
+      console.log(error);
+      console.log('Something went wrong');
       setIsLoadingModalOpen(false);
-      enqueueSnackbar("Something went wrong", { variant: 'error' });
+      enqueueSnackbar('Something went wrong', { variant: 'error' });
     }
-  }
+  };
 
   useEffect(() => {
     getCount();
@@ -371,7 +396,6 @@ export function Dashboard(props: DashboardProps) {
     setIsDeleteModalOpen(false);
   };
 
-
   // Function to close the edit modal
   const closeEditModal = () => {
     setIsEditModalOpen(false);
@@ -384,9 +408,9 @@ export function Dashboard(props: DashboardProps) {
     );
 
     if (selectedAdmin) {
-      setEditData(selectedAdmin)
+      setEditData(selectedAdmin);
       setSelectedAdminId(AdminId);
-      console.log("Admin Id:", AdminId);
+      console.log('Admin Id:', AdminId);
       setIsEditModalOpen(true);
     }
   };
@@ -399,222 +423,221 @@ export function Dashboard(props: DashboardProps) {
     if (selectedAdmin) {
       setDeleteData(selectedAdmin);
       setAdminToDeleteId(Admin);
-      console.log("AdminToDeleteId:", adminToDeleteId);
+      console.log('AdminToDeleteId:', adminToDeleteId);
       setIsDeleteModalOpen(true);
     }
   };
 
-
-   const handleExport = async (exportType: string) => {
-
-    try{
-    let apiUrls;
-    switch (exportType) {
-      case 'residents':
-        apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/residents/export`;
-        break;
-      case 'vehicles':
-        apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/vehicles/export`;
-        break;
-      default:
-        console.error('Invalid import type');
-        return;
-    }
-     const response = await axios.get(apiUrls, {
-      withCredentials: true,
-      responseType: 'blob', // Important: Set the responseType to 'blob'
-    });
-
-    console.log('API response:', response);
-
-    if (response && response.data) {
-      console.log('Response data available');
-      const blob = new Blob([response.data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  const handleExport = async (exportType: string) => {
+    try {
+      let apiUrls;
+      switch (exportType) {
+        case 'residents':
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/residents/export`;
+          break;
+        case 'vehicles':
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/vehicles/export`;
+          break;
+        default:
+          console.error('Invalid import type');
+          return;
+      }
+      const response = await axios.get(apiUrls, {
+        withCredentials: true,
+        responseType: 'blob', // Important: Set the responseType to 'blob'
       });
 
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `exported_${exportType}_data.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      enqueueSnackbar("Excel file Exported successfully!", { variant: 'success' });
-      // getSingleBuildingFlats();
-      setModalExportOpen(false);
       console.log('API response:', response);
-    } else {
-      console.log('Error Exporting file');
-      enqueueSnackbar("Error Exporting file!", { variant: 'error' });
-    }
-  } catch (error) {
-    console.error('Error Exporting file to API', error);
-    enqueueSnackbar("Error Exporting file!", { variant: 'error' });
-  }
 
-    
-  };
-
-  const handleExportFlatType = async (exportType: string) => {
-
-    try{
-    let apiUrls;
-    switch (exportType) {
-      case 'flats':
-        apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/flats`;
-        break;
-      case 'residents':
-        apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/residents/export`;
-        break;
-      case 'vehicles':
-        apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/vehicles/export`;
-        break;
-      default:
-        console.error('Invalid import type');
-        return;
-    }
-    const response = await axios.get(apiUrls, {
-      withCredentials: true,
-    });
-    if (response) {
-
-      try {
-        // const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.id}/flats`, {
-        //   withCredentials: true
-        // });
-        const hospitalsData = response.data.content;
-        const excludedFields = ['id', 'isActive'];
-        const exportData = convertDataToExcel(hospitalsData, excludedFields);
-    
-        const blob = new Blob([exportData], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      if (response && response.data) {
+        console.log('Response data available');
+        const blob = new Blob([response.data], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         });
-    
+
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = `exported_${exportType}_data.xlsx`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-      } catch (error) {
-        console.error('Error fetching data from API:', error);
+        enqueueSnackbar('Excel file Exported successfully!', {
+          variant: 'success',
+        });
+        // getSingleBuildingFlats();
+        setModalExportOpen(false);
+        console.log('API response:', response);
+      } else {
+        console.log('Error Exporting file');
+        enqueueSnackbar('Error Exporting file!', { variant: 'error' });
       }
-
-      enqueueSnackbar("Excel file Exported successfully!", { variant: 'success' });
-      // getSingleBuildingFlats();
-      setModalExportOpen(false);
-      console.log('API response:', response);
-    } else {
-      console.log('Error Exporting file');
-      enqueueSnackbar("Error Exporting file!", { variant: 'error' });
+    } catch (error) {
+      console.error('Error Exporting file to API', error);
+      enqueueSnackbar('Error Exporting file!', { variant: 'error' });
     }
-  } catch (error) {
-    console.error('Error Exporting file to API', error);
-    enqueueSnackbar("Error Exporting file!", { variant: 'error' });
-  }
-
-    
   };
-  
 
-  
-const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, any> => {
-  console.log("obj:",obj);
-  return Object.keys(obj).reduce((acc, key) => {
-    const pre = prefix.length ? prefix + '.' : '';
-    
-    if (typeof obj[key] === 'object' && obj[key] !== null) {
-      if (key !== 'id' && key !== 'hospital') {
-        // Recursively flatten nested objects
-        //traverse recursively till we reach hospital after that move to else part
-        Object.assign(acc, flattenObject(obj[key], pre + key));
+  const handleExportFlatType = async (exportType: string) => {
+    try {
+      let apiUrls;
+      switch (exportType) {
+        case 'flats':
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/flats`;
+          break;
+        case 'residents':
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/residents/export`;
+          break;
+        case 'vehicles':
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/vehicles/export`;
+          break;
+        default:
+          console.error('Invalid import type');
+          return;
       }
-    } else {
-      // Check for specific keys and handle them accordingly
-      //if key matches any one value then traverse
-      // if (key === 'number' || key === 'floor.number' || key === 'floor.building.name') {
+      const response = await axios.get(apiUrls, {
+        withCredentials: true,
+      });
+      if (response) {
+        try {
+          // const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.id}/flats`, {
+          //   withCredentials: true
+          // });
+          const hospitalsData = response.data.content;
+          const excludedFields = ['id', 'isActive'];
+          const exportData = convertDataToExcel(hospitalsData, excludedFields);
+
+          const blob = new Blob([exportData], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `exported_${exportType}_data.xlsx`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } catch (error) {
+          console.error('Error fetching data from API:', error);
+        }
+
+        enqueueSnackbar('Excel file Exported successfully!', {
+          variant: 'success',
+        });
+        // getSingleBuildingFlats();
+        setModalExportOpen(false);
+        console.log('API response:', response);
+      } else {
+        console.log('Error Exporting file');
+        enqueueSnackbar('Error Exporting file!', { variant: 'error' });
+      }
+    } catch (error) {
+      console.error('Error Exporting file to API', error);
+      enqueueSnackbar('Error Exporting file!', { variant: 'error' });
+    }
+  };
+
+  const flattenObject = (
+    obj: Record<string, any>,
+    prefix = ''
+  ): Record<string, any> => {
+    console.log('obj:', obj);
+    return Object.keys(obj).reduce((acc, key) => {
+      const pre = prefix.length ? prefix + '.' : '';
+
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        if (key !== 'id' && key !== 'hospital') {
+          // Recursively flatten nested objects
+          //traverse recursively till we reach hospital after that move to else part
+          Object.assign(acc, flattenObject(obj[key], pre + key));
+        }
+      } else {
+        // Check for specific keys and handle them accordingly
+        //if key matches any one value then traverse
+        // if (key === 'number' || key === 'floor.number' || key === 'floor.building.name') {
         if (key === 'floor.building.name') {
           // Extract building name from nested structure
           acc[pre + 'Building Name'] = obj[key];
         } else {
           acc[pre + key.replace('floor.', '')] = obj[key];
         }
-      // }
-    }
-    
-    return acc;
-  }, {} as Record<string, any>);
-};
+        // }
+      }
 
-  
-  
-  
-const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[]) => {
-  if (!data.length) {
-    return new ArrayBuffer(0);
-  }
-
-  // Define a mapping of export types to data transformation functions
-  const dataTransformers: Record<string, (row: Record<string, any>) => Record<string, any>> = {
-    'flats': (row) => ({
-      'Building Name': row['floor.building.name'],
-      'Floor Number': row['floor.number'],
-      'Flat Number': row['number'],
-    }),
-    'residents': (row) => ({
-      'Building Name': row['flats.flat.floor.building.name'],
-      'Floor Number': row['flats.flat.floor.number'],
-      'Flat Number': row['flats.flat.number'],
-      'Name': row['name'],
-      'Type':row['flats.flat.type'],
-      'Email':row['email'],
-      'Phone Number':row['phoneNumber'],
-      'Is Child?':row['isChild'],
-      'Is Primary?':row['flats.isPrimary'],
-      // Add other resident-related fields as needed
-    }),
-    'vehicles': (row) => ({
-      'Building Name': row['floor.building.name'],
-      'Flat Number': row['number'],
-      'Vehicle Number': row['vehicle.number'],
-      // Add other vehicle-related fields as needed
-    }),
+      return acc;
+    }, {} as Record<string, any>);
   };
 
-  const dataTransformer = dataTransformers[exportType];
+  const convertDataToExcel = (
+    data: Record<string, any>[],
+    excludedFields: string[]
+  ) => {
+    if (!data.length) {
+      return new ArrayBuffer(0);
+    }
 
-  if (!dataTransformer) {
-    console.error('Invalid export type');
-    return new ArrayBuffer(0);
-  }
+    // Define a mapping of export types to data transformation functions
+    const dataTransformers: Record<
+      string,
+      (row: Record<string, any>) => Record<string, any>
+    > = {
+      flats: (row) => ({
+        'Building Name': row['floor.building.name'],
+        'Floor Number': row['floor.number'],
+        'Flat Number': row['number'],
+      }),
+      residents: (row) => ({
+        'Building Name': row['flats.flat.floor.building.name'],
+        'Floor Number': row['flats.flat.floor.number'],
+        'Flat Number': row['flats.flat.number'],
+        Name: row['name'],
+        Type: row['flats.flat.type'],
+        Email: row['email'],
+        'Phone Number': row['phoneNumber'],
+        'Is Child?': row['isChild'],
+        'Is Primary?': row['flats.isPrimary'],
+        // Add other resident-related fields as needed
+      }),
+      vehicles: (row) => ({
+        'Building Name': row['floor.building.name'],
+        'Flat Number': row['number'],
+        'Vehicle Number': row['vehicle.number'],
+        // Add other vehicle-related fields as needed
+      }),
+    };
 
-  const flattenedData = data.map((row) => flattenObject(row));
-  const filteredData = flattenedData.map((row) =>
-    Object.keys(row).reduce((acc, key) => {
-      if (!excludedFields.includes(key)) {
-        acc[key] = row[key];
-      }
-      return acc;
-    }, {} as Record<string, any>)
-  );
+    const dataTransformer = dataTransformers[exportType];
 
-  const rearrangedData = filteredData.map(dataTransformer);
+    if (!dataTransformer) {
+      console.error('Invalid export type');
+      return new ArrayBuffer(0);
+    }
 
-  const worksheet = XLSX.utils.json_to_sheet(rearrangedData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet 1');
+    const flattenedData = data.map((row) => flattenObject(row));
+    const filteredData = flattenedData.map((row) =>
+      Object.keys(row).reduce((acc, key) => {
+        if (!excludedFields.includes(key)) {
+          acc[key] = row[key];
+        }
+        return acc;
+      }, {} as Record<string, any>)
+    );
 
-  const excelData: any = XLSX.write(workbook, {
-    bookType: 'xlsx',
-    bookSST: false,
-    type: 'array',
-  });
+    const rearrangedData = filteredData.map(dataTransformer);
 
-  return new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-};
-  
+    const worksheet = XLSX.utils.json_to_sheet(rearrangedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet 1');
 
- 
+    const excelData: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      bookSST: false,
+      type: 'array',
+    });
+
+    return new Blob([excelData], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+  };
 
   const handleCloseModal = () => {
     setModalOpen(false);
@@ -623,13 +646,13 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
     setShowFileInput(false); // Reset showFileInput
   };
 
-  const handleCloseExportModal=()=>{
+  const handleCloseExportModal = () => {
     setModalExportOpen(false);
     setExportType('');
-  }
-  
+  };
+
   const handleImportType = (type: string) => {
-    console.log("type selected")
+    console.log('type selected');
     if (type !== null) {
       openFileInput();
       setImportType(type);
@@ -638,9 +661,8 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
     }
   };
 
-  
   const handleExportType = (type: string) => {
-    console.log("type selected")
+    console.log('type selected');
     if (type !== null) {
       setExportType(type);
       handleExport(type);
@@ -649,24 +671,23 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
     }
   };
 
-
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     // document.getElementById('excel-file-input')?.click();
-   
+
     if (!file) {
       return;
     }
-      setSelectedFile(file);
-      uploadFileToAPI(file, importType);
+    setSelectedFile(file);
+    uploadFileToAPI(file, importType);
   };
 
   const openFileInput = () => {
     document.getElementById('excel-file-input')?.click();
-    console.log("input clicked!");
+    console.log('input clicked!');
     setModalOpen(false);
   };
-  
+
   const uploadFileToAPI = async (file: File | null, importType: string) => {
     if (!file) {
       console.error('No file selected');
@@ -695,19 +716,20 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
         withCredentials: true,
       });
       if (response) {
-        enqueueSnackbar("Excel file uploaded ssuccessfully!", { variant: 'success' });
+        enqueueSnackbar('Excel file uploaded ssuccessfully!', {
+          variant: 'success',
+        });
         setModalOpen(false);
         console.log('API response:', response);
       } else {
         console.log('Error uploading file');
-        enqueueSnackbar("Error uploading file!", { variant: 'error' });
+        enqueueSnackbar('Error uploading file!', { variant: 'error' });
       }
     } catch (error) {
       console.error('Error uploading file to API', error);
-      enqueueSnackbar("Error uploading file!", { variant: 'error' });
+      enqueueSnackbar('Error uploading file!', { variant: 'error' });
     }
   };
-
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -718,10 +740,9 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
   };
 
   //Download template files
-  const handleOptionSelect = async(option: string) => {
+  const handleOptionSelect = async (option: string) => {
     setSelectedOption(option);
     try {
-    
       let templateFilePath = '';
 
       switch (option) {
@@ -743,49 +764,171 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
       }
       const response = await fetch(templateFilePath);
       const blob = await response.blob();
-  
-      const contentType = response.headers.get('content-type') || 'application/octet-stream';
-  
+
+      const contentType =
+        response.headers.get('content-type') || 'application/octet-stream';
+
       const filename = `template_${option}.xlsx`;
-      const url = window.URL.createObjectURL(new Blob([blob], { type: contentType }));
-  
+      const url = window.URL.createObjectURL(
+        new Blob([blob], { type: contentType })
+      );
+
       const a = document.createElement('a');
       a.href = url;
       a.download = filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-  
+
       window.URL.revokeObjectURL(url);
       handleCloseTemplateModal();
     } catch (error) {
       console.error('Error downloading template:', error);
       handleCloseTemplateModal();
-   
     }
   };
-
 
   return (
     <div className={styles['container']}>
       {loadingDetails ? (
-        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", height: "75vh" }}><CircularProgress /></div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '75vh',
+          }}
+        >
+          <CircularProgress />
+        </div>
       ) : (
         <div className={styles['main_container']}>
           <div className={styles['first_container']}>
             <div className={styles['header']}>
-              <h1 style={{ marginLeft: '0px' }}>{hospital?.name}</h1>  
+              {/* <h1 style={{ marginLeft: '0px' }}>{hospital?.name}</h1>   */}
             </div>
 
             <div className={styles['dashboard-card-container']}>
-            <Card sx={{ minWidth: '40% '}} className={styles['hospital-details']}>
-                <CardContent>
+              {/* <Card
+                sx={{ minWidth: '40% ' }}
+                className={styles['hospital-details']}
+              > */}
+                {/* <CardContent>
                   <Typography variant="body2">
-                   <div className={styles['soc-detail-add']}><LocalPhoneIcon sx={{marginRight:"4px"}}/>{hospital?.phoneNumber}</div>
+                    <div className={styles['soc-detail-add']}>
+                      <LocalPhoneIcon sx={{ marginRight: '4px' }} />
+                      {hospital?.phoneNumber}
+                    </div>
                     <br />
-                    <div className={styles['soc-detail-add']}><EmailIcon sx={{marginRight:"4px"}}/>{hospital?.email}</div>
-                    <br/>
-                    <div className={styles['soc-detail-add']}><HomeIcon sx={{marginRight:"4px"}}/>{hospital?.addressLine1}, {hospital?.addressLine2}, {hospital?.city}, {hospital?.stateCode}, {hospital?.countryCode}, {hospital?.postalCode}</div>
+                    <div className={styles['soc-detail-add']}>
+                      <EmailIcon sx={{ marginRight: '4px' }} />
+                      {hospital?.email}
+                    </div>
+                    <br />
+                    <div className={styles['soc-detail-add']}>
+                      <HomeIcon sx={{ marginRight: '4px' }} />
+                      {hospital?.addressLine1}, {hospital?.addressLine2},{' '}
+                      {hospital?.city}, {hospital?.stateCode},{' '}
+                      {hospital?.countryCode}, {hospital?.postalCode}
+                    </div>
+                  </Typography>
+                </CardContent> */}
+              {/* </Card> */}
+
+              <Card className={styles['cards']}>
+                <CardContent className={styles['cardcontent']}>
+                <Typography
+                    variant="h4"
+                    color="text.fourth"
+                    gutterBottom
+                    className={styles['fields-icons']}
+                  >
+                   <CurrencyRupeeOutlinedIcon sx={{p:"10px",color:"#3371EB", backgroundColor:"#EEF3FF"}} />
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    color="text.fourth"
+                    gutterBottom
+                    className={styles['fields']}
+                  >
+                    Earnings
+                  </Typography>
+                  <Typography className={styles['count']}>
+                   23,425
+                    <br />
+                  </Typography>
+                </CardContent>
+              </Card>
+              <Card className={styles['cards']}>
+                <CardContent className={styles['cardcontent']}>
+                <Typography
+                    variant="h4"
+                    color="text.fourth"
+                    gutterBottom
+                    className={styles['fields-icons']}
+                  >
+                   <PersonIcon sx={{p:"10px",color:"#FF8024", backgroundColor:"#FFF4F2"}} />
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    color="text.fourth"
+                    gutterBottom
+                    className={styles['fields']}
+                  >
+                    New Patient
+                  </Typography>
+                  <Typography className={styles['count']}>
+                   1,925
+                    <br />
+                  </Typography>
+                </CardContent>
+              </Card>
+              <Card className={styles['cards']}>
+                <CardContent className={styles['cardcontent']}>
+                <Typography
+                    variant="h4"
+                    color="text.fourth"
+                    gutterBottom
+                    className={styles['fields-icons']}
+                  >
+                   <AssignmentIcon sx={{p:"10px",color:"#14CC26", backgroundColor:"#EBFFE8"}} />
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    color="text.fourth"
+                    gutterBottom
+                    className={styles['fields']}
+                  >
+                    New Appointment
+                  </Typography>
+                  <Typography className={styles['count']}>
+                   153
+                    <br />
+                  </Typography>
+                </CardContent>
+              </Card>
+              <Card className={styles['cards']}>
+                <CardContent className={styles['cardcontent']}>
+                <Typography
+                    variant="h4"
+                    color="text.fourth"
+                    gutterBottom
+                    className={styles['fields-icons']}
+                  >
+                   <PeopleAltIcon sx={{p:"10px",color:"#9F0086", backgroundColor:"#FFE8FD"}} />
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    color="text.fourth"
+                    gutterBottom
+                    className={styles['fields']}
+                  >
+                    Patient Visit
+                  </Typography>
+                  <Typography className={styles['count']}>
+                   20
+                    <br />
                   </Typography>
                 </CardContent>
               </Card>
@@ -826,7 +969,6 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
             </div>
 
             {/* <div className={styles['horizontal-line']} /> */}
-            
 
             {/* <div>
   {data.map((item) => (
@@ -861,8 +1003,6 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
   ))}
 </div> */}
 
-
-
             {/* <Box sx={{ height: 400, width: '90%', display:'flex', flexDirection:'row', margin:'20px' }}>
   <DataGrid
     rows={data}
@@ -884,16 +1024,14 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
               <Box style={{ margin: '9px', float: 'right', display: 'flex', justifyContent: 'flex-end' }}>
                 <RefreshIcon onClick={handleRefresh} style={{ cursor: 'pointer' }} />
               </Box> */}
-              {/* <AllVehicleLogs refreshLogs={refreshLogs} /> */}
+            {/* <AllVehicleLogs refreshLogs={refreshLogs} /> */}
             {/* </Box> */}
-
           </div>
 
           {/* <div className={styles['vertical-line']} /> */}
 
           <div className={styles['rightColumn']}>
-          
-          {/* <Box className={styles['import-export']}> */}
+            {/* <Box className={styles['import-export']}> */}
             {/* <Button startIcon={<InsertDriveFileIcon/>} color="info"
               variant="contained"  onClick={handleOpenModal} className={styles['import-export-button']}>Template</Button>
 
@@ -930,9 +1068,7 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
                     style={{ display: 'none' }}
                     onChange={handleImport}
                   /> */}
-                {/* )} */}
-
-
+            {/* )} */}
 
             {/* <Button
               startIcon={<DownloadIcon/>}
@@ -955,12 +1091,10 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
                     </Box>
             </Modal>       */}
 
-            
-
             {/* </Box> */}
 
-          {/* <div className={styles['column_second']}> */}
-           
+            {/* <div className={styles['column_second']}> */}
+
             {/* <Grid container className={styles['headerStyles']}>
               <Grid item sx={{width:'100%'}}>
                 <div className={styles['grid-header']}>
@@ -996,12 +1130,12 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
               ) : (Array.isArray(adminData) && adminData.length > 0 ? (
                 adminData.map((response: Manager, index: number) => (
                   <Grid container key={index} columnGap={3} className={styles['grid-container']}> */}
-                    {/* <Grid item xs={12} md={1}><div className={styles['resident-primary']}>{response.isPrimary === true ? (<Chip label="primary" color="primary" variant="outlined" />) : (<></>)}</div></Grid> */}
-                    {/* <Grid item xs={3} md={1.5} ><div className={styles['resident-name']}>{response.user.firstName}</div></Grid> */}
-                    {/* <Grid item xs={2}> <div className={styles['resident-phone']}>{response.user.lastName}</div></Grid> */}
-                    {/* <Grid item xs={2}> <div className={styles['resident-phone']}>{response.user.email}</div></Grid>
+            {/* <Grid item xs={12} md={1}><div className={styles['resident-primary']}>{response.isPrimary === true ? (<Chip label="primary" color="primary" variant="outlined" />) : (<></>)}</div></Grid> */}
+            {/* <Grid item xs={3} md={1.5} ><div className={styles['resident-name']}>{response.user.firstName}</div></Grid> */}
+            {/* <Grid item xs={2}> <div className={styles['resident-phone']}>{response.user.lastName}</div></Grid> */}
+            {/* <Grid item xs={2}> <div className={styles['resident-phone']}>{response.user.email}</div></Grid>
                   <Grid item xs={2}> <div className={styles['resident-phone']}>+91-{response.user.phoneNumber}</div></Grid> */}
-                    {/* <Grid item xs={1} className={styles['resident-actions']}>
+            {/* <Grid item xs={1} className={styles['resident-actions']}>
                       
                       <IconButton onClick={(e) => {
                         e.stopPropagation()
@@ -1021,7 +1155,7 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
                       </IconButton>
                     </Grid>
                   </Grid> */}
-                {/* ))
+            {/* ))
               ) : (
                 <div className={styles['no-data']}>No Admin found</div>
               )
@@ -1045,12 +1179,11 @@ const convertDataToExcel = (data: Record<string, any>[], excludedFields: string[
               }}
               adminData={deleteData} /> */}
 
-          {/* </div> */}
+            {/* </div> */}
           </div>
         </div>
-      )
-      }
-    </div >
+      )}
+    </div>
   );
 }
 

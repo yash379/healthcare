@@ -2,6 +2,11 @@
   height:64px;
   background-color:#FFFFFF !important;
   width:100% !important;
+  box-shadow: none !important;
+}
+
+.welcome-back{
+  margin-left: 260px !important;
 }
 
 
@@ -36,7 +41,7 @@ width: 248px;
 height: 43px;
 flex-shrink: 0;
 border-radius: 5px;
-border: 1px solid #4D4D4D;
+// border: 1px solid #4D4D4D;
 background: rgba(255, 253, 253, 0.02);
 /* margin: 3px; */
 margin-right: 20px;
@@ -46,16 +51,35 @@ cursor: pointer;
 background-color: white;
 }
 
+.profile{
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+}
 .userimg{
 margin:6px 5px 5px 6px;
 color: black;
 }
 
 .usertext{
-display:column;
-margin: 4px 5px 5px 7px;
+display:flex;
+flex-direction: row;
+margin: 4px 5px 5px 50px;
 flex: 1;
 }
+
+.userData{
+  display: flex;
+  flex-direction: column;
+  color:black;
+  margin-top:-18px;
+  margin-left: 5px;
+  }
+  
+  .userRole{
+    margin-top: -15px;
+    margin-left: 3px;
+  }
 
 .usertext > h6{
 margin-top: -19px;
@@ -96,6 +120,7 @@ justify-content: flex-start !important;
 height: 44px !important;
 width: 29px !important;
 }
+
 
 
 @keyframes dropdown {

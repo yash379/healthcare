@@ -118,14 +118,20 @@
     .cards {
         min-width: 25%;
         width:26%;
-        padding: 2px;
-        padding-bottom: 0px !important;
+        padding: 10px;
+        padding-bottom: 20px !important;
         box-shadow: 0px 1.16354px 16.63539px 0px rgba(0, 0, 0, 0.15) !important;
         min-height: 86px !important;
-        margin-top:10px;
+        margin-top:80px !important;
+        margin-left:80px !important;
+        height: 55%;
     }
     
-    
+//    .fields-icons{
+//     background-color: #faf5e7;
+//     margin-right: 80px !important;
+//     padding-left: 10px;
+//    } 
     
     .fields {
         // text-align: right;
@@ -133,7 +139,7 @@
         font-family: Poppins;
         font-size: 17.206px !important;
         font-style: normal;
-        font-weight: 600 !important;
+        font-weight: 400 !important;
         line-height: 16.671px;
         /* 96.892% */
         letter-spacing: 0.208px;
@@ -141,9 +147,9 @@
     
     .count {
         // text-align: center;
-        font-weight: bold;
+        // font-weight: bold;
         font-size: 28px !important;
-        color: #F7B523 !important;
+        color: #000 !important;
         font-family: Poppins;
         font-size: 27.681px !important;
         font-style: normal;
@@ -154,7 +160,7 @@
     }
     
     .cardcontent {
-        padding-bottom: 0px !important;
+        padding-bottom: 50px !important;
     }
     
     .horizontal-line {

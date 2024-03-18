@@ -30,6 +30,7 @@
   
   .outlet {
     margin-left: 0; 
+    background-color: rgb(241, 247, 250);
    
   
     @media (min-width: 100px) {
@@ -50,7 +51,7 @@
   }
   
   .Box {
-    overflow-y: scroll;
+    // overflow-y: scroll;
     height: calc(100vh - 70px);
   }
   
