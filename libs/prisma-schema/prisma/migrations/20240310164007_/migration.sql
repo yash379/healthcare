@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "doctors" ADD COLUMN     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "updated_at" TIMESTAMPTZ;
