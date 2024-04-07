@@ -26,6 +26,7 @@ import UpdatePassword from './pages/update-password/update-password';
 import ForgetPassword from './pages/forget-password/forget-password';
 import ListDoctors from './pages/list-doctor/list-doctor';
 import ListPatients from './pages/list-patient/list-patient';
+import AddPatientPage from './pages/list-patient/add-patient-page/add-patient-page';
 
 export function App() {
 
@@ -81,6 +82,7 @@ export function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/hospitals" element={<ListHospitals />}/>
             <Route path="/hospitals/add" element={<AddHospitalPage/>}/>
+          
             <Route  element={<HospitalLayout/>}>
       
               <Route path="/hospitals/:hospitalId/edit" element={<EditHospitalPage/>}/> 
@@ -88,7 +90,7 @@ export function App() {
               <Route path="/hospitals/:hospitalId/details" element={<ViewHospitalPage/>}/>
               <Route path="/hospitals/:hospitalId/doctors" element={<ListDoctors/>}/>
               <Route path="/hospitals/:hospitalId/patients" element={<ListPatients />}/>
-
+              <Route path="/hospitals/:hospitalId/patients/add" element={<AddPatientPage />}/>
               <Route path="/profile" element={<Profile />}/>
             </Route>
             <Route path="/users"  element={<ListFLUser />}/>

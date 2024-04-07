@@ -93,7 +93,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             </ListItemButton>
           </Link>
 
-          <Link style={{ textDecoration: "none" }} to={`/hospital/${hospitalcontext?.id}/doctors`} onClick={() => handleComponentChange('doctors')}>
+          {/* <Link style={{ textDecoration: "none" }} to={`/hospital/${hospitalcontext?.id}/doctors`} onClick={() => handleComponentChange('doctors')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'doctors' && styles['active-tab']
               }`}>
               <ListItemIcon>
@@ -101,7 +101,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
               </ListItemIcon>
               <ListItemText className={styles["drawertab"]} primary="Doctor" />
             </ListItemButton>
-          </Link>
+          </Link> */}
           <Link style={{ textDecoration: "none" }} to={`/hospital/${hospitalcontext?.id}/patients`} onClick={() => handleComponentChange('patients')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'patients' && styles['active-tab']
               }`}>

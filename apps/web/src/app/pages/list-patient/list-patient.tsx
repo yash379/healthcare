@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-useless-fragment */
-import styles from './list-doctor.module.scss';
+import styles from './list-patient.module.scss';
 import { environment } from '../../../environments/environment';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
@@ -9,62 +9,83 @@ import { Box } from '@mui/material';
 import Breadcrumbs from '../../Components/bread-crumbs/bread-crumbs';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddDoctorComponent from './add-doctor/add-doctor';
-import EditDoctorComponent from './edit-doctor/edit-doctor';
-import DeleteDoctorComponent from './delete-doctor/delete-doctor';
-// import ViewDoctorComponent from '../view-doctor/view-doctor';
+import AddPatientComponent from './add-patient/add-patient';
+import EditPatientComponent from './edit-patient/edit-patient';
+import DeletePatientComponent from './delete-patient/delete-patient';
+// import ViewPatientComponent from '../view-patient/view-patient';
 import { enqueueSnackbar } from 'notistack';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Hospital } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
-import { HospitalContext } from '../../contexts/user-contexts';
+import { HospitalContext } from '../../contexts/user-context';
 import { Gender } from '@prisma/client';
 
 /* eslint-disable-next-line */
-export interface ListDoctorsProps { }
+export interface ListPatientsProps { }
 
 
 interface Form {
   firstName: string;
   lastName: string;
-  email: string;
+  email?: string;
+  phoneNumber?: string;
   gender: Gender;
-  phoneNumber: string;
-  doctorCode: string;
-  speciality: string;
-  isActive: boolean,
+  bloodgroup: string;
+  dob: Date;
+  digitalHealthCode: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  stateCode?: string;
+  countryCode: string;
+  postalCode: string;
+  isActive: boolean;
 }
 
-interface ViewDoctor {
+interface ViewPatient {
   id: number;
   firstName: string;
   lastName: string;
-  email: string;
+  email?: string;
+  phoneNumber?: string;
   gender: Gender;
-  phoneNumber: string;
-  doctorCode: string;
-  speciality: string;
+  bloodgroup: string;
+  dob: Date;
+  digitalHealthCode: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  stateCode?: string;
+  countryCode: string;
+  postalCode: string;
   isActive: boolean;
 }
 
 export interface EditForm {
   firstName: string;
   lastName: string;
-  email: string;
+  email?: string;
+  phoneNumber?: string;
   gender: Gender;
-  phoneNumber: string;
-  doctorCode: string;
-  speciality: string;
+  bloodgroup: string;
+  dob: Date;
+  digitalHealthCode: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  stateCode?: string;
+  countryCode: string;
+  postalCode: string;
   isActive: boolean;
 }
 
 
 
-export function ListDoctors(props: ListDoctorsProps) {
+export function ListPatients(props: ListPatientsProps) {
   const apiUrl = environment.apiUrl;
-  const [activeDoctors, setActiveDoctors] = useState<ViewDoctor[]>([]);
-  const [viewDoctorOpen, setViewDoctorOpen] = useState(false);
-  const [selectedDoctor, setSelectedDoctor] = useState<number | null>(null);
+  const [activePatients, setActivePatients] = useState<ViewPatient[]>([]);
+  const [viewPatientOpen, setViewPatientOpen] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState<number | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQueryName, setSearchQueryName] = useState<string>('');
@@ -72,17 +93,17 @@ export function ListDoctors(props: ListDoctorsProps) {
   const [searchQueryPhone, setSearchQueryPhone] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedDoctorId, setSelectedDoctorId] = useState<number | null>(null);
+  const [selectedPatientId, setSelectedPatientId] = useState<number | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [DoctorToDeleteId, setDoctorToDeleteId] = useState<number | null>(null);
+  const [PatientToDeleteId, setPatientToDeleteId] = useState<number | null>(null);
   const [totalItems, setTotalItems] = useState(0);
-  const [editData, setEditData] = useState<ViewDoctor | null>(null);
-  const [viewData, setViewData] = useState<ViewDoctor | null>(null);
+  const [editData, setEditData] = useState<ViewPatient | null>(null);
+  const [viewData, setViewData] = useState<ViewPatient | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [hospital,setHospital]=useState<Hospital | null>(null);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   console.log("hospital id:",id);
   const params=useParams();
@@ -90,11 +111,11 @@ export function ListDoctors(props: ListDoctorsProps) {
   console.log("Hospital Context:",hospitalContext);
   console.log("hospital context hospital id:",hospitalContext?.id);
 
-  const getDoctors = async () => {
+  const getPatients = async () => {
     try {
       setLoading(true);
       //  await new Promise((resolve) => setTimeout(resolve, 2000));
-      const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/doctors`, {
+      const response = await axios.get(`${apiUrl}/hospitals/${hospitalContext?.id}/patients`, {
         withCredentials: true,
         params: {
           pageSize: rowsPerPage,
@@ -108,12 +129,12 @@ export function ListDoctors(props: ListDoctorsProps) {
 
       const { content, total } = response.data;
       setTotalItems(total);
-      setActiveDoctors(content);
-console.log("Doctor", response.data)
+      setActivePatients(content);
+console.log("Patient", response.data)
 
-      const Doctors = response.data.content;
-      console.log(Doctors)
-      setActiveDoctors(Doctors);
+      const Patients = response.data.content;
+      console.log(Patients)
+      setActivePatients(Patients);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -124,10 +145,10 @@ console.log("Doctor", response.data)
 
 
   useEffect(() => {
-    getDoctors();
+    getPatients();
   }, [page, rowsPerPage, searchQueryName,
     searchQueryEmail,
-    searchQueryPhone])
+    searchQueryPhone, hospitalContext])
 
 
   const handleFilterChange = () => {
@@ -144,7 +165,7 @@ console.log("Doctor", response.data)
 
 
 
-  //Doctor Update CloseModal
+  //Patient Update CloseModal
   const closeEditModal = () => {
     setIsEditModalOpen(false);
     setEditData(null);
@@ -154,55 +175,55 @@ console.log("Doctor", response.data)
   //Search Function
   const handleSearchNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQueryName(event.target.value);
-    getDoctors()
+    getPatients()
   };
 
   const handleSearchEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQueryEmail(event.target.value);
-    getDoctors();
+    getPatients();
   };
 
   const handleSearchPhoneNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQueryPhone(event.target.value);
-    getDoctors();
+    getPatients();
   };
 
 
   //Building Update Function
-  const handleEditClick = (doctorId: number) => {
-    const selectedDoctor: ViewDoctor | undefined = activeDoctors.find(
-      (doctor) => doctor.id === doctorId
+  const handleEditClick = (patientId: number) => {
+    const selectedPatient: ViewPatient | undefined = activePatients.find(
+      (patient) => patient.id === patientId
     );
 
-    if (selectedDoctor) {
-      setEditData(selectedDoctor)
-      setSelectedDoctorId(doctorId);
+    if (selectedPatient) {
+      setEditData(selectedPatient)
+      setSelectedPatientId(patientId);
       setIsEditModalOpen(true);
     }
   };
 
   //Table Row Select Function
-  const handleRowClick = (doctorId: number, event: React.MouseEvent<HTMLTableRowElement>) => {
-    const selectedDoctor: ViewDoctor | undefined = activeDoctors.find(
-      (doctor) => doctor.id === doctorId
+  const handleRowClick = (patientId: number, event: React.MouseEvent<HTMLTableRowElement>) => {
+    const selectedPatient: ViewPatient | undefined = activePatients.find(
+      (patient) => patient.id === patientId
     );
 
-    if (selectedDoctor) {
-      setViewData(selectedDoctor)
-      setSelectedDoctor(doctorId);
+    if (selectedPatient) {
+      setViewData(selectedPatient)
+      setSelectedPatient(patientId);
     }
   };
 
 
   // Function to open the delete confirmation modal
-  const openDeleteModal = (doctorId: number) => {
-    setDoctorToDeleteId(doctorId);
+  const openDeleteModal = (patientId: number) => {
+    setPatientToDeleteId(patientId);
     setIsDeleteModalOpen(true);
   };
 
   // Function to close the delete confirmation modal
   const closeDeleteModal = () => {
-    setDoctorToDeleteId(null);
+    setPatientToDeleteId(null);
     setIsDeleteModalOpen(false);
   };
 
@@ -219,7 +240,7 @@ console.log("Doctor", response.data)
     setRowsPerPage(newRowsPerPage);
     setPage(0);
     setRowsPerPage(newRowsPerPage)
-    getDoctors();
+    getPatients();
   };
 
 
@@ -227,20 +248,20 @@ console.log("Doctor", response.data)
 
   const pageCount = Math.ceil(totalItems / rowsPerPage);
 
-  // Add Doctor
-  const handleAddDoctor = async (formData: Form) => {
+  // Add Patient
+  const handleAddPatient = async (formData: Form) => {
 
     try {
-      const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${params.hospitalId}/doctors`,
-        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender,  email: formData.email, phoneNumber: formData.phoneNumber, doctorCode: formData.doctorCode, speciality: formData.speciality, isActive: formData.isActive },
+      const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${params.hospitalId}/patients`,
+        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender,  email: formData.email, phoneNumber: formData.phoneNumber , bloodgroup: formData.bloodgroup, dob:formData.dob, digitalHealthCode:formData.digitalHealthCode, addressLine1:formData.addressLine1, addressLine2:formData.addressLine2, city:formData.city, stateCode:formData.stateCode, countryCode:formData.countryCode, postalCode:formData.postalCode, isActive: formData.isActive },
         {
           withCredentials: true,
 
         },)
       if (responseData) {
-        enqueueSnackbar('Doctor added successfully', { variant: 'success' });
+        enqueueSnackbar('Patient added successfully', { variant: 'success' });
         setIsAddModalOpen(false);
-        getDoctors();
+        getPatients();
 
       } else {
         console.log("Something went wrong")
@@ -255,15 +276,14 @@ console.log("Doctor", response.data)
 
 
 
-  // Edit Doctor
+  // Edit Patient
   const handleUpdate = async (updateData: EditForm) => {
-    console.log(updateData, "updatedData");
     try {
       const response = await axios.put(
-        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${selectedDoctorId}`,
+        `${apiUrl}/hospitals/${params.hospitalId}/patients/${selectedPatientId}`,
         {
           firstName: updateData.firstName, lastName: updateData.lastName, email: updateData.email, phoneNumber: updateData.phoneNumber,
-          gender: updateData.gender, doctorCode: updateData.doctorCode, isActive: updateData.isActive, speciality:updateData.speciality
+          gender: updateData.gender, bloodgroup: updateData.bloodgroup, dob:updateData.dob, digitalHealthCode:updateData.digitalHealthCode, addressLine1:updateData.addressLine1, addressLine2:updateData.addressLine2, city:updateData.city, stateCode:updateData.stateCode, countryCode:updateData.countryCode, postalCode:updateData.postalCode, isActive: updateData.isActive
         },
         {
           withCredentials: true,
@@ -278,8 +298,8 @@ console.log("Doctor", response.data)
 
       if (response.data) {
         console.log('Building Name Updated Successfully');
-        enqueueSnackbar('Doctor details updated successfully', { variant: 'success' });
-        getDoctors();
+        enqueueSnackbar('Patient details updated successfully', { variant: 'success' });
+        getPatients();
         setIsModalOpen(false)
       } else {
         console.log('Update data not received');
@@ -291,7 +311,7 @@ console.log("Doctor", response.data)
     }
   };
 
-  //delete a Doctor
+  //delete a Patient
 
   // const handleDelete = async (Id: any) => {
   //   try {
@@ -317,28 +337,28 @@ console.log("Doctor", response.data)
   //   setSelectedResident(residentid)
   // }
 
-  const handleCheckboxChange = (DoctorId: number) => {
-    const isSelected = selectedItems.includes(DoctorId);
+  const handleCheckboxChange = (PatientId: number) => {
+    const isSelected = selectedItems.includes(PatientId);
     if (isSelected) {
       setSelectedItems((prevSelected) =>
-        prevSelected.filter((id) => id !== DoctorId)
+        prevSelected.filter((id) => id !== PatientId)
       );
     } else {
-      setSelectedItems((prevSelected) => [...prevSelected, DoctorId]);
+      setSelectedItems((prevSelected) => [...prevSelected, PatientId]);
     }
   };
 
   const handleHeaderCheckboxChange = () => {
     // If all items are currently selected, unselect all. Otherwise, select all.
-    const allSelected = activeDoctors.every((doctor) =>
-      selectedItems.includes(doctor.id)
+    const allSelected = activePatients.every((patient) =>
+      selectedItems.includes(patient.id)
     );
 
     if (allSelected) {
       setSelectedItems([]);
     } else {
-      const allDoctorIds = activeDoctors.map((doctor) => doctor.id);
-      setSelectedItems(allDoctorIds);
+      const allPatientIds = activePatients.map((patient) => patient.id);
+      setSelectedItems(allPatientIds);
     }
   };
 
@@ -354,7 +374,7 @@ console.log("Doctor", response.data)
       label: `${hospitalContext?.name}`
     },
     {
-      label: 'Doctors',
+      label: 'Patients',
     },
   ];
 
@@ -368,19 +388,19 @@ console.log("Doctor", response.data)
         <Box className={styles['building_container']}>
 
           <Box className={styles['btn_container']}>
-            <h1>Doctors</h1>
+            <h1>Patients</h1>
             <Box>
-              <AddDoctorComponent
+              <AddPatientComponent
                 open={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
-                onSubmit={handleAddDoctor}
+                onSubmit={handleAddPatient}
               />
             </Box>
             <Box>
-              {/* <ViewDoctorComponent
-                open={viewDoctorOpen}
-                onClose={() => setViewDoctorOpen(false)}
-                doctorId={selectedDoctor}
+              {/* <ViewPatientComponent
+                open={viewPatientOpen}
+                onClose={() => setViewPatientOpen(false)}
+                patientId={selectedPatient}
                 initialData={viewData}
               /> */}
             </Box>
@@ -398,9 +418,10 @@ console.log("Doctor", response.data)
                 }}
               />
               <Button variant="contained" color="primary"
-                onClick={() => {
-                  setIsAddModalOpen(true)
-                }}
+                // onClick={() => {
+                //   setIsAddModalOpen(true)
+                // }}
+                onClick={() => navigate('/hospitals/:hospitalId/patients/add')}
               > <AddIcon fontSize='small' /> Add</Button>
             </Box>
 
@@ -413,8 +434,8 @@ console.log("Doctor", response.data)
                 <TableCell><Checkbox
                   {...label}
                   checked={
-                    activeDoctors.length > 0 &&
-                    activeDoctors.every((building) =>
+                    activePatients.length > 0 &&
+                    activePatients.every((building) =>
                       selectedItems.includes(building.id)
                     )
                   }
@@ -428,9 +449,11 @@ console.log("Doctor", response.data)
                   </TableCell>
                   <TableCell sx={{ border: "hidden" }}>Gender
                   </TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Doctor Code
+                  <TableCell sx={{ border: "hidden" }}>Blood Group
                   </TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Speciality
+                  <TableCell sx={{ border: "hidden" }}>Digital Health Code
+                  </TableCell>
+                  <TableCell sx={{ border: "hidden" }}>Address
                   </TableCell>
                   {/* <TableCell sx={{ border: "hidden" }}>Flat Number</TableCell>
                   <TableCell sx={{ border: "hidden" }}>Building Name</TableCell> */}
@@ -444,34 +467,37 @@ console.log("Doctor", response.data)
                 <TableCell align='center' colSpan={7}>
                   <CircularProgress />
                 </TableCell>
-              ) : (Array.isArray(activeDoctors) && activeDoctors.length > 0 ? (
-                  activeDoctors.map((doctor: ViewDoctor, index: number) => (
-                    <TableRow className={styles['table_row']} onClick={(e) => { handleRowClick(doctor.id, e); setViewDoctorOpen(true); }} key={index}>
+              ) : (Array.isArray(activePatients) && activePatients.length > 0 ? (
+                  activePatients.map((patient: ViewPatient, index: number) => (
+                    <TableRow className={styles['table_row']} onClick={(e) => { handleRowClick(patient.id, e); setViewPatientOpen(true); }} key={index}>
                        <TableCell><Checkbox
-                      checked={selectedItems.includes(doctor.id)}
-                      onChange={() => handleCheckboxChange(doctor.id)}
+                      checked={selectedItems.includes(patient.id)}
+                      onChange={() => handleCheckboxChange(patient.id)}
                       {...label}
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
                     /></TableCell>
-                      <TableCell>{doctor.firstName} {doctor.lastName}
+                      <TableCell>{patient.firstName} {patient.lastName}
                       </TableCell>
-                      <TableCell>{doctor.email}
+                      <TableCell>{patient.email}
                       </TableCell>
-                      <TableCell>+91-{doctor.phoneNumber}
-                      </TableCell>
-                      <TableCell>
-                        {doctor.gender}
+                      <TableCell>+91-{patient.phoneNumber}
                       </TableCell>
                       <TableCell>
-                        {doctor.doctorCode}
+                        {patient.gender}
                       </TableCell>
                       <TableCell>
-                        {doctor.speciality}
+                        {patient.bloodgroup}
+                      </TableCell>
+                      <TableCell>
+                        {patient.digitalHealthCode}
+                      </TableCell>
+                      <TableCell>
+                        {patient.addressLine1} {patient.addressLine2} ,{patient.city}, {patient.stateCode}, {patient.postalCode}
                       </TableCell>
                       <TableCell align='center'>
-                      <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(doctor.id) }} sx={{ color:'black'}}>
+                      <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(patient.id) }} sx={{ color:'black'}}>
                         <EditIcon ></EditIcon>
                       </IconButton>
                       {/* <IconButton color="error"  onClick={() =>
@@ -488,7 +514,7 @@ console.log("Doctor", response.data)
                   <TableRow>
                     <TableCell sx={{
                       textAlign: 'center',
-                    }} colSpan={8}>No Doctor found</TableCell>
+                    }} colSpan={8}>No Patient found</TableCell>
                   </TableRow>
                   )
                   )}
@@ -539,7 +565,7 @@ console.log("Doctor", response.data)
         </Box>
 
 
-        <EditDoctorComponent
+        <EditPatientComponent
           open={isEditModalOpen}
           onClose={closeEditModal}
           onUpdate={(data) => {
@@ -549,11 +575,11 @@ console.log("Doctor", response.data)
           initialData={editData}
         />
 
-        {/* <DeleteDoctorComponent
+        {/* <DeletePatientComponent
           open={isDeleteModalOpen}
           onClose={closeDeleteModal}
           onDelete={() => {
-            handleDelete(DoctorToDeleteId);
+            handleDelete(PatientToDeleteId);
             closeDeleteModal();
           }}
         /> */}
@@ -563,4 +589,4 @@ console.log("Doctor", response.data)
   );
 }
 
-export default ListDoctors;
+export default ListPatients;

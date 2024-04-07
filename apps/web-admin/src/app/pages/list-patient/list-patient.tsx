@@ -14,7 +14,7 @@ import EditPatientComponent from './edit-patient/edit-patient';
 import DeletePatientComponent from './delete-patient/delete-patient';
 // import ViewPatientComponent from '../view-patient/view-patient';
 import { enqueueSnackbar } from 'notistack';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Hospital } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/user-contexts';
@@ -103,7 +103,7 @@ export function ListPatients(props: ListPatientsProps) {
   const [hospital,setHospital]=useState<Hospital | null>(null);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   console.log("hospital id:",id);
   const params=useParams();
@@ -418,9 +418,10 @@ console.log("Patient", response.data)
                 }}
               />
               <Button variant="contained" color="primary"
-                onClick={() => {
-                  setIsAddModalOpen(true)
-                }}
+                // onClick={() => {
+                //   setIsAddModalOpen(true)
+                // }}
+                onClick={() => navigate('/hospitals/:hospitalId/patients/add')}
               > <AddIcon fontSize='small' /> Add</Button>
             </Box>
 

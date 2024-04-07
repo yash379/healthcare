@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-useless-fragment */
-import styles from './add-doctor.module.scss';
+import styles from './add-patient.module.scss';
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import Modal from '@mui/material/Modal';
@@ -19,38 +19,33 @@ import { useParams } from 'react-router-dom';
 import { Gender } from '@prisma/client';
 
 
-export interface AddDoctorProps {
+export interface AddPatientProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: Form) => void;
-  // initialData: ViewFlat | null;
 }
 
 interface Form {
   firstName: string;
   lastName: string;
-  email: string;
+  email?: string;
+  phoneNumber?: string;
   gender: Gender;
-  phoneNumber: string;
-  doctorCode: string;
-  speciality: string;
+  bloodgroup: string;
+  dob: Date;
+  digitalHealthCode: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  stateCode?: string;
+  countryCode: string;
+  postalCode: string;
   isActive: boolean;
 }
 
 
-interface EditForm {
-  firstName: string;
-  lastName: string;
-  email: string;
-  gender: Gender;
-  phoneNumber: string;
-  doctorCode: string;
-  speciality: string;
-  isActive: boolean;
-}
 
-
-const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit }) => {
+const AddPatientComponent: React.FC<AddPatientProps> = ({ open, onClose, onSubmit }) => {
   const apiUrl = environment.apiUrl;
   const [totalbuildingValue, setTotalbuildingValue] = useState<number | null>(null);
   const [totalValue, setTotalValue] = useState<number | null>(null);
@@ -62,10 +57,17 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
     lastName: yup.string().required('Last Name is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
     phoneNumber: yup.string().matches(/[6789][0-9]{9}/, 'Invalid phone number').min(10).max(10).required('Phone number is required'),
-    gender: yup.string().required('Please Select One'),
+    gender: yup.boolean().required('Please Select One'),
     isActive: yup.boolean().required('Please Select One'),
-    doctorCode: yup.string().required('Doctor Code is required'),
-    speciality: yup.string().required('Speciality is required'),
+    bloodgroup: yup.string().required('Blood Group is required'),
+    dob: yup.date().required('Date Of Birth is required'),
+    digitalHealthCode: yup.string().required('Digital Health Code is required'),
+    addressLine1: yup.string().required('addressLine1 is required'),
+    addressLine2: yup.string().notRequired(),
+    city: yup.string().required('City is required'),
+    stateCode: yup.string().required('State Code is required'),
+    countryCode: yup.string().required('Country Code is required'),
+    postalCode: yup.string().required('Postal Code is required'),
   });
   const {  handleSubmit, control, reset, formState: { errors }, watch, setValue } = useForm<Form>({
     resolver: yupResolver(validationSchema),
@@ -107,7 +109,7 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
   return (
     <Modal open={open} onClose={onClose}>
     <Box className={styles['modal-container']}>
-      <h2 className={styles['h2_tag']}>Add Doctor</h2>
+      <h2 className={styles['h2_tag']}>Add Patient</h2>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <Box sx={{
           display: 'grid',
@@ -121,9 +123,13 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
           },
         }}
         >
-          <Box className={styles['modal_first_container']}>
+          {/* <Box className={styles['modal_first_container']}> */}
 
-          <Box className={styles['grid_top']}>
+           
+          <Box className={styles['modal_second_container']}
+          >
+
+            <Box className={styles['grid_top']}>
               <Controller
                 name="firstName"
                 control={control}
@@ -222,12 +228,7 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
               />
             </Box>
 
-            
-           
-           </Box>
-          <Box className={styles['modal_second_container']}
-          >
-<Box className={styles['grid_top']}>
+            <Box className={styles['grid_top']}>
               <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
                 <InputLabel htmlFor="type"  >Gender*</InputLabel>
                 <Controller
@@ -259,48 +260,7 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
                 <FormHelperText>{errors.gender?.message}</FormHelperText>
               </FormControl>
             </Box>
-            <Box className={styles['grid_top']}>
-              <Controller
-                name="doctorCode"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Doctor Code is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter Doctor Code"
-                    {...field}
-                    label="Doctor Code*"
-                    error={!!errors.doctorCode}
-                    helperText={errors.doctorCode?.message}
-                    sx={{ width: '100%' }}
-                  />
 
-                )}
-              />
-            </Box>
-            <Box className={styles['grid_top']}>
-              <Controller
-                name="speciality"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Speciality is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter Speciality"
-                    {...field}
-                    label="Speciality*"
-                    error={!!errors.speciality}
-                    helperText={errors.speciality?.message}
-                    sx={{ width: '100%' }}
-                  />
-
-                )}
-              />
-            </Box>
 
           </Box>
         </Box>
@@ -320,4 +280,4 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
   );
 }
 
-export default AddDoctorComponent;
+export default AddPatientComponent;

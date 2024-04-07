@@ -283,6 +283,208 @@ export class PatientsService {
     return pattern.test(mobileNumber);
   }
 
+  // async add(
+  //   hospitalId: number,
+  //   addPatientdto: AddPatientDto
+  // ): Promise<PatientDto> {
+  //   if (Number.isNaN(hospitalId)) {
+  //     throw new HttpException(
+  //       'Hospital id is missing in params',
+  //       HttpStatus.BAD_REQUEST
+  //     );
+  //   }
+
+  //   // TODO: implement transaction
+
+  //   const hospital = await this.prisma.hospital.findUnique({
+  //     where: {
+  //       id: hospitalId,
+  //     },
+  //   });
+  //   console.log(hospital);
+  //   if (!hospital) {
+  //     throw new HttpException(
+  //       'hospital not found check hospitalId',
+  //       HttpStatus.NOT_FOUND
+  //     );
+  //   }
+
+  //   const isPhoneNumberValid = this.isValidMobileNumber(
+  //     addPatientdto.phoneNumber
+  //   );
+
+  //   if (!isPhoneNumberValid) {
+  //     throw new HttpException(
+  //       `${addPatientdto.phoneNumber} is a valid 10-digit mobile number.`,
+  //       HttpStatus.BAD_REQUEST
+  //     );
+  //   }
+
+  //   const patient = await this.prisma.patient.findFirst({
+  //     where: {
+  //       firstName: addPatientdto.firstName,
+  //       lastName: addPatientdto.lastName,
+  //       email: addPatientdto.email,
+  //       phoneNumber: addPatientdto.phoneNumber,
+  //       gender: addPatientdto.gender,
+  //       bloodgroup: addPatientdto.bloodgroup,
+  //       dob: addPatientdto.dob,
+  //       digitalHealthCode: addPatientdto.digitalHealthCode,
+  //       addressLine1: addPatientdto.addressLine1,
+  //       addressLine2: addPatientdto.addressLine2,
+  //       city: addPatientdto.city,
+  //       stateCode: addPatientdto.stateCode,
+  //       countryCode: addPatientdto.countryCode,
+  //       postalCode: addPatientdto.postalCode,
+  //       isActive: addPatientdto.isActive,
+  //     },
+  //   });
+  //   if (patient) {
+  //     const patientHospital = await this.prisma.patientHospital.findFirst({
+  //       where: {
+  //         hospitalId: hospitalId,
+  //         patientId: patient.id,
+  //       },
+  //     });
+  //     if (patientHospital) {
+  //       throw new HttpException(
+  //         {
+  //           status: HttpStatus.BAD_REQUEST,
+  //           error: 'Patient already exists',
+  //         },
+  //         HttpStatus.BAD_REQUEST
+  //       );
+  //     }
+  //     const checkHospital = await this.prisma.hospital.findFirst({
+  //       where: { id: hospitalId },
+  //     });
+  //     if (!checkHospital) {
+  //       throw new NotFoundException();
+  //     } else {
+  //       const { gender } = addPatientdto;
+  //       const addPatientData = {
+  //         hospitalId: hospitalId,
+  //         patientId: patient.id,
+  //         digitalHealthCode:patient.digitalHealthCode,
+  //         // firstName: patient.firstName,
+  //         // lastName: patient.lastName,
+  //         // email: patient.email,
+  //         // phoneNumber: patient.phoneNumber,
+  //         // gender: patient.gender,
+  //       };
+  //       console.log(addPatientData);
+  //       const addPatientHospital = await this.prisma.patientHospital.create({
+  //         data: addPatientData,
+  //       });
+  //       // if (addPatientData.isPrimary) {
+  //       //   // set other residents of this flat as not primary
+  //       //   await this.prisma.residentFlat.updateMany({
+  //       //     where: { flatId: flatId, residentId: { not: resident.id } },
+  //       //     data: { isPrimary: false },
+  //       //   });
+  //       // }
+  //       return {
+  //         id: patient.id,
+  //         firstName: patient.firstName,
+  //         lastName: patient.lastName,
+  //         email: patient.email,
+  //         phoneNumber: patient.phoneNumber,
+  //         gender: patient.gender,
+  //         bloodgroup: patient.bloodgroup,
+  //         dob: patient.dob,
+  //         digitalHealthCode: patient.digitalHealthCode,
+  //         addressLine1: patient.addressLine1,
+  //         addressLine2: patient.addressLine2,
+  //         city: patient.city,
+  //         stateCode: patient.stateCode,
+  //         countryCode: patient.countryCode,
+  //         postalCode: patient.postalCode,
+
+  //         // hospitalId:addPatientHospital.hospitalId,
+  //         isActive: patient.isActive,
+  //       };
+  //     }
+  //   }
+
+  //   const checkHospital = await this.prisma.hospital.findFirst({
+  //     where: { id: hospitalId },
+  //   });
+  //   if (!checkHospital) {
+  //     throw new NotFoundException();
+  //   } else {
+  //     const { gender, ...addPatientDto } = addPatientdto;
+  //     const addPatient = await this.prisma.patient.create({
+  //       data: {
+  //         firstName: addPatientDto.firstName,
+  //         lastName: addPatientDto.lastName,
+  //         email: addPatientDto.email,
+  //         phoneNumber: addPatientDto.phoneNumber,
+  //         gender: gender,
+  //         bloodgroup: addPatientDto.bloodgroup,
+  //         dob: addPatientDto.dob,
+  //         digitalHealthCode: addPatientDto.digitalHealthCode,
+  //         addressLine1: addPatientDto.addressLine1,
+  //         addressLine2: addPatientDto.addressLine2,
+  //         city: addPatientDto.city,
+  //         stateCode: addPatientDto.stateCode,
+  //         countryCode: addPatientDto.countryCode,
+  //         postalCode: addPatientDto.postalCode,
+
+  //         isActive: addPatientDto.isActive,
+  //         hospitals: {
+  //           create: [
+  //             {
+  //               hospitalId: hospitalId,
+  //               digitalHealthCode: addPatientDto.digitalHealthCode,
+  //             },
+  //           ],
+  //         },
+  //       },
+  //     });
+  //     const addPatientData = {
+  //       hospitalId: hospitalId,
+  //       patientId: addPatient.id,
+  //       digitalHealthCode:addPatient.digitalHealthCode,
+  //       // gender: gender,
+  //       // firstName: addPatientDto.firstName,
+  //       // lastName: addPatientDto.lastName,
+  //       // email: addPatientDto.email,
+  //       // phoneNumber: addPatientDto.phoneNumber,
+  //       // gender:gender,
+  //       // isActive: addPatientDto.isActive
+  //     };
+  //     const addPatientHospital = await this.prisma.patientHospital.create({
+  //       data: addPatientData,
+  //     });
+  //     // if (addResidentData.isPrimary) {
+  //     //   // set other residents of this flat as not primary
+  //     //   await this.prisma.residentFlat.updateMany({
+  //     //     where: { flatId: flatId, residentId: { not: addResident.id } },
+  //     //     data: { isPrimary: false },
+  //     //   });
+  //     // }
+  //     return {
+  //       id: addPatient.id,
+  //       firstName: addPatient.firstName,
+  //       lastName: addPatient.lastName,
+  //       email: addPatient.email,
+  //       phoneNumber: addPatient.phoneNumber,
+  //       gender: addPatient.gender,
+  //       bloodgroup: addPatient.bloodgroup,
+  //       dob: addPatient.dob,
+  //       digitalHealthCode: addPatient.digitalHealthCode,
+  //       addressLine1: addPatient.addressLine1,
+  //       addressLine2: addPatient.addressLine2,
+  //       city: addPatient.city,
+  //       stateCode: addPatient.stateCode,
+  //       countryCode: addPatient.countryCode,
+  //       postalCode: addPatient.postalCode,
+  //       isActive: addPatient.isActive,
+  //     };
+  //   }
+  // }
+
+ 
   async add(
     hospitalId: number,
     addPatientdto: AddPatientDto
@@ -293,34 +495,33 @@ export class PatientsService {
         HttpStatus.BAD_REQUEST
       );
     }
-
-    // TODO: implement transaction
-
+  
+    // Check if hospital exists
     const hospital = await this.prisma.hospital.findUnique({
       where: {
         id: hospitalId,
       },
     });
-    console.log(hospital);
     if (!hospital) {
       throw new HttpException(
-        'hospital not found check hospitalId',
+        'Hospital not found, check hospitalId',
         HttpStatus.NOT_FOUND
       );
     }
-
+  
+    // Check if phone number is valid
     const isPhoneNumberValid = this.isValidMobileNumber(
       addPatientdto.phoneNumber
     );
-
     if (!isPhoneNumberValid) {
       throw new HttpException(
-        `${addPatientdto.phoneNumber} is a valid 10-digit mobile number.`,
+        `${addPatientdto.phoneNumber} is not a valid 10-digit mobile number.`,
         HttpStatus.BAD_REQUEST
       );
     }
-
-    const patient = await this.prisma.patient.findFirst({
+  
+    // Check if Patient already exists
+    let patient = await this.prisma.patient.findFirst({
       where: {
         firstName: addPatientdto.firstName,
         lastName: addPatientdto.lastName,
@@ -339,149 +540,74 @@ export class PatientsService {
         isActive: addPatientdto.isActive,
       },
     });
-    if (patient) {
-      const patientHospital = await this.prisma.patientHospital.findFirst({
-        where: {
-          hospitalId: hospitalId,
-          patientId: patient.id,
-        },
-      });
-      if (patientHospital) {
-        throw new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            error: 'Patient already exists',
-          },
-          HttpStatus.BAD_REQUEST
-        );
-      }
-      const checkHospital = await this.prisma.hospital.findFirst({
-        where: { id: hospitalId },
-      });
-      if (!checkHospital) {
-        throw new NotFoundException();
-      } else {
-        const { gender } = addPatientdto;
-        const addPatientData = {
-          hospitalId: hospitalId,
-          patientId: patient.id,
-          digitalHealthCode:patient.digitalHealthCode,
-          // firstName: patient.firstName,
-          // lastName: patient.lastName,
-          // email: patient.email,
-          // phoneNumber: patient.phoneNumber,
-          // gender: patient.gender,
-        };
-        console.log(addPatientData);
-        const addPatientHospital = await this.prisma.patientHospital.create({
-          data: addPatientData,
-        });
-        // if (addPatientData.isPrimary) {
-        //   // set other residents of this flat as not primary
-        //   await this.prisma.residentFlat.updateMany({
-        //     where: { flatId: flatId, residentId: { not: resident.id } },
-        //     data: { isPrimary: false },
-        //   });
-        // }
-        return {
-          id: patient.id,
-          firstName: patient.firstName,
-          lastName: patient.lastName,
-          email: patient.email,
-          phoneNumber: patient.phoneNumber,
-          gender: patient.gender,
-          bloodgroup: patient.bloodgroup,
-          dob: patient.dob,
-          digitalHealthCode: patient.digitalHealthCode,
-          addressLine1: patient.addressLine1,
-          addressLine2: patient.addressLine2,
-          city: patient.city,
-          stateCode: patient.stateCode,
-          countryCode: patient.countryCode,
-          postalCode: patient.postalCode,
-
-          // hospitalId:addPatientHospital.hospitalId,
-          isActive: patient.isActive,
-        };
-      }
-    }
-
-    const checkHospital = await this.prisma.hospital.findFirst({
-      where: { id: hospitalId },
-    });
-    if (!checkHospital) {
-      throw new NotFoundException();
-    } else {
-      const { gender, ...addPatientDto } = addPatientdto;
-      const addPatient = await this.prisma.patient.create({
+  
+    // If patient doesn't exist, create a new one
+    if (!patient) {
+      patient = await this.prisma.patient.create({
         data: {
-          firstName: addPatientDto.firstName,
-          lastName: addPatientDto.lastName,
-          email: addPatientDto.email,
-          phoneNumber: addPatientDto.phoneNumber,
-          gender: gender,
-          bloodgroup: addPatientDto.bloodgroup,
-          dob: addPatientDto.dob,
-          digitalHealthCode: addPatientDto.digitalHealthCode,
-          addressLine1: addPatientDto.addressLine1,
-          addressLine2: addPatientDto.addressLine2,
-          city: addPatientDto.city,
-          stateCode: addPatientDto.stateCode,
-          countryCode: addPatientDto.countryCode,
-          postalCode: addPatientDto.postalCode,
-
-          isActive: addPatientDto.isActive,
-          hospitals: {
-            create: [
-              {
-                hospitalId: hospitalId,
-                digitalHealthCode: addPatientDto.digitalHealthCode,
-              },
-            ],
-          },
+          firstName: addPatientdto.firstName,
+          lastName: addPatientdto.lastName,
+          email: addPatientdto.email,
+          phoneNumber: addPatientdto.phoneNumber,
+          gender: addPatientdto.gender,
+          bloodgroup: addPatientdto.bloodgroup,
+          dob: addPatientdto.dob,
+          digitalHealthCode: addPatientdto.digitalHealthCode,
+          addressLine1: addPatientdto.addressLine1,
+          addressLine2: addPatientdto.addressLine2,
+          city: addPatientdto.city,
+          stateCode: addPatientdto.stateCode,
+          countryCode: addPatientdto.countryCode,
+          postalCode: addPatientdto.postalCode,
+          isActive: addPatientdto.isActive,
         },
       });
-      const addPatientData = {
-        hospitalId: hospitalId,
-        patientId: addPatient.id,
-        digitalHealthCode:addPatient.digitalHealthCode,
-        // gender: gender,
-        // firstName: addPatientDto.firstName,
-        // lastName: addPatientDto.lastName,
-        // email: addPatientDto.email,
-        // phoneNumber: addPatientDto.phoneNumber,
-        // gender:gender,
-        // isActive: addPatientDto.isActive
-      };
-      const addPatientHospital = await this.prisma.patientHospital.create({
-        data: addPatientData,
-      });
-      // if (addResidentData.isPrimary) {
-      //   // set other residents of this flat as not primary
-      //   await this.prisma.residentFlat.updateMany({
-      //     where: { flatId: flatId, residentId: { not: addResident.id } },
-      //     data: { isPrimary: false },
-      //   });
-      // }
-      return {
-        id: addPatient.id,
-        firstName: addPatient.firstName,
-        lastName: addPatient.lastName,
-        email: addPatient.email,
-        phoneNumber: addPatient.phoneNumber,
-        gender: addPatient.gender,
-        bloodgroup: addPatient.bloodgroup,
-        dob: addPatient.dob,
-        digitalHealthCode: addPatient.digitalHealthCode,
-        addressLine1: addPatient.addressLine1,
-        addressLine2: addPatient.addressLine2,
-        city: addPatient.city,
-        stateCode: addPatient.stateCode,
-        countryCode: addPatient.countryCode,
-        postalCode: addPatient.postalCode,
-        isActive: addPatient.isActive,
-      };
     }
+  
+    // Check if patientHospital entry already exists
+    const existingPatientHospital = await this.prisma.patientHospital.findFirst({
+      where: {
+        hospitalId: hospitalId,
+        patientId: patient.id,
+      },
+    });
+  
+    // If patientHospital entry already exists, throw an error
+    if (existingPatientHospital) {
+      throw new HttpException(
+        'Patient is already associated with this hospital',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  
+    // Create patientHospital entry
+    const addPatientHospital = await this.prisma.patientHospital.create({
+      data: {
+        hospitalId: hospitalId,
+        patientId: patient.id,
+        digitalHealthCode: patient.digitalHealthCode,
+      },
+    });
+  
+    // Return patient details
+    return {
+      id: patient.id,
+      firstName: patient.firstName,
+      lastName: patient.lastName,
+      email: patient.email,
+      phoneNumber: patient.phoneNumber,
+      gender: patient.gender,
+      bloodgroup: patient.bloodgroup,
+      dob: patient.dob,
+      digitalHealthCode: patient.digitalHealthCode,
+      addressLine1: patient.addressLine1,
+      addressLine2: patient.addressLine2,
+      city: patient.city,
+      stateCode: patient.stateCode,
+      countryCode: patient.countryCode,
+      postalCode: patient.postalCode,
+      isActive: patient.isActive,
+    };
   }
 
   async findByIdForSwitch(id: number): Promise<PatientDto> {
@@ -701,7 +827,7 @@ export class PatientsService {
             lastName: addPatientDto.lastName,
             email: addPatientDto.email,
             phoneNumber: addPatientDto.phoneNumber,
-            // gender: addDoctorDto.gender,
+            gender: patientDto.gender,
             bloodgroup:addPatientDto.bloodgroup,
             dob:addPatientDto.dob,
             digitalHealthCode:addPatientDto.digitalHealthCode,

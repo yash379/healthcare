@@ -750,7 +750,7 @@ export class DoctorsService {
             email: addDoctorDto.email,
             phoneNumber: addDoctorDto.phoneNumber,
             speciality: addDoctorDto.speciality,
-            // gender: addDoctorDto.gender,
+            gender: doctorDto.gender,
             doctorCode: addDoctorDto.doctorCode,
           },
         });

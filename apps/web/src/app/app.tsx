@@ -14,6 +14,8 @@ import LogOut from './Components/log-out/log-out';
 import ForgotPassword from './pages/forgot-password/forgot-password';
 import UpdatePassword from './pages/update-password/update-password';
 import Security from './Components/security/security';
+import ListPatients from './pages/list-patient/list-patient';
+import AddPatientPage from './pages/list-patient/add-patient-page/add-patient-page';
 export function App() {
 
   const location = useLocation();
@@ -62,6 +64,8 @@ export function App() {
             <Route path="/" element={<Layout />}>
 
               <Route path="/dashboard/:hospitalId" element={<Dashboard />} />
+              <Route path="/hospital/:hospitalId/patients" element={<ListPatients />} />
+              <Route path="/hospital/:hospitalId/patients/add" element={<AddPatientPage />} />
               <Route path="/profile" element={<Profile />} />
             </Route>
           </Route>
