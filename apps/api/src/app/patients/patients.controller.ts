@@ -16,13 +16,13 @@ import {
   UseInterceptors,
   Res,
 } from '@nestjs/common';
-import { DoctorsService } from './doctors.service';
+import { PatientsService } from './patients.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ListDoctorPageDto } from './dto/list-doctor-page.dto';
-import { DoctorDto } from './dto/doctors.dto';
-import { AddDoctorDto } from './dto/add-doctor.dto';
-import { ViewDoctorDto } from './dto/view-doctor.dto';
+import { ListPatientPageDto } from './dto/list-patient-page.dto';
+import { PatientDto } from './dto/patient.dto';
+import { AddPatientDto } from './dto/add-patient.dto';
+import { ViewPatientDto } from './dto/view-patient.dto';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
@@ -31,19 +31,19 @@ import { FileDto } from '../core/dto/page-base.dto';
 import * as xlsx from 'xlsx';
 import { Gender } from '@prisma/client';
 
-@ApiTags('doctors')
+@ApiTags('patients')
 @Controller()
-export class DoctorsController {
-  constructor(private doctorsService: DoctorsService) {}
+export class PatientsController {
+  constructor(private patientsService: PatientsService) {}
 
   // @UseGuards(AuthGuard,RolesGuard)
   // @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  // @Get('/hospitals/:hospitalId/doctors')
+  // @Get('/hospitals/:hospitalId/patients')
   // @HttpCode(HttpStatus.OK)
-  // @ApiOkResponse({ type: ListDoctorPageDto })
-  // async getDoctorForHospital(
+  // @ApiOkResponse({ type: ListPatientPageDto })
+  // async getPatientForHospital(
   //   @Request() req,
-  //   @Param('doctorId') doctorId: number,
+  //   @Param('patientId') patientId: number,
   //   @Query('pageSize') pageSize?: number,
   //   @Query('pageOffset') pageOffset?: number,
   //   @Query('firstName') firstName?: string,
@@ -51,13 +51,13 @@ export class DoctorsController {
   //   @Query('email') email?: string,
   //   @Query('phoneNumber') phoneNumber?: string,
   //   @Query('speciality') speciality?: string,
-  //   @Query('doctorCode') doctorCode?: string,
+  //   @Query('patientCode') patientCode?: string,
   //   @Query('gender') gender?: Gender,
   //   @Query('sortBy') sortBy?: string,
   //   @Query('sortOrder') sortOrder?: 'asc' | 'desc'
-  // ): Promise<ListDoctorPageDto> {
+  // ): Promise<ListPatientPageDto> {
   //   const { user } = req;
-  //   const listdoc = await this.doctorsService.getFilteredDoctors(
+  //   const listdoc = await this.patientsService.getFilteredPatients(
   //     +pageSize,
   //     +pageOffset,
   //     firstName,
@@ -65,24 +65,24 @@ export class DoctorsController {
   //     email,
   //     phoneNumber,
   //     speciality,
-  //     doctorCode,
+  //     patientCode,
   //     gender,
   //     sortBy,
   //     sortOrder,
   //     user.id,
-  //     +doctorId,undefined,undefined,undefined,
+  //     +patientId,undefined,undefined,undefined,
   //     false
   //   );
   //   return listdoc;
   // }
 
-  // @ApiOperation({summary: "export doctors data by hospital"})
+  // @ApiOperation({summary: "export patients data by hospital"})
   // @UseGuards(AuthGuard,RolesGuard)
   // @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  // @Get('/hospitals/:hospitalId/doctors/export')
+  // @Get('/hospitals/:hospitalId/patients/export')
   // @HttpCode(HttpStatus.OK)
   // async exportVehicleData(@Param('hospitalId') hospitalId: number,@Res() res) {
-  //   const data = await this.doctorsService.exportDoctorsDetailsForHospital(+hospitalId);
+  //   const data = await this.patientsService.exportPatientsDetailsForHospital(+hospitalId);
 
   //   // Create a workbook and add a worksheet
   //   const ws = xlsx.utils.aoa_to_sheet(data);
@@ -95,7 +95,7 @@ export class DoctorsController {
   //   // Set the response headers
   //   res.set({
   //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  //     'Content-Disposition': 'attachment; filename=doctorDetails.xlsx',
+  //     'Content-Disposition': 'attachment; filename=patientDetails.xlsx',
   //   });
 
   //   // Send the buffer as the response
@@ -103,16 +103,16 @@ export class DoctorsController {
   // }
 
   
-  // @ApiOperation({summary:'Doctor bulk data upload'})
+  // @ApiOperation({summary:'Patient bulk data upload'})
   // @ApiBody({ type: FileDto })
   // @ApiConsumes('multipart/form-data') // Specify the media type for file upload
   // @UseInterceptors(FileInterceptor('file'))
   // // @UseGuards(AuthGuard, RolesGuard)
   // @HttpCode(HttpStatus.CREATED)
-  // @Post('/hospitals/:hospitalId/doctors/bulkupload')
+  // @Post('/hospitals/:hospitalId/patients/bulkupload')
   // @HttpCode(HttpStatus.CREATED)
   // // @ApiOkResponse({ type: ListHospitalDto })
-  // bulkUploadDoctorData(
+  // bulkUploadPatientData(
   //   @Param('hospitalId') hospitalId: number,
   //   @Body() fileDto : FileDto ,
   //   @UploadedFile(
@@ -131,10 +131,10 @@ export class DoctorsController {
   // )
   // // : Promise<ListHospitalDto> 
   // {
-  //   return this.doctorsService.bulkUploadDoctorData(+hospitalId, fileDto,file);
+  //   return this.patientsService.bulkUploadPatientData(+hospitalId, fileDto,file);
   // }
 
-  //   @ApiOperation({summary:'bulk doctor data upload'})
+  //   @ApiOperation({summary:'bulk patient data upload'})
   //   @ApiBody({ type: FileDto })
   //   @ApiConsumes('multipart/form-data') // Specify the media type for file upload
   //   @UseInterceptors(FileInterceptor('file'))
@@ -165,56 +165,56 @@ export class DoctorsController {
   //   )
   //   // : Promise<ListHospitalDto> 
   //   {
-  //     return this.doctorsService.bulkUploadDoctorsData(+hospitalId,+buildingId,+floorId,+flatId, fileDto,file);
+  //     return this.patientsService.bulkUploadPatientsData(+hospitalId,+buildingId,+floorId,+flatId, fileDto,file);
   //   }
 
-  @ApiOperation({summary: "add doctors for the hospital"})
+  @ApiOperation({summary: "add patients for the hospital"})
   @UseGuards(AuthGuard,RolesGuard)
   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Post('/hospitals/:hospitalId/doctors')
+  @Post('/hospitals/:hospitalId/patients')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOkResponse({ type: DoctorDto })
+  @ApiOkResponse({ type: PatientDto })
   add(
     @Param('hospitalId') hospitalId: number,
-    @Body() addDoctorDto: AddDoctorDto
-  ): Promise<DoctorDto> {
-    return this.doctorsService.add(+hospitalId, addDoctorDto);
+    @Body() addPatientDto: AddPatientDto
+  ): Promise<PatientDto> {
+    return this.patientsService.add(+hospitalId, addPatientDto);
   }
 
   @UseGuards(AuthGuard,RolesGuard)
   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Get('/hospitals/:hospitalId/doctors/:id')
+  @Get('/hospitals/:hospitalId/patients/:id')
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: ViewDoctorDto })
+  @ApiOkResponse({ type: ViewPatientDto })
   findById(
     @Param('hospitalId') hospitalId: number,
     @Param('id') id: number,
     @Request() req
-  ): Promise<ViewDoctorDto> {
+  ): Promise<ViewPatientDto> {
     // const { user } = req;
-    return this.doctorsService.findById(+hospitalId, +id);
+    return this.patientsService.findById(+hospitalId, +id);
   }
 
   @UseGuards(AuthGuard,RolesGuard)
   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Put('/hospitals/:hospitalId/doctors/:id')
+  @Put('/hospitals/:hospitalId/patients/:id')
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: DoctorDto })
+  @ApiOkResponse({ type: PatientDto })
   edit(
     @Param('hospitalId') hospitalId: number,
-    @Body() doctorDto: AddDoctorDto,
+    @Body() patientDto: AddPatientDto,
     @Param('id') id: number
-  ): Promise<DoctorDto> {
-    return this.doctorsService.edit(+hospitalId, doctorDto, id);
+  ): Promise<PatientDto> {
+    return this.patientsService.edit(+hospitalId, patientDto, id);
   }
 
 
 
   @UseGuards(AuthGuard,RolesGuard)
   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Get('/hospitals/:hospitalId/doctors')
+  @Get('/hospitals/:hospitalId/patients')
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: ListDoctorPageDto })
+  @ApiOkResponse({ type: ListPatientPageDto })
   async getFilteredPosts(
     @Request() req,
     @Param('hospitalId') hospitalId: number,
@@ -224,45 +224,43 @@ export class DoctorsController {
     @Query('lastName') lastName?: string,
     @Query('email') email?: string,
     @Query('phoneNumber') phoneNumber?: string,
-    @Query('speciality') speciality?: string,
-    @Query('doctorCode') doctorCode?: string,
+    @Query('digitalHeathCode') digitalHeathCode?: string,
     // @Query('gender') gender?: Gender,
     @Query('sortBy') sortBy?: string,
     @Query('sortOrder') sortOrder?: 'asc' | 'desc'
-  ): Promise<ListDoctorPageDto> {
-    // const { doctor } = req;
-    const listdoctor = await this.doctorsService.getFilteredDoctors(
+  ): Promise<ListPatientPageDto> {
+    // const { patient } = req;
+    const listpatient = await this.patientsService.getFilteredPatients(
       +pageSize,
       +pageOffset,
       firstName,
       lastName,
       email,
       phoneNumber,
-      speciality,
-      doctorCode,
+      digitalHeathCode,
       // gender,
       sortBy,
       sortOrder,
-      // doctor.id,
+      // patient.id,
       +hospitalId,
       true
     );
-    return listdoctor;
+    return listpatient;
   }
 
   @UseGuards(AuthGuard,RolesGuard)
   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Delete('/hospitals/:hospitalId/doctors/:id')
+  @Delete('/hospitals/:hospitalId/patients/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOkResponse()
   delete( @Param('hospitalId') hospitalId: number,
  @Param('id') id: number) {
-    return this.doctorsService.deleteDoctor(+hospitalId, +id);
+    return this.patientsService.deletePatient(+hospitalId, +id);
   }
 
   @UseGuards(AuthGuard,RolesGuard)
   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
-  @Post('/hospitals/:hospitalId/doctors/:id/:status')
+  @Post('/hospitals/:hospitalId/patients/:id/:status')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOkResponse()
   softDelete(
@@ -270,6 +268,6 @@ export class DoctorsController {
     @Param('id') id: number,
     @Param('status') status: string
   ) {
-    return this.doctorsService.softDeleteDoctor(+hospitalId, +id, status);
+    return this.patientsService.softDeletePatient(+hospitalId, +id, status);
   }
 }

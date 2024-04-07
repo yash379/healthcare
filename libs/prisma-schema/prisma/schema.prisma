@@ -158,10 +158,11 @@ model Hospital {
   isActive     Boolean   @map("is_active")
   code         String    @map("code")
 
-  patients Patient[]
+  // patients        Patient[]
   // doctors        Doctor[]
-  users    UserHospitalRole[]
-  doctors  DoctorHospital[]
+  users           UserHospitalRole[]
+  doctors         DoctorHospital[]
+  patients        PatientHospital[]
 
   @@unique([code])
   @@map("hospitals")
@@ -181,17 +182,17 @@ model DoctorHospital {
 }
 
 model Doctor {
-  id          Int     @id @default(autoincrement())
-  email       String  @unique
-  gender      Gender  @map("gender")
-  doctorCode  String  @map("doctor_code")
-  speciality  String  @map("speciality")
-  phoneNumber String? @map("phone_number")
-  firstName   String  @map("first_name")
-  lastName    String  @map("last_name")
-  isActive    Boolean @default(true) @map("is_active")
-   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt         DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  gender      Gender    @map("gender")
+  doctorCode  String    @map("doctor_code")
+  speciality  String    @map("speciality")
+  phoneNumber String?   @map("phone_number")
+  firstName   String    @map("first_name")
+  lastName    String    @map("last_name")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
   password    String?
   token       String?
 
@@ -202,6 +203,19 @@ model Doctor {
 
   @@unique([doctorCode])
   @@map("doctors")
+}
+
+model PatientHospital {
+  id                Int      @id @default(autoincrement()) @map("id")
+  hospitalId        Int      @map("hospital_id")
+  patientId         Int      @map("patient_id")
+  isPrimary         Boolean  @default(false) @map("is_primary")
+  digitalHealthCode String   @map("digitalHealthCode")
+  hospital          Hospital @relation(fields: [hospitalId], references: [id])
+  patient           Patient  @relation(fields: [patientId], references: [id])
+
+  @@unique([hospitalId, patientId])
+  @@map("patient_hospitals")
 }
 
 model Patient {
@@ -224,8 +238,9 @@ model Patient {
   updatedAt         DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
   isActive          Boolean   @map("is_active")
 
-  hospital   Hospital @relation(fields: [hospitalId], references: [id])
-  hospitalId Int      @map("hospital_id")
+  // hospital        Hospital          @relation(fields: [hospitalId], references: [id])
+  // hospitalId      Int               @map("hospital_id")
+  hospitals     PatientHospital[]
 
   @@unique([digitalHealthCode])
   @@map("patients")

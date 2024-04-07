@@ -25,6 +25,7 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import UpdatePassword from './pages/update-password/update-password';
 import ForgetPassword from './pages/forget-password/forget-password';
 import ListDoctors from './pages/list-doctor/list-doctor';
+import ListPatients from './pages/list-patient/list-patient';
 
 export function App() {
 
@@ -86,6 +87,7 @@ export function App() {
               <Route path="/hospitals/:hospitalId" element={<View/>}/>
               <Route path="/hospitals/:hospitalId/details" element={<ViewHospitalPage/>}/>
               <Route path="/hospitals/:hospitalId/doctors" element={<ListDoctors/>}/>
+              <Route path="/hospitals/:hospitalId/patients" element={<ListPatients />}/>
 
               <Route path="/profile" element={<Profile />}/>
             </Route>

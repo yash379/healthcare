@@ -4,19 +4,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { DoctorDto } from './dto/doctors.dto';
-import { PrismaClient, DoctorHospital, Gender } from '@prisma/client';
-import { AddDoctorDto } from './dto/add-doctor.dto';
-import { ViewDoctorDto } from './dto/view-doctor.dto';
-import { ListDoctorPageDto } from './dto/list-doctor-page.dto';
+import { PatientDto } from './dto/patient.dto';
+import { PrismaClient, PatientHospital, Gender } from '@prisma/client';
+import { AddPatientDto } from './dto/add-patient.dto';
+import { ViewPatientDto } from './dto/view-patient.dto';
+import { ListPatientPageDto } from './dto/list-patient-page.dto';
 import { FileDto } from '../core/dto/page-base.dto';
 import * as xlsx from 'xlsx';
 
 @Injectable()
-export class DoctorsService {
+export class PatientsService {
   private prisma = new PrismaClient();
 
-  // async exportDoctorsDetailsForHospital(hospitalId: number) {
+  // async exportPatientsDetailsForHospital(hospitalId: number) {
   //   const hospital = await this.prisma.hospital.findFirst({
   //     where: {
   //       id: hospitalId
@@ -25,13 +25,12 @@ export class DoctorsService {
 
   //   if (!hospital) throw new HttpException("hospital not found", HttpStatus.NOT_FOUND);
 
-  //   // generate doctor data for the hospital where the doctor is associated for the hospital
-  //   const doctors = await this.prisma.doctor.findMany({
+  //   // generate patient data for the hospital where the patient is associated for the hospital
+  //   const patients = await this.prisma.patient.findMany({
   //     select: {
   //       id: true,
   //       firstName: true,
   //       lastName: true,
-  //       doctorCode: true,
   //       gender: true,
   //       email: true,
   //       phoneNumber: true,
@@ -286,8 +285,8 @@ export class DoctorsService {
 
   async add(
     hospitalId: number,
-    addDoctordto: AddDoctorDto
-  ): Promise<DoctorDto> {
+    addPatientdto: AddPatientDto
+  ): Promise<PatientDto> {
     if (Number.isNaN(hospitalId)) {
       throw new HttpException(
         'Hospital id is missing in params',
@@ -311,39 +310,47 @@ export class DoctorsService {
     }
 
     const isPhoneNumberValid = this.isValidMobileNumber(
-      addDoctordto.phoneNumber
+      addPatientdto.phoneNumber
     );
 
     if (!isPhoneNumberValid) {
       throw new HttpException(
-        `${addDoctordto.phoneNumber} is a valid 10-digit mobile number.`,
+        `${addPatientdto.phoneNumber} is a valid 10-digit mobile number.`,
         HttpStatus.BAD_REQUEST
       );
     }
 
-    const doctor = await this.prisma.doctor.findFirst({
+    const patient = await this.prisma.patient.findFirst({
       where: {
-        firstName: addDoctordto.firstName,
-        lastName: addDoctordto.lastName,
-        speciality: addDoctordto.speciality,
-        gender: addDoctordto.gender,
-        email: addDoctordto.email,
-        phoneNumber: addDoctordto.phoneNumber,
-        isActive: addDoctordto.isActive,
+        firstName: addPatientdto.firstName,
+        lastName: addPatientdto.lastName,
+        email: addPatientdto.email,
+        phoneNumber: addPatientdto.phoneNumber,
+        gender: addPatientdto.gender,
+        bloodgroup: addPatientdto.bloodgroup,
+        dob: addPatientdto.dob,
+        digitalHealthCode: addPatientdto.digitalHealthCode,
+        addressLine1: addPatientdto.addressLine1,
+        addressLine2: addPatientdto.addressLine2,
+        city: addPatientdto.city,
+        stateCode: addPatientdto.stateCode,
+        countryCode: addPatientdto.countryCode,
+        postalCode: addPatientdto.postalCode,
+        isActive: addPatientdto.isActive,
       },
     });
-    if (doctor) {
-      const doctorHospital = await this.prisma.doctorHospital.findFirst({
+    if (patient) {
+      const patientHospital = await this.prisma.patientHospital.findFirst({
         where: {
           hospitalId: hospitalId,
-          doctorId: doctor.id,
+          patientId: patient.id,
         },
       });
-      if (doctorHospital) {
+      if (patientHospital) {
         throw new HttpException(
           {
             status: HttpStatus.BAD_REQUEST,
-            error: 'Doctor already exists',
+            error: 'Patient already exists',
           },
           HttpStatus.BAD_REQUEST
         );
@@ -354,23 +361,22 @@ export class DoctorsService {
       if (!checkHospital) {
         throw new NotFoundException();
       } else {
-        const { gender } = addDoctordto;
-        const addDoctorData = {
+        const { gender } = addPatientdto;
+        const addPatientData = {
           hospitalId: hospitalId,
-          doctorId: doctor.id,
-          // firstName: doctor.firstName,
-          // lastName: doctor.lastName,
-          // email: doctor.email,
-          // phoneNumber: doctor.phoneNumber,
-          speciality: doctor.speciality,
-          // doctorCode: doctor.doctorCode,
-          // gender: doctor.gender,
+          patientId: patient.id,
+          digitalHealthCode:patient.digitalHealthCode,
+          // firstName: patient.firstName,
+          // lastName: patient.lastName,
+          // email: patient.email,
+          // phoneNumber: patient.phoneNumber,
+          // gender: patient.gender,
         };
-        console.log(addDoctorData);
-        // const addDoctorHospital = await this.prisma.doctorHospital.create({
-        //   data: addDoctorData,
-        // });
-        // if (addDoctorData.isPrimary) {
+        console.log(addPatientData);
+        const addPatientHospital = await this.prisma.patientHospital.create({
+          data: addPatientData,
+        });
+        // if (addPatientData.isPrimary) {
         //   // set other residents of this flat as not primary
         //   await this.prisma.residentFlat.updateMany({
         //     where: { flatId: flatId, residentId: { not: resident.id } },
@@ -378,16 +384,24 @@ export class DoctorsService {
         //   });
         // }
         return {
-          id: doctor.id,
-          firstName: doctor.firstName,
-          lastName: doctor.lastName,
-          email: doctor.email,
-          phoneNumber: doctor.phoneNumber,
-          speciality: doctor.speciality,
-          gender: doctor.gender,
-          doctorCode: doctor.doctorCode,
-          // hospitalId:addDoctorHospital.hospitalId,
-          isActive: doctor.isActive,
+          id: patient.id,
+          firstName: patient.firstName,
+          lastName: patient.lastName,
+          email: patient.email,
+          phoneNumber: patient.phoneNumber,
+          gender: patient.gender,
+          bloodgroup: patient.bloodgroup,
+          dob: patient.dob,
+          digitalHealthCode: patient.digitalHealthCode,
+          addressLine1: patient.addressLine1,
+          addressLine2: patient.addressLine2,
+          city: patient.city,
+          stateCode: patient.stateCode,
+          countryCode: patient.countryCode,
+          postalCode: patient.postalCode,
+
+          // hospitalId:addPatientHospital.hospitalId,
+          isActive: patient.isActive,
         };
       }
     }
@@ -398,42 +412,49 @@ export class DoctorsService {
     if (!checkHospital) {
       throw new NotFoundException();
     } else {
-      const { gender, ...addDoctorDto } = addDoctordto;
-      const addDoctor = await this.prisma.doctor.create({
+      const { gender, ...addPatientDto } = addPatientdto;
+      const addPatient = await this.prisma.patient.create({
         data: {
-          firstName: addDoctorDto.firstName,
-          lastName: addDoctorDto.lastName,
-          email: addDoctorDto.email,
-          phoneNumber: addDoctorDto.phoneNumber,
-          doctorCode: addDoctorDto.doctorCode,
+          firstName: addPatientDto.firstName,
+          lastName: addPatientDto.lastName,
+          email: addPatientDto.email,
+          phoneNumber: addPatientDto.phoneNumber,
           gender: gender,
-          speciality: addDoctorDto.speciality,
-          isActive: addDoctorDto.isActive,
+          bloodgroup: addPatientDto.bloodgroup,
+          dob: addPatientDto.dob,
+          digitalHealthCode: addPatientDto.digitalHealthCode,
+          addressLine1: addPatientDto.addressLine1,
+          addressLine2: addPatientDto.addressLine2,
+          city: addPatientDto.city,
+          stateCode: addPatientDto.stateCode,
+          countryCode: addPatientDto.countryCode,
+          postalCode: addPatientDto.postalCode,
+
+          isActive: addPatientDto.isActive,
           hospitals: {
             create: [
               {
                 hospitalId: hospitalId,
-                speciality: addDoctorDto.speciality,
+                digitalHealthCode: addPatientDto.digitalHealthCode,
               },
             ],
           },
         },
       });
-      const addDoctorData = {
+      const addPatientData = {
         hospitalId: hospitalId,
-        doctorId: addDoctor.id,
+        patientId: addPatient.id,
+        digitalHealthCode:addPatient.digitalHealthCode,
         // gender: gender,
-        // firstName: addDoctorDto.firstName,
-        // lastName: addDoctorDto.lastName,
-        // email: addDoctorDto.email,
-        // phoneNumber: addDoctorDto.phoneNumber,
-        // doctorCode: addDoctorDto.doctorCode,
-        speciality: addDoctorDto.speciality,
+        // firstName: addPatientDto.firstName,
+        // lastName: addPatientDto.lastName,
+        // email: addPatientDto.email,
+        // phoneNumber: addPatientDto.phoneNumber,
         // gender:gender,
-        // isActive: addDoctorDto.isActive
+        // isActive: addPatientDto.isActive
       };
-      const addDoctorHospital = await this.prisma.doctorHospital.create({
-        data: addDoctorData,
+      const addPatientHospital = await this.prisma.patientHospital.create({
+        data: addPatientData,
       });
       // if (addResidentData.isPrimary) {
       //   // set other residents of this flat as not primary
@@ -443,60 +464,81 @@ export class DoctorsService {
       //   });
       // }
       return {
-        id: addDoctor.id,
-        firstName: addDoctor.firstName,
-        lastName: addDoctor.lastName,
-        email: addDoctor.email,
-        phoneNumber: addDoctor.phoneNumber,
-        gender: addDoctor.gender,
-        speciality: addDoctor.speciality,
-        doctorCode: addDoctor.doctorCode,
-        isActive: addDoctor.isActive,
+        id: addPatient.id,
+        firstName: addPatient.firstName,
+        lastName: addPatient.lastName,
+        email: addPatient.email,
+        phoneNumber: addPatient.phoneNumber,
+        gender: addPatient.gender,
+        bloodgroup: addPatient.bloodgroup,
+        dob: addPatient.dob,
+        digitalHealthCode: addPatient.digitalHealthCode,
+        addressLine1: addPatient.addressLine1,
+        addressLine2: addPatient.addressLine2,
+        city: addPatient.city,
+        stateCode: addPatient.stateCode,
+        countryCode: addPatient.countryCode,
+        postalCode: addPatient.postalCode,
+        isActive: addPatient.isActive,
       };
     }
   }
 
-  async findByIdForSwitch(id: number): Promise<DoctorDto> {
-    const doctor = await this.prisma.doctor.findUnique({
+  async findByIdForSwitch(id: number): Promise<PatientDto> {
+    const patient = await this.prisma.patient.findUnique({
       where: { id: Number(id) },
       select: {
         id: true,
-        email: true,
-        phoneNumber: true,
         firstName: true,
         lastName: true,
-        isActive: true,
-        speciality: true,
-        doctorCode: true,
+        email: true,
+        phoneNumber: true,
         gender: true,
+        bloodgroup: true,
+        dob: true,
+        digitalHealthCode: true,
+        addressLine1: true,
+        addressLine2: true,
+        city: true,
+        stateCode: true,
+        countryCode: true,
+        postalCode: true,
+        isActive: true,
       },
     });
-    console.log(doctor);
-    if (!doctor) {
+    console.log(patient);
+    if (!patient) {
       throw new NotFoundException();
     }
-    if (!doctor.isActive)
-      throw new HttpException('doctor is inactive', HttpStatus.BAD_REQUEST);
+    if (!patient.isActive)
+      throw new HttpException('patient is inactive', HttpStatus.BAD_REQUEST);
 
-    const viewDoctor = {
-      id: doctor.id,
-      email: doctor.email,
-      phoneNumber: doctor.phoneNumber,
-      firstName: doctor.firstName,
-      lastName: doctor.lastName,
-      isActive: doctor.isActive,
-      speciality: doctor.speciality,
-      doctorCode: doctor.doctorCode,
-      gender: doctor.gender,
+    const viewPatient = {
+      id: patient.id,
+      firstName: patient.firstName,
+      lastName: patient.lastName,
+      email: patient.email,
+      phoneNumber: patient.phoneNumber,
+      gender: patient.gender,
+      bloodgroup: patient.bloodgroup,
+      dob: patient.dob,
+      digitalHealthCode: patient.digitalHealthCode,
+      addressLine1: patient.addressLine1,
+      addressLine2: patient.addressLine2,
+      city: patient.city,
+      stateCode: patient.stateCode,
+      countryCode: patient.countryCode,
+      postalCode: patient.postalCode,
+      isActive: patient.isActive,
     };
-    return viewDoctor;
+    return viewPatient;
   }
 
   async findByEmail(email: string) {
-    console.log(email)
-    const user = await this.prisma.doctor.findFirst({
+    console.log(email);
+    const user = await this.prisma.patient.findFirst({
       where: { email },
-      select: { id: true, email: true, password: true, firstName: true },
+      select: { id: true, email: true, firstName: true },
     });
     if (!user) {
       throw new NotFoundException();
@@ -508,7 +550,7 @@ export class DoctorsService {
     hospitalId: number,
     id: number
     // userId: number
-  ): Promise<ViewDoctorDto> {
+  ): Promise<ViewPatientDto> {
     if (Number.isNaN(hospitalId) || Number.isNaN(id)) {
       throw new HttpException(
         'hospital id is missing in params',
@@ -521,7 +563,7 @@ export class DoctorsService {
         id: hospitalId,
       },
       select: {
-        doctors: {
+        patients: {
           where: {
             id: id,
           },
@@ -535,7 +577,7 @@ export class DoctorsService {
       );
     }
 
-    const doctorview = await this.prisma.doctor.findUnique({
+    const patientview = await this.prisma.patient.findUnique({
       where: { id: Number(id) },
       select: {
         id: true,
@@ -543,17 +585,24 @@ export class DoctorsService {
         lastName: true,
         email: true,
         phoneNumber: true,
-        speciality: true,
         gender: true,
-        doctorCode: true,
+        bloodgroup: true,
+        dob: true,
+        digitalHealthCode:true,
+        addressLine1: true,
+        addressLine2: true,
+        city: true,
+        stateCode:true,
+        countryCode: true,
+        postalCode: true,
         isActive: true,
       },
     });
-    if (!doctorview) {
+    if (!patientview) {
       throw new NotFoundException();
     } else {
-      if (doctorview.isActive) {
-        return doctorview;
+      if (patientview.isActive) {
+        return patientview;
       } else {
         throw new NotFoundException();
       }
@@ -562,9 +611,9 @@ export class DoctorsService {
 
   async edit(
     hospitalId: number,
-    doctorDto: AddDoctorDto,
+    patientDto: AddPatientDto,
     id: number
-  ): Promise<DoctorDto & { hospitalId: number }> {
+  ): Promise<PatientDto & { hospitalId: number }> {
     if (Number.isNaN(hospitalId) || Number.isNaN(id)) {
       throw new HttpException(
         'hospital id is missing in params',
@@ -577,7 +626,7 @@ export class DoctorsService {
         id: hospitalId,
       },
       // select: {
-      //   doctors: {
+      //   patients: {
       //     where: {
       //       id: id,
       //     },
@@ -591,36 +640,43 @@ export class DoctorsService {
       );
     }
 
-    const isPhoneNumberValid = this.isValidMobileNumber(doctorDto.phoneNumber);
+    const isPhoneNumberValid = this.isValidMobileNumber(patientDto.phoneNumber);
 
     if (!isPhoneNumberValid) {
       throw new HttpException(
-        `${doctorDto.phoneNumber} is a valid 10-digit mobile number.`,
+        `${patientDto.phoneNumber} is a valid 10-digit mobile number.`,
         HttpStatus.BAD_REQUEST
       );
     }
 
-    const checkdoctor = await this.prisma.doctor.findUnique({
+    const checkpatient = await this.prisma.patient.findUnique({
       where: { id: Number(id) },
     });
-    const doctor = await this.prisma.doctor.findFirst({
+    const patient = await this.prisma.patient.findFirst({
       where: {
-        firstName: doctorDto.firstName,
-        lastName: doctorDto.lastName,
-        email: doctorDto.email,
-        phoneNumber: doctorDto.phoneNumber,
-        speciality: doctorDto.speciality,
-        gender: doctorDto.gender,
-        doctorCode: doctorDto.doctorCode,
-        isActive: doctorDto.isActive,
+        firstName: patientDto.firstName,
+        lastName: patientDto.lastName,
+        email: patientDto.email,
+        phoneNumber: patientDto.phoneNumber,
+        gender: patientDto.gender,
+        bloodgroup: patientDto.bloodgroup,
+        dob: patientDto.dob,
+        digitalHealthCode: patientDto.digitalHealthCode,
+        addressLine1: patientDto.addressLine1,
+        addressLine2: patientDto.addressLine2,
+        city: patientDto.city,
+        stateCode: patientDto.stateCode,
+        countryCode: patientDto.countryCode,
+        postalCode: patientDto.postalCode,
+        isActive: patientDto.isActive,
       },
     });
 
-    if (!checkdoctor) {
+    if (!checkpatient) {
       throw new NotFoundException();
     } else {
-      // const doctorHospital = await this.createDoctorHospital(
-      //   doctorDto,
+      // const patientHospital = await this.createPatientHospital(
+      //   patientDto,
       //   id,
       //   hospitalId
       // );
@@ -631,23 +687,30 @@ export class DoctorsService {
       if (!checkhospital) {
         throw new NotFoundException();
       } else {
-        if (doctor && doctor.id != id) {
+        if (patient && patient.id != id) {
           throw new HttpException(
-            'Doctor with same email already exists',
+            'Patient with same email already exists',
             HttpStatus.BAD_REQUEST
           );
         }
-        const { gender, ...addDoctorDto } = doctorDto;
-        const updateDoctor = await this.prisma.doctor.update({
+        const { gender, ...addPatientDto } = patientDto;
+        const updatePatient = await this.prisma.patient.update({
           where: { id: Number(id) },
           data: {
-            firstName: addDoctorDto.firstName,
-            lastName: addDoctorDto.lastName,
-            email: addDoctorDto.email,
-            phoneNumber: addDoctorDto.phoneNumber,
-            speciality: addDoctorDto.speciality,
+            firstName: addPatientDto.firstName,
+            lastName: addPatientDto.lastName,
+            email: addPatientDto.email,
+            phoneNumber: addPatientDto.phoneNumber,
             // gender: addDoctorDto.gender,
-            doctorCode: addDoctorDto.doctorCode,
+            bloodgroup:addPatientDto.bloodgroup,
+            dob:addPatientDto.dob,
+            digitalHealthCode:addPatientDto.digitalHealthCode,
+            addressLine1:addPatientDto.addressLine1,
+            addressLine2:addPatientDto.addressLine2,
+            city:addPatientDto.city,
+            stateCode:addPatientDto.stateCode,
+            countryCode:addPatientDto.countryCode,
+            postalCode:addPatientDto.postalCode,
           },
         });
 
@@ -663,37 +726,43 @@ export class DoctorsService {
         //   data: { isPrimary: addResidentDto.isPrimary, type: type },
         // });
         return {
-          id: updateDoctor.id,
-          firstName: updateDoctor.firstName,
-          lastName: updateDoctor.lastName,
-          gender: updateDoctor.gender,
-          email: updateDoctor.email,
-          phoneNumber: updateDoctor.phoneNumber,
+          id: updatePatient.id,
+          firstName: updatePatient.firstName,
+          lastName: updatePatient.lastName,
+          gender: updatePatient.gender,
+          email: updatePatient.email,
+          phoneNumber: updatePatient.phoneNumber,
+          bloodgroup: updatePatient.bloodgroup,
+          dob: updatePatient.dob,
+          digitalHealthCode: updatePatient.digitalHealthCode,
+          addressLine1: updatePatient.addressLine1,
+          addressLine2: updatePatient.addressLine2,
+          city: updatePatient.city,
+          stateCode: updatePatient.stateCode,
+          countryCode: updatePatient.countryCode,
+          postalCode: updatePatient.postalCode,
           hospitalId: hospitalId,
-          speciality: updateDoctor.speciality,
-          doctorCode: updateDoctor.doctorCode,
-          isActive: updateDoctor.isActive,
+          isActive: updatePatient.isActive,
         };
       }
     }
   }
 
-  async getFilteredDoctors(
+  async getFilteredPatients(
     pageSize: number,
     pageOffset: number,
     firstName: string,
     lastName: string,
     email: string,
     phoneNumber: string,
-    speciality: string,
-    doctorCode: string,
+    digitalHeathCode: string,
     // gender:Gender,
     sortBy: string,
     sortOrder: 'asc' | 'desc',
-    // doctorId: number,
+    // patientId: number,
     hospitalId: number,
     associateHospitalId: boolean
-  ): Promise<ListDoctorPageDto> {
+  ): Promise<ListPatientPageDto> {
     if (Number.isNaN(hospitalId)) {
       throw new HttpException(
         'hospital id is missing in params',
@@ -708,9 +777,9 @@ export class DoctorsService {
         },
         select: {
           id: true,
-          // doctors: {
+          // patients: {
           //   where: {
-          //     id: doctorId,
+          //     id: patientId,
           //   },
           // },
         },
@@ -727,7 +796,7 @@ export class DoctorsService {
       const size = pageSize ? pageSize : 10;
       const offset = pageOffset ? pageOffset : 0;
       const orderBy = { [sort]: order };
-      const count = await this.prisma.doctor.count({
+      const count = await this.prisma.patient.count({
         where: {
           hospitals: {
             some: {
@@ -737,16 +806,23 @@ export class DoctorsService {
         },
       });
 
-      const doctors = await this.prisma.doctor.findMany({
+      const patients = await this.prisma.patient.findMany({
         select: {
           id: true,
           firstName: true,
           lastName: true,
           email: true,
           phoneNumber: true,
-          speciality: true,
           gender: true,
-          doctorCode: true,
+          bloodgroup: true,
+          dob: true,
+          digitalHealthCode: true,
+          addressLine1: true,
+          addressLine2: true,
+          city: true,
+          stateCode: true,
+          countryCode: true,
+          postalCode: true,
           isActive: true,
           createdAt: true,
           updatedAt: true,
@@ -767,11 +843,10 @@ export class DoctorsService {
             some: {
               hospitalId: hospitalId,
               hospital: {
-            id: hospitalId,
+                id: hospitalId,
+              },
+            },
           },
-        },
-      },
-    
         },
       });
 
@@ -785,7 +860,7 @@ export class DoctorsService {
             order: order,
           },
         ],
-        content: doctors,
+        content: patients,
       };
     }
 
@@ -805,8 +880,8 @@ export class DoctorsService {
     if (lastName !== undefined) {
       whereArray.push({ name: { contains: lastName, mode: 'insensitive' } });
     }
-    if (speciality !== undefined) {
-      whereArray.push({ name: { contains: speciality, mode: 'insensitive' } });
+    if (digitalHeathCode !== undefined) {
+      whereArray.push({ name: { contains: digitalHeathCode, mode: 'insensitive' } });
     }
 
     if (email !== undefined) {
@@ -831,20 +906,27 @@ export class DoctorsService {
     const size = pageSize ? pageSize : 10;
     const offset = pageOffset ? pageOffset : 0;
     const orderBy = { [sort]: order };
-    const count = await this.prisma.doctor.count({
+    const count = await this.prisma.patient.count({
       where: whereQuery,
     });
 
-    const listdoctor = await this.prisma.doctor.findMany({
+    const listpatient = await this.prisma.patient.findMany({
       select: {
         id: true,
         firstName: true,
         lastName: true,
         email: true,
         phoneNumber: true,
-        speciality: true,
         gender: true,
-        doctorCode: true,
+        bloodgroup: true,
+        dob: true,
+        digitalHealthCode: true,
+        addressLine1: true,
+        addressLine2: true,
+        city: true,
+        stateCode: true,
+        countryCode: true,
+        postalCode: true,
         isActive: true,
         createdAt: true,
         updatedAt: true,
@@ -876,11 +958,11 @@ export class DoctorsService {
           order: order,
         },
       ],
-      content: listdoctor,
+      content: listpatient,
     };
   }
 
-  async deleteDoctor(hospitalId: number, id: number): Promise<void> {
+  async deletePatient(hospitalId: number, id: number): Promise<void> {
     if (Number.isNaN(hospitalId) || Number.isNaN(id)) {
       throw new HttpException(
         'hospital id is missing in params',
@@ -893,7 +975,7 @@ export class DoctorsService {
         id: hospitalId,
       },
       // select: {
-      //   doctors: {
+      //   patients: {
       //     where: {
       //       id: id,
       //     },
@@ -907,31 +989,31 @@ export class DoctorsService {
       );
     }
 
-    const doctorHospitalRelation = await this.prisma.doctorHospital.findFirst({
+    const patientHospitalRelation = await this.prisma.patientHospital.findFirst({
       where: {
-        doctorId: id,
+        patientId: id,
         hospitalId: hospitalId,
       },
     });
-    if (doctorHospitalRelation) {
-      await this.prisma.doctorHospital.delete({
+    if (patientHospitalRelation) {
+      await this.prisma.patientHospital.delete({
         where: {
-          id: doctorHospitalRelation.id,
+          id: patientHospitalRelation.id,
         },
       });
     }
 
-    const doctor = await this.prisma.doctor.delete({
+    const patient = await this.prisma.patient.delete({
       where: { id: Number(id) },
     });
-    if (!doctor) {
+    if (!patient) {
       throw new NotFoundException();
     } else {
       return;
     }
   }
 
-  async softDeleteDoctor(
+  async softDeletePatient(
     hospitalId: number,
     id: number,
     status: string
@@ -952,15 +1034,15 @@ export class DoctorsService {
       throw new HttpException('hospital not found', HttpStatus.NOT_FOUND);
     }
 
-    const checkdoctor = await this.prisma.doctor.findUnique({
+    const checkpatient = await this.prisma.patient.findUnique({
       where: { id: Number(id) },
     });
-    if (!checkdoctor) {
+    if (!checkpatient) {
       throw new NotFoundException();
     } else {
       const flag = status === 'true';
-      if (checkdoctor.isActive != flag) {
-        const dele = await this.prisma.doctor.update({
+      if (checkpatient.isActive != flag) {
+        const dele = await this.prisma.patient.update({
           where: { id: Number(id) },
           data: { isActive: flag },
         });
@@ -973,37 +1055,37 @@ export class DoctorsService {
     }
   }
 
-  async createdoctorHospital(
-    addDoctorDto: AddDoctorDto,
+  async createpatientHospital(
+    addPatientDto: AddPatientDto,
     id: number,
     hospitalId: number
-  ): Promise<DoctorHospital> {
-    const doctorHospital = await this.prisma.doctorHospital.findFirst({
+  ): Promise<PatientHospital> {
+    const patientHospital = await this.prisma.patientHospital.findFirst({
       where: {
         hospitalId: hospitalId,
-        doctorId: Number(id),
+        patientId: Number(id),
       },
     });
-    if (!doctorHospital) {
-      const addDoctorData = {
+    if (!patientHospital) {
+      const addPatientData = {
         hospitalId: hospitalId,
-        doctorId: Number(id),
-        speciality: addDoctorDto.speciality,
+        patientId: Number(id),
+        digitalHealthCode:addPatientDto.digitalHealthCode
       };
-      const addDoctorHospital = await this.prisma.doctorHospital.create({
-        data: addDoctorData,
+      const addPatientHospital = await this.prisma.patientHospital.create({
+        data: addPatientData,
       });
-      return addDoctorHospital;
+      return addPatientHospital;
     }
-    if (doctorHospital) {
-      if (doctorHospital.speciality != addDoctorDto.speciality) {
-        const doctorhospital = await this.prisma.doctorHospital.update({
-          where: { id: doctorHospital.id },
-          data: { speciality: doctorHospital.speciality },
+    if (patientHospital) {
+      if (patientHospital.digitalHealthCode != addPatientDto.digitalHealthCode) {
+        const patienthospital = await this.prisma.patientHospital.update({
+          where: { id: patientHospital.id },
+          data: { digitalHealthCode: patientHospital.digitalHealthCode },
         });
-        return doctorhospital;
+        return patienthospital;
       }
     }
-    return doctorHospital;
+    return patientHospital;
   }
 }
