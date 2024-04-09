@@ -16,6 +16,8 @@ import UpdatePassword from './pages/update-password/update-password';
 import Security from './Components/security/security';
 import ListPatients from './pages/list-patient/list-patient';
 import AddPatientPage from './pages/list-patient/add-patient-page/add-patient-page';
+import EditPatientPage from './pages/list-patient/edit-patient-page/edit-patient-page';
+import PatientLayout from './layouts/patient-layout/patient-layout';
 export function App() {
 
   const location = useLocation();
@@ -60,14 +62,20 @@ export function App() {
     <UserContext.Provider value={user}>
       <SnackbarProvider maxSnack={3}>
         <Routes>
+       
           <Route element={<HospitalLayout />}>
+   
             <Route path="/" element={<Layout />}>
 
               <Route path="/dashboard/:hospitalId" element={<Dashboard />} />
+              {/* <Route element={<PatientLayout />}> */}
               <Route path="/hospital/:hospitalId/patients" element={<ListPatients />} />
               <Route path="/hospital/:hospitalId/patients/add" element={<AddPatientPage />} />
+              <Route path="/hospital/:hospitalId/patients/edit/:patientId" element={<EditPatientPage />} />
+              </Route>
               <Route path="/profile" element={<Profile />} />
-            </Route>
+            {/* </Route> */}
+            
           </Route>
           <Route path="/selectHospital" element={<SelectHospital />} />
 

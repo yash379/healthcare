@@ -3,7 +3,23 @@ import styles from './list-patient.module.scss';
 import { environment } from '../../../environments/environment';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, TextField, Button, Checkbox, CircularProgress, IconButton, Stack, Pagination, PaginationItem } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
+  TextField,
+  Button,
+  Checkbox,
+  CircularProgress,
+  IconButton,
+  Stack,
+  Pagination,
+  PaginationItem,
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box } from '@mui/material';
 import Breadcrumbs from '../../Components/bread-crumbs/bread-crumbs';
@@ -19,10 +35,10 @@ import { Hospital } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/user-context';
 import { Gender } from '@prisma/client';
+import { PatientContext } from '../../contexts/patient-context';
 
 /* eslint-disable-next-line */
-export interface ListPatientsProps { }
-
+export interface ListPatientsProps {}
 
 interface Form {
   firstName: string;
@@ -79,8 +95,6 @@ export interface EditForm {
   isActive: boolean;
 }
 
-
-
 export function ListPatients(props: ListPatientsProps) {
   const apiUrl = environment.apiUrl;
   const [activePatients, setActivePatients] = useState<ViewPatient[]>([]);
@@ -93,63 +107,77 @@ export function ListPatients(props: ListPatientsProps) {
   const [searchQueryPhone, setSearchQueryPhone] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedPatientId, setSelectedPatientId] = useState<number | null>(null);
+  const [selectedPatientId, setSelectedPatientId] = useState<number | null>(
+    null
+  );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [PatientToDeleteId, setPatientToDeleteId] = useState<number | null>(null);
+  const [PatientToDeleteId, setPatientToDeleteId] = useState<number | null>(
+    null
+  );
   const [totalItems, setTotalItems] = useState(0);
   const [editData, setEditData] = useState<ViewPatient | null>(null);
   const [viewData, setViewData] = useState<ViewPatient | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [hospital,setHospital]=useState<Hospital | null>(null);
+  const [hospital, setHospital] = useState<Hospital | null>(null);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  console.log("hospital id:",id);
-  const params=useParams();
-  const hospitalContext=useContext(HospitalContext);
-  console.log("Hospital Context:",hospitalContext);
-  console.log("hospital context hospital id:",hospitalContext?.id);
+  console.log('hospital id:', id);
+  const params = useParams();
+  const hospitalContext = useContext(HospitalContext);
+  console.log('Hospital Context:', hospitalContext);
+  console.log('hospital context hospital id:', hospitalContext?.id);
 
+  const [deleteData, setDeleteData] = useState<ViewPatient | null>(null);
+  const [patientContext, setPatientContext]=useState<ViewPatient | null>(null);
+ 
   const getPatients = async () => {
     try {
       setLoading(true);
       //  await new Promise((resolve) => setTimeout(resolve, 2000));
-      const response = await axios.get(`${apiUrl}/hospitals/${hospitalContext?.id}/patients`, {
-        withCredentials: true,
-        params: {
-          pageSize: rowsPerPage,
-          pageOffset: page,
-          firstName: searchQueryName,
-          lastName: searchQueryName,
-          email: searchQueryEmail,
-          phoneNumber: searchQueryPhone
-        },
-      });
+      const response = await axios.get(
+        `${apiUrl}/hospitals/${hospitalContext?.id}/patients`,
+        {
+          withCredentials: true,
+          params: {
+            pageSize: rowsPerPage,
+            pageOffset: page,
+            firstName: searchQueryName,
+            lastName: searchQueryName,
+            email: searchQueryEmail,
+            phoneNumber: searchQueryPhone,
+          },
+        }
+      );
 
       const { content, total } = response.data;
       setTotalItems(total);
       setActivePatients(content);
-console.log("Patient", response.data)
+      // setPatientContext(content)
+      console.log('Patient', response.data);
 
       const Patients = response.data.content;
-      console.log(Patients)
+      console.log(Patients);
       setActivePatients(Patients);
       setLoading(false);
     } catch (error) {
       console.log(error);
-      console.log("Something went wrong");
+      console.log('Something went wrong');
       setLoading(false);
     }
   };
 
-
   useEffect(() => {
     getPatients();
-  }, [page, rowsPerPage, searchQueryName,
+  }, [
+    page,
+    rowsPerPage,
+    searchQueryName,
     searchQueryEmail,
-    searchQueryPhone, hospitalContext])
-
+    searchQueryPhone,
+    hospitalContext,
+  ]);
 
   const handleFilterChange = () => {
     setPage(0);
@@ -157,13 +185,7 @@ console.log("Patient", response.data)
 
   useEffect(() => {
     handleFilterChange();
-  }, [searchQueryName,
-    searchQueryEmail,
-    searchQueryPhone]);
-
-
-
-
+  }, [searchQueryName, searchQueryEmail, searchQueryPhone]);
 
   //Patient Update CloseModal
   const closeEditModal = () => {
@@ -171,23 +193,27 @@ console.log("Patient", response.data)
     setEditData(null);
   };
 
-
   //Search Function
-  const handleSearchNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setSearchQueryName(event.target.value);
-    getPatients()
+    getPatients();
   };
 
-  const handleSearchEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchEmailChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setSearchQueryEmail(event.target.value);
     getPatients();
   };
 
-  const handleSearchPhoneNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchPhoneNumberChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setSearchQueryPhone(event.target.value);
     getPatients();
   };
-
 
   //Building Update Function
   const handleEditClick = (patientId: number) => {
@@ -196,29 +222,49 @@ console.log("Patient", response.data)
     );
 
     if (selectedPatient) {
-      setEditData(selectedPatient)
+      setEditData(selectedPatient);
       setSelectedPatientId(patientId);
-      setIsEditModalOpen(true);
+      setPatientContext(selectedPatient); // Set the selected patient as the patient context
+      console.log(selectedPatient, "selectedPateont");
+      navigate('/hospital/:hospitalId/patients/edit/:patientId');
+      // setIsEditModalOpen(true);
     }
   };
 
+  useEffect(() => {
+    console.log('Updated patientContext:', patientContext);
+  }, [patientContext]);
   //Table Row Select Function
-  const handleRowClick = (patientId: number, event: React.MouseEvent<HTMLTableRowElement>) => {
+  const handleRowClick = (
+    patientId: number,
+    event: React.MouseEvent<HTMLTableRowElement>
+  ) => {
     const selectedPatient: ViewPatient | undefined = activePatients.find(
       (patient) => patient.id === patientId
     );
 
     if (selectedPatient) {
-      setViewData(selectedPatient)
+      setViewData(selectedPatient);
       setSelectedPatient(patientId);
     }
   };
 
-
   // Function to open the delete confirmation modal
+  // const openDeleteModal = (patientId: number) => {
+  //   setPatientToDeleteId(patientId);
+  //   setIsDeleteModalOpen(true);
+  // };
+
   const openDeleteModal = (patientId: number) => {
-    setPatientToDeleteId(patientId);
-    setIsDeleteModalOpen(true);
+    const selectedPatient: ViewPatient | undefined = activePatients.find(
+      (patient) => patient.id === patientId
+    );
+
+    if (selectedPatient) {
+      setPatientToDeleteId(patientId);
+      setDeleteData(selectedPatient)
+      setIsDeleteModalOpen(true);
+    }
   };
 
   // Function to close the delete confirmation modal
@@ -226,7 +272,6 @@ console.log("Patient", response.data)
     setPatientToDeleteId(null);
     setIsDeleteModalOpen(false);
   };
-
 
   //Pagination
   const handleChangePage = (event: any, newPage: number) => {
@@ -239,10 +284,9 @@ console.log("Patient", response.data)
     console.log('Rows per page changed to:', newRowsPerPage);
     setRowsPerPage(newRowsPerPage);
     setPage(0);
-    setRowsPerPage(newRowsPerPage)
+    setRowsPerPage(newRowsPerPage);
     getPatients();
   };
-
 
   const pageCountThreshold = totalItems;
 
@@ -250,31 +294,43 @@ console.log("Patient", response.data)
 
   // Add Patient
   const handleAddPatient = async (formData: Form) => {
-
     try {
-      const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${params.hospitalId}/patients`,
-        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender,  email: formData.email, phoneNumber: formData.phoneNumber , bloodgroup: formData.bloodgroup, dob:formData.dob, digitalHealthCode:formData.digitalHealthCode, addressLine1:formData.addressLine1, addressLine2:formData.addressLine2, city:formData.city, stateCode:formData.stateCode, countryCode:formData.countryCode, postalCode:formData.postalCode, isActive: formData.isActive },
+      const { data: responseData } = await axios.post(
+        `${apiUrl}/hospitals/${params.hospitalId}/patients`,
+        {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          gender: formData.gender,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          bloodgroup: formData.bloodgroup,
+          dob: formData.dob,
+          digitalHealthCode: formData.digitalHealthCode,
+          addressLine1: formData.addressLine1,
+          addressLine2: formData.addressLine2,
+          city: formData.city,
+          stateCode: formData.stateCode,
+          countryCode: formData.countryCode,
+          postalCode: formData.postalCode,
+          isActive: formData.isActive,
+        },
         {
           withCredentials: true,
-
-        },)
+        }
+      );
       if (responseData) {
         enqueueSnackbar('Patient added successfully', { variant: 'success' });
         setIsAddModalOpen(false);
         getPatients();
-
       } else {
-        console.log("Something went wrong")
+        console.log('Something went wrong');
       }
-
     } catch (error) {
       console.log(error);
-      console.log("Something went wrong in input form")
+      console.log('Something went wrong in input form');
       enqueueSnackbar('Something went wrong', { variant: 'error' });
     }
-  }
-
-
+  };
 
   // Edit Patient
   const handleUpdate = async (updateData: EditForm) => {
@@ -282,25 +338,39 @@ console.log("Patient", response.data)
       const response = await axios.put(
         `${apiUrl}/hospitals/${params.hospitalId}/patients/${selectedPatientId}`,
         {
-          firstName: updateData.firstName, lastName: updateData.lastName, email: updateData.email, phoneNumber: updateData.phoneNumber,
-          gender: updateData.gender, bloodgroup: updateData.bloodgroup, dob:updateData.dob, digitalHealthCode:updateData.digitalHealthCode, addressLine1:updateData.addressLine1, addressLine2:updateData.addressLine2, city:updateData.city, stateCode:updateData.stateCode, countryCode:updateData.countryCode, postalCode:updateData.postalCode, isActive: updateData.isActive
+          firstName: updateData.firstName,
+          lastName: updateData.lastName,
+          email: updateData.email,
+          phoneNumber: updateData.phoneNumber,
+          gender: updateData.gender,
+          bloodgroup: updateData.bloodgroup,
+          dob: updateData.dob,
+          digitalHealthCode: updateData.digitalHealthCode,
+          addressLine1: updateData.addressLine1,
+          addressLine2: updateData.addressLine2,
+          city: updateData.city,
+          stateCode: updateData.stateCode,
+          countryCode: updateData.countryCode,
+          postalCode: updateData.postalCode,
+          isActive: updateData.isActive,
         },
         {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
-          }
-        },
-
+          },
+        }
       );
 
       console.log(response.data);
 
       if (response.data) {
         console.log('Building Name Updated Successfully');
-        enqueueSnackbar('Patient details updated successfully', { variant: 'success' });
+        enqueueSnackbar('Patient details updated successfully', {
+          variant: 'success',
+        });
         getPatients();
-        setIsModalOpen(false)
+        setIsModalOpen(false);
       } else {
         console.log('Update data not received');
       }
@@ -313,21 +383,20 @@ console.log("Patient", response.data)
 
   //delete a Patient
 
-  // const handleDelete = async (Id: any) => {
-  //   try {
-  //     const { data } = await axios.post(`${apiUrl}/societies/1/residents/${Id}/false`, null, {
-  //       withCredentials: true,
-  //     });
-  //     console.log(data);
-  //     console.log('Resident DeActive successfully')
-  //     enqueueSnackbar('Resident Deleted Successfully', { variant: 'success' });
-  //     getResidents();
-  //   } catch (error) {
-  //     console.log(error)
-  //     console.log("Something went wrong")
-  //   }
-  // }
-
+  const handleDelete = async (Id: any) => {
+    try {
+      const { data } = await axios.delete(`${apiUrl}/hospitals/${hospitalContext?.id}/patients/${Id}`,  {
+        withCredentials: true,
+      });
+      console.log(data);
+      console.log('Patient DeActive successfully')
+      enqueueSnackbar('Patient Deleted Successfully', { variant: 'success' });
+      getPatients();
+    } catch (error) {
+      console.log(error)
+      console.log("Something went wrong")
+    }
+  }
 
   //Select Particular Table Row Function
   // function handleRowClick(residentid: number, event: React.MouseEvent<HTMLTableRowElement>) {
@@ -362,16 +431,15 @@ console.log("Patient", response.data)
     }
   };
 
-
   // BreadCrumbs
   const breadcrumbs = [
+    // {
+    //   to: '/hospitals',
+    //   label: 'Hospitals',
+    // },
     {
-      to: '/hospitals',
-      label: 'Hospitals',
-    },
-    {
-      to: `/hospitals/${hospitalContext?.id}`,
-      label: `${hospitalContext?.name}`
+      to: `/dashboard/${hospitalContext?.id}`,
+      label: `Dashboard`,
     },
     {
       label: 'Patients',
@@ -380,13 +448,10 @@ console.log("Patient", response.data)
 
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
-
   return (
-    <>
       <Box className={styles['container']}>
         <Breadcrumbs paths={breadcrumbs} />
         <Box className={styles['building_container']}>
-
           <Box className={styles['btn_container']}>
             <h1>Patients</h1>
             <Box>
@@ -412,158 +477,178 @@ console.log("Patient", response.data)
                 sx={{ mt: 2.3, mr: '10px' }}
                 onChange={handleSearchNameChange}
                 InputProps={{
-                  startAdornment: (
-                    <SearchIcon color="action" />
-                  ),
+                  startAdornment: <SearchIcon color="action" />,
                 }}
               />
-              <Button variant="contained" color="primary"
+              <Button
+                variant="contained"
+                color="primary"
                 // onClick={() => {
                 //   setIsAddModalOpen(true)
                 // }}
-                onClick={() => navigate('/hospitals/:hospitalId/patients/add')}
-              > <AddIcon fontSize='small' /> Add</Button>
+                onClick={() => navigate(`/hospital/${hospitalContext?.id}/patients/add`)}
+              >
+                {' '}
+                <AddIcon fontSize="small" /> Add
+              </Button>
             </Box>
-
-          </Box >
+          </Box>
 
           <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
-                <TableCell><Checkbox
-                  {...label}
-                  checked={
-                    activePatients.length > 0 &&
-                    activePatients.every((building) =>
-                      selectedItems.includes(building.id)
-                    )
-                  }
-                  onChange={handleHeaderCheckboxChange}
-                /></TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Name
+                  <TableCell>
+                    <Checkbox
+                      {...label}
+                      checked={
+                        activePatients.length > 0 &&
+                        activePatients.every((building) =>
+                          selectedItems.includes(building.id)
+                        )
+                      }
+                      onChange={handleHeaderCheckboxChange}
+                    />
                   </TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Email
+                  <TableCell sx={{ border: 'hidden' }}>Name</TableCell>
+                  <TableCell sx={{ border: 'hidden' }}>Email</TableCell>
+                  <TableCell sx={{ border: 'hidden' }}>Phone Number</TableCell>
+                  <TableCell sx={{ border: 'hidden' }}>Gender</TableCell>
+                  <TableCell sx={{ border: 'hidden' }}>Blood Group</TableCell>
+                  <TableCell sx={{ border: 'hidden' }}>
+                    Digital Health Code
                   </TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Phone Number
-                  </TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Gender
-                  </TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Blood Group
-                  </TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Digital Health Code
-                  </TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Address
-                  </TableCell>
+                  <TableCell sx={{ border: 'hidden' }}>Address</TableCell>
                   {/* <TableCell sx={{ border: "hidden" }}>Flat Number</TableCell>
                   <TableCell sx={{ border: "hidden" }}>Building Name</TableCell> */}
-                  <TableCell sx={{ border: "hidden" }}></TableCell>
+                  <TableCell sx={{ border: 'hidden' }}></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow>
-                </TableRow>
+                <TableRow></TableRow>
                 {loading ? (
-                <TableCell align='center' colSpan={7}>
-                  <CircularProgress />
-                </TableCell>
-              ) : (Array.isArray(activePatients) && activePatients.length > 0 ? (
+                  <TableCell align="center" colSpan={7}>
+                    <CircularProgress />
+                  </TableCell>
+                ) : Array.isArray(activePatients) &&
+                  activePatients.length > 0 ? (
                   activePatients.map((patient: ViewPatient, index: number) => (
-                    <TableRow className={styles['table_row']} onClick={(e) => { handleRowClick(patient.id, e); setViewPatientOpen(true); }} key={index}>
-                       <TableCell><Checkbox
-                      checked={selectedItems.includes(patient.id)}
-                      onChange={() => handleCheckboxChange(patient.id)}
-                      {...label}
+                    <TableRow
+                      className={styles['table_row']}
                       onClick={(e) => {
-                        e.stopPropagation();
+                        handleRowClick(patient.id, e);
+                        setViewPatientOpen(true);
                       }}
-                    /></TableCell>
-                      <TableCell>{patient.firstName} {patient.lastName}
-                      </TableCell>
-                      <TableCell>{patient.email}
-                      </TableCell>
-                      <TableCell>+91-{patient.phoneNumber}
+                      key={index}
+                    >
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedItems.includes(patient.id)}
+                          onChange={() => handleCheckboxChange(patient.id)}
+                          {...label}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        />
                       </TableCell>
                       <TableCell>
-                        {patient.gender}
+                        {patient.firstName} {patient.lastName}
                       </TableCell>
+                      <TableCell>{patient.email}</TableCell>
+                      <TableCell>+91-{patient.phoneNumber}</TableCell>
+                      <TableCell>{patient.gender}</TableCell>
+                      <TableCell>{patient.bloodgroup}</TableCell>
+                      <TableCell>{patient.digitalHealthCode}</TableCell>
                       <TableCell>
-                        {patient.bloodgroup}
+                        {patient.addressLine1} {patient.addressLine2} ,
+                        {patient.city}, {patient.stateCode},{' '}
+                        {patient.postalCode}
                       </TableCell>
-                      <TableCell>
-                        {patient.digitalHealthCode}
-                      </TableCell>
-                      <TableCell>
-                        {patient.addressLine1} {patient.addressLine2} ,{patient.city}, {patient.stateCode}, {patient.postalCode}
-                      </TableCell>
-                      <TableCell align='center'>
-                      <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(patient.id) }} sx={{ color:'black'}}>
-                        <EditIcon ></EditIcon>
-                      </IconButton>
-                      {/* <IconButton color="error"  onClick={() =>
-                      openDeleteModal(resident.id)
+                      <TableCell align="center">
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditClick(patient.id);
+                            navigate(`/hospital/${hospitalContext?.id}/patients/edit/${patient.id}`);
+                          }}
+                          sx={{ color: 'black' }}
+                        >
+                          <EditIcon></EditIcon>
+                        </IconButton>
+                        <IconButton color="error"  onClick={() =>
+                      openDeleteModal(patient.id)
                       }>
                         <DeleteIcon></DeleteIcon>
-                      </IconButton> */}
-
-                        
+                      </IconButton>
                       </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell sx={{
-                      textAlign: 'center',
-                    }} colSpan={8}>No Patient found</TableCell>
+                    <TableCell
+                      sx={{
+                        textAlign: 'center',
+                      }}
+                      colSpan={8}
+                    >
+                      No Patient found
+                    </TableCell>
                   </TableRow>
-                  )
-                  )}
+                )}
               </TableBody>
             </Table>
-            <Box sx={{  display:'flex',
-            flexDirection:'row',
-            justifyContent:"flex-end",
-           
-          }}>
-          <Stack sx={{marginBottom:"15px", marginRight:"20px", marginTop: "30px",}} spacing={2}>
-            <Pagination
-            sx={{  display:'flex',
-            flexDirection:'row',
-            justifyContent:"flex-end",
-           
-          }}
-              count={pageCount > pageCountThreshold ? pageCount + 1 : pageCount}
-              page={page + 1}
-              onChange={(event, value) => handleChangePage(event, value - 1)}
-
-              renderItem={(item) => (
-                <PaginationItem
-                  component="div"
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <Stack
+                sx={{
+                  marginBottom: '15px',
+                  marginRight: '20px',
+                  marginTop: '30px',
+                }}
+                spacing={2}
+              >
+                <Pagination
                   sx={{
-                 
-                    marginLeft: "5px",
-                  
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'flex-end',
                   }}
-                 
-                  {...item}
+                  count={
+                    pageCount > pageCountThreshold ? pageCount + 1 : pageCount
+                  }
+                  page={page + 1}
+                  onChange={(event, value) =>
+                    handleChangePage(event, value - 1)
+                  }
+                  renderItem={(item) => (
+                    <PaginationItem
+                      component="div"
+                      sx={{
+                        marginLeft: '5px',
+                      }}
+                      {...item}
+                    />
+                  )}
                 />
-              )}
-            />
-          </Stack>
-            <TablePagination
-              sx={{ marginTop: "5px" }}
-              rowsPerPageOptions={[5, 10, 20]}
-              component="div"
-              count={totalItems}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+              </Stack>
+              <TablePagination
+                sx={{ marginTop: '5px' }}
+                rowsPerPageOptions={[5, 10, 20]}
+                component="div"
+                count={totalItems}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </Box>
           </TableContainer>
         </Box>
-
 
         <EditPatientComponent
           open={isEditModalOpen}
@@ -575,17 +660,16 @@ console.log("Patient", response.data)
           initialData={editData}
         />
 
-        {/* <DeletePatientComponent
-          open={isDeleteModalOpen}
-          onClose={closeDeleteModal}
-          onDelete={() => {
-            handleDelete(PatientToDeleteId);
-            closeDeleteModal();
-          }}
-        /> */}
-      </Box >
-
-    </>
+        <DeletePatientComponent
+        open={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onDelete={() => {
+          handleDelete(PatientToDeleteId);
+          closeDeleteModal();
+        } } 
+        patientData={deleteData}   
+             />
+      </Box>
   );
 }
 

@@ -199,7 +199,7 @@ const theme = createTheme({
       fontFamily: "Poppins"
     },
     subtitle1: {
-      color: 'white !important',
+      color: 'black !important',
     },
    
 

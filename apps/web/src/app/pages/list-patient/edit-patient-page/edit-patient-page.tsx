@@ -1,8 +1,8 @@
-import styles from './add-patient-page.module.scss';
+import styles from './edit-patient-page.module.scss';
+import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import {
   TextField,
   Button,
@@ -15,26 +15,43 @@ import {
   FormHelperText,
   InputAdornment,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-
 import { environment } from '../../../../environments/environment';
 import Breadcrumbs from '../../../Components/bread-crumbs/bread-crumbs';
-
+import EditIcon from '@mui/icons-material/Edit';
+import { useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { CountriesStates } from '../../../core/consts/countries-states';
 
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { Gender, Patient } from '@prisma/client';
 import { enqueueSnackbar } from 'notistack';
 import { HospitalContext } from '../../../contexts/user-context';
-import { Gender } from '@prisma/client';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import PhoneInput from 'react-phone-input-2'
-import 'react-phone-input-2/lib/style.css'
+import dayjs from 'dayjs';
+import { PatientContext } from '../../../contexts/patient-context';
 
-export interface AddPatient {
+export interface EditPatient {
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phoneNumber?: string;
+  gender: Gender;
+  bloodgroup: string;
+  dob: Date;
+  digitalHealthCode: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  stateCode?: string;
+  countryCode: string;
+  postalCode: string;
+  isActive: boolean;
+}
+
+export interface ViewPatient {
   firstName: string;
   lastName: string;
   email?: string;
@@ -53,23 +70,30 @@ export interface AddPatient {
 }
 
 /* eslint-disable-next-line */
-export interface AddPatientPageProps { }
+export interface EditPatientPageProps {}
 
-export function AddPatientPage(props: AddPatientPageProps) {
-  const [country, setCountry] = useState<string>('');
-
+export function EditPatientPage(props: EditPatientPageProps) {
   const apiUrl = environment.apiUrl;
-  const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
+  const [patient, setPatient] = useState<ViewPatient | null>(null);
+  const { hospitalId, patientId } = useParams<{ hospitalId: string, patientId: string }>();
+  console.log('Hospital ID:', hospitalId);
+console.log('Patient ID:', patientId);
+const patientContext = useContext(PatientContext);
+//get patientid as id from patientContext
+// const { patient: id } = patientContext;
+console.log(patientContext,"patientcontext");
   const navigate = useNavigate();
-  const hospitalContext=useContext(HospitalContext);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isSuccessSnackbarOpen, setIsSuccessSnackbarOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const { id } = useParams<{ id: string }>();
   const validationSchema = yup.object().shape({
     firstName: yup.string().required('First Name is required'),
     lastName: yup.string().required('Last Name is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
-    phoneNumber: yup.string().matches(/[6789][0-9]{9}/, 'Invalid phone number').required('Phone number is required'),
+    phoneNumber: yup
+      .string()
+      .matches(/[6789][0-9]{9}/, 'Invalid phone number')
+      .min(10)
+      .max(10)
+      .required('Phone number is required'),
     gender: yup.string().required('Please Select One'),
     isActive: yup.boolean().required('Please Select One'),
     bloodgroup: yup.string().required('Blood Group is required'),
@@ -86,50 +110,94 @@ export function AddPatientPage(props: AddPatientPageProps) {
     handleSubmit,
     control,
     reset,
-    watch,
     formState: { errors },
-  } = useForm<AddPatient>({
+    watch,
+    setValue,
+  } = useForm<ViewPatient>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      stateCode: '',
       isActive: true,
     },
   });
 
   const countryValue = watch('countryCode');
-
-  console.log("hospitalcontext : ", hospitalContext)
-  
-  // Add Patient
-  const handleAddPatient = async (formData: AddPatient) => {
-
-    try {
-      const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${hospitalContext?.id}/patients`,
-        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender,  email: formData.email, phoneNumber: formData.phoneNumber , bloodgroup: formData.bloodgroup, dob:formData.dob, digitalHealthCode:formData.digitalHealthCode, addressLine1:formData.addressLine1, addressLine2:formData.addressLine2, city:formData.city, stateCode:formData.stateCode, countryCode:formData.countryCode, postalCode:formData.postalCode, isActive: formData.isActive },
-        {
-          withCredentials: true,
-
-        },)
-      if (responseData) {
-        reset();
-        enqueueSnackbar("Patient added successfully!", { variant: 'success' });
-        navigate(`/dashboard/${hospitalContext?.id}`);
-        // setIsAddModalOpen(false);
-        // getPatients();
-
-      } else {
-        console.log("Something went wrong")
-      }
-
-    } catch (error) {
-      console.log(error);
-      console.log("Something went wrong in input form")
-      enqueueSnackbar('Something went wrong', { variant: 'error' });
-    }
-  }
-
   const stateOptions =
     CountriesStates.find((c) => c.code === countryValue)?.states || [];
+
+  const params = useParams();
+  console.log("params", params)
+  const hospitalContext = useContext(HospitalContext);
+  console.log(hospitalContext, params);
+
+  useEffect(() => {
+    async function fetchPatientData() {
+      try {
+        const response = await axios.get<ViewPatient>(
+          `${apiUrl}/hospitals/${hospitalContext?.id}/patients/${params.patientId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        const patientData = response.data;
+        console.log('patientData reponse latest', response);
+        setPatient(patientData);
+
+        // Set the form data using setValue
+        setValue('firstName', patientData.firstName);
+        setValue('lastName', patientData.lastName);
+        setValue('email', patientData.email);
+        setValue('phoneNumber', patientData.phoneNumber);
+        setValue('gender', patientData.gender);
+        setValue('bloodgroup', patientData.bloodgroup);
+        setValue('dob', new Date(patientData.dob));
+        setValue('digitalHealthCode', patientData.digitalHealthCode);
+        setValue('addressLine1', patientData.addressLine1);
+        setValue('addressLine2', patientData.addressLine2);
+        setValue('city', patientData.city);
+        setValue('countryCode', patientData.countryCode);
+        setValue('stateCode', patientData.stateCode);
+        setValue('postalCode', patientData.postalCode);
+      } catch (error) {
+        console.error('Error fetching Patient data:', error);
+      }
+    }
+
+    fetchPatientData();
+  }, [apiUrl, id, setValue, hospitalContext?.id, params.patientId]);
+
+  const onSubmit = async (data: EditPatient) => {
+    try {
+      const response = await axios.put(
+        `${apiUrl}/hospitals/${hospitalContext?.id}/patients/${params.patientId}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log('Patient updated:', response.data);
+
+      enqueueSnackbar('Patient updated successfully!', { variant: 'success' });
+      navigate(`/hospital/${hospitalContext?.id}/patients`);
+    } catch (error) {
+      console.error('Error updating Patient:', error);
+      enqueueSnackbar(
+        'Something went wrongAn error occurred while updating the patient.',
+        { variant: 'error' }
+      );
+    }
+  };
+
+
+  // const parseDate = (date?: any) => {
+  //   if (date) {
+  //     const parse = Date.parse(date);
+  //     if (!isNaN(parse)) {
+  //       return new Date(parse);
+  //     }
+  //   }
+  //   return undefined;
+  // };
+  
   const breadcrumbs = [
     {
       to: `/dashboard/${hospitalContext?.id}`,
@@ -137,18 +205,17 @@ export function AddPatientPage(props: AddPatientPageProps) {
     },
     { to: `/hospital/${hospitalContext?.id}/patients`, label: 'Patients' },
     {
-      label: 'Add',
+      label: 'Edit',
     },
   ];
-
   return (
     <>
       <Breadcrumbs paths={breadcrumbs} />
       <div className={styles['container']}>
         <Typography variant="h1" sx={{ my: '20px' }}>
-          <Icon component={AddIcon} /> Add Patient
+          <Icon component={EditIcon} /> Edit Patient
         </Typography>
-        <form onSubmit={handleSubmit(handleAddPatient)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className={styles['form-row']}>
             <div className={styles['form-item']}>
               <Controller
@@ -162,6 +229,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     variant="outlined"
                     {...field}
                     fullWidth
+                    disabled
                     error={!!errors.digitalHealthCode}
                     helperText={errors.digitalHealthCode?.message}
                   />
@@ -169,7 +237,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
               />
             </div>
             <div className={styles['form-item']}>
-            <Controller
+              <Controller
                 name="firstName"
                 control={control}
                 defaultValue=""
@@ -185,15 +253,13 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     helperText={errors.firstName?.message}
                     sx={{ width: '100%' }}
                   />
-
                 )}
               />
             </div>
-
           </div>
           <div className={styles['form-row']}>
             <div className={styles['form-item']}>
-            <Controller
+              <Controller
                 name="lastName"
                 control={control}
                 defaultValue=""
@@ -209,12 +275,11 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     helperText={errors.lastName?.message}
                     sx={{ width: '100%' }}
                   />
-
                 )}
               />
             </div>
             <div className={styles['form-item']}>
-            <Controller
+              <Controller
                 name="email"
                 control={control}
                 defaultValue=""
@@ -233,10 +298,10 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </div>
-            </div>
-            <div className={styles['form-row']}>
+          </div>
+          <div className={styles['form-row']}>
             <div className={styles['form-item']}>
-            <Controller
+              <Controller
                 name="phoneNumber"
                 control={control}
                 defaultValue=""
@@ -246,52 +311,36 @@ export function AddPatientPage(props: AddPatientPageProps) {
                   //   value: /^[0-9]*$/,
                   //   message: 'Invalid phone number',
                   // },
-
                 }}
                 render={({ field }) => (
-                  // <TextField
-                  //   type="text"
-                  //   inputMode="numeric"
-                  //   className="form-control"
-                  //   placeholder="Enter Phone Number"
-                  //   InputProps={{
-                  //     startAdornment: (
-                  //       <InputAdornment sx={{mt:"1px"}} position="start">
-                  //         +91
-                  //       </InputAdornment>
-                  //     ),
-                  //   }}
-                  //   {...field}
-                  //   label="Phone Number*"
-                  //   error={!!errors.phoneNumber}
-                  //   helperText={errors.phoneNumber?.message}
-                  //   sx={{ width: '100%' }}
-                    
-                  // />
-                  <PhoneInput
-                  {...field}   
-                  inputStyle={{
-                    borderColor: (errors.phoneNumber) && "#de0835",
-                    boxSizing: 'inherit',
-                    height: '50px',
-                    width: '550px'                      
-                  }}                                                                                                     
-                  country={'in'}
-                  value={field.value}
-                  onChange={(phone: any) => field.onChange(phone)}
-                  error={!!errors.phoneNumber}
-                  helperText={errors.phoneNumber?.message}
-                /> 
+                  <TextField
+                    type="text"
+                    inputMode="numeric"
+                    className="form-control"
+                    placeholder="Enter Phone Number"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment sx={{ mt: '1px' }} position="start">
+                          +91
+                        </InputAdornment>
+                      ),
+                    }}
+                    {...field}
+                    label="Phone Number*"
+                    error={!!errors.phoneNumber}
+                    helperText={errors.phoneNumber?.message}
+                    sx={{ width: '100%' }}
+                  />
                 )}
               />
             </div>
             <div className={styles['form-item']}>
-            <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
-                <InputLabel htmlFor="type"  >Gender*</InputLabel>
+              <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
+                <InputLabel htmlFor="type">Gender*</InputLabel>
                 <Controller
                   name="gender"
                   control={control}
-                  // defaultValue=""
+                  defaultValue=""
                   rules={{ required: 'Gender is required' }}
                   render={({ field }) => (
                     <Select
@@ -302,22 +351,26 @@ export function AddPatientPage(props: AddPatientPageProps) {
                       MenuProps={{
                         PaperProps: {
                           style: {
-                            maxHeight: 97
+                            maxHeight: 97,
                           },
                         },
                       }}
                     >
-                      <MenuItem sx={{ justifyContent: "start" }} value="MALE">Male</MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value="FEMALE">Female</MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value="OTHERS">Others</MenuItem>
+                      <MenuItem sx={{ justifyContent: 'start' }} value="MALE">
+                        Male
+                      </MenuItem>
+                      <MenuItem sx={{ justifyContent: 'start' }} value="FEMALE">
+                        Female
+                      </MenuItem>
+                      <MenuItem sx={{ justifyContent: 'start' }} value="OTHERS">
+                        Others
+                      </MenuItem>
                     </Select>
-
                   )}
                 />
                 {/* <FormHelperText>{errors.gender?.message}</FormHelperText> */}
               </FormControl>
             </div>
-
           </div>
           <div className={styles['form-row']}>
             <div className={styles['form-item']}>
@@ -339,27 +392,28 @@ export function AddPatientPage(props: AddPatientPageProps) {
               />
             </div>
             <div className={styles['form-item']}>
-            <Controller
-                      name="dob"
-                      control={control}
-                      render={({ field, fieldState: { error } }) => (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
-                            {...field}
-                            label="DOB"
-                            slotProps={{
-                              textField: {
-                                error: !!error,
-                                helperText: error?.message,
-                                fullWidth: true,
-                              },
-                            }}
-                          />
-                        </LocalizationProvider>
-                      )}
+              <Controller
+                name="dob"
+                control={control}
+                // defaultValue={parseDate(patient?.dob)}
+                render={({ field, fieldState: { error } }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      {...field}
+                      value={field.value ? dayjs(field.value) : undefined}
+                      label="DOB"
+                      slotProps={{
+                        textField: {
+                          error: !!error,
+                          helperText: error?.message,
+                          fullWidth: true,
+                        },
+                      }}
                     />
+                  </LocalizationProvider>
+                )}
+              />
             </div>
-
           </div>
           <div className={styles['form-row']}>
             <div className={styles['form-item']}>
@@ -398,11 +452,10 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </div>
-           
           </div>
 
           <div className={styles['form-row']}>
-          <div className={styles['form-item']}>
+            <div className={styles['form-item']}>
               <Controller
                 name="city"
                 control={control}
@@ -424,19 +477,18 @@ export function AddPatientPage(props: AddPatientPageProps) {
               <Controller
                 name="countryCode"
                 control={control}
-                defaultValue={""}
+                defaultValue=""
                 render={({ field }) => (
                   <FormControl fullWidth variant="outlined">
                     <InputLabel>Country*</InputLabel>
                     <Select
                       {...field}
                       label="Country*"
-                      value={field.value || ""}
                       error={!!errors.countryCode}
-              
+                      // disabled
                     >
                       {CountriesStates.map((countryData, index) => (
-                        <MenuItem key={index} value={countryData.code} >
+                        <MenuItem key={index} value={countryData.code}>
                           {countryData.name}
                         </MenuItem>
                       ))}
@@ -444,12 +496,13 @@ export function AddPatientPage(props: AddPatientPageProps) {
                   </FormControl>
                 )}
               />
-              <FormHelperText sx={{ ml: "12px", color: "#d32f2f" }}>{errors.countryCode?.message}</FormHelperText>
+              <FormHelperText sx={{ ml: '12px', color: '#d32f2f' }}>
+                {errors.countryCode?.message}
+              </FormHelperText>
             </div>
-           
           </div>
           <div className={styles['form-row']}>
-          <div className={styles['form-item']}>
+            <div className={styles['form-item']}>
               <Controller
                 name="stateCode"
                 control={control}
@@ -473,7 +526,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 name="postalCode"
                 control={control}
                 defaultValue=""
-                rules={{ required: 'postalcode is required' }}
+                rules={{ required: 'postal code is required' }}
                 render={({ field }) => (
                   <TextField
                     label="Postal Code*"
@@ -486,7 +539,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </div>
-
           </div>
           <div className={styles['form-row']}>
             <div className={styles['form-item']}>
@@ -496,10 +548,9 @@ export function AddPatientPage(props: AddPatientPageProps) {
             </div>
           </div>
         </form>
-
       </div>
     </>
   );
 }
 
-export default AddPatientPage;
+export default EditPatientPage;
