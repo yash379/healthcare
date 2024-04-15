@@ -94,9 +94,9 @@ export function Login({ onLogin }: LoginProps) {
               src={loginImg}
               alt="Background"
               style={{
-                width: '60vh',
-                height: '65vh',
-                objectFit: 'cover',
+                width: '50vh', // Ensure the image does not exceed the container width
+                height: '65vh', // Allow the height to adjust proportionally
+                objectFit: 'cover', // Maintain aspect ratio and cover the entire container
                 borderTopLeftRadius: '40px',
                 borderBottomLeftRadius: '40px',
               }}
@@ -141,7 +141,7 @@ export function Login({ onLogin }: LoginProps) {
                   helperText={errors.password?.message}
                   className="form-control"
                   placeholder="Enter Your Password"
-                  sx={{ width: '280px' }}
+                  sx={{ width: '100%' }}
                 />
               </div>
               <div className={styles['forgot-password']}>

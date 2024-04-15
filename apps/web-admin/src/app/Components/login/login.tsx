@@ -65,7 +65,7 @@ export function Login({ onLogin }: LoginProps) {
             src={loginImg}
             alt="Background"
             style={{
-              width: '60vh',
+              width: '50vh',
               height: '65vh',
               objectFit: 'cover',
               borderTopLeftRadius: '40px',
