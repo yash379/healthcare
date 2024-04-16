@@ -100,7 +100,7 @@ export function ListDoctors(props: ListDoctorsProps) {
           pageSize: rowsPerPage,
           pageOffset: page,
           firstName: searchQueryName,
-          lastName: searchQueryName,
+          // lastName: searchQueryName,
           email: searchQueryEmail,
           phoneNumber: searchQueryPhone
         },
@@ -125,9 +125,7 @@ console.log("Doctor", response.data)
 
   useEffect(() => {
     getDoctors();
-  }, [page, rowsPerPage, searchQueryName,
-    searchQueryEmail,
-    searchQueryPhone])
+  }, [page, rowsPerPage, searchQueryName, searchQueryEmail, searchQueryPhone])
 
 
   const handleFilterChange = () => {
@@ -154,7 +152,7 @@ console.log("Doctor", response.data)
   //Search Function
   const handleSearchNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQueryName(event.target.value);
-    getDoctors()
+    getDoctors();
   };
 
   const handleSearchEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {

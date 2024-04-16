@@ -33,57 +33,52 @@ export function Login({ onLogin }: LoginProps) {
   const apiUrl = environment.apiUrl;
   const navigate = useNavigate();
 
-  // const onSubmit = async (formData: any) => {
+  const onSubmit = async (formData: { email: string; password: string }) => {
+    try {
+      const res = await axios.post<any>(`${apiUrl}/login`, formData, {
+        withCredentials: true,
+      });
+      const user = res.data;
+      console.log(user);
+      // enqueueSnackbar('Login successfully', { variant: 'success' });
+      // console
+      // if (user || null) {
+      //   navigate("/dashboard")
+      // }
+      console.log(res)
+      if (user.hospitalRoles.length > 0) {
+        onLogin(user);
+      } else {
+        console.log('User does not have the required superRole to log in');
+        enqueueSnackbar(`User does not have a hospital role. Can't login`, { variant: 'warning' });
+      }
+    } catch (error) {
+      console.log(error);
+      console.log('Something went wrong');
+      enqueueSnackbar('Invalid Username or Password', { variant: 'error' });
+    }
+  };
+
+  // const onSubmit = async (formData: { email: string; password: string }) => {
   //   try {
-  //     const res = await axios.post<any>(`${apiUrl}/login`, formData, {
-  //       withCredentials: true,
-  //     });
+  //     const { email, password } = formData;
+  //     const res = await axios.post<User>(
+  //       `${apiUrl}/login`,
+  //       { email, password },
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     );
   //     const user = res.data;
-  //     console.log(user);
-  //     enqueueSnackbar('Login successfully', { variant: 'success' });
-  //     // console
-
-  //     if (user || null) {
-  //       navigate("/dashboard")
-
-  //     }
-  //     if (user.organizationRoles[0].organizationRole === 'ADMIN') {
-  //       // Only log in if the user has the 'ADMIN' superRole
-  //       onLogin(user);
-  //       // navigate("/dashboard");
-  //     } else {
-  //       // Handle the case where the user doesn't have the 'ADMIN' superRole
-  //       console.log('User does not have the required superRole to log in');
-  //     }
   //     onLogin(user);
+  //     enqueueSnackbar("Login successfully!", { variant: 'success' });
   //     console.log('res', res);
   //   } catch (error) {
   //     console.log(error);
+  //     enqueueSnackbar('Invalid username or password ', { variant: 'error' });
   //     console.log('Something went wrong');
-  //     enqueueSnackbar('Invalid Username or Password', { variant: 'error' });
   //   }
   // };
-
-  const onSubmit = async (formData: { email: string; password: string }) => {
-    try {
-      const { email, password } = formData;
-      const res = await axios.post<User>(
-        `${apiUrl}/login`,
-        { email, password },
-        {
-          withCredentials: true,
-        }
-      );
-      const user = res.data;
-      onLogin(user);
-      // enqueueSnackbar("Login successfully!", { variant: 'success' });
-      console.log('res', res);
-    } catch (error) {
-      console.log(error);
-      enqueueSnackbar('Invalid username or password ', { variant: 'error' });
-      console.log('Something went wrong');
-    }
-  };
 
   return (
     <Box className={styles['main_root']}>
