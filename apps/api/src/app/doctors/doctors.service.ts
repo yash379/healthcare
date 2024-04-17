@@ -598,14 +598,15 @@ export class DoctorsService {
 
   async findByEmail(email: string) {
     console.log(email)
-    const user = await this.prisma.doctor.findFirst({
+    const doctor = await this.prisma.doctor.findFirst({
       where: { email },
       select: { id: true, email: true, password: true, firstName: true },
     });
-    if (!user) {
+    console.log("doctor password",doctor.password)
+    if (!doctor) {
       throw new NotFoundException();
     }
-    return user;
+    return doctor;
   }
 
   async findById(

@@ -7,6 +7,7 @@ export class DoctorAuthService {
   constructor(private readonly doctorService: DoctorsService) {}
 
   async validateDoctor(email: string, hashP: string) {
+    console.log("email", email, "hashP", hashP)
     const doctor = await this.doctorService.findByEmail(email);
     console.log(doctor);
    
