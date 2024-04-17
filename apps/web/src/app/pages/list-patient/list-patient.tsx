@@ -215,7 +215,7 @@ export function ListPatients(props: ListPatientsProps) {
     getPatients();
   };
 
-  //Building Update Function
+  //Patient Update Function
   const handleEditClick = (patientId: number) => {
     const selectedPatient: ViewPatient | undefined = activePatients.find(
       (patient) => patient.id === patientId
@@ -519,8 +519,6 @@ export function ListPatients(props: ListPatientsProps) {
                     Digital Health Code
                   </TableCell>
                   <TableCell sx={{ border: 'hidden' }}>Address</TableCell>
-                  {/* <TableCell sx={{ border: "hidden" }}>Flat Number</TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Building Name</TableCell> */}
                   <TableCell sx={{ border: 'hidden' }}></TableCell>
                 </TableRow>
               </TableHead>

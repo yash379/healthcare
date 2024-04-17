@@ -24,6 +24,16 @@
   background-color: #f8f9fa;
 }
 
+  .image img {
+    width: 45vh; /* Ensure the image does not exceed the container width */
+    height: 65vh; /* Allow the height to adjust proportionally */
+    object-fit: cover; /* Maintain aspect ratio and cover the entire container */
+    border-top-left-radius: 40px;
+    border-bottom-left-radius: 40px;
+  }
+
+
+
 .logo_image {
   text-align: center;
   margin-bottom: 20px;
@@ -57,5 +67,14 @@
   
   .logo_image {
     margin-bottom: 40px;
+  }
+}
+@media screen and (min-height: 768px) {
+  .image img {
+    width: 35vh; /* Ensure the image does not exceed the container width */
+    height: 50vh; /* Allow the height to adjust proportionally */
+    object-fit: cover; /* Maintain aspect ratio and cover the entire container */
+    border-top-left-radius: 40px;
+    border-bottom-left-radius: 40px;
   }
 }

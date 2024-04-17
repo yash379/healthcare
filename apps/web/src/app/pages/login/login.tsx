@@ -88,13 +88,13 @@ export function Login({ onLogin }: LoginProps) {
             <img
               src={loginImg}
               alt="Background"
-              style={{
-                width: '50vh', // Ensure the image does not exceed the container width
-                height: '65vh', // Allow the height to adjust proportionally
-                objectFit: 'cover', // Maintain aspect ratio and cover the entire container
-                borderTopLeftRadius: '40px',
-                borderBottomLeftRadius: '40px',
-              }}
+              // style={{
+              //   width: '50vh', // Ensure the image does not exceed the container width
+              //   height: '65vh', // Allow the height to adjust proportionally
+              //   objectFit: 'cover', // Maintain aspect ratio and cover the entire container
+              //   borderTopLeftRadius: '40px',
+              //   borderBottomLeftRadius: '40px',
+              // }}
             />
           </Grid>
         </Box>

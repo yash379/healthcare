@@ -110,6 +110,7 @@ export function ListPatients(props: ListPatientsProps) {
   const hospitalContext=useContext(HospitalContext);
   console.log("Hospital Context:",hospitalContext);
   console.log("hospital context hospital id:",hospitalContext?.id);
+  const [deleteData, setDeleteData] = useState<ViewPatient | null>(null);
 
   const getPatients = async () => {
     try {
@@ -189,16 +190,19 @@ console.log("Patient", response.data)
   };
 
 
-  //Building Update Function
-  const handleEditClick = (patientId: number) => {
+   //Patient Update Function
+   const handleEditClick = (patientId: number) => {
     const selectedPatient: ViewPatient | undefined = activePatients.find(
       (patient) => patient.id === patientId
     );
 
     if (selectedPatient) {
-      setEditData(selectedPatient)
+      setEditData(selectedPatient);
       setSelectedPatientId(patientId);
-      setIsEditModalOpen(true);
+      // setPatientContext(selectedPatient); // Set the selected patient as the patient context
+      console.log(selectedPatient, "selectedPateont");
+      navigate('/hospitals/:hospitalId/patients/edit/:patientId');
+      // setIsEditModalOpen(true);
     }
   };
 
@@ -214,11 +218,16 @@ console.log("Patient", response.data)
     }
   };
 
-
-  // Function to open the delete confirmation modal
   const openDeleteModal = (patientId: number) => {
-    setPatientToDeleteId(patientId);
-    setIsDeleteModalOpen(true);
+    const selectedPatient: ViewPatient | undefined = activePatients.find(
+      (patient) => patient.id === patientId
+    );
+
+    if (selectedPatient) {
+      setPatientToDeleteId(patientId);
+      setDeleteData(selectedPatient)
+      setIsDeleteModalOpen(true);
+    }
   };
 
   // Function to close the delete confirmation modal
@@ -313,20 +322,20 @@ console.log("Patient", response.data)
 
   //delete a Patient
 
-  // const handleDelete = async (Id: any) => {
-  //   try {
-  //     const { data } = await axios.post(`${apiUrl}/societies/1/residents/${Id}/false`, null, {
-  //       withCredentials: true,
-  //     });
-  //     console.log(data);
-  //     console.log('Resident DeActive successfully')
-  //     enqueueSnackbar('Resident Deleted Successfully', { variant: 'success' });
-  //     getResidents();
-  //   } catch (error) {
-  //     console.log(error)
-  //     console.log("Something went wrong")
-  //   }
-  // }
+  const handleDelete = async (Id: any) => {
+    try {
+      const { data } = await axios.delete(`${apiUrl}/hospitals/${hospitalContext?.id}/patients/${Id}`,{
+        withCredentials: true,
+      });
+      console.log(data);
+      console.log('Patient DeActive successfully')
+      enqueueSnackbar('Patient Deleted Successfully', { variant: 'success' });
+      getPatients();
+    } catch (error) {
+      console.log(error)
+      console.log("Something went wrong")
+    }
+  }
 
 
   //Select Particular Table Row Function
@@ -455,8 +464,6 @@ console.log("Patient", response.data)
                   </TableCell>
                   <TableCell sx={{ border: "hidden" }}>Address
                   </TableCell>
-                  {/* <TableCell sx={{ border: "hidden" }}>Flat Number</TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Building Name</TableCell> */}
                   <TableCell sx={{ border: "hidden" }}></TableCell>
                 </TableRow>
               </TableHead>
@@ -497,16 +504,14 @@ console.log("Patient", response.data)
                         {patient.addressLine1} {patient.addressLine2} ,{patient.city}, {patient.stateCode}, {patient.postalCode}
                       </TableCell>
                       <TableCell align='center'>
-                      <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(patient.id) }} sx={{ color:'black'}}>
+                      <IconButton onClick={(e) => { e.stopPropagation();  navigate(`/hospitals/${hospitalContext?.id}/patients/edit/${patient.id}`); }} sx={{ color:'black'}}>
                         <EditIcon ></EditIcon>
                       </IconButton>
-                      {/* <IconButton color="error"  onClick={() =>
-                      openDeleteModal(resident.id)
+                      <IconButton color="error"  onClick={() =>
+                      openDeleteModal(patient.id)
                       }>
                         <DeleteIcon></DeleteIcon>
-                      </IconButton> */}
-
-                        
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))
@@ -575,14 +580,15 @@ console.log("Patient", response.data)
           initialData={editData}
         />
 
-        {/* <DeletePatientComponent
-          open={isDeleteModalOpen}
-          onClose={closeDeleteModal}
-          onDelete={() => {
-            handleDelete(PatientToDeleteId);
-            closeDeleteModal();
-          }}
-        /> */}
+<DeletePatientComponent
+        open={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onDelete={() => {
+          handleDelete(PatientToDeleteId);
+          closeDeleteModal();
+        } } 
+        patientData={deleteData}   
+             />
       </Box >
 
     </>
