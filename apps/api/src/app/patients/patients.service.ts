@@ -510,15 +510,15 @@ export class PatientsService {
     }
   
     // Check if phone number is valid
-    const isPhoneNumberValid = this.isValidMobileNumber(
-      addPatientdto.phoneNumber
-    );
-    if (!isPhoneNumberValid) {
-      throw new HttpException(
-        `${addPatientdto.phoneNumber} is not a valid 10-digit mobile number.`,
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    // const isPhoneNumberValid = this.isValidMobileNumber(
+    //   addPatientdto.phoneNumber
+    // );
+    // if (!isPhoneNumberValid) {
+    //   throw new HttpException(
+    //     `${addPatientdto.phoneNumber} is not a valid 10-digit mobile number.`,
+    //     HttpStatus.BAD_REQUEST
+    //   );
+    // }
   
     // Check if Patient already exists
     let patient = await this.prisma.patient.findFirst({
@@ -766,14 +766,14 @@ export class PatientsService {
       );
     }
 
-    const isPhoneNumberValid = this.isValidMobileNumber(patientDto.phoneNumber);
+    // const isPhoneNumberValid = this.isValidMobileNumber(patientDto.phoneNumber);
 
-    if (!isPhoneNumberValid) {
-      throw new HttpException(
-        `${patientDto.phoneNumber} is a valid 10-digit mobile number.`,
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    // if (!isPhoneNumberValid) {
+    //   throw new HttpException(
+    //     `${patientDto.phoneNumber} is a valid 10-digit mobile number.`,
+    //     HttpStatus.BAD_REQUEST
+    //   );
+    // }
 
     const checkpatient = await this.prisma.patient.findUnique({
       where: { id: Number(id) },

@@ -273,14 +273,15 @@ export function AddPatientPage(props: AddPatientPageProps) {
                   inputStyle={{
                     borderColor: (errors.phoneNumber) && "#de0835",
                     boxSizing: 'inherit',
-                    height: '50px',
-                    width: '550px'                      
+                    height: '55px',
+                    width: '100%',
+                    maxWidth:"524px"                      
                   }}                                                                                                     
                   country={'in'}
                   value={field.value}
                   onChange={(phone: any) => field.onChange(phone)}
-                  error={!!errors.phoneNumber}
-                  helperText={errors.phoneNumber?.message}
+                  // error={!!errors.phoneNumber}
+                  // helperText={errors.phoneNumber?.message}
                 /> 
                 )}
               />

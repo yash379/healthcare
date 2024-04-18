@@ -32,6 +32,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { PatientContext } from '../../../contexts/patient-context';
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
 export interface EditPatient {
   firstName: string;
@@ -91,8 +93,6 @@ console.log(patientContext,"patientcontext");
     phoneNumber: yup
       .string()
       .matches(/[6789][0-9]{9}/, 'Invalid phone number')
-      .min(10)
-      .max(10)
       .required('Phone number is required'),
     gender: yup.string().required('Please Select One'),
     isActive: yup.boolean().required('Please Select One'),
@@ -313,24 +313,40 @@ console.log(patientContext,"patientcontext");
                   // },
                 }}
                 render={({ field }) => (
-                  <TextField
-                    type="text"
-                    inputMode="numeric"
-                    className="form-control"
-                    placeholder="Enter Phone Number"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment sx={{ mt: '1px' }} position="start">
-                          +91
-                        </InputAdornment>
-                      ),
-                    }}
-                    {...field}
-                    label="Phone Number*"
-                    error={!!errors.phoneNumber}
-                    helperText={errors.phoneNumber?.message}
-                    sx={{ width: '100%' }}
-                  />
+                  // <TextField
+                  //   type="text"
+                  //   inputMode="numeric"
+                  //   className="form-control"
+                  //   placeholder="Enter Phone Number"
+                  //   InputProps={{
+                  //     startAdornment: (
+                  //       <InputAdornment sx={{ mt: '1px' }} position="start">
+                  //         +91
+                  //       </InputAdornment>
+                  //     ),
+                  //   }}
+                  //   {...field}
+                  //   label="Phone Number*"
+                  //   error={!!errors.phoneNumber}
+                  //   helperText={errors.phoneNumber?.message}
+                  //   sx={{ width: '100%' }}
+                  // />
+
+                  <PhoneInput
+                  {...field}   
+                  inputStyle={{
+                    borderColor: (errors.phoneNumber) && "#de0835",
+                    boxSizing: 'inherit',
+                    height: '55px',
+                    width: '100%',
+                    maxWidth:"524px"                      
+                  }}                                                                                                     
+                  country={'in'}
+                  value={field.value}
+                  onChange={(phone: any) => field.onChange(phone)}
+                  // error={!!errors.phoneNumber}
+                  // helperText={errors.phoneNumber?.message}
+                /> 
                 )}
               />
             </div>
