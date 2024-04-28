@@ -553,7 +553,7 @@ export function ListPatients(props: ListPatientsProps) {
                         {patient.firstName} {patient.lastName}
                       </TableCell>
                       <TableCell>{patient.email}</TableCell>
-                      <TableCell>+91-{patient.phoneNumber}</TableCell>
+                      <TableCell>{patient.phoneNumber}</TableCell>
                       <TableCell>{patient.gender}</TableCell>
                       <TableCell>{patient.bloodgroup}</TableCell>
                       <TableCell>{patient.digitalHealthCode}</TableCell>

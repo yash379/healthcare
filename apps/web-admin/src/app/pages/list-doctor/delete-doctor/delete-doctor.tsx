@@ -1,4 +1,4 @@
-import styles from './delete-resident.module.scss';
+import styles from './delete-doctor.module.scss';
 import React from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -34,7 +34,7 @@ const DeleteDoctorComponent: React.FC<DeleteDoctorProps> = ({
   return (
     <Modal open={open} onClose={onClose}>
       <Box className={styles['delete_modal_container']}>
-        <h2 className={styles['h2_tag']}>Delete Doctor</h2>
+        {/* <h2 className={styles['h2_tag']}>Delete Doctor</h2> */}
         <p>Are you sure you want to delete doctor <b>{doctorData?.firstName + ' ' + doctorData?.lastName}</b>?</p>
         <Box className={styles['modal-buttons']}>
           <Button variant="contained" color="secondary" onClick={onClose}>

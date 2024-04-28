@@ -41,7 +41,7 @@ export function HospitalLayout(props: HospitalLayoutProps) {
       
     } 
     getHospital();
-  },[hospitalId]);
+  },[apiUrl, hospitalId, params.hospitalId]);
 
 
   return (

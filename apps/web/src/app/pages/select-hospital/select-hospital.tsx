@@ -26,8 +26,11 @@ export function SelectHospital(props: SelectHospitalProps) {
     }else{
       navigate(`/dashboard/${user?.hospitalRoles[0].hospitalId}`);
     }
-  },[user?.hospitalRoles.length, navigate]);
+  },[user?.hospitalRoles?.length, navigate, user?.hospitalRoles]);
 
+
+  
+  
   const handleToggle = (value: number) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];

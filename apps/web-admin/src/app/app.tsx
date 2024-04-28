@@ -2,7 +2,7 @@
 import styles from './app.module.scss';
 import axios from 'axios';
 import { UserContext } from '../app/contexts/user-contexts';
-import { User } from '@healthcare/data-transfer-types'
+import { User, ViewUser } from '@healthcare/data-transfer-types'
 import { useState, useEffect, Component } from 'react';
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ListHospitals from './pages/list-hospitals/list-hospitals';
@@ -32,15 +32,28 @@ import EditPatientPage from './pages/list-patient/edit-patient-page/edit-patient
 export function App() {
 
   const location = useLocation();
-  const [user, setUser] = useState<User | null>(null);
-  const params = useParams()
+  const [user, _setUser] = useState<User | null>(
+    () => {
+    const userFromStorage = localStorage.getItem('user');
+    if (userFromStorage) {
+      const user: User = JSON.parse(userFromStorage);
+      return user;
+    }
+    return null;
+  }
+);
+const setUser = (user: User | null) => {
+  if (user) {
+    localStorage.setItem('user', JSON.stringify(user));
+    _setUser(user);
+  } else {
+    localStorage.removeItem('user');
+    _setUser(null);
+  }
+};
 
-  // const shouldRenderLayout = location.pathname !== '*';
-  const validRoutes = ['/login'];
+const navigate = useNavigate();
 
-  const shouldRenderLayout = validRoutes.includes(location.pathname);
-
-  const navigate = useNavigate();
 
   const onLogout = async () => {
     localStorage.removeItem('user');
@@ -51,10 +64,6 @@ export function App() {
 
   const onLogin = (user: User) => {
     localStorage.setItem('user', JSON.stringify(user));
-    // setUser(user);
-
-    // console.log("onLogin", user);
-    // navigate("/hospitals");
     if (!user?.superRole) {
       enqueueSnackbar("User does not have a Super Role. Can't log in.", { variant: 'warning' });
       navigate("/login");
@@ -65,20 +74,20 @@ export function App() {
     }
   }
 
-  useEffect(() => {
-    const userFromStorage = localStorage.getItem('user');
-    if (userFromStorage !== null) {
-      const user: User = JSON.parse(userFromStorage);
-      setUser(user);
-    }
+  // useEffect(() => {
+  //   const userFromStorage = localStorage.getItem('user');
+  //   if (userFromStorage !== null) {
+  //     const user: User = JSON.parse(userFromStorage);
+  //     setUser(user);
+  //   }
 
-  }, []);
+  // }, []);
   return (
     <div>
-      <UserContext.Provider value={user}>
+
         <SnackbarProvider maxSnack={3}>
           <Routes>
-          <Route path="/" element={<Layout/>}>
+          <Route path="/" element={<Layout user={user} />}>
             {/* <Route path="/hospitals/:id" element={<View/>}/> */}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/hospitals" element={<ListHospitals />}/>
@@ -104,7 +113,7 @@ export function App() {
           <Route path="*" element={<PageNotFound/>}/>
           </Routes>
         </SnackbarProvider>
-      </UserContext.Provider>
+
 
     </div>
   );

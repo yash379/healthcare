@@ -92,7 +92,7 @@ console.log(patientContext,"patientcontext");
     email: yup.string().email('Invalid email').required('Email is required'),
     phoneNumber: yup
       .string()
-      .matches(/[6789][0-9]{9}/, 'Invalid phone number')
+      .matches(/^(?:\+?91|0)?[6-9]\d{9}$/, 'Invalid phone number')
       .required('Phone number is required'),
     gender: yup.string().required('Please Select One'),
     isActive: yup.boolean().required('Please Select One'),
@@ -119,6 +119,10 @@ console.log(patientContext,"patientcontext");
       isActive: true,
     },
   });
+
+  const PhoneNumber = watch('phoneNumber');
+
+  console.log("phone Number", PhoneNumber)
 
   const countryValue = watch('countryCode');
   const stateOptions =
@@ -334,6 +338,7 @@ console.log(patientContext,"patientcontext");
 
                   <PhoneInput
                   {...field}   
+                  
                   inputStyle={{
                     borderColor: (errors.phoneNumber) && "#de0835",
                     boxSizing: 'inherit',
@@ -349,6 +354,7 @@ console.log(patientContext,"patientcontext");
                 /> 
                 )}
               />
+               {!!errors.phoneNumber && <Typography sx={{color:'#de0835',fontSize:[13,"!important"],marginLeft:'13px'}} >{errors.phoneNumber.message}</Typography>} 
             </div>
             <div className={styles['form-item']}>
               <FormControl sx={{ width: '100%' }} error={!!errors.gender}>

@@ -4,7 +4,7 @@ import Layout from './Components/layout/layout';
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 import { UserContext } from './contexts/user-context';
 import { useContext, useState, useEffect } from 'react';
-import { User } from '@healthcare/data-transfer-types';
+import { User, ViewUser } from '@healthcare/data-transfer-types';
 import Dashboard from './pages/dashboard/dashboard';
 import PageNotFound from './Components/page-not-found/page-not-found';
 import HospitalLayout from './Routes/hospital-layout/hospital-layout';
@@ -21,8 +21,26 @@ import PatientLayout from './layouts/patient-layout/patient-layout';
 export function App() {
 
   const location = useLocation();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, _setUser] = useState<User | null>(
+    () => {
+    const userFromStorage = localStorage.getItem('user');
+    if (userFromStorage) {
+      const user: User = JSON.parse(userFromStorage);
+      return user;
+    }
+    return null;
+  }
+);
 
+const setUser = (user: User | null) => {
+  if (user) {
+    localStorage.setItem('user', JSON.stringify(user));
+    _setUser(user);
+  } else {
+    localStorage.removeItem('user');
+    _setUser(null);
+  }
+};
   const navigate = useNavigate();
 
   const usercontext = useContext(UserContext);
@@ -51,13 +69,13 @@ export function App() {
     }
   }
 
-  useEffect(() => {
-    const userFromStorage = localStorage.getItem('user');
-    if (userFromStorage !== null) {
-      const user: User = JSON.parse(userFromStorage);
-      setUser(user);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const userFromStorage = localStorage.getItem('user');
+  //   if (userFromStorage !== null) {
+  //     const user: User = JSON.parse(userFromStorage);
+  //     setUser(user);
+  //   }
+  // }, []);
   return (
     <UserContext.Provider value={user}>
       <SnackbarProvider maxSnack={3}>
@@ -65,7 +83,7 @@ export function App() {
        
           <Route element={<HospitalLayout />}>
    
-            <Route path="/" element={<Layout />}>
+            <Route path="/" element={<Layout user={user}  />}>
 
               <Route path="/dashboard/:hospitalId" element={<Dashboard />} />
               {/* <Route element={<PatientLayout />}> */}

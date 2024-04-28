@@ -1,7 +1,9 @@
 import { Hospital } from "@healthcare/data-transfer-types";
 import { OrganizationRoleName, SuperRoleName } from "@prisma/client";
 import React from "react";
-// import { User } from "@fnt-flsy/data-transfer-types";
+// import {  User  } from "@healthcare/data-transfer-types";
+
+
 
 interface User {
     id: number;

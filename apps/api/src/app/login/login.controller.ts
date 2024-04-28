@@ -35,7 +35,7 @@ export class LoginController {
   }
 
   @UseGuards(AuthGuard)
-  @Get()
+  @Get('profile')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: UserDto })
   findByIdForSwitch(@Request() req): Promise<UserDto> {

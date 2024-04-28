@@ -17,7 +17,8 @@ import * as yup from 'yup';
 import { Checkbox, Dialog, FormControlLabel, FormHelperText, FormLabel, Grid, InputAdornment, Radio, RadioGroup } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { Gender } from '@prisma/client';
-
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
 export interface AddDoctorProps {
   open: boolean;
@@ -192,32 +193,22 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
                 defaultValue=""
                 rules={{
                   required: 'Phone Number is required',
-                  // pattern: {
-                  //   value: /^[0-9]*$/,
-                  //   message: 'Invalid phone number',
-                  // },
-
                 }}
                 render={({ field }) => (
-                  <TextField
-                    type="text"
-                    inputMode="numeric"
-                    className="form-control"
-                    placeholder="Enter Phone Number"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment sx={{mt:"1px"}} position="start">
-                          +91
-                        </InputAdornment>
-                      ),
-                    }}
-                    {...field}
-                    label="Phone Number*"
-                    error={!!errors.phoneNumber}
-                    helperText={errors.phoneNumber?.message}
-                    sx={{ width: '100%' }}
-                    
-                  />
+                  <PhoneInput
+                  {...field}   
+                  inputStyle={{
+                    borderColor: (errors.phoneNumber) && "#de0835",
+                    boxSizing: 'inherit',
+                    height: '55px',
+                    width: '82%',
+                    maxWidth:"524px"                      
+                  }}                                                                                                     
+                  country={'in'}
+                  value={field.value}
+                  onChange={(phone: any) => field.onChange(phone)}
+                
+                /> 
                 )}
               />
             </Box>

@@ -220,7 +220,7 @@ export class DoctorsController {
     @Param('hospitalId') hospitalId: number,
     @Query('pageSize') pageSize?: number,
     @Query('pageOffset') pageOffset?: number,
-    @Query('firstName') firstName?: string,
+    @Query('name') name?: string,
     @Query('lastName') lastName?: string,
     @Query('email') email?: string,
     @Query('phoneNumber') phoneNumber?: string,
@@ -234,7 +234,7 @@ export class DoctorsController {
     const listdoctor = await this.doctorsService.getFilteredDoctors(
       +pageSize,
       +pageOffset,
-      firstName,
+      name,
       lastName,
       email,
       phoneNumber,

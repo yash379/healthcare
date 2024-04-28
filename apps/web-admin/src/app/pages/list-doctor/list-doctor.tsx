@@ -99,10 +99,10 @@ export function ListDoctors(props: ListDoctorsProps) {
         params: {
           pageSize: rowsPerPage,
           pageOffset: page,
-          firstName: searchQueryName,
+          name: searchQueryName,
           // lastName: searchQueryName,
-          email: searchQueryEmail,
-          phoneNumber: searchQueryPhone
+          // email: searchQueryEmail,
+          // phoneNumber: searchQueryPhone
         },
       });
 
@@ -125,7 +125,7 @@ console.log("Doctor", response.data)
 
   useEffect(() => {
     getDoctors();
-  }, [page, rowsPerPage, searchQueryName, searchQueryEmail, searchQueryPhone])
+  }, [page, rowsPerPage, searchQueryName])
 
 
   const handleFilterChange = () => {
@@ -134,9 +134,7 @@ console.log("Doctor", response.data)
 
   useEffect(() => {
     handleFilterChange();
-  }, [searchQueryName,
-    searchQueryEmail,
-    searchQueryPhone]);
+  }, [searchQueryName]);
 
 
 
@@ -194,8 +192,14 @@ console.log("Doctor", response.data)
 
   // Function to open the delete confirmation modal
   const openDeleteModal = (doctorId: number) => {
+    const selectedDoctor: ViewDoctor | undefined = activeDoctors.find(
+      (doctor) => doctor.id === doctorId
+    );
+    if (selectedDoctor) {
+      setViewData(selectedDoctor)
     setDoctorToDeleteId(doctorId);
     setIsDeleteModalOpen(true);
+    }
   };
 
   // Function to close the delete confirmation modal
@@ -291,20 +295,20 @@ console.log("Doctor", response.data)
 
   //delete a Doctor
 
-  // const handleDelete = async (Id: any) => {
-  //   try {
-  //     const { data } = await axios.post(`${apiUrl}/societies/1/residents/${Id}/false`, null, {
-  //       withCredentials: true,
-  //     });
-  //     console.log(data);
-  //     console.log('Resident DeActive successfully')
-  //     enqueueSnackbar('Resident Deleted Successfully', { variant: 'success' });
-  //     getResidents();
-  //   } catch (error) {
-  //     console.log(error)
-  //     console.log("Something went wrong")
-  //   }
-  // }
+  const handleDelete = async (Id: any) => {
+    try {
+      const { data } = await axios.post(`${apiUrl}/hospitals/${hospitalContext?.id}/doctors/${Id}`, {
+        withCredentials: true,
+      });
+      console.log(data);
+      console.log('Doctor DeActive successfully')
+      enqueueSnackbar('Doctor Deleted Successfully', { variant: 'success' });
+      getDoctors();
+    } catch (error) {
+      console.log(error)
+      console.log("Something went wrong")
+    }
+  }
 
 
   //Select Particular Table Row Function
@@ -457,7 +461,7 @@ console.log("Doctor", response.data)
                       </TableCell>
                       <TableCell>{doctor.email}
                       </TableCell>
-                      <TableCell>+91-{doctor.phoneNumber}
+                      <TableCell>{doctor.phoneNumber}
                       </TableCell>
                       <TableCell>
                         {doctor.gender}
@@ -472,11 +476,11 @@ console.log("Doctor", response.data)
                       <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(doctor.id) }} sx={{ color:'black'}}>
                         <EditIcon ></EditIcon>
                       </IconButton>
-                      {/* <IconButton color="error"  onClick={() =>
-                      openDeleteModal(resident.id)
+                      <IconButton color="error"  onClick={() =>
+                      openDeleteModal(doctor.id)
                       }>
                         <DeleteIcon></DeleteIcon>
-                      </IconButton> */}
+                      </IconButton>
 
                         
                       </TableCell>
@@ -547,14 +551,15 @@ console.log("Doctor", response.data)
           initialData={editData}
         />
 
-        {/* <DeleteDoctorComponent
+        <DeleteDoctorComponent
           open={isDeleteModalOpen}
           onClose={closeDeleteModal}
           onDelete={() => {
             handleDelete(DoctorToDeleteId);
             closeDeleteModal();
-          }}
-        /> */}
+          } } 
+          doctorData={viewData}          
+        />
       </Box >
 
     </>

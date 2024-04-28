@@ -786,7 +786,7 @@ export class DoctorsService {
   async getFilteredDoctors(
     pageSize: number,
     pageOffset: number,
-    firstName: string,
+    name: string,
     lastName: string,
     email: string,
     phoneNumber: string,
@@ -904,15 +904,15 @@ export class DoctorsService {
       },
     });
 
-    if (firstName !== undefined) {
-      whereArray.push({ name: { contains: firstName, mode: 'insensitive' } });
+    if (name !== undefined) {
+      whereArray.push({ firstName: { contains: name, mode: 'insensitive' } });
     }
-    if (lastName !== undefined) {
-      whereArray.push({ name: { contains: lastName, mode: 'insensitive' } });
-    }
-    if (speciality !== undefined) {
-      whereArray.push({ name: { contains: speciality, mode: 'insensitive' } });
-    }
+    // if (lastName !== undefined) {
+    //   whereArray.push({ name: { contains: lastName, mode: 'insensitive' } });
+    // }
+    // if (speciality !== undefined) {
+    //   whereArray.push({ name: { contains: speciality, mode: 'insensitive' } });
+    // }
 
     if (email !== undefined) {
       whereArray.push({ email: { contains: email, mode: 'insensitive' } });

@@ -10,7 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
-import { User } from '@healthcare/data-transfer-types';
+import { User, ViewUser } from '@healthcare/data-transfer-types';
 
 export interface LoginProps {
   onLogin: (user: User) => void;
@@ -50,6 +50,7 @@ export function Login({ onLogin }: LoginProps) {
         onLogin(user);
       } else {
         console.log('User does not have the required superRole to log in');
+        // navigate('/login')
         enqueueSnackbar(`User does not have a hospital role. Can't login`, { variant: 'warning' });
       }
     } catch (error) {

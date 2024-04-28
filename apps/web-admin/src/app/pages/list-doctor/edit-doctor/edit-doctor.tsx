@@ -18,6 +18,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useTheme } from '@mui/system';
 import { Gender } from '@prisma/client';
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
 export interface EditDoctorProps {
   open: boolean;
@@ -51,7 +53,7 @@ const EditDoctorComponent: React.FC<EditDoctorProps> = ({ open, onClose, onUpdat
     firstName: yup.string().required('First Name is required'),
     lastName: yup.string().required('Last Name is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
-    phoneNumber: yup.string().matches(/[6789][0-9]{9}/, 'Invalid phone number').min(10).max(10).required('Phone number is required'),
+    phoneNumber: yup.string().matches(/^((\+){0,1}91(\s){0,1}(-){0,1}(\s){0,1}){0,1}9[0-9](\s){0,1}(-){0,1}(\s){0,1}[1-9]{1}[0-9]{7}$/, 'Invalid phone number').required('Phone number is required'),
     gender: yup.string().required('Please Select One'),
     isActive: yup.boolean().required('Please Select One'),
     doctorCode: yup.string().required('Doctor Code is required'),
@@ -235,25 +237,20 @@ const EditDoctorComponent: React.FC<EditDoctorProps> = ({ open, onClose, onUpdat
                   defaultValue=""
                   rules={{ required: 'Phone Number is required' }}
                   render={({ field }) => (
-                    <TextField
-                      type="text"
-                      inputMode="numeric"
-                      sx={{ width: '100%' }}
-                      className="form-control"
-                      placeholder="Enter Doctor Phone Number"
-                      {...field}
-                      label="Phone Number"
-                      error={!!errors.phoneNumber}
-                      helperText={errors.phoneNumber?.message}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment sx={{ mt: "1px" }} position="start">
-                            +91
-                          </InputAdornment>
-                        ),
-                      }}
-                   
-                    />
+                    <PhoneInput
+                    {...field}   
+                    inputStyle={{
+                      borderColor: (errors.phoneNumber) && "#de0835",
+                      boxSizing: 'inherit',
+                      height: '55px',
+                      width: '82%',
+                      maxWidth:"524px"                      
+                    }}                                                                                                     
+                    country={'in'}
+                    value={field.value}
+                    onChange={(phone: any) => field.onChange(phone)}
+                  
+                  /> 
                   )}
                 />
               </Grid>

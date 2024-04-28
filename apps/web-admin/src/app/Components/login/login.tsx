@@ -4,13 +4,13 @@ import { environment } from '../../../environments/environment';
 import Button from '@mui/material/Button';
 import { Box, Grid, TextField } from '@mui/material';
 import axios, { AxiosError } from 'axios';
-import { User } from '@healthcare/data-transfer-types';
+import { User, ViewUser } from '@healthcare/data-transfer-types';
 import { UserContext } from '../../contexts/user-contexts';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { enqueueSnackbar } from 'notistack';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import loginImg from '../../../assets/loginImg.jpg';
 
 /* eslint-disable-next-line */
@@ -23,7 +23,7 @@ export function Login({ onLogin }: LoginProps) {
 
 
   const usercontext = useContext(UserContext);
-
+  const navigate=useNavigate();
   const apiUrl = environment.apiUrl;
 
   const validationSchema = yup.object().shape({
@@ -44,6 +44,7 @@ export function Login({ onLogin }: LoginProps) {
       );
       const user = res.data;
       onLogin(user);
+      // navigate('/dashboard')
       // enqueueSnackbar("Login successfully!", { variant: 'success' });
       console.log('res', res);
     } catch (error) {

@@ -285,6 +285,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 /> 
                 )}
               />
+              {!!errors.phoneNumber && <Typography sx={{color:'#de0835',fontSize:[13,"!important"],marginLeft:'13px'}} >{errors.phoneNumber.message}</Typography>} 
             </div>
             <div className={styles['form-item']}>
             <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
