@@ -27,7 +27,10 @@ export function UpdatePassword(props: UpdatePasswordProps) {
 
   const validationSchema = yup.object().shape({
     password: yup.string().required('Password is required'),
-    reconfirmPassword:yup.string().required('ReConfirm Password'),
+    reconfirmPassword: yup
+    .string()
+    .required('Re-enter password')
+    .oneOf([yup.ref('password')], 'Password does not match'),
   });
 
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(validationSchema) });
@@ -35,9 +38,8 @@ export function UpdatePassword(props: UpdatePasswordProps) {
 
   const handleOnSubmit = async (formData: { password: any; reconfirmPassword: any}) => {
     console.log(formData, params.emailId,params.token);
-    if(formData.password===formData.reconfirmPassword){
         try {
-          const { password, reconfirmPassword } = formData;
+          const { password } = formData;
           const email=params.emailId;
           const token=params.token;
           setLoading(true);
@@ -50,21 +52,21 @@ export function UpdatePassword(props: UpdatePasswordProps) {
           }
           );
           const user = res.data;
-          // onLogin(user);
-          window.alert('Password Updated successfully!');
           enqueueSnackbar("Password Updated successfully!", { variant: 'success' });
           navigate('/login');
           console.log('res', res);
           setLoading(false);
         } catch (error) {
           console.log(error);
-          enqueueSnackbar("Something went wrong", { variant: 'error' });
-          console.log("Something went wrong")
-          setLoading(false);
-      }
-    }else{
-          console.log("Both Password are different")
-          enqueueSnackbar("Password do not match", { variant: 'error' });
+          if (axios.isAxiosError(error) && error.response?.status === 400) {
+            // enqueueSnackbar("Something went wrong", { variant: 'error' });
+            enqueueSnackbar(
+              'Your password reset link is not valid, or already used.', { variant: 'error' }
+            );
+            console.log('Something went wrong');
+            setLoading(false);
+        }
+      
     }
   }
   return (
@@ -72,7 +74,6 @@ export function UpdatePassword(props: UpdatePasswordProps) {
       <div className={styles['login-img']}></div>
       <div className={styles['form-container']}>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-      {/* <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></div> */}
       <h1 style={{display:'flex',}}>Update Password</h1>
       <div className={styles['subtitle']}>Set New Password</div>
         <div className={styles['password']}>

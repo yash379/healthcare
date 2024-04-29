@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import axios, { AxiosError } from 'axios';
 // import fountlab from "../../../assets/fount-lab-logo.png";
 import { enqueueSnackbar } from 'notistack';
-import { Button, TextField, CircularProgress, Divider } from '@mui/material';
+import { Button, TextField, CircularProgress, Divider, Typography } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
@@ -19,7 +19,7 @@ export interface ForgotPasswordProps {}
 export function ForgotPassword(props: ForgotPasswordProps) {
   const usercontext = useContext(UserContext);
   const [loading, setLoading] = useState(false);
-
+  const [linkSendSuccess, setLinkSendSuccess] = useState(false);
   const apiUrl = environment.apiUrl;
   const params = useParams();
   console.log('Params:', params);
@@ -58,11 +58,13 @@ export function ForgotPassword(props: ForgotPasswordProps) {
       const user = res.data;
       // onLogin(user);
       // setEmailSent(true);
-
-      window.alert('Password Update link sent to Email successfully!');
-      enqueueSnackbar('Password Update link sent to Email successfully!', {
-        variant: 'success',
-      });
+if(res.status===202){
+  setLinkSendSuccess(true);
+  enqueueSnackbar('Password Update link sent to Email successfully!', {
+    variant: 'success',
+  });
+}
+    
       console.log('res', res);
       // navigate('/login');
       setLoading(false);
@@ -79,8 +81,13 @@ export function ForgotPassword(props: ForgotPasswordProps) {
       <div className={styles['login-page']}>
         <div className={styles['login-img']}></div>
         <div className={styles['form-container']}>
+        {linkSendSuccess ?(
+          <Typography variant="subtitle1" gutterBottom>
+          Password Update link sent to Email successfully!
+          </Typography>
+         ):(
           <form onSubmit={handleSubmit(handleOnSubmit)}>
-            {/* <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px" /></div> */}
+         
             <h1 style={{ display: 'flex' }}>Forgot Password</h1>
             <div className={styles['email']}>
               <TextField
@@ -109,13 +116,14 @@ export function ForgotPassword(props: ForgotPasswordProps) {
               </Button>
             </div>
           </form>
+         )}
           <Divider
             sx={{ width: '100%', mt: '40px' }}
             className={styles['divider']}
             variant="middle"
           />
           <div className={styles['back-to-login']}>
-            <Button type="submit" classes="btn btn-primary" onClick={() => navigate('/login')}>
+            <Button className={styles['back-button']}  classes="btn btn-primary" onClick={() => navigate('/login')}>
               Back to Login
             </Button>
           </div>

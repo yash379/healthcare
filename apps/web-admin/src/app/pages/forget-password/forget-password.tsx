@@ -3,13 +3,12 @@ import { environment } from '../../../environments/environment';
 import { UserContext } from '../../contexts/user-contexts';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { User } from '@fnt-flsy/data-transfer-types';
 import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios, { AxiosError } from 'axios';
 // import fountlab from "../../../assets/fount-lab-logo.png";
 import { enqueueSnackbar } from 'notistack';
-import { Button, CircularProgress, TextField } from '@mui/material';
+import { Button, CircularProgress, Divider, TextField, Typography } from '@mui/material';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 /* eslint-disable-next-line */
@@ -18,7 +17,7 @@ export interface ForgetPasswordProps {}
 export function ForgetPassword(props: ForgetPasswordProps) {
   const usercontext = useContext(UserContext);
   const [loading, setLoading] = useState(false);
-
+  const [linkSendSuccess, setLinkSendSuccess] = useState(false);
   const apiUrl = environment.apiUrl;  
   const params=useParams();
   console.log("Params:",params);
@@ -48,9 +47,12 @@ export function ForgetPassword(props: ForgetPasswordProps) {
           );
           const user = res.data;
           // onLogin(user);
-          window.alert('Password Update link sent to Email successfully!');
-          enqueueSnackbar("Password Update link sent to Email successfully!", { variant: 'success' });
-          navigate('/login');
+          if(res.status===202){
+            setLinkSendSuccess(true);
+            enqueueSnackbar('Password Update link sent to Email successfully!', {
+              variant: 'success',
+            });
+          }
           console.log('res', res);
           setLoading(false);
         } catch (error) { 
@@ -64,8 +66,13 @@ export function ForgetPassword(props: ForgetPasswordProps) {
     <div className={styles['login-page']}>
       <div className={styles['login-img']}></div>
       <div className={styles['form-container']}>
+      {linkSendSuccess ?(
+          <Typography variant="subtitle1" gutterBottom>
+          Password Update link sent to Email successfully!
+          </Typography>
+         ):(
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-      {/* <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></div> */}
+ 
       <h1 style={{display:'flex'  }}>Forgot Password</h1>
         <div className={styles['email']}>
           <TextField type="email" 
@@ -86,8 +93,19 @@ export function ForgetPassword(props: ForgetPasswordProps) {
               </Button>
         </div>
       </form>
-    </div>
-    </div>
+       )}
+    <Divider
+            sx={{ width: '100%', mt: '40px' }}
+            className={styles['divider']}
+            variant="middle"
+          />
+          <div className={styles['back-to-login']}>
+            <Button variant='contained' className={styles['back-button']}  classes="btn btn-primary" onClick={() => navigate('/login')}>
+              Back to Login
+            </Button>
+          </div>
+        </div>
+      </div>
   );
 }
 

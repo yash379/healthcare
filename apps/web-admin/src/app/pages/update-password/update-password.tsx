@@ -3,7 +3,6 @@ import { environment } from '../../../environments/environment';
 import { UserContext } from '../../contexts/user-contexts';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { User } from '@fnt-flsy/data-transfer-types';
 import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios, { AxiosError } from 'axios';
@@ -35,9 +34,9 @@ export function UpdatePassword(props: UpdatePasswordProps) {
 
   const handleOnSubmit = async (formData: { password: any; reconfirmPassword: any}) => {
     console.log(formData, params.emailId,params.token);
-    if(formData.password===formData.reconfirmPassword){
+
         try {
-          const { password, reconfirmPassword } = formData;
+          const { password } = formData;
           const email=params.emailId;
           const token=params.token;
           setLoading(true);
@@ -50,24 +49,23 @@ export function UpdatePassword(props: UpdatePasswordProps) {
           }
           );
           const user = res.data;
-          window.alert('Password Updated successfully!');
-          // onLogin(user);
           enqueueSnackbar("Password Updated successfully!", { variant: 'success' });
           navigate('/login');
           console.log('res', res);
           setLoading(false);
         } catch (error) {
-          
-          console.log(error)
-          enqueueSnackbar("Something went wrong", { variant: 'error' });
-          console.log("Something went wrong");
-          setLoading(false);
+          console.log(error);
+          if (axios.isAxiosError(error) && error.response?.status === 400) {
+            // enqueueSnackbar("Something went wrong", { variant: 'error' });
+            enqueueSnackbar(
+              'Your password reset link is not valid, or already used.', { variant: 'error' }
+            );
+            console.log('Something went wrong');
+            setLoading(false);
+        }
         
       }
-    }else{
-          console.log("Both Password are different")
-          enqueueSnackbar("Password do not match", { variant: 'error' });
-    }
+    
   }
   return (
     <div className={styles['login-page']}>
