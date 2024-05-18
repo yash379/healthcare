@@ -1,6 +1,6 @@
 import { User } from '@healthcare/data-transfer-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { SuperRoleName,HospitalRoleName } from '@prisma/client';
+// import { SuperRoleName,HospitalRoleName } from '@prisma/client';
 import { IsEmail, IsNotEmpty, MaxLength, } from 'class-validator';
 import { OrganizationRolesDto } from '../../core/dto/organizationRoles.dto';
 
@@ -23,13 +23,13 @@ export class UserDto implements User {
   @IsNotEmpty()
   @ApiProperty() lastName: string;
 
-  @ApiProperty() hospitalRole?: HospitalRoleName
+  // @ApiProperty() hospitalRole?: HospitalRoleName
 
   @ApiProperty()
   organizationRoles?:OrganizationRolesDto[];
 
-  @ApiProperty()
-  superRole?: SuperRoleName;
+  // @ApiProperty()
+  // superRole?: SuperRoleName;
 }
 
 

@@ -16,7 +16,6 @@ import { UsersService } from '../users/users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { UserDto } from '../users/dto/user.dto';
 import { ViewUserDto } from '../users/dto/view-user.dto';
-import { DoctorsService } from '../doctors/doctors.service';
 
 @Controller('')
 export class LoginController {

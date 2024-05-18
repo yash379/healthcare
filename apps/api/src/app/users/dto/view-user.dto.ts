@@ -1,6 +1,6 @@
 import { ViewOrganizationRoleDto, ViewUser } from "@healthcare/data-transfer-types";
 import { ApiProperty } from "@nestjs/swagger";
-import { SuperRoleName } from '@prisma/client';
+// import { SuperRoleName } from '@prisma/client';
 
 
 export class ViewUserDto implements ViewUser {
@@ -11,7 +11,7 @@ export class ViewUserDto implements ViewUser {
   @ApiProperty() isActive: boolean;
   @ApiProperty() phoneNumber: string;
   @ApiProperty() organizationRoles: ViewOrganizationRoleDto[];
-  @ApiProperty() superRole?: SuperRoleName;
+  // @ApiProperty() superRole?: SuperRoleName;
 }
 
 

@@ -10,6 +10,6 @@ export class ListUserDto
     'firstName',
     'lastName',
     'organizationRoles',
-    'superRole'
+    // 'superRole'
   ])
   implements ListUser {}

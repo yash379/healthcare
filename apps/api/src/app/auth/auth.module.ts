@@ -7,8 +7,6 @@ import { UsersService } from '../users/users.service';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
 import { NotificationsService } from '../notifications/notifications.service';
-import { DoctorsModule } from '../doctors/doctors.module';
-import { DoctorsService } from '../doctors/doctors.service';
 
 @Module({
   imports: [UsersModule],

@@ -8,7 +8,7 @@ import {
 import { AssetCountDashboardDto, UserDto } from './dto/user.dto';
 import { ListUserPageDto } from './dto/list-user-page.dto';
 import { AddUserDto } from './dto/add-user.dto';
-import { PrismaClient, SuperRoleName } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 import * as generatePassword from 'generate-password';
 import { ListUserDto } from './dto/list-user.dto';
 import { EditUserStatus, ViewUserDto } from './dto/view-user.dto';
@@ -18,6 +18,9 @@ import { comparePasswords, encodePassword } from '../auth/bcrypt';
 import * as ejs from 'ejs';
 import * as fs from 'fs/promises';
 import { ADMIN_URL, API_URL, HOSPITAL_URL } from '../core/consts/env.consts';
+import { AddDoctorDto } from './dto/add-doctor.dto';
+import { DoctorDto } from './dto/doctors.dto';
+
 
 @Injectable()
 export class UsersService {
@@ -168,434 +171,556 @@ export class UsersService {
 
 
 
-  async createAdminUser(
-    createUserDto: AddUserDto
-  ): Promise<UserDto> {
-    // TODO: add generated password functionlity with smtp configurations and email validation...
+  // async createAdminUser(
+  //   createUserDto: AddUserDto
+  // ): Promise<UserDto> {
+  //   // TODO: add generated password functionlity with smtp configurations and email validation...
 
     
-    const token = this.generateRandomHexToken(16);
+  //   const token = this.generateRandomHexToken(16);
    
-    const data = { ...createUserDto, token };
+  //   const data = { ...createUserDto, token };
 
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email: createUserDto.email,
-      },
-    });
+  //   const user = await this.prisma.user.findUnique({
+  //     where: {
+  //       email: createUserDto.email,
+  //     },
+  //   });
 
-    if (user) {
-      console.log('user already exist now adding the user admin role...');
+  //   if (user) {
+  //     console.log('user already exist now adding the user admin role...');
 
-      const is_user_super_relation = await this.prisma.userSuperRole.findFirst({
-        where:{
-          userId: user.id,
-          superRoleId: 1
-        }
-      })
+  //     const is_user_super_relation = await this.prisma.userSuperRole.findFirst({
+  //       where:{
+  //         userId: user.id,
+  //         superRoleId: 1
+  //       }
+  //     })
 
-      if(is_user_super_relation){
-        throw new HttpException("user already exist with the super role", HttpStatus.BAD_REQUEST);
-      }
+  //     if(is_user_super_relation){
+  //       throw new HttpException("user already exist with the super role", HttpStatus.BAD_REQUEST);
+  //     }
 
-      const user_super_relation = await this.prisma.userSuperRole.create({
-        data: {
-          userId: user.id,
-          superRoleId: 1,
-        },
-      });
+  //     const user_super_relation = await this.prisma.userSuperRole.create({
+  //       data: {
+  //         userId: user.id,
+  //         superRoleId: 1,
+  //       },
+  //     });
   
-      if (!user_super_relation) {
-        throw new HttpException(
-          'some error while establishing relation between user and super',
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
+  //     if (!user_super_relation) {
+  //       throw new HttpException(
+  //         'some error while establishing relation between user and super',
+  //         HttpStatus.INTERNAL_SERVER_ERROR
+  //       );
+  //     }
 
-      const templateContent = await fs.readFile('apps/api/src/assets/templates/existing-admin-user-template.ejs', 'utf-8');
+  //     const templateContent = await fs.readFile('apps/api/src/assets/templates/existing-admin-user-template.ejs', 'utf-8');
 
-      const message = ejs.render(templateContent, {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        adminLoginLink: ADMIN_URL,
-      });
+  //     const message = ejs.render(templateContent, {
+  //       firstName: user.firstName,
+  //       lastName: user.lastName,
+  //       adminLoginLink: ADMIN_URL,
+  //     });
 
-      const sentMail = await this.notificationService.sendEmail(user.email, "You have been added in POYV Team", message);
+  //     const sentMail = await this.notificationService.sendEmail(user.email, "You have been added in POYV Team", message);
 
-      if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
+  //     if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
 
-      return {
-        id: user.id,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        superRole: 'ADMIN',
-      };
-    }
+  //     return {
+  //       id: user.id,
+  //       email: user.email,
+  //       phoneNumber: user.phoneNumber,
+  //       firstName: user.firstName,
+  //       lastName: user.lastName,
+  //       superRole: 'ADMIN',
+  //     };
+  //   }
 
-    const { superRole, organizationRoles, hospitalRole, ...newData } = data;
+  //   const { superRole, organizationRoles, hospitalRole, ...newData } = data;
 
-    const newUser = await this.prisma.user.create({
-      data: newData,
-    });
+  //   const newUser = await this.prisma.user.create({
+  //     data: newData,
+  //   });
 
-    if (!newUser) {
-      throw new BadRequestException('Failed to create user.');
-    }
-    // add relation to the users_hospital_roles
+  //   if (!newUser) {
+  //     throw new BadRequestException('Failed to create user.');
+  //   }
+  //   // add relation to the users_hospital_roles
 
-    const user_super_relation = await this.prisma.userSuperRole.create({
-      data: {
-        userId: newUser.id,
-        superRoleId: 1,
-      },
-    });
+  //   const user_super_relation = await this.prisma.userSuperRole.create({
+  //     data: {
+  //       userId: newUser.id,
+  //       superRoleId: 1,
+  //     },
+  //   });
 
-    if (!user_super_relation) {
-      throw new HttpException(
-        'some error while establishing relation between user and super',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
+  //   if (!user_super_relation) {
+  //     throw new HttpException(
+  //       'some error while establishing relation between user and super',
+  //       HttpStatus.INTERNAL_SERVER_ERROR
+  //     );
+  //   }
 
-    const resetPasswordLink = `${ADMIN_URL}/update-password/email/${newUser.email}/token/${token}`
+  //   const resetPasswordLink = `${ADMIN_URL}/update-password/email/${newUser.email}/token/${token}`
 
-    const templateContent = await fs.readFile('apps/api/src/assets/templates/new-admin-user-template.ejs', 'utf-8');
+  //   const templateContent = await fs.readFile('apps/api/src/assets/templates/new-admin-user-template.ejs', 'utf-8');
 
-    const message = ejs.render(templateContent, {
-      firstName: newUser.firstName,
-      lastName: newUser.lastName,
-      resetPasswordLink: resetPasswordLink,
-      loginLink: ADMIN_URL,
-    });
+  //   const message = ejs.render(templateContent, {
+  //     firstName: newUser.firstName,
+  //     lastName: newUser.lastName,
+  //     resetPasswordLink: resetPasswordLink,
+  //     loginLink: ADMIN_URL,
+  //   });
 
-    const sentMail = await this.notificationService.sendEmail(newUser.email, "You have been added in Fountlab", message);
+  //   const sentMail = await this.notificationService.sendEmail(newUser.email, "You have been added in Fountlab", message);
 
-    if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
+  //   if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
 
-    return {
-      id: newUser.id,
-      email: newUser.email,
-      phoneNumber: newUser.phoneNumber,
-      firstName: newUser.firstName,
-      lastName: newUser.lastName,
-      superRole: superRole,
-    };
+  //   return {
+  //     id: newUser.id,
+  //     email: newUser.email,
+  //     phoneNumber: newUser.phoneNumber,
+  //     firstName: newUser.firstName,
+  //     lastName: newUser.lastName,
+  //     superRole: superRole,
+  //   };
+  // }
+
+  isValidMobileNumber(mobileNumber: string): boolean {
+    // Define a regex pattern for a 10-digit mobile number
+    const pattern = /^[0-9]{10}$/;
+
+    // Test the provided mobile number against the pattern
+    return pattern.test(mobileNumber);
   }
 
-  async create(
-    hospitalId: number,
-    createUserDto: AddUserDto & {
-      isPrimary: boolean;
-    }
-  ): Promise<
-    UserDto & {
-      isPrimary: boolean;
-    }
-  > {
-    // TODO: add generated password functionlity with smtp configurations and email validation...
+async add(
+  hospitalId: number,
+  addDoctorDto: AddDoctorDto
+): Promise<DoctorDto> {
+  if (Number.isNaN(hospitalId)) {
+    throw new HttpException(
+      'Hospital id is missing in params',
+      HttpStatus.BAD_REQUEST
+    );
+  }
 
-    const token = this.generateRandomHexToken(16);
+  // Check if hospital exists
+  const hospital = await this.prisma.hospital.findUnique({
+    where: { id: hospitalId },
+  });
+  if (!hospital) {
+    throw new HttpException(
+      'Hospital not found, check hospitalId',
+      HttpStatus.NOT_FOUND
+    );
+  }
 
-    const data = { ...createUserDto, token };
+  // Check if phone number is valid
+  const isPhoneNumberValid = this.isValidMobileNumber(addDoctorDto.phoneNumber);
+  if (!isPhoneNumberValid) {
+    throw new HttpException(
+      `${addDoctorDto.phoneNumber} is not a valid 10-digit mobile number.`,
+      HttpStatus.BAD_REQUEST
+    );
+  }
 
-    const hospital = await this.prisma.hospital.findFirst({
-      where: {
-        id: hospitalId,
+  // Check if user with the email already exists
+  let user = await this.prisma.user.findUnique({
+    where: { email: addDoctorDto.email },
+  });
+
+  if (!user) {
+    // Create a new user if not exists
+    user = await this.prisma.user.create({
+      data: {
+        email: addDoctorDto.email,
+        phoneNumber: addDoctorDto.phoneNumber,
+        firstName: addDoctorDto.firstName,
+        lastName: addDoctorDto.lastName,
+        // password: addDoctorDto.password, // assuming password is hashed
+        role: Role.DOCTOR,
+        isActive: addDoctorDto.isActive,
       },
     });
-    if (!hospital) {
+  }
+
+  // Check if doctor already exists
+  let doctor = await this.prisma.doctor.findUnique({
+    where: { userId: user.id },
+  });
+
+  // If doctor doesn't exist, create a new one
+  if (!doctor) {
+    doctor = await this.prisma.doctor.create({
+      data: {
+        userId: user.id,
+        gender: addDoctorDto.gender,
+        doctorCode: addDoctorDto.doctorCode,
+        speciality: addDoctorDto.speciality,
+        hospitalId: hospitalId,
+      },
+    });
+  }else {
+    const existingDoctorHospital = await this.prisma.doctor.findFirst({
+      where: {
+        userId: user.id,
+        hospitalId: hospitalId,
+      },
+    });
+
+    if (existingDoctorHospital) {
       throw new HttpException(
-        'hospital with id' + hospitalId + ' not exist',
+        'Doctor is already associated with this hospital',
         HttpStatus.BAD_REQUEST
       );
     }
+  }
 
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email: createUserDto.email,
-      },
-    });
+  // // Check if doctorHospital entry already exists
+  // const existingDoctorHospital = await this.prisma.doctor.findFirst({
+  //   where: {
+  //     hospitalId: hospitalId,
+  //     id: doctor.id,
+  //   },
+  // });
 
-    // if (user) {
-    //   throw new HttpException(
-    //     {
-    //       status: HttpStatus.BAD_REQUEST,
-    //       error: 'User already exists',
-    //     },
-    //     HttpStatus.BAD_REQUEST
-    //   );
-    // }
+  // // If doctorHospital entry already exists, throw an error
+  // if (existingDoctorHospital) {
+  //   throw new HttpException(
+  //     'Doctor is already associated with this hospital',
+  //     HttpStatus.BAD_REQUEST
+  //   );
+  // }
 
-    if (!user) {
-      const { superRole, organizationRoles, hospitalRole, isPrimary, ...newData } =
-        data;
+  // Return doctor details
+  return {
+    id: doctor.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phoneNumber: user.phoneNumber,
+    speciality: doctor.speciality,
+    gender: doctor.gender,
+    doctorCode: doctor.doctorCode,
+    isActive: user.isActive,
+  };
+}
 
-      const newUser = await this.prisma.user.create({
-        data: newData,
-      });
 
-      if (!newUser) {
-        throw new BadRequestException('Failed to create user.');
-      }
-      // add relation to the users_hospital_roles
+  // async create(
+  //   hospitalId: number,
+  //   createUserDto: AddUserDto & {
+  //     isPrimary: boolean;
+  //   }
+  // ): Promise<
+  //   UserDto & {
+  //     isPrimary: boolean;
+  //   }
+  // > {
+  //   // TODO: add generated password functionlity with smtp configurations and email validation...
 
-      const user_hospital_relation = await this.prisma.userHospitalRole.create({
-        data: {
-          userId: newUser.id,
-          hospitalId: hospitalId,
-          hospitalRoleId: 1,
-          isPrimary: isPrimary,
-        },
-      });
+  //   const token = this.generateRandomHexToken(16);
 
-      if (!user_hospital_relation) {
-        throw new HttpException(
-          'some error while establishing relation between user and hospital',
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
+  //   const data = { ...createUserDto, token };
 
-      if (isPrimary) {
-        // set others with same role in the same hospital as not primary
-        await this.prisma.userHospitalRole.updateMany({
-          where: {
-            hospitalId: hospitalId,
-            hospitalRoleId: 1,
-            userId: { not: newUser.id },
-          },
-          data: { isPrimary: false },
-        });
-      }
+  //   const hospital = await this.prisma.hospital.findFirst({
+  //     where: {
+  //       id: hospitalId,
+  //     },
+  //   });
+  //   if (!hospital) {
+  //     throw new HttpException(
+  //       'hospital with id' + hospitalId + ' not exist',
+  //       HttpStatus.BAD_REQUEST
+  //     );
+  //   }
 
-      const resetPasswordLink = `${HOSPITAL_URL}/update-password/email/${newUser.email}/token/${token}`
+  //   const user = await this.prisma.user.findUnique({
+  //     where: {
+  //       email: createUserDto.email,
+  //     },
+  //   });
 
-      const templateContent = await fs.readFile('apps/api/src/assets/templates/new-manager-template.ejs', 'utf-8');
+  //   // if (user) {
+  //   //   throw new HttpException(
+  //   //     {
+  //   //       status: HttpStatus.BAD_REQUEST,
+  //   //       error: 'User already exists',
+  //   //     },
+  //   //     HttpStatus.BAD_REQUEST
+  //   //   );
+  //   // }
+
+  //   if (!user) {
+  //     const { superRole, organizationRoles, hospitalRole, isPrimary, ...newData } =
+  //       data;
+
+  //     const newUser = await this.prisma.user.create({
+  //       data: newData,
+  //     });
+
+  //     if (!newUser) {
+  //       throw new BadRequestException('Failed to create user.');
+  //     }
+  //     // add relation to the users_hospital_roles
+
+  //     const user_hospital_relation = await this.prisma.userHospitalRole.create({
+  //       data: {
+  //         userId: newUser.id,
+  //         hospitalId: hospitalId,
+  //         hospitalRoleId: 1,
+  //         isPrimary: isPrimary,
+  //       },
+  //     });
+
+  //     if (!user_hospital_relation) {
+  //       throw new HttpException(
+  //         'some error while establishing relation between user and hospital',
+  //         HttpStatus.INTERNAL_SERVER_ERROR
+  //       );
+  //     }
+
+  //     if (isPrimary) {
+  //       // set others with same role in the same hospital as not primary
+  //       await this.prisma.userHospitalRole.updateMany({
+  //         where: {
+  //           hospitalId: hospitalId,
+  //           hospitalRoleId: 1,
+  //           userId: { not: newUser.id },
+  //         },
+  //         data: { isPrimary: false },
+  //       });
+  //     }
+
+  //     const resetPasswordLink = `${HOSPITAL_URL}/update-password/email/${newUser.email}/token/${token}`
+
+  //     const templateContent = await fs.readFile('apps/api/src/assets/templates/new-manager-template.ejs', 'utf-8');
   
-      const message = ejs.render(templateContent, {
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        hospitalName: hospital.name,
-        resetPasswordLink: resetPasswordLink,
-        loginLink: HOSPITAL_URL,
-      });
+  //     const message = ejs.render(templateContent, {
+  //       firstName: newUser.firstName,
+  //       lastName: newUser.lastName,
+  //       hospitalName: hospital.name,
+  //       resetPasswordLink: resetPasswordLink,
+  //       loginLink: HOSPITAL_URL,
+  //     });
 
-      const sentMail = await this.notificationService.sendEmail(newUser.email, "You have been added in " + hospital.name, message);
+  //     const sentMail = await this.notificationService.sendEmail(newUser.email, "You have been added in " + hospital.name, message);
 
-      if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
+  //     if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
 
-      return {
-        id: newUser.id,
-        email: newUser.email,
-        phoneNumber: newUser.phoneNumber,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        hospitalRole: hospitalRole,
-        isPrimary: isPrimary,
-      };
+  //     return {
+  //       id: newUser.id,
+  //       email: newUser.email,
+  //       phoneNumber: newUser.phoneNumber,
+  //       firstName: newUser.firstName,
+  //       lastName: newUser.lastName,
+  //       hospitalRole: hospitalRole,
+  //       isPrimary: isPrimary,
+  //     };
 
-    } else {
-      const { superRole, organizationRoles, hospitalRole, isPrimary, ...newData } = data;
-      const user_hospital_relation = await this.prisma.userHospitalRole.findFirst({
-        where: {
-          userId: user.id,
-          hospitalId: hospitalId
-        }
-      });
+  //   } else {
+  //     const { superRole, organizationRoles, hospitalRole, isPrimary, ...newData } = data;
+  //     const user_hospital_relation = await this.prisma.userHospitalRole.findFirst({
+  //       where: {
+  //         userId: user.id,
+  //         hospitalId: hospitalId
+  //       }
+  //     });
 
-      if (user_hospital_relation) {
-        throw new HttpException(
-          'user already present as manager for hospital',
-          HttpStatus.BAD_REQUEST
-        );
-      }
+  //     if (user_hospital_relation) {
+  //       throw new HttpException(
+  //         'user already present as manager for hospital',
+  //         HttpStatus.BAD_REQUEST
+  //       );
+  //     }
 
-      const new_user_hospital_relation = await this.prisma.userHospitalRole.create({
-        data: {
-          userId: user.id,
-          hospitalId: hospitalId,
-          hospitalRoleId: 1,
-          isPrimary: isPrimary,
-        },
-      });
+  //     const new_user_hospital_relation = await this.prisma.userHospitalRole.create({
+  //       data: {
+  //         userId: user.id,
+  //         hospitalId: hospitalId,
+  //         hospitalRoleId: 1,
+  //         isPrimary: isPrimary,
+  //       },
+  //     });
 
-      const templateContent = await fs.readFile('apps/api/src/assets/templates/existing-manager-template.ejs', 'utf-8');
+  //     const templateContent = await fs.readFile('apps/api/src/assets/templates/existing-manager-template.ejs', 'utf-8');
   
-      const message = ejs.render(templateContent, {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        hospitalName: hospital.name,
-        loginLink: HOSPITAL_URL,
-      });
+  //     const message = ejs.render(templateContent, {
+  //       firstName: user.firstName,
+  //       lastName: user.lastName,
+  //       hospitalName: hospital.name,
+  //       loginLink: HOSPITAL_URL,
+  //     });
 
-      const sentMail = await this.notificationService.sendEmail(user.email, "You have been added in " + hospital.name, message);
+  //     const sentMail = await this.notificationService.sendEmail(user.email, "You have been added in " + hospital.name, message);
 
-      if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
+  //     if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
 
-      if (isPrimary) {
-        // set others with same role in the same hospital as not primary
-        await this.prisma.userHospitalRole.updateMany({
-          where: {
-            hospitalId: hospitalId,
-            hospitalRoleId: 1,
-            userId: { not: user.id },
-          },
-          data: { isPrimary: false },
-        });
-      }
+  //     if (isPrimary) {
+  //       // set others with same role in the same hospital as not primary
+  //       await this.prisma.userHospitalRole.updateMany({
+  //         where: {
+  //           hospitalId: hospitalId,
+  //           hospitalRoleId: 1,
+  //           userId: { not: user.id },
+  //         },
+  //         data: { isPrimary: false },
+  //       });
+  //     }
 
-      return {
-        id: user.id,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        hospitalRole: hospitalRole,
-        isPrimary: isPrimary,
-      };
+  //     return {
+  //       id: user.id,
+  //       email: user.email,
+  //       phoneNumber: user.phoneNumber,
+  //       firstName: user.firstName,
+  //       lastName: user.lastName,
+  //       hospitalRole: hospitalRole,
+  //       isPrimary: isPrimary,
+  //     };
 
-    }
-
-
-  }
-
-  async listAdmins(
-    pageSize: number,
-    pageOffset: number,
-    name: string,
-    email: string,
-    sortBy: string,
-    sortOrder: 'asc' | 'desc'
-  ): Promise<ListUserPageDto> {
-    const hospitalAdminRoleId = await this.prisma.hospitalRole.findFirst({
-      where: {
-        name: SuperRoleName.ADMIN
-      }
-    })
-    const whereArray = [];
-    let whereQuery = {};
-    whereArray.push({
-      superRoles: {
-        some: {
-          superRoleId: hospitalAdminRoleId.id
-        }
-      }
-    })
-
-    if (email !== undefined) {
-      whereArray.push({ email: { contains: email, mode: 'insensitive' } });
-    }
-
-    if (name !== undefined) {
-      whereArray.push({
-        OR: [
-          { firstName: { contains: name, mode: 'insensitive' } },
-          { lastName: { contains: name, mode: 'insensitive' } },
-        ],
-      });
-    }
-    if (whereArray.length > 0) {
-      if (whereArray.length > 1) {
-        whereQuery = { AND: whereArray };
-      } else {
-        whereQuery = whereArray[0];
-      }
-    }
-
-    const sort = (sortBy ? sortBy : 'id').toString();
-    const order = sortOrder ? sortOrder : 'asc';
-    const size = pageSize ? pageSize : 10;
-    const offset = pageOffset ? pageOffset : 0;
-    const orderBy = { [sort]: order };
-    const count = await this.prisma.user.count({
-      where: whereQuery,
-    });
+  //   }
 
 
+  // }
 
-    const listusers = await this.prisma.user.findMany({
-      where: whereQuery,
-      select: {
-        id: true,
-        email: true,
-        phoneNumber: true,
-        firstName: true,
-        isActive: true,
-        lastName: true,
-        organizationRoles: {
-          select: {
-            organization: { select: { name: true } },
-            organizationRole: { select: { name: true } },
-          },
-        },
-        superRoles: { select: { superRole: { select: { name: true } } } },
-      },
-      take: Number(size),
-      skip: Number(size * offset),
-      orderBy,
-    });
+  // async listAdmins(
+  //   pageSize: number,
+  //   pageOffset: number,
+  //   name: string,
+  //   email: string,
+  //   sortBy: string,
+  //   sortOrder: 'asc' | 'desc'
+  // ): Promise<ListUserPageDto> {
+  //   const hospitalAdminRoleId = await this.prisma.hospitalRole.findFirst({
+  //     where: {
+  //       name: SuperRoleName.ADMIN
+  //     }
+  //   })
+  //   const whereArray = [];
+  //   let whereQuery = {};
+  //   whereArray.push({
+  //     superRoles: {
+  //       some: {
+  //         superRoleId: hospitalAdminRoleId.id
+  //       }
+  //     }
+  //   })
 
-    const listUsers = await this.getList(listusers);
+  //   if (email !== undefined) {
+  //     whereArray.push({ email: { contains: email, mode: 'insensitive' } });
+  //   }
 
-    return {
-      size: size,
-      number: offset,
-      total: count,
-      sort: [
-        {
-          by: sort,
-          order: order,
-        },
-      ],
-      content: listUsers,
-    };
-    // return await this.prisma.userSuperRole.findMany({
-    //   select:{
-    //     id: true,
-    //     superRole:{
-    //       select:{
-    //         name: true
-    //       }
-    //     },
-    //     user: {
-    //       select: {
-    //         id: true,
-    //         firstName: true,
-    //         lastName: true,
-    //         phoneNumber: true,
-    //         email: true,
-    //       },
-    //     },
-    //   }
-    // })
-  }
+  //   if (name !== undefined) {
+  //     whereArray.push({
+  //       OR: [
+  //         { firstName: { contains: name, mode: 'insensitive' } },
+  //         { lastName: { contains: name, mode: 'insensitive' } },
+  //       ],
+  //     });
+  //   }
+  //   if (whereArray.length > 0) {
+  //     if (whereArray.length > 1) {
+  //       whereQuery = { AND: whereArray };
+  //     } else {
+  //       whereQuery = whereArray[0];
+  //     }
+  //   }
 
-  async listMangers(hospitalId: number) {
-    return await this.prisma.userHospitalRole.findMany({
-      where: {
-        hospitalId: hospitalId,
-      },
-      select: {
-        id: true,
-        hospitalRole: {
-          select: {
-            name: true,
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            phoneNumber: true,
-            email: true,
-          },
-        },
-        isPrimary: true,
-      },
-    });
-  }
+  //   const sort = (sortBy ? sortBy : 'id').toString();
+  //   const order = sortOrder ? sortOrder : 'asc';
+  //   const size = pageSize ? pageSize : 10;
+  //   const offset = pageOffset ? pageOffset : 0;
+  //   const orderBy = { [sort]: order };
+  //   const count = await this.prisma.user.count({
+  //     where: whereQuery,
+  //   });
+
+
+
+  //   const listusers = await this.prisma.user.findMany({
+  //     where: whereQuery,
+  //     select: {
+  //       id: true,
+  //       email: true,
+  //       phoneNumber: true,
+  //       firstName: true,
+  //       isActive: true,
+  //       lastName: true,
+  //       organizationRoles: {
+  //         select: {
+  //           organization: { select: { name: true } },
+  //           organizationRole: { select: { name: true } },
+  //         },
+  //       },
+  //       superRoles: { select: { superRole: { select: { name: true } } } },
+  //     },
+  //     take: Number(size),
+  //     skip: Number(size * offset),
+  //     orderBy,
+  //   });
+
+  //   const listUsers = await this.getList(listusers);
+
+  //   return {
+  //     size: size,
+  //     number: offset,
+  //     total: count,
+  //     sort: [
+  //       {
+  //         by: sort,
+  //         order: order,
+  //       },
+  //     ],
+  //     content: listUsers,
+  //   };
+  //   // return await this.prisma.userSuperRole.findMany({
+  //   //   select:{
+  //   //     id: true,
+  //   //     superRole:{
+  //   //       select:{
+  //   //         name: true
+  //   //       }
+  //   //     },
+  //   //     user: {
+  //   //       select: {
+  //   //         id: true,
+  //   //         firstName: true,
+  //   //         lastName: true,
+  //   //         phoneNumber: true,
+  //   //         email: true,
+  //   //       },
+  //   //     },
+  //   //   }
+  //   // })
+  // }
+
+  // async listMangers(hospitalId: number) {
+  //   return await this.prisma.userHospitalRole.findMany({
+  //     where: {
+  //       hospitalId: hospitalId,
+  //     },
+  //     select: {
+  //       id: true,
+  //       hospitalRole: {
+  //         select: {
+  //           name: true,
+  //         },
+  //       },
+  //       user: {
+  //         select: {
+  //           id: true,
+  //           firstName: true,
+  //           lastName: true,
+  //           phoneNumber: true,
+  //           email: true,
+  //         },
+  //       },
+  //       isPrimary: true,
+  //     },
+  //   });
+  // }
 
   async findByEmail(email: string) {
     const user = await this.prisma.user.findFirst({
@@ -608,53 +733,53 @@ export class UsersService {
     return user;
   }
 
-  async findById(id: number): Promise<
-    ViewUserDto & {
-      isPrimary: boolean;
-    }
-  > {
-    const user = await this.prisma.user.findUnique({
-      where: { id: Number(id) },
-      select: {
-        id: true,
-        email: true,
-        phoneNumber: true,
-        firstName: true,
-        lastName: true,
-        isActive: true,
-        organizationRoles: {
-          select: {
-            organization: { select: { name: true } },
-            organizationRole: { select: { name: true } },
-          },
-        },
-        superRoles: { select: { superRole: { select: { name: true } } } },
-      },
-    });
-    if (!user) {
-      throw new NotFoundException();
-    } else {
-      const viewUser = {
-        id: user.id,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        isActive: user.isActive,
-        //TODO: check primary status
-        isPrimary: false,
-        organizationRoles: user.organizationRoles.map((role) => ({
-          name: role.organization.name,
-          organizationRole: role.organizationRole.name,
-        })),
-        superRole:
-          user.superRoles.length > 0
-            ? (user.superRoles[0].superRole.name as SuperRoleName)
-            : undefined,
-      };
-      return viewUser;
-    }
-  }
+  // async findById(id: number): Promise<
+  //   ViewUserDto & {
+  //     isPrimary: boolean;
+  //   }
+  // > {
+  //   const user = await this.prisma.user.findUnique({
+  //     where: { id: Number(id) },
+  //     select: {
+  //       id: true,
+  //       email: true,
+  //       phoneNumber: true,
+  //       firstName: true,
+  //       lastName: true,
+  //       isActive: true,
+  //       organizationRoles: {
+  //         select: {
+  //           organization: { select: { name: true } },
+  //           organizationRole: { select: { name: true } },
+  //         },
+  //       },
+  //       superRoles: { select: { superRole: { select: { name: true } } } },
+  //     },
+  //   });
+  //   if (!user) {
+  //     throw new NotFoundException();
+  //   } else {
+  //     const viewUser = {
+  //       id: user.id,
+  //       email: user.email,
+  //       phoneNumber: user.phoneNumber,
+  //       firstName: user.firstName,
+  //       lastName: user.lastName,
+  //       isActive: user.isActive,
+  //       //TODO: check primary status
+  //       isPrimary: false,
+  //       organizationRoles: user.organizationRoles.map((role) => ({
+  //         name: role.organization.name,
+  //         organizationRole: role.organizationRole.name,
+  //       })),
+  //       superRole:
+  //         user.superRoles.length > 0
+  //           ? (user.superRoles[0].superRole.name as SuperRoleName)
+  //           : undefined,
+  //     };
+  //     return viewUser;
+  //   }
+  // }
 
   async findByIdForSwitch(id: number): Promise<UserDto> {
     const user = await this.prisma.user.findUnique({
@@ -666,24 +791,24 @@ export class UsersService {
         firstName: true,
         lastName: true,
         isActive: true,
-        organizationRoles: {
-          select: {
-            organization: { select: { id: true } },
-            organizationRole: { select: { name: true } },
-          },
-        },
-        superRoles: { select: { superRole: { select: { name: true } } } },
+        // organizationRoles: {
+        //   select: {
+        //     organization: { select: { id: true } },
+        //     organizationRole: { select: { name: true } },
+        //   },
+        // },
+        // superRoles: { select: { superRole: { select: { name: true } } } },
 
-        hospitalRoles: {
-          select: {
-            hospital: { select: { id: true, name: true } },
-            hospitalRole: {
-              select: {
-                name: true,
-              },
-            },
-          },
-        },
+        // hospitalRoles: {
+        //   select: {
+        //     hospital: { select: { id: true, name: true } },
+        //     hospitalRole: {
+        //       select: {
+        //         name: true,
+        //       },
+        //     },
+        //   },
+        // },
       },
     });
     console.log(user)
@@ -699,482 +824,482 @@ export class UsersService {
       firstName: user.firstName,
       lastName: user.lastName,
       isActive: user.isActive,
-      organizationRoles: user.organizationRoles.map((role) => ({
-        organizationId: role.organization.id,
-        organizationRole: role.organizationRole.name,
-      })),
-      superRole:
-        user.superRoles.length > 0
-          ? (user.superRoles[0].superRole.name as SuperRoleName)
-          : undefined,
+      // organizationRoles: user.organizationRoles.map((role) => ({
+      //   organizationId: role.organization.id,
+      //   organizationRole: role.organizationRole.name,
+      // })),
+      // superRole:
+      //   user.superRoles.length > 0
+      //     ? (user.superRoles[0].superRole.name as SuperRoleName)
+      //     : undefined,
 
-      hospitalRoles: user.hospitalRoles.map((role) => ({
-        hospitalId: role.hospital.id,
-        hospitalName: role.hospital.name,
-        hospitalRole: role.hospitalRole.name,
-      })),
+      // hospitalRoles: user.hospitalRoles.map((role) => ({
+      //   hospitalId: role.hospital.id,
+      //   hospitalName: role.hospital.name,
+      //   hospitalRole: role.hospitalRole.name,
+      // })),
     };
     return viewUser;
 
   }
 
-  async editUserStatus(id: number, editUserStatus: EditUserStatus) {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        id: id
-      }
-    });
-    if (!user) throw new HttpException("user not found", HttpStatus.NOT_FOUND);
+  // async editUserStatus(id: number, editUserStatus: EditUserStatus) {
+  //   const user = await this.prisma.user.findFirst({
+  //     where: {
+  //       id: id
+  //     }
+  //   });
+  //   if (!user) throw new HttpException("user not found", HttpStatus.NOT_FOUND);
 
-    const editedUser = await this.prisma.user.update({
-      where: {
-        id: id
-      },
-      data: {
-        isActive: editUserStatus.isActive
-      }
-    })
+  //   const editedUser = await this.prisma.user.update({
+  //     where: {
+  //       id: id
+  //     },
+  //     data: {
+  //       isActive: editUserStatus.isActive
+  //     }
+  //   })
 
 
-    const templateContent = await fs.readFile('apps/api/src/assets/templates/deactivate-admin-user.ejs', 'utf-8');
+  //   const templateContent = await fs.readFile('apps/api/src/assets/templates/deactivate-admin-user.ejs', 'utf-8');
   
-    const message = ejs.render(templateContent, {
-      firstName: user.firstName,
-      lastName: user.lastName,
-    });
+  //   const message = ejs.render(templateContent, {
+  //     firstName: user.firstName,
+  //     lastName: user.lastName,
+  //   });
 
-    const sentMail = await this.notificationService.sendEmail(user.email, "You have been removed from Fountlab", message);
+  //   const sentMail = await this.notificationService.sendEmail(user.email, "You have been removed from Fountlab", message);
 
-    if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
+  //   if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
 
-    return editUserStatus
-  }
+  //   return editUserStatus
+  // }
 
-  async edit(
-    userDto: AddUserDto & {
-      isPrimary: boolean;
-    },
-    hospitalId: number,
-    id: number
-  ): Promise<
-    UserDto & {
-      isPrimary: boolean;
-    }
-  > {
-    let transaction;
-    try {
-      transaction = await this.prisma.$transaction(async (prisma) => {
-        const checkUser = await this.findById(id);
-        if (!checkUser) {
-          throw new NotFoundException();
-        }
+  // async edit(
+  //   userDto: AddUserDto & {
+  //     isPrimary: boolean;
+  //   },
+  //   hospitalId: number,
+  //   id: number
+  // ): Promise<
+  //   UserDto & {
+  //     isPrimary: boolean;
+  //   }
+  // > {
+  //   let transaction;
+  //   try {
+  //     transaction = await this.prisma.$transaction(async (prisma) => {
+  //       const checkUser = await this.findById(id);
+  //       if (!checkUser) {
+  //         throw new NotFoundException();
+  //       }
 
-        //check hospital
-        const hospital = await prisma.hospital.findFirst({
-          where: {
-            id: hospitalId,
-          },
-        });
-        if (!hospital) {
-          throw new HttpException('hospital not found ', HttpStatus.BAD_REQUEST);
-        }
-        //check user
+  //       //check hospital
+  //       const hospital = await prisma.hospital.findFirst({
+  //         where: {
+  //           id: hospitalId,
+  //         },
+  //       });
+  //       if (!hospital) {
+  //         throw new HttpException('hospital not found ', HttpStatus.BAD_REQUEST);
+  //       }
+  //       //check user
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: userDto.email,
-          },
-        });
+  //       const user = await prisma.user.findUnique({
+  //         where: {
+  //           email: userDto.email,
+  //         },
+  //       });
 
-        if (user && user.id != id) {
-          throw new HttpException(
-            'User with same email already exists',
-            HttpStatus.BAD_REQUEST
-          );
-        }
+  //       if (user && user.id != id) {
+  //         throw new HttpException(
+  //           'User with same email already exists',
+  //           HttpStatus.BAD_REQUEST
+  //         );
+  //       }
 
-        const data = userDto;
-        const {
-          superRole,
-          organizationRoles,
-          hospitalRole,
-          isPrimary,
-          ...newData
-        } = data;
+  //       const data = userDto;
+  //       const {
+  //         superRole,
+  //         organizationRoles,
+  //         hospitalRole,
+  //         isPrimary,
+  //         ...newData
+  //       } = data;
 
-        // if (
-        //   !superRole &&
-        //   (!organizationRoles || organizationRoles.length === 0)
-        // ) {
-        //   throw new BadRequestException();
-        // }
+  //       // if (
+  //       //   !superRole &&
+  //       //   (!organizationRoles || organizationRoles.length === 0)
+  //       // ) {
+  //       //   throw new BadRequestException();
+  //       // }
 
-        const updateuser = await prisma.user.update({
-          where: { id: id },
-          data: newData,
-        });
-        await this.prisma.userHospitalRole.updateMany({
-          where: { userId: updateuser.id, hospitalId: hospitalId },
-          data: { isPrimary: isPrimary },
-        });
-        if (isPrimary) {
-          // set others with same role in the same hospital as not primary
-          await this.prisma.userHospitalRole.updateMany({
-            where: {
-              hospitalId: hospitalId,
-              hospitalRoleId: 1,
-              userId: { not: updateuser.id },
-            },
-            data: { isPrimary: false },
-          });
-        }
+  //       const updateuser = await prisma.user.update({
+  //         where: { id: id },
+  //         data: newData,
+  //       });
+  //       await this.prisma.userHospitalRole.updateMany({
+  //         where: { userId: updateuser.id, hospitalId: hospitalId },
+  //         data: { isPrimary: isPrimary },
+  //       });
+  //       if (isPrimary) {
+  //         // set others with same role in the same hospital as not primary
+  //         await this.prisma.userHospitalRole.updateMany({
+  //           where: {
+  //             hospitalId: hospitalId,
+  //             hospitalRoleId: 1,
+  //             userId: { not: updateuser.id },
+  //           },
+  //           data: { isPrimary: false },
+  //         });
+  //       }
 
-        // const superRoleInDatabase = await prisma.userSuperRole.findFirst({
-        //   where: { userId: id },
-        // });
-        // const organizationRolesinDatabase =
-        //   await this.prisma.userOrganizationRole.findMany({
-        //     where: { userId: user.id },
-        //   });
+  //       // const superRoleInDatabase = await prisma.userSuperRole.findFirst({
+  //       //   where: { userId: id },
+  //       // });
+  //       // const organizationRolesinDatabase =
+  //       //   await this.prisma.userOrganizationRole.findMany({
+  //       //     where: { userId: user.id },
+  //       //   });
 
-        // if (superRoleInDatabase) {
-        //   if (!superRole)
-        //     await prisma.userSuperRole.delete({
-        //       where: { id: superRoleInDatabase.id },
-        //     });
-        // }
+  //       // if (superRoleInDatabase) {
+  //       //   if (!superRole)
+  //       //     await prisma.userSuperRole.delete({
+  //       //       where: { id: superRoleInDatabase.id },
+  //       //     });
+  //       // }
 
-        // if (superRole) {
-        //   const fntrole = await prisma.superRole.findFirst({
-        //     where: { name: superRole },
-        //   });
-        //   const role = await prisma.userSuperRole.findFirst({
-        //     where: { userId: id, superRoleId: fntrole.id },
-        //   });
-        //   if (!role) {
-        //     await prisma.userSuperRole.create({
-        //       data: { userId: id, superRoleId: fntrole.id },
-        //     });
-        //   }
-        // }
+  //       // if (superRole) {
+  //       //   const fntrole = await prisma.superRole.findFirst({
+  //       //     where: { name: superRole },
+  //       //   });
+  //       //   const role = await prisma.userSuperRole.findFirst({
+  //       //     where: { userId: id, superRoleId: fntrole.id },
+  //       //   });
+  //       //   if (!role) {
+  //       //     await prisma.userSuperRole.create({
+  //       //       data: { userId: id, superRoleId: fntrole.id },
+  //       //     });
+  //       //   }
+  //       // }
 
-        // const rolesPresentInDb = [];
+  //       // const rolesPresentInDb = [];
 
-        // if (organizationRoles && organizationRoles.length > 0) {
-        //   for (const org of organizationRoles) {
-        //     const { organizationId, organizationRole } = org;
+  //       // if (organizationRoles && organizationRoles.length > 0) {
+  //       //   for (const org of organizationRoles) {
+  //       //     const { organizationId, organizationRole } = org;
 
-        //     if (!organizationId) {
-        //       throw new BadRequestException();
-        //     }
+  //       //     if (!organizationId) {
+  //       //       throw new BadRequestException();
+  //       //     }
 
-        //     const orgCheck = await prisma.organization.findFirst({
-        //       where: { id: organizationId },
-        //     });
+  //       //     const orgCheck = await prisma.organization.findFirst({
+  //       //       where: { id: organizationId },
+  //       //     });
 
-        //     if (!orgCheck) {
-        //       throw new BadRequestException();
-        //     }
-        //     if (!organizationRole) {
-        //       throw new BadRequestException();
-        //     }
+  //       //     if (!orgCheck) {
+  //       //       throw new BadRequestException();
+  //       //     }
+  //       //     if (!organizationRole) {
+  //       //       throw new BadRequestException();
+  //       //     }
 
-        //     const orgrole = await prisma.organizationRole.findFirst({
-        //       where: { name: { equals: organizationRole } },
-        //     });
+  //       //     const orgrole = await prisma.organizationRole.findFirst({
+  //       //       where: { name: { equals: organizationRole } },
+  //       //     });
 
-        //     const role = await prisma.userOrganizationRole.findFirst({
-        //       where: {
-        //         userId: id,
-        //         organizationRoleId: orgrole.id,
-        //         organizationId: organizationId,
-        //       },
-        //     });
+  //       //     const role = await prisma.userOrganizationRole.findFirst({
+  //       //       where: {
+  //       //         userId: id,
+  //       //         organizationRoleId: orgrole.id,
+  //       //         organizationId: organizationId,
+  //       //       },
+  //       //     });
 
-        //     if (role) {
-        //       rolesPresentInDb.push(role);
-        //     }
+  //       //     if (role) {
+  //       //       rolesPresentInDb.push(role);
+  //       //     }
 
-        //     if (!role) {
-        //       await prisma.userOrganizationRole.create({
-        //         data: {
-        //           userId: id,
-        //           organizationRoleId: orgrole.id,
-        //           organizationId: organizationId,
-        //         },
-        //       });
-        //     }
-        //   }
-        // }
+  //       //     if (!role) {
+  //       //       await prisma.userOrganizationRole.create({
+  //       //         data: {
+  //       //           userId: id,
+  //       //           organizationRoleId: orgrole.id,
+  //       //           organizationId: organizationId,
+  //       //         },
+  //       //       });
+  //       //     }
+  //       //   }
+  //       // }
 
-        // const rolesPrsentInList = [];
-        // rolesPresentInDb.forEach((value) => rolesPrsentInList.push(value.id));
-        // const rolesPrsentinDb = [];
-        // organizationRolesinDatabase.forEach((value) =>
-        //   rolesPrsentinDb.push(value.id)
-        // );
-        // // add here
-        // const missing = rolesPrsentinDb.filter(
-        //   (item) => rolesPrsentInList.indexOf(item) < 0
-        // );
+  //       // const rolesPrsentInList = [];
+  //       // rolesPresentInDb.forEach((value) => rolesPrsentInList.push(value.id));
+  //       // const rolesPrsentinDb = [];
+  //       // organizationRolesinDatabase.forEach((value) =>
+  //       //   rolesPrsentinDb.push(value.id)
+  //       // );
+  //       // // add here
+  //       // const missing = rolesPrsentinDb.filter(
+  //       //   (item) => rolesPrsentInList.indexOf(item) < 0
+  //       // );
 
-        // if (missing && missing.length > 0) {
-        //   await prisma.userOrganizationRole.deleteMany({
-        //     where: { id: { in: missing } },
-        //   });
-        // }
-        const updatedUser: UserDto & {
-          isPrimary: boolean;
-        } = {
-          id: updateuser.id,
-          email: updateuser.email,
-          phoneNumber: updateuser.phoneNumber,
-          firstName: updateuser.firstName,
-          lastName: updateuser.lastName,
-          organizationRoles: organizationRoles,
-          superRole: superRole,
-          isPrimary,
-        };
+  //       // if (missing && missing.length > 0) {
+  //       //   await prisma.userOrganizationRole.deleteMany({
+  //       //     where: { id: { in: missing } },
+  //       //   });
+  //       // }
+  //       const updatedUser: UserDto & {
+  //         isPrimary: boolean;
+  //       } = {
+  //         id: updateuser.id,
+  //         email: updateuser.email,
+  //         phoneNumber: updateuser.phoneNumber,
+  //         firstName: updateuser.firstName,
+  //         lastName: updateuser.lastName,
+  //         organizationRoles: organizationRoles,
+  //         superRole: superRole,
+  //         isPrimary,
+  //       };
 
-        return updatedUser;
-      });
-    } catch (error) {
-      // Handle transaction failure
-      console.log(error);
-      throw new BadRequestException('Failed to edit user.');
-    }
+  //       return updatedUser;
+  //     });
+  //   } catch (error) {
+  //     // Handle transaction failure
+  //     console.log(error);
+  //     throw new BadRequestException('Failed to edit user.');
+  //   }
 
-    return transaction;
-  }
+  //   return transaction;
+  // }
 
-  async deleteUser(hospitalId: number, id: number): Promise<void> {
-    const checkUser = await this.findById(id);
-    if (!checkUser) {
-      throw new NotFoundException();
-    } 
-    const hospitalUserRelation = await this.prisma.userHospitalRole.findFirst({
-      where: {
-        hospitalId: hospitalId,
-        userId: id,
-      },
-    });
+  // async deleteUser(hospitalId: number, id: number): Promise<void> {
+  //   const checkUser = await this.findById(id);
+  //   if (!checkUser) {
+  //     throw new NotFoundException();
+  //   } 
+  //   const hospitalUserRelation = await this.prisma.userHospitalRole.findFirst({
+  //     where: {
+  //       hospitalId: hospitalId,
+  //       userId: id,
+  //     },
+  //   });
 
-    if(hospitalUserRelation)  await this.prisma.userHospitalRole.delete({ where: { id: hospitalUserRelation.id, },});
+  //   if(hospitalUserRelation)  await this.prisma.userHospitalRole.delete({ where: { id: hospitalUserRelation.id, },});
 
-    const templateContent = await fs.readFile('apps/api/src/assets/templates/deactivate-manager.ejs', 'utf-8');
+  //   const templateContent = await fs.readFile('apps/api/src/assets/templates/deactivate-manager.ejs', 'utf-8');
   
-    const message = ejs.render(templateContent, {
-      firstName: checkUser.firstName,
-      lastName: checkUser.lastName,
-    });
+  //   const message = ejs.render(templateContent, {
+  //     firstName: checkUser.firstName,
+  //     lastName: checkUser.lastName,
+  //   });
 
     
-    const sentMail = await this.notificationService.sendEmail(checkUser.email, "You have been removed from hospital ", message);
+  //   const sentMail = await this.notificationService.sendEmail(checkUser.email, "You have been removed from hospital ", message);
 
-    if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
+  //   if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
   
-    console.log('removed user...')
-    return;
+  //   console.log('removed user...')
+  //   return;
     
-  }
+  // }
 
 
 
-  async editAdmin(
-    userDto: AddUserDto,
-    id: number
-  ): Promise<
-    UserDto
-  > {
-    let transaction;
-    try {
-      transaction = await this.prisma.$transaction(async (prisma) => {
-        const checkUser = await this.findById(id);
-        if (!checkUser) {
-          throw new NotFoundException();
-        }
-        //check user
+  // async editAdmin(
+  //   userDto: AddUserDto,
+  //   id: number
+  // ): Promise<
+  //   UserDto
+  // > {
+  //   let transaction;
+  //   try {
+  //     transaction = await this.prisma.$transaction(async (prisma) => {
+  //       const checkUser = await this.findById(id);
+  //       if (!checkUser) {
+  //         throw new NotFoundException();
+  //       }
+  //       //check user
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: userDto.email,
-          },
-        });
+  //       const user = await prisma.user.findUnique({
+  //         where: {
+  //           email: userDto.email,
+  //         },
+  //       });
 
-        if (user && user.id != id) {
-          throw new HttpException(
-            'User with same email already exists',
-            HttpStatus.BAD_REQUEST
-          );
-        }
+  //       if (user && user.id != id) {
+  //         throw new HttpException(
+  //           'User with same email already exists',
+  //           HttpStatus.BAD_REQUEST
+  //         );
+  //       }
 
-        const data = userDto;
-        const {
-          superRole,
-          organizationRoles,
-          hospitalRole,
+  //       const data = userDto;
+  //       const {
+  //         superRole,
+  //         organizationRoles,
+  //         hospitalRole,
 
-          ...newData
-        } = data;
-
-
-
-        const updateuser = await prisma.user.update({
-          where: { id: id },
-          data: newData,
-        });
+  //         ...newData
+  //       } = data;
 
 
-        const updatedUser: UserDto = {
-          id: updateuser.id,
-          email: updateuser.email,
-          phoneNumber: updateuser.phoneNumber,
-          firstName: updateuser.firstName,
-          lastName: updateuser.lastName,
-          organizationRoles: organizationRoles,
-          superRole: superRole,
 
-        };
+  //       const updateuser = await prisma.user.update({
+  //         where: { id: id },
+  //         data: newData,
+  //       });
 
-        return updatedUser;
-      });
-    } catch (error) {
-      // Handle transaction failure
-      console.log(error);
-      throw new BadRequestException('Failed to edit user.');
-    }
 
-    return transaction;
-  }
+  //       const updatedUser: UserDto = {
+  //         id: updateuser.id,
+  //         email: updateuser.email,
+  //         phoneNumber: updateuser.phoneNumber,
+  //         firstName: updateuser.firstName,
+  //         lastName: updateuser.lastName,
+  //         organizationRoles: organizationRoles,
+  //         superRole: superRole,
 
-  async deleteAdminUser(id: number): Promise<void> {
-    const checkUser = await this.findById(id);
-    if (!checkUser) {
-      throw new NotFoundException();
-    } else {
-      const superUserRelation = await this.prisma.userSuperRole.findFirst({
-        where: {
-          userId: id,
-        },
-      });
-      await this.prisma.userSuperRole.delete({
-        where: {
-          id: superUserRelation.id,
-        },
-      });
-      await this.prisma.user.delete({ where: { id: Number(id) } });
-      return;
-    }
-  }
+  //       };
 
-  async getFilteredPosts(
-    pageSize: number,
-    pageOffset: number,
-    name: string,
-    email: string,
-    sortBy: string,
-    sortOrder: 'asc' | 'desc'
-  ): Promise<ListUserPageDto> {
-    const whereArray = [];
-    let whereQuery = {};
+  //       return updatedUser;
+  //     });
+  //   } catch (error) {
+  //     // Handle transaction failure
+  //     console.log(error);
+  //     throw new BadRequestException('Failed to edit user.');
+  //   }
 
-    if (email !== undefined) {
-      whereArray.push({ email: { contains: email, mode: 'insensitive' } });
-    }
+  //   return transaction;
+  // }
 
-    if (name !== undefined) {
-      whereArray.push({
-        OR: [
-          { firstName: { contains: name, mode: 'insensitive' } },
-          { lastName: { contains: name, mode: 'insensitive' } },
-        ],
-      });
-    }
-    if (whereArray.length > 0) {
-      if (whereArray.length > 1) {
-        whereQuery = { AND: whereArray };
-      } else {
-        whereQuery = whereArray[0];
-      }
-    }
+  // async deleteAdminUser(id: number): Promise<void> {
+  //   const checkUser = await this.findById(id);
+  //   if (!checkUser) {
+  //     throw new NotFoundException();
+  //   } else {
+  //     const superUserRelation = await this.prisma.userSuperRole.findFirst({
+  //       where: {
+  //         userId: id,
+  //       },
+  //     });
+  //     await this.prisma.userSuperRole.delete({
+  //       where: {
+  //         id: superUserRelation.id,
+  //       },
+  //     });
+  //     await this.prisma.user.delete({ where: { id: Number(id) } });
+  //     return;
+  //   }
+  // }
 
-    const sort = (sortBy ? sortBy : 'id').toString();
-    const order = sortOrder ? sortOrder : 'asc';
-    const size = pageSize ? pageSize : 10;
-    const offset = pageOffset ? pageOffset : 0;
-    const orderBy = { [sort]: order };
-    const count = await this.prisma.user.count({
-      where: whereQuery,
-    });
+  // async getFilteredPosts(
+  //   pageSize: number,
+  //   pageOffset: number,
+  //   name: string,
+  //   email: string,
+  //   sortBy: string,
+  //   sortOrder: 'asc' | 'desc'
+  // ): Promise<ListUserPageDto> {
+  //   const whereArray = [];
+  //   let whereQuery = {};
 
-    const listusers = await this.prisma.user.findMany({
-      where: whereQuery,
-      select: {
-        id: true,
-        email: true,
-        phoneNumber: true,
-        firstName: true,
-        lastName: true,
-        organizationRoles: {
-          select: {
-            organization: { select: { name: true } },
-            organizationRole: { select: { name: true } },
-          },
-        },
-        superRoles: { select: { superRole: { select: { name: true } } } },
-      },
-      take: Number(size),
-      skip: Number(size * offset),
-      orderBy,
-    });
+  //   if (email !== undefined) {
+  //     whereArray.push({ email: { contains: email, mode: 'insensitive' } });
+  //   }
 
-    const listUsers = await this.getList(listusers);
+  //   if (name !== undefined) {
+  //     whereArray.push({
+  //       OR: [
+  //         { firstName: { contains: name, mode: 'insensitive' } },
+  //         { lastName: { contains: name, mode: 'insensitive' } },
+  //       ],
+  //     });
+  //   }
+  //   if (whereArray.length > 0) {
+  //     if (whereArray.length > 1) {
+  //       whereQuery = { AND: whereArray };
+  //     } else {
+  //       whereQuery = whereArray[0];
+  //     }
+  //   }
 
-    return {
-      size: size,
-      number: offset,
-      total: count,
-      sort: [
-        {
-          by: sort,
-          order: order,
-        },
-      ],
-      content: listUsers,
-    };
-  }
+  //   const sort = (sortBy ? sortBy : 'id').toString();
+  //   const order = sortOrder ? sortOrder : 'asc';
+  //   const size = pageSize ? pageSize : 10;
+  //   const offset = pageOffset ? pageOffset : 0;
+  //   const orderBy = { [sort]: order };
+  //   const count = await this.prisma.user.count({
+  //     where: whereQuery,
+  //   });
 
-  private getList(listuser): Promise<ListUserDto[]> {
-    if (!listuser) {
-      throw new BadRequestException();
-    } else {
-      return listuser.map((user) => ({
-        id: user.id,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        isActive: user.isActive,
-        organizationRoles: user.organizationRoles.map((role) => ({
-          name: role.organization.name,
-          organizationRole: role.organizationRole.name,
-        })),
-        superRole:
-          user.superRoles.length > 0
-            ? (user.superRoles[0].superRole.name as SuperRoleName)
-            : undefined,
-      }));
-    }
-  }
+  //   const listusers = await this.prisma.user.findMany({
+  //     where: whereQuery,
+  //     select: {
+  //       id: true,
+  //       email: true,
+  //       phoneNumber: true,
+  //       firstName: true,
+  //       lastName: true,
+  //       organizationRoles: {
+  //         select: {
+  //           organization: { select: { name: true } },
+  //           organizationRole: { select: { name: true } },
+  //         },
+  //       },
+  //       superRoles: { select: { superRole: { select: { name: true } } } },
+  //     },
+  //     take: Number(size),
+  //     skip: Number(size * offset),
+  //     orderBy,
+  //   });
 
-  private generateRandomPassword(length: number): string {
-    const password = generatePassword.generate({
-      length,
-      numbers: true,
-      symbols: true,
-      uppercase: true,
-      excludeSimilarCharacters: true,
-    });
-    return password;
-  }
+  //   const listUsers = await this.getList(listusers);
+
+  //   return {
+  //     size: size,
+  //     number: offset,
+  //     total: count,
+  //     sort: [
+  //       {
+  //         by: sort,
+  //         order: order,
+  //       },
+  //     ],
+  //     content: listUsers,
+  //   };
+  // }
+
+  // private getList(listuser): Promise<ListUserDto[]> {
+  //   if (!listuser) {
+  //     throw new BadRequestException();
+  //   } else {
+  //     return listuser.map((user) => ({
+  //       id: user.id,
+  //       email: user.email,
+  //       phoneNumber: user.phoneNumber,
+  //       firstName: user.firstName,
+  //       lastName: user.lastName,
+  //       isActive: user.isActive,
+  //       organizationRoles: user.organizationRoles.map((role) => ({
+  //         name: role.organization.name,
+  //         organizationRole: role.organizationRole.name,
+  //       })),
+  //       superRole:
+  //         user.superRoles.length > 0
+  //           ? (user.superRoles[0].superRole.name as SuperRoleName)
+  //           : undefined,
+  //     }));
+  //   }
+  // }
+
+  // private generateRandomPassword(length: number): string {
+  //   const password = generatePassword.generate({
+  //     length,
+  //     numbers: true,
+  //     symbols: true,
+  //     uppercase: true,
+  //     excludeSimilarCharacters: true,
+  //   });
+  //   return password;
+  // }
 }

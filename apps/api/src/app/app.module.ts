@@ -7,10 +7,6 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { AuthModule } from './auth/auth.module';
 import { LoginModule } from './login/login.module';
 import { HospitalsModule } from './hospitals/hospitals.module';
-import { DoctorsModule } from './doctors/doctors.module';
-import { DoctorLoginModule } from './doctor-login/doctor-login.module';
-import { DoctorAuthModule } from './doctor-auth/doctor-auth.module';
-import { PatientsModule } from './patients/patients.module';
 
 @Module({
   imports: [
@@ -18,11 +14,9 @@ import { PatientsModule } from './patients/patients.module';
     NotificationsModule,
     AuthModule,
     LoginModule,
-    DoctorAuthModule,
-    DoctorLoginModule,
-    HospitalsModule,
-    DoctorsModule,
-    PatientsModule,
+    // HospitalsModule,
+    // DoctorsModule,
+    // PatientsModule,
    
   ],
   controllers: [AppController],
