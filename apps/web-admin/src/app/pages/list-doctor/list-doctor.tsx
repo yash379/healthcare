@@ -233,8 +233,8 @@ console.log("Doctor", response.data)
   const handleAddDoctor = async (formData: Form) => {
 
     try {
-      const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${params.hospitalId}/doctors`,
-        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender,  email: formData.email, phoneNumber: formData.phoneNumber, doctorCode: formData.doctorCode, speciality: formData.speciality, isActive: formData.isActive },
+      const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${params.hospitalId}/doctor`,
+        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender,  email: formData.email, phoneNumber: '8734234232', doctorCode: formData.doctorCode, speciality: formData.speciality, isActive: formData.isActive },
         {
           withCredentials: true,
 

@@ -1,5 +1,5 @@
 import { Page } from './page';
-// import { OrganizationRoleName, HospitalRoleName, SuperRoleName } from '@prisma/client';
+import {  HospitalRoleName, SuperRoleName } from '@prisma/client';
 
 
 export interface User {
@@ -9,12 +9,12 @@ export interface User {
   email: string;
   phoneNumber: string;
   // HospitalRole?: HospitalRoleName;
-  organizationRoles?: OrganizationRoleDto[];
-  // superRole?: SuperRoleName;
+  hospitalRoles?: HospitalRoleDto[];
+  superRole?: SuperRoleName;
 }
-export interface OrganizationRoleDto  {
-  organizationId: number;
-  // organizationRole: OrganizationRoleName;
+export interface HospitalRoleDto  {
+  hospitalId: number;
+  hospitalRole: HospitalRoleName;
 }
 
 export interface ViewUser {
@@ -23,12 +23,12 @@ export interface ViewUser {
   lastName: string;
   email: string;
   phoneNumber: string;
-  organizationRoles: ViewOrganizationRoleDto[];
-  // superRole?: SuperRoleName;
+  hospitalRoles: ViewHospitalRoleDto[];
+  superRole?: SuperRoleName;
 }
-export interface ViewOrganizationRoleDto  {
+export interface ViewHospitalRoleDto  {
   name: string;
-  // organizationRole: OrganizationRoleName;
+  hospitalRole: HospitalRoleName;
 }
 
 
@@ -39,8 +39,8 @@ ViewUser,
   | 'phoneNumber'
   | 'firstName'
   | 'lastName'
-  | 'organizationRoles'
-  // | 'superRole'
+  | 'hospitalRoles'
+  | 'superRole'
 >;
 
 export type AddUser = Omit<User, 'id'>;

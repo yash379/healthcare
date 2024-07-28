@@ -12,7 +12,7 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
-import { AddUserDto } from './dto/add-user.dto';
+import { AddManagerDto, AddUserDto } from './dto/add-user.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -20,7 +20,7 @@ import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
 import { ListUserPageDto } from './dto/list-user-page.dto';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AssetCountDashboardDto, UserDto } from './dto/user.dto';
+import { AssetCountDashboardDto, ManagerDto, UserDto } from './dto/user.dto';
 import { EditUserStatus, ViewUserDto } from './dto/view-user.dto';
 import { ForgotPasswordDto, LoginDto, UpdatePasswordDto, UpdatePasswordThroughProfileDto } from '../core/dto/user-login.dto';
 import { LocalAuthGuard } from '../auth/local-auth.guard';
@@ -32,38 +32,38 @@ import { DoctorDto } from './dto/doctors.dto';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Post('/admins')
-  // @ApiOkResponse({ type: UserDto })
-  // @Roles(Role.POYV_ADMIN)
-  // @HttpCode(HttpStatus.CREATED)
-  // createAdminUser(@Body() data: AddUserDto & {isPrimary: boolean}): Promise<UserDto> {
-  //   return this.usersService.createAdminUser(data);
-  // }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Post('/admins')
+  @ApiOkResponse({ type: UserDto })
+  @Roles(Role.POYV_ADMIN)
+  @HttpCode(HttpStatus.CREATED)
+  createAdminUser(@Body() data: AddUserDto & {isPrimary: boolean}): Promise<UserDto> {
+    return this.usersService.createAdminUser(data);
+  }
 
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Get('/admins')
-  // @HttpCode(HttpStatus.OK)
-  // @ApiOkResponse({ type: ListUserPageDto })
-  // @Roles(Role.POYV_ADMIN)
-  // listAdmins(
-  //   @Query('pageSize') pageSize?: number,
-  //   @Query('pageOffset') pageOffset?: number,
-  //   @Query('name') name?: string,
-  //   @Query('email') email?: string,
-  //   @Query('sortBy') sortBy?: string,
-  //   @Query('sortOrder') sortOrder?: 'asc' | 'desc'
-  // ) : Promise<ListUserPageDto> {
-  //   return this.usersService.listAdmins(
-  //     +pageSize,
-  //     +pageOffset,
-  //     name,
-  //     email,
-  //     sortBy,
-  //     sortOrder
-  //   );
-  // }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Get('/admins')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: ListUserPageDto })
+  @Roles(Role.POYV_ADMIN)
+  listAdmins(
+    @Query('pageSize') pageSize?: number,
+    @Query('pageOffset') pageOffset?: number,
+    @Query('name') name?: string,
+    @Query('email') email?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc'
+  ) : Promise<ListUserPageDto> {
+    return this.usersService.listAdmins(
+      +pageSize,
+      +pageOffset,
+      name,
+      email,
+      sortBy,
+      sortOrder
+    );
+  }
 
 
   // @UseGuards(AuthGuard, RolesGuard)
@@ -86,12 +86,20 @@ export class UsersController {
   // }
 
   // @UseGuards(AuthGuard, RolesGuard)
-  @Post('/hospitals/:hospitalId/manager')
+  @Post('/hospitals/:hospitalId/doctor')
   @ApiOkResponse({ type: UserDto })
-  // @Roles(Role.POYV_ADMIN,  Role.HOSPITAL_ADMIN)
+  @Roles(Role.POYV_ADMIN,  Role.HOSPITAL_ADMIN)
   @HttpCode(HttpStatus.CREATED)
   create(@Param('hospitalId') hospitalId: number,@Body() data: AddDoctorDto ): Promise<DoctorDto > {
-    return this.usersService.add(+hospitalId,data);
+    return this.usersService.addDoctor(+hospitalId,data);
+  }
+
+  @Post('/hospitals/:hospitalId/manager')
+  @ApiOkResponse({ type: UserDto })
+  @Roles(Role.POYV_ADMIN,  Role.HOSPITAL_ADMIN)
+  @HttpCode(HttpStatus.CREATED)
+  addManager(@Param('hospitalId') hospitalId: number,@Body() data: AddManagerDto & {isPrimary: boolean}): Promise<ManagerDto & {isPrimary: boolean} > {
+    return this.usersService.addManager(+hospitalId,data);
   }
 
   
@@ -150,14 +158,14 @@ export class UsersController {
   //   return this.usersService.editUserStatus(+id,editUserStatus);
   // }
 
-  // @UseGuards(AuthGuard)
-  // @Put('/hospitals/:hospitalId/managers/:id')
-  // @HttpCode(HttpStatus.OK)
-  // @ApiOkResponse({ type: UserDto })
-  // @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
-  // edit(@Body() data: AddUserDto & {isPrimary: boolean}, @Param('hospitalId') hospitalId: number, @Param('id') id: number): Promise<UserDto & {isPrimary: boolean}> {
-  //   return this.usersService.edit(data, +hospitalId,+id);
-  // }
+  @UseGuards(AuthGuard)
+  @Put('/hospitals/:hospitalId/doctor/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: UserDto })
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
+  edit(@Body() data: AddDoctorDto, @Param('hospitalId') hospitalId: number, @Param('id') id: number): Promise<DoctorDto> {
+    return this.usersService.updateDoctor(data, +hospitalId,+id);
+  }
 
   // @UseGuards(AuthGuard)
   // @Delete('/hospitals/:hospitalId/managers/:id')

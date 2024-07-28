@@ -12,7 +12,7 @@ INSERT INTO public.organization_roles(
 
 INSERT INTO public.hospital_roles(
 	 name)
-	VALUES ( 'ADMIN');
+	VALUES ( 'ADMIN','DOCTOR','PATIENT');
 
 INSERT INTO public.users_super_roles(
 	 user_id, super_role_id)

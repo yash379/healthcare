@@ -22,6 +22,8 @@ export function ProtectedRoute({Component}: ProtectedRouteProps) {
       }
    },[]);
 
+   
+
    return (
     <div className={styles['container']}>
       <Component/>

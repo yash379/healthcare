@@ -9,6 +9,24 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum SuperRoleName {
+  ADMIN
+}
+
+enum HospitalRoleName {
+  SUPER_ADMIN
+  ADMIN
+  DOCTOR
+  PATIENT
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
 model User {
   id          Int         @id @default(autoincrement())
   email       String      @unique
@@ -18,12 +36,13 @@ model User {
   isActive    Boolean     @default(true) @map("is_active")
   password    String?
   token       String?
-  role        Role
+  role        HospitalRoleName
   doctor      Doctor?
   patient     Patient?
   admin       Admin?
   superAdmin  SuperAdmin?
-
+superRoles        UserSuperRole[]
+  hospitalRoles UserHospitalRole[]
   @@map("users")
 }
 
@@ -92,7 +111,7 @@ model Hospital {
   DoctorHospital  DoctorHospital[]
   PatientHospital PatientHospital[]
   AdminHospital   AdminHospital[]
-
+ users        UserHospitalRole[]
   @@unique([code])
   @@map("hospitals")
 }
@@ -155,15 +174,42 @@ model AdminHospital {
   @@map("admin_hospitals")
 }
 
-enum Role {
-  SUPER_ADMIN
-  ADMIN
-  DOCTOR
-  PATIENT
+
+model SuperRole {
+  id    Int             @id @default(autoincrement())
+  name  SuperRoleName   @unique
+  users UserSuperRole[]
+
+  @@map("super_roles")
 }
 
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
+model HospitalRole {
+  id    Int                    @id @default(autoincrement())
+  name  HospitalRoleName   @unique
+  users UserHospitalRole[]
+
+  @@map("hospital_roles")
+}
+
+model UserSuperRole {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  superRoleId Int       @map("super_role_id")
+  user        User      @relation(fields: [userId], references: [id])
+  superRole   SuperRole @relation(fields: [superRoleId], references: [id])
+
+  @@map("users_super_roles")
+}
+
+model UserHospitalRole {
+  id                 Int              @id @default(autoincrement())
+  userId             Int              @map("user_id")
+  hospitalRoleId Int              @map("hospital_role_id")
+  hospitalId     Int              @map("hospital_id")
+  isPrimary      Boolean      @default(false) @map("is_primary")
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hospitalRole   HospitalRole @relation(fields: [hospitalRoleId], references: [id])
+  hospital       Hospital     @relation(fields: [hospitalId], references: [id])
+
+  @@map("users_hospital_roles")
 }

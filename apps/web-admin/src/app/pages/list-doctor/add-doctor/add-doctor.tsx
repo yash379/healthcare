@@ -62,7 +62,7 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
     firstName: yup.string().required('First Name is required'),
     lastName: yup.string().required('Last Name is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
-    phoneNumber: yup.string().matches(/[6789][0-9]{9}/, 'Invalid phone number').min(10).max(10).required('Phone number is required'),
+    // phoneNumber: yup.string().matches(/[6789][0-9]{9}/, 'Invalid phone number').min(10).max(10).required('Phone number is required'),
     gender: yup.string().required('Please Select One'),
     isActive: yup.boolean().required('Please Select One'),
     doctorCode: yup.string().required('Doctor Code is required'),
@@ -186,14 +186,14 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
                 )}
               />
             </Box>
-            <Box className={styles['grid_top']}>
+            {/* <Box className={styles['grid_top']}>
               <Controller
                 name="phoneNumber"
                 control={control}
                 defaultValue=""
-                rules={{
-                  required: 'Phone Number is required',
-                }}
+                // rules={{
+                //   required: 'Phone Number is required',
+                // }}
                 render={({ field }) => (
                   <PhoneInput
                   {...field}   
@@ -211,7 +211,7 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
                 /> 
                 )}
               />
-            </Box>
+            </Box> */}
 
             
            

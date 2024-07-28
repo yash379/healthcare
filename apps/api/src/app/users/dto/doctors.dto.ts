@@ -40,3 +40,4 @@ export class DoctorDto implements Doctor {
   @IsBoolean()
   isActive:boolean
 }
+

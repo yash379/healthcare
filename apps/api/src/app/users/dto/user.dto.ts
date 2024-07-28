@@ -2,7 +2,8 @@ import { User } from '@healthcare/data-transfer-types';
 import { ApiProperty } from '@nestjs/swagger';
 // import { SuperRoleName,HospitalRoleName } from '@prisma/client';
 import { IsEmail, IsNotEmpty, MaxLength, } from 'class-validator';
-import { OrganizationRolesDto } from '../../core/dto/organizationRoles.dto';
+import { HospitalRolesDto } from '../../core/dto/hospitalRoles.dto';
+import { HospitalRoleName, SuperRoleName } from '@prisma/client';
 
 export class UserDto implements User {
   @ApiProperty() id: number;
@@ -26,10 +27,10 @@ export class UserDto implements User {
   // @ApiProperty() hospitalRole?: HospitalRoleName
 
   @ApiProperty()
-  organizationRoles?:OrganizationRolesDto[];
+  hospitalRoles?:HospitalRolesDto[];
 
-  // @ApiProperty()
-  // superRole?: SuperRoleName;
+  @ApiProperty()
+  superRole?: SuperRoleName;
 }
 
 
@@ -52,3 +53,34 @@ export class AssetCountDashboardDto  {
   @ApiProperty()
   Devices: number
 }
+
+export class ManagerDto implements User {
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  firstName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  lastName: string;
+
+
+  @ApiProperty()
+  @MaxLength(250)
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  phoneNumber: string;
+
+  @ApiProperty()
+  hospitalRoles?:HospitalRolesDto[];
+
+  @ApiProperty()
+  superRole?: SuperRoleName;
+}
+
+

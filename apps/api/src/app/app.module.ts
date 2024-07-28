@@ -14,7 +14,7 @@ import { HospitalsModule } from './hospitals/hospitals.module';
     NotificationsModule,
     AuthModule,
     LoginModule,
-    // HospitalsModule,
+    HospitalsModule,
     // DoctorsModule,
     // PatientsModule,
    
