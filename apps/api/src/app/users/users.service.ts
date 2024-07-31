@@ -1372,6 +1372,102 @@ export class UsersService {
   //   });
   // }
 
+  async listDoctors(
+    hospitalId: number,
+    pageSize: number,
+    pageOffset: number,
+    name: string,
+    email: string,
+    sortBy: string,
+    sortOrder: 'asc' | 'desc'
+  ): Promise<ListUserPageDto> {
+    const hospitalDoctorRoleId = await this.prisma.hospitalRole.findFirst({
+      where: {
+        name: HospitalRoleName.DOCTOR
+      }
+    });
+  
+    const whereArray = [];
+    let whereQuery = {};
+  
+    whereArray.push({
+      hospitalRoles: {
+        some: {
+          hospitalId: hospitalId,
+          hospitalRoleId: hospitalDoctorRoleId.id
+        }
+      }
+    });
+  
+    if (email !== undefined) {
+      whereArray.push({ email: { contains: email, mode: 'insensitive' } });
+    }
+  
+    if (name !== undefined) {
+      whereArray.push({
+        OR: [
+          { firstName: { contains: name, mode: 'insensitive' } },
+          { lastName: { contains: name, mode: 'insensitive' } },
+        ],
+      });
+    }
+  
+    if (whereArray.length > 0) {
+      if (whereArray.length > 1) {
+        whereQuery = { AND: whereArray };
+      } else {
+        whereQuery = whereArray[0];
+      }
+    }
+  
+    const sort = (sortBy ? sortBy : 'id').toString();
+    const order = sortOrder ? sortOrder : 'asc';
+    const size = pageSize ? pageSize : 10;
+    const offset = pageOffset ? pageOffset : 0;
+    const orderBy = { [sort]: order };
+    const count = await this.prisma.user.count({
+      where: whereQuery,
+    });
+  
+    const listUsers = await this.prisma.user.findMany({
+      where: whereQuery,
+      select: {
+        id: true,
+        email: true,
+        phoneNumber: true,
+        firstName: true,
+        isActive: true,
+        lastName: true,
+        hospitalRoles: {
+          select: {
+            hospital: { select: { name: true } },
+            hospitalRole: { select: { name: true } },
+          },
+        },
+        superRoles: { select: { superRole: { select: { name: true } } } },
+      },
+      take: Number(size),
+      skip: Number(size * offset),
+      orderBy,
+    });
+  
+    const listUsersDto = await this.getList(listUsers);
+  
+    return {
+      size: size,
+      number: offset,
+      total: count,
+      sort: [
+        {
+          by: sort,
+          order: order,
+        },
+      ],
+      content: listUsersDto,
+    };
+  }
+  
+
   async findByEmail(email: string) {
     const user = await this.prisma.user.findFirst({
       where: { email },

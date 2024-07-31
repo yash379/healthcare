@@ -65,6 +65,31 @@ export class UsersController {
     );
   }
 
+  
+  @UseGuards(AuthGuard, RolesGuard)
+  @Get('/hospitals/:hospitalId/doctors')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: ListUserPageDto })
+  @Roles(Role.POYV_ADMIN)
+  listDoctors(
+    @Param('hospitalId') hospitalId: number,
+    @Query('pageSize') pageSize?: number,
+    @Query('pageOffset') pageOffset?: number,
+    @Query('name') name?: string,
+    @Query('email') email?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc'
+  ): Promise<ListUserPageDto> {
+    return this.usersService.listDoctors(
+      +hospitalId,
+      +pageSize,
+      +pageOffset,
+      name,
+      email,
+      sortBy,
+      sortOrder
+    );
+  }
 
   // @UseGuards(AuthGuard, RolesGuard)
   // @Get('asset-count')
