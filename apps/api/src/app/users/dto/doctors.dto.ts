@@ -22,11 +22,11 @@ export class DoctorDto implements Doctor {
 
   @ApiProperty()
   @IsEmail()
-  email ?: string;
+  email: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  phoneNumber ?: string;
+  phoneNumber: string;
 
   @ApiProperty()
   @IsNotEmpty()

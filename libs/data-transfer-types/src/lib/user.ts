@@ -1,5 +1,5 @@
 import { Page } from './page';
-import {  HospitalRoleName, SuperRoleName } from '@prisma/client';
+import {  Gender, HospitalRoleName, SuperRoleName } from '@prisma/client';
 
 
 export interface User {
@@ -26,10 +26,14 @@ export interface ViewUser {
   hospitalRoles: ViewHospitalRoleDto[];
   superRole?: SuperRoleName;
 }
+
 export interface ViewHospitalRoleDto  {
   name: string;
   hospitalRole: HospitalRoleName;
 }
+
+
+
 
 
 export type ListUser = Pick<
@@ -46,3 +50,4 @@ ViewUser,
 export type AddUser = Omit<User, 'id'>;
 
 export type ListUserPage = Page<ListUser>;
+

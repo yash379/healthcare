@@ -1,8 +1,7 @@
-import { ViewHospitalRoleDto, ViewUser } from "@healthcare/data-transfer-types";
-import { ApiProperty } from "@nestjs/swagger";
-import { SuperRoleName } from "@prisma/client";
+import { ViewDoctor, ViewHospitalRoleDto, ViewUser } from '@healthcare/data-transfer-types';
+import { ApiProperty } from '@nestjs/swagger';
+import { Gender, SuperRoleName } from '@prisma/client';
 // import { SuperRoleName } from '@prisma/client';
-
 
 export class ViewUserDto implements ViewUser {
   @ApiProperty() id: number;
@@ -15,11 +14,9 @@ export class ViewUserDto implements ViewUser {
   @ApiProperty() superRole?: SuperRoleName;
 }
 
-
 export class EditUserStatus {
   @ApiProperty() isActive: boolean;
 }
-
 
 export class ViewManagerDto implements ViewUser {
   @ApiProperty() id: number;
@@ -32,7 +29,7 @@ export class ViewManagerDto implements ViewUser {
   @ApiProperty() superRole?: SuperRoleName;
 }
 
-
 export class EditManagerStatus {
   @ApiProperty() isActive: boolean;
 }
+

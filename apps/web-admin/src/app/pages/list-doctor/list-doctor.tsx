@@ -15,7 +15,7 @@ import DeleteDoctorComponent from './delete-doctor/delete-doctor';
 // import ViewDoctorComponent from '../view-doctor/view-doctor';
 import { enqueueSnackbar } from 'notistack';
 import { useParams } from 'react-router-dom';
-import { Hospital } from '@healthcare/data-transfer-types';
+import { Doctor, Hospital, ViewDoctor } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/user-contexts';
 import { Gender } from '@prisma/client';
@@ -33,18 +33,6 @@ interface Form {
   doctorCode: string;
   speciality: string;
   isActive: boolean,
-}
-
-interface ViewDoctor {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  gender: Gender;
-  phoneNumber: string;
-  doctorCode: string;
-  speciality: string;
-  isActive: boolean;
 }
 
 export interface EditForm {
@@ -258,14 +246,14 @@ console.log("Doctor", response.data)
 
 
   // Edit Doctor
-  const handleUpdate = async (updateData: EditForm) => {
+  const handleUpdate = async (updateData: ViewDoctor) => {
     console.log(updateData, "updatedData");
     try {
       const response = await axios.put(
-        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${selectedDoctorId}`,
+        `${apiUrl}/hospitals/${params.hospitalId}/doctor/${selectedDoctorId}`,
         {
-          firstName: updateData.firstName, lastName: updateData.lastName, email: updateData.email, phoneNumber: updateData.phoneNumber,
-          gender: updateData.gender, doctorCode: updateData.doctorCode, isActive: updateData.isActive, speciality:updateData.speciality
+          firstName: updateData.firstName, lastName: updateData.lastName, email: updateData.email, phoneNumber: '9834235433',
+          gender: updateData.gender, doctorCode: updateData.doctorCode, speciality:updateData.speciality, isActive:true
         },
         {
           withCredentials: true,

@@ -25,6 +25,8 @@ import * as fs from 'fs/promises';
 import { ADMIN_URL, API_URL, HOSPITAL_URL } from '../core/consts/env.consts';
 import { AddDoctorDto } from './dto/add-doctor.dto';
 import { DoctorDto } from './dto/doctors.dto';
+import { ListDoctorPageDto } from './dto/list-doctor-page.dto';
+import { ListDoctorDto } from './dto/list-doctor.dto';
 
 @Injectable()
 export class UsersService {
@@ -523,7 +525,6 @@ export class UsersService {
   //   };
   // }
 
-
   async addDoctor(
     hospitalId: number,
     addDoctorDto: AddDoctorDto
@@ -534,11 +535,11 @@ export class UsersService {
         HttpStatus.BAD_REQUEST
       );
     }
-  
+
     const token = this.generateRandomHexToken(16);
-  
+
     const data = { ...addDoctorDto, token };
-  
+
     // Check if hospital exists
     const hospital = await this.prisma.hospital.findUnique({
       where: { id: hospitalId },
@@ -549,7 +550,7 @@ export class UsersService {
         HttpStatus.NOT_FOUND
       );
     }
-  
+
     // Check if phone number is valid
     const isPhoneNumberValid = this.isValidMobileNumber(
       addDoctorDto.phoneNumber
@@ -560,14 +561,14 @@ export class UsersService {
         HttpStatus.BAD_REQUEST
       );
     }
-  
+
     // Check if user with the email already exists
     let user = await this.prisma.user.findUnique({
       where: { email: addDoctorDto.email },
     });
-  
+
     let isNewUser = false;
-  
+
     if (!user) {
       isNewUser = true;
       // Create a new user if not exists
@@ -577,19 +578,19 @@ export class UsersService {
           phoneNumber: addDoctorDto.phoneNumber,
           firstName: addDoctorDto.firstName,
           lastName: addDoctorDto.lastName,
-       //   password: addDoctorDto.password, // assuming password is hashed
+          //   password: addDoctorDto.password, // assuming password is hashed
           role: HospitalRoleName.DOCTOR,
           isActive: addDoctorDto.isActive,
-          token: token
+          token: token,
         },
       });
     }
-  
+
     // Check if doctor already exists
     let doctor = await this.prisma.doctor.findUnique({
       where: { userId: user.id },
     });
-  
+
     // If doctor doesn't exist, create a new one
     if (!doctor) {
       try {
@@ -603,10 +604,13 @@ export class UsersService {
         });
       } catch (error) {
         console.error('Error creating doctor:', error);
-        throw new HttpException('Failed to create doctor.', HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException(
+          'Failed to create doctor.',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
       }
     }
-  
+
     // Check if doctor is already associated with the hospital in DoctorHospital table
     const existingDoctorHospital = await this.prisma.doctorHospital.findUnique({
       where: {
@@ -616,14 +620,14 @@ export class UsersService {
         },
       },
     });
-  
+
     if (existingDoctorHospital) {
       throw new HttpException(
         'Doctor is already associated with this hospital',
         HttpStatus.BAD_REQUEST
       );
     }
-  
+
     // Create association in the DoctorHospital table
     try {
       await this.prisma.doctorHospital.create({
@@ -639,17 +643,17 @@ export class UsersService {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
-  
+
     // Create association in the UserHospitalRole table
     try {
       const doctorHospitalRelation = await this.prisma.userHospitalRole.create({
         data: {
           userId: user.id,
           hospitalId: hospitalId,
-          hospitalRoleId: 2 // Assuming the role ID for 'DOCTOR' is 1
+          hospitalRoleId: 2, // Assuming the role ID for 'DOCTOR' is 1
         },
       });
-  
+
       if (!doctorHospitalRelation) {
         throw new HttpException(
           'Some error while establishing relation between user and hospital',
@@ -663,14 +667,14 @@ export class UsersService {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
-  
+
     const resetPasswordLink = `${ADMIN_URL}/update-password/email/${addDoctorDto.email}/token/${token}`;
     if (isNewUser) {
       const templateContent = await fs.readFile(
         'apps/api/src/assets/templates/new-doctor-template.ejs',
         'utf-8'
       );
-  
+
       const message = ejs.render(templateContent, {
         firstName: addDoctorDto.firstName,
         lastName: addDoctorDto.lastName,
@@ -678,7 +682,7 @@ export class UsersService {
         resetPasswordLink: resetPasswordLink,
         loginLink: ADMIN_URL,
       });
-  
+
       const sentMail = await this.notificationService.sendEmail(
         addDoctorDto.email,
         'You have been added in ' + hospital.name,
@@ -694,27 +698,27 @@ export class UsersService {
         'apps/api/src/assets/templates/existing-doctor-template.ejs',
         'utf-8'
       );
-  
+
       const message = ejs.render(templateContent, {
         firstName: user.firstName,
         lastName: user.lastName,
         hospitalName: hospital.name,
         adminLoginLink: ADMIN_URL,
       });
-  
+
       const sentMail = await this.notificationService.sendEmail(
         user.email,
         'You have been added in ' + hospital.name,
         message
       );
-  
+
       if (!sentMail)
         throw new HttpException(
           'There is some problem while sending mail',
           HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
-  
+
     return {
       id: doctor.id,
       firstName: user.firstName,
@@ -730,90 +734,90 @@ export class UsersService {
 
   async updateDoctor(
     updateDoctorDto: AddDoctorDto,
-    hospitalId:number,
-    doctorId: number,
-): Promise<DoctorDto> {
+    hospitalId: number,
+    doctorId: number
+  ): Promise<DoctorDto> {
     if (Number.isNaN(doctorId)) {
-        throw new HttpException(
-            'Doctor id is missing in params',
-            HttpStatus.BAD_REQUEST
-        );
+      throw new HttpException(
+        'Doctor id is missing in params',
+        HttpStatus.BAD_REQUEST
+      );
     }
 
-          const hospital = await this.prisma.hospital.findFirst({
-          where: {
-            id: hospitalId,
-          },
-        });
-        if (!hospital) {
-          throw new HttpException('hospital not found ', HttpStatus.BAD_REQUEST);
-        }  
+    const hospital = await this.prisma.hospital.findFirst({
+      where: {
+        id: hospitalId,
+      },
+    });
+    if (!hospital) {
+      throw new HttpException('hospital not found ', HttpStatus.BAD_REQUEST);
+    }
     // Check if doctor exists
     const doctor = await this.prisma.doctor.findUnique({
-        where: { id: doctorId },
+      where: { id: doctorId },
     });
     if (!doctor) {
-        throw new HttpException(
-            'Doctor not found, check doctorId',
-            HttpStatus.NOT_FOUND
-        );
+      throw new HttpException(
+        'Doctor not found, check doctorId',
+        HttpStatus.NOT_FOUND
+      );
     }
 
     // Check if user exists
     const user = await this.prisma.user.findUnique({
-        where: { id: doctor.userId },
+      where: { id: doctor.userId },
     });
     if (!user) {
-        throw new HttpException(
-            'User associated with doctor not found',
-            HttpStatus.NOT_FOUND
-        );
+      throw new HttpException(
+        'User associated with doctor not found',
+        HttpStatus.NOT_FOUND
+      );
     }
 
     // Update user details
     const updatedUser = await this.prisma.user.update({
-        where: { id: user.id },
-        data: {
-            email: updateDoctorDto.email ?? user.email,
-            phoneNumber: updateDoctorDto.phoneNumber ?? user.phoneNumber,
-            firstName: updateDoctorDto.firstName ?? user.firstName,
-            lastName: updateDoctorDto.lastName ?? user.lastName,
-            isActive: updateDoctorDto.isActive ?? user.isActive,
-        },
+      where: { id: user.id },
+      data: {
+        email: updateDoctorDto.email ?? user.email,
+        phoneNumber: updateDoctorDto.phoneNumber ?? user.phoneNumber,
+        firstName: updateDoctorDto.firstName ?? user.firstName,
+        lastName: updateDoctorDto.lastName ?? user.lastName,
+        isActive: updateDoctorDto.isActive ?? user.isActive,
+      },
     });
 
     // Update doctor details
     const updatedDoctor = await this.prisma.doctor.update({
-        where: { id: doctorId },
-        data: {
-            gender: updateDoctorDto.gender ?? doctor.gender,
-            doctorCode: updateDoctorDto.doctorCode ?? doctor.doctorCode,
-            speciality: updateDoctorDto.speciality ?? doctor.speciality,
-        },
+      where: { id: doctorId },
+      data: {
+        gender: updateDoctorDto.gender ?? doctor.gender,
+        doctorCode: updateDoctorDto.doctorCode ?? doctor.doctorCode,
+        speciality: updateDoctorDto.speciality ?? doctor.speciality,
+      },
     });
 
     return {
-        id: updatedDoctor.id,
-        firstName: updatedUser.firstName,
-        lastName: updatedUser.lastName,
-        email: updatedUser.email,
-        phoneNumber: updatedUser.phoneNumber,
-        speciality: updatedDoctor.speciality,
-        gender: updatedDoctor.gender,
-        doctorCode: updatedDoctor.doctorCode,
-        isActive: updatedUser.isActive,
+      id: updatedDoctor.id,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      email: updatedUser.email,
+      phoneNumber: updatedUser.phoneNumber,
+      speciality: updatedDoctor.speciality,
+      gender: updatedDoctor.gender,
+      doctorCode: updatedDoctor.doctorCode,
+      isActive: updatedUser.isActive,
     };
-}
+  }
 
   async addManager(
     hospitalId: number,
-    addManagerDto: AddManagerDto  & {
+    addManagerDto: AddManagerDto & {
       isPrimary: boolean;
     }
-  ): Promise<ManagerDto
-  & {
-    isPrimary: boolean;
-  }
+  ): Promise<
+    ManagerDto & {
+      isPrimary: boolean;
+    }
   > {
     if (Number.isNaN(hospitalId)) {
       throw new HttpException(
@@ -821,11 +825,11 @@ export class UsersService {
         HttpStatus.BAD_REQUEST
       );
     }
-  
+
     const token = this.generateRandomHexToken(16);
-  
+
     const data = { ...addManagerDto, token };
-  
+
     // Check if hospital exists
     const hospital = await this.prisma.hospital.findUnique({
       where: { id: hospitalId },
@@ -836,7 +840,7 @@ export class UsersService {
         HttpStatus.NOT_FOUND
       );
     }
-  
+
     // Check if phone number is valid
     const isPhoneNumberValid = this.isValidMobileNumber(
       addManagerDto.phoneNumber
@@ -847,14 +851,14 @@ export class UsersService {
         HttpStatus.BAD_REQUEST
       );
     }
-  
+
     // Check if user with the email already exists
     let user = await this.prisma.user.findUnique({
       where: { email: addManagerDto.email },
     });
-  
+
     let isNewUser = false;
-  
+
     if (!user) {
       isNewUser = true;
       // Create a new user if not exists
@@ -866,31 +870,33 @@ export class UsersService {
           lastName: addManagerDto.lastName,
           role: HospitalRoleName.ADMIN,
           // isActive: addManagerDto.isActive,
-          token: token
+          token: token,
         },
       });
     }
-  
+
     // Check if admin already exists
     let admin = await this.prisma.admin.findUnique({
       where: { userId: user.id },
     });
-  
+
     // If admin doesn't exist, create a new one
     if (!admin) {
       try {
         admin = await this.prisma.admin.create({
           data: {
-            userId: user.id
-
+            userId: user.id,
           },
         });
       } catch (error) {
         console.error('Error creating manager:', error);
-        throw new HttpException('Failed to create manager.', HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException(
+          'Failed to create manager.',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
       }
     }
-  
+
     // Check if admin is already associated with the hospital in ManagerHospital table
     const existingManagerHospital = await this.prisma.adminHospital.findUnique({
       where: {
@@ -900,14 +906,14 @@ export class UsersService {
         },
       },
     });
-  
+
     if (existingManagerHospital) {
       throw new HttpException(
         'Manager is already associated with this hospital',
         HttpStatus.BAD_REQUEST
       );
     }
-  
+
     // Create association in the ManagerHospital table
     try {
       await this.prisma.adminHospital.create({
@@ -923,7 +929,7 @@ export class UsersService {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
-  
+
     // Create association in the UserHospitalRole table
     try {
       const adminHospitalRelation = await this.prisma.userHospitalRole.create({
@@ -931,10 +937,10 @@ export class UsersService {
           userId: user.id,
           hospitalId: hospitalId,
           hospitalRoleId: 1, // Assuming the role ID for 'DOCTOR' is 1
-          isPrimary: addManagerDto.isPrimary
+          isPrimary: addManagerDto.isPrimary,
         },
       });
-  
+
       if (!adminHospitalRelation) {
         throw new HttpException(
           'Some error while establishing relation between user and hospital',
@@ -961,14 +967,13 @@ export class UsersService {
       });
     }
 
-  
     const resetPasswordLink = `${ADMIN_URL}/update-password/email/${addManagerDto.email}/token/${token}`;
     if (isNewUser) {
       const templateContent = await fs.readFile(
         'apps/api/src/assets/templates/new-manager-template.ejs',
         'utf-8'
       );
-  
+
       const message = ejs.render(templateContent, {
         firstName: addManagerDto.firstName,
         lastName: addManagerDto.lastName,
@@ -976,7 +981,7 @@ export class UsersService {
         resetPasswordLink: resetPasswordLink,
         loginLink: ADMIN_URL,
       });
-  
+
       const sentMail = await this.notificationService.sendEmail(
         addManagerDto.email,
         'You have been added in ' + hospital.name,
@@ -988,51 +993,50 @@ export class UsersService {
           HttpStatus.INTERNAL_SERVER_ERROR
         );
     } else {
-
       const templateContent = await fs.readFile(
         'apps/api/src/assets/templates/existing-manager-template.ejs',
         'utf-8'
       );
-  
+
       const message = ejs.render(templateContent, {
         firstName: user.firstName,
         lastName: user.lastName,
         hospitalName: hospital.name,
         adminLoginLink: ADMIN_URL,
       });
-  
+
       const sentMail = await this.notificationService.sendEmail(
         user.email,
         'You have been added in ' + hospital.name,
         message
       );
-  
+
       if (!sentMail)
         throw new HttpException(
           'There is some problem while sending mail',
           HttpStatus.INTERNAL_SERVER_ERROR
         );
 
-        if (addManagerDto.isPrimary) {
-          // set others with same role in the same hospital as not primary
-          await this.prisma.userHospitalRole.updateMany({
-            where: {
-              hospitalId: hospitalId,
-              hospitalRoleId: 1,
-              userId: { not: user.id },
-            },
-            data: { isPrimary: false },
-          });
-        }
+      if (addManagerDto.isPrimary) {
+        // set others with same role in the same hospital as not primary
+        await this.prisma.userHospitalRole.updateMany({
+          where: {
+            hospitalId: hospitalId,
+            hospitalRoleId: 1,
+            userId: { not: user.id },
+          },
+          data: { isPrimary: false },
+        });
+      }
     }
-  
+
     return {
       id: admin.id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       phoneNumber: user.phoneNumber,
-      isPrimary:addManagerDto.isPrimary
+      isPrimary: addManagerDto.isPrimary,
     };
   }
 
@@ -1247,18 +1251,18 @@ export class UsersService {
   ): Promise<ListUserPageDto> {
     const hospitalAdminRoleId = await this.prisma.hospitalRole.findFirst({
       where: {
-        name: SuperRoleName.ADMIN
-      }
-    })
+        name: SuperRoleName.ADMIN,
+      },
+    });
     const whereArray = [];
     let whereQuery = {};
     whereArray.push({
       superRoles: {
         some: {
-          superRoleId: hospitalAdminRoleId.id
-        }
-      }
-    })
+          superRoleId: hospitalAdminRoleId.id,
+        },
+      },
+    });
 
     if (email !== undefined) {
       whereArray.push({ email: { contains: email, mode: 'insensitive' } });
@@ -1380,29 +1384,29 @@ export class UsersService {
     email: string,
     sortBy: string,
     sortOrder: 'asc' | 'desc'
-  ): Promise<ListUserPageDto> {
+  ): Promise<ListDoctorPageDto> {
     const hospitalDoctorRoleId = await this.prisma.hospitalRole.findFirst({
       where: {
-        name: HospitalRoleName.DOCTOR
-      }
+        name: HospitalRoleName.DOCTOR,
+      },
     });
-  
+
     const whereArray = [];
     let whereQuery = {};
-  
+
     whereArray.push({
       hospitalRoles: {
         some: {
           hospitalId: hospitalId,
-          hospitalRoleId: hospitalDoctorRoleId.id
-        }
-      }
+          hospitalRoleId: hospitalDoctorRoleId.id,
+        },
+      },
     });
-  
+
     if (email !== undefined) {
       whereArray.push({ email: { contains: email, mode: 'insensitive' } });
     }
-  
+
     if (name !== undefined) {
       whereArray.push({
         OR: [
@@ -1411,7 +1415,7 @@ export class UsersService {
         ],
       });
     }
-  
+
     if (whereArray.length > 0) {
       if (whereArray.length > 1) {
         whereQuery = { AND: whereArray };
@@ -1419,7 +1423,7 @@ export class UsersService {
         whereQuery = whereArray[0];
       }
     }
-  
+
     const sort = (sortBy ? sortBy : 'id').toString();
     const order = sortOrder ? sortOrder : 'asc';
     const size = pageSize ? pageSize : 10;
@@ -1428,7 +1432,7 @@ export class UsersService {
     const count = await this.prisma.user.count({
       where: whereQuery,
     });
-  
+
     const listUsers = await this.prisma.user.findMany({
       where: whereQuery,
       select: {
@@ -1438,6 +1442,14 @@ export class UsersService {
         firstName: true,
         isActive: true,
         lastName: true,
+        doctor: {
+          select: {
+            userId: true,
+            gender: true,
+            doctorCode: true,
+            speciality: true,
+          },
+        },
         hospitalRoles: {
           select: {
             hospital: { select: { name: true } },
@@ -1450,9 +1462,9 @@ export class UsersService {
       skip: Number(size * offset),
       orderBy,
     });
-  
-    const listUsersDto = await this.getList(listUsers);
-  
+
+    const listUsersDto = await this.getDoctorList(listUsers);
+
     return {
       size: size,
       number: offset,
@@ -1466,7 +1478,6 @@ export class UsersService {
       content: listUsersDto,
     };
   }
-  
 
   async findByEmail(email: string) {
     const user = await this.prisma.user.findFirst({
@@ -2016,6 +2027,31 @@ export class UsersService {
         superRole:
           user.superRoles.length > 0
             ? (user.superRoles[0].superRole.name as SuperRoleName)
+            : undefined,
+      }));
+    }
+  }
+  private getDoctorList(listdoctor): Promise<ListDoctorDto[]> {
+    if (!listdoctor) {
+      throw new BadRequestException();
+    } else {
+      return listdoctor.map((doctor) => ({
+        id: doctor.id,
+        email: doctor.email,
+        phoneNumber: doctor.phoneNumber,
+        firstName: doctor.firstName,
+        lastName: doctor.lastName,
+        isActive: doctor.isActive,
+        gender: doctor.doctor.gender,
+        doctorCode: doctor.doctor.doctorCode,
+        speciality: doctor.doctor.speciality,
+        hospitalRoles: doctor.hospitalRoles.map((role) => ({
+          name: role.hospital.name,
+          hospitalRole: role.hospitalRole.name,
+        })),
+        superRole:
+          doctor.superRoles.length > 0
+            ? (doctor.superRoles[0].superRole.name as SuperRoleName)
             : undefined,
       }));
     }

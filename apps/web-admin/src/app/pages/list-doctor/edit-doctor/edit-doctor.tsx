@@ -20,25 +20,26 @@ import { useTheme } from '@mui/system';
 import { Gender } from '@prisma/client';
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { ViewDoctor } from '@healthcare/data-transfer-types';
 
 export interface EditDoctorProps {
   open: boolean;
   onClose: () => void;
-  onUpdate: (data: EditForm) => void;
-  initialData: EditForm | null;
+  onUpdate: (data: ViewDoctor) => void;
+  initialData: ViewDoctor | null;
 }
 
 
-interface EditForm {
-  firstName: string;
-  lastName: string;
-  email: string;
-  gender: Gender;
-  phoneNumber: string;
-  doctorCode: string;
-  speciality: string;
-  isActive: boolean;
-}
+// interface EditForm {
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   gender: Gender;
+//   phoneNumber: string;
+//   doctorCode: string;
+//   speciality: string;
+//   isActive: boolean;
+// }
 
 
 const EditDoctorComponent: React.FC<EditDoctorProps> = ({ open, onClose, onUpdate, initialData }) => {
@@ -53,20 +54,19 @@ const EditDoctorComponent: React.FC<EditDoctorProps> = ({ open, onClose, onUpdat
     firstName: yup.string().required('First Name is required'),
     lastName: yup.string().required('Last Name is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
-    phoneNumber: yup.string().matches(/^((\+){0,1}91(\s){0,1}(-){0,1}(\s){0,1}){0,1}9[0-9](\s){0,1}(-){0,1}(\s){0,1}[1-9]{1}[0-9]{7}$/, 'Invalid phone number').required('Phone number is required'),
+    // phoneNumber: yup.string().matches(/^((\+){0,1}91(\s){0,1}(-){0,1}(\s){0,1}){0,1}9[0-9](\s){0,1}(-){0,1}(\s){0,1}[1-9]{1}[0-9]{7}$/, 'Invalid phone number').required('Phone number is required'),
     gender: yup.string().required('Please Select One'),
-    isActive: yup.boolean().required('Please Select One'),
+    // isActive: yup.boolean().required('Please Select One'),
     doctorCode: yup.string().required('Doctor Code is required'),
     speciality: yup.string().required('Speciality is required'),
   });
 
 
 
-  const { handleSubmit, control, reset, formState: { errors }, setValue, watch } = useForm<EditForm>({
+  const { handleSubmit, control, reset, formState: { errors }, setValue, watch } = useForm<ViewDoctor>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      ...initialData,
-      isActive: true
+      ...initialData
     }
   });
 
@@ -86,7 +86,7 @@ const EditDoctorComponent: React.FC<EditDoctorProps> = ({ open, onClose, onUpdat
     }
   }, [initialData, setValue]);
 
-  const handleUpdate = (data: EditForm) => {
+  const handleUpdate = (data: ViewDoctor) => {
     onUpdate(data);
     reset();
   };
@@ -230,7 +230,7 @@ const EditDoctorComponent: React.FC<EditDoctorProps> = ({ open, onClose, onUpdat
             <Grid container
               spacing={2}
             >
-              <Grid item xs={12} md={6} sx={{ mt: '15px' }}>
+              {/* <Grid item xs={12} md={6} sx={{ mt: '15px' }}>
                 <Controller
                   name="phoneNumber"
                   control={control}
@@ -253,7 +253,7 @@ const EditDoctorComponent: React.FC<EditDoctorProps> = ({ open, onClose, onUpdat
                   /> 
                   )}
                 />
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={12} md={6} className={styles['grid_spe']}>
                 <Controller

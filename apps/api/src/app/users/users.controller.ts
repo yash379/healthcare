@@ -26,6 +26,7 @@ import { ForgotPasswordDto, LoginDto, UpdatePasswordDto, UpdatePasswordThroughPr
 import { LocalAuthGuard } from '../auth/local-auth.guard';
 import { AddDoctorDto } from './dto/add-doctor.dto';
 import { DoctorDto } from './dto/doctors.dto';
+import { ListDoctorPageDto } from './dto/list-doctor-page.dto';
 
 @ApiTags("Users")
 @Controller()
@@ -69,7 +70,7 @@ export class UsersController {
   @UseGuards(AuthGuard, RolesGuard)
   @Get('/hospitals/:hospitalId/doctors')
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: ListUserPageDto })
+  @ApiOkResponse({ type: ListDoctorPageDto })
   @Roles(Role.POYV_ADMIN)
   listDoctors(
     @Param('hospitalId') hospitalId: number,
@@ -79,7 +80,7 @@ export class UsersController {
     @Query('email') email?: string,
     @Query('sortBy') sortBy?: string,
     @Query('sortOrder') sortOrder?: 'asc' | 'desc'
-  ): Promise<ListUserPageDto> {
+  ): Promise<ListDoctorPageDto> {
     return this.usersService.listDoctors(
       +hospitalId,
       +pageSize,

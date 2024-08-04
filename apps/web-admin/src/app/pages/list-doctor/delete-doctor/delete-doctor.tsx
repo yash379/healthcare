@@ -4,26 +4,27 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Gender } from '@prisma/client';
+import { ViewDoctor } from '@healthcare/data-transfer-types';
 
 
 export interface DeleteDoctorProps {
   open: boolean;
   onClose: () => void;
   onDelete: () => void;
-  doctorData: EditForm | null;
+  doctorData: ViewDoctor | null;
 }
 
 
-interface EditForm {
-  firstName: string;
-  lastName: string;
-  email: string;
-  gender: Gender;
-  phoneNumber: string;
-  doctorCode: string;
-  speciality: string;
-  isActive: boolean;
-}
+// interface EditForm {
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   gender: Gender;
+//   phoneNumber: string;
+//   doctorCode: string;
+//   speciality: string;
+//   isActive: boolean;
+// }
 
 const DeleteDoctorComponent: React.FC<DeleteDoctorProps> = ({
   open,
