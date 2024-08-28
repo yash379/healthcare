@@ -224,7 +224,27 @@ const EditDoctorComponent: React.FC<EditDoctorProps> = ({ open, onClose, onUpdat
                   )}
                 />
               </Grid>
-             
+              <Grid item xs={12} md={6} className={styles['grid_top']}>
+                <Controller
+                  name="speciality"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: 'Speciality is required' }}
+                  render={({ field }) => (
+                    <TextField
+                      type="text"
+                      sx={{ width: '100%' }}
+                      className="form-control"
+                      placeholder="Enter Doctor Speciality"
+                      {...field}
+                      label="Speciality"
+                      error={!!errors.speciality}
+                      helperText={errors.speciality?.message}
+                   
+                    />
+                  )}
+                />
+              </Grid>
 
             </Grid>
             <Grid container
@@ -255,27 +275,7 @@ const EditDoctorComponent: React.FC<EditDoctorProps> = ({ open, onClose, onUpdat
                 />
               </Grid> */}
 
-              <Grid item xs={12} md={6} className={styles['grid_spe']}>
-                <Controller
-                  name="speciality"
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: 'Speciality is required' }}
-                  render={({ field }) => (
-                    <TextField
-                      type="text"
-                      sx={{ width: '100%' }}
-                      className="form-control"
-                      placeholder="Enter Doctor Speciality"
-                      {...field}
-                      label="Speciality"
-                      error={!!errors.speciality}
-                      helperText={errors.speciality?.message}
-                   
-                    />
-                  )}
-                />
-              </Grid>
+            
     
               {/* </Box>
              */}

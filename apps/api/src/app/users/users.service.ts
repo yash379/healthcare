@@ -536,6 +536,7 @@ export class UsersService {
       );
     }
 
+    console.log(addDoctorDto, 'adddoctodto data')
     const token = this.generateRandomHexToken(16);
 
     const data = { ...addDoctorDto, token };
@@ -568,6 +569,25 @@ export class UsersService {
     });
 
     let isNewUser = false;
+
+    // Before saving to the database
+console.log('Data before saving:', {
+  user: {
+    email: addDoctorDto.email,
+    phoneNumber: addDoctorDto.phoneNumber,
+    firstName: addDoctorDto.firstName,
+    lastName: addDoctorDto.lastName,
+    // password: addDoctorDto.password, // assuming password is hashed
+    role: HospitalRoleName.DOCTOR,
+    isActive: addDoctorDto.isActive,
+    token: token,
+  },
+  doctor: {
+    gender: addDoctorDto.gender,
+    doctorCode: addDoctorDto.doctorCode,
+    speciality: addDoctorDto.speciality,
+  }
+});
 
     if (!user) {
       isNewUser = true;
@@ -602,6 +622,8 @@ export class UsersService {
             speciality: addDoctorDto.speciality,
           },
         });
+
+        console.log('Doctor data after saving:', doctor);
       } catch (error) {
         console.error('Error creating doctor:', error);
         throw new HttpException(
@@ -611,6 +633,13 @@ export class UsersService {
       }
     }
 
+    console.log('Data before creating doctor:', {
+      userId: user.id,
+      gender: addDoctorDto.gender,
+      doctorCode: addDoctorDto.doctorCode,
+      speciality: addDoctorDto.speciality,
+    });
+    
     // Check if doctor is already associated with the hospital in DoctorHospital table
     const existingDoctorHospital = await this.prisma.doctorHospital.findUnique({
       where: {
@@ -743,37 +772,32 @@ export class UsersService {
         HttpStatus.BAD_REQUEST
       );
     }
-
+  
+    // Check if hospital exists
     const hospital = await this.prisma.hospital.findFirst({
-      where: {
-        id: hospitalId,
-      },
+      where: { id: hospitalId },
     });
     if (!hospital) {
-      throw new HttpException('hospital not found ', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Hospital not found', HttpStatus.NOT_FOUND);
     }
+  
     // Check if doctor exists
     const doctor = await this.prisma.doctor.findUnique({
-      where: { id: doctorId },
+      where: { userId: doctorId },
+      include: { user: true },
     });
     if (!doctor) {
-      throw new HttpException(
-        'Doctor not found, check doctorId',
-        HttpStatus.NOT_FOUND
-      );
+      throw new HttpException('Doctor not found, check doctorId', HttpStatus.NOT_FOUND);
     }
-
-    // Check if user exists
+  
+    // Check if user associated with the doctor exists
     const user = await this.prisma.user.findUnique({
       where: { id: doctor.userId },
     });
     if (!user) {
-      throw new HttpException(
-        'User associated with doctor not found',
-        HttpStatus.NOT_FOUND
-      );
+      throw new HttpException('User associated with doctor not found', HttpStatus.NOT_FOUND);
     }
-
+  
     // Update user details
     const updatedUser = await this.prisma.user.update({
       where: { id: user.id },
@@ -785,17 +809,17 @@ export class UsersService {
         isActive: updateDoctorDto.isActive ?? user.isActive,
       },
     });
-
+  
     // Update doctor details
     const updatedDoctor = await this.prisma.doctor.update({
-      where: { id: doctorId },
+      where: { userId: doctorId },
       data: {
         gender: updateDoctorDto.gender ?? doctor.gender,
         doctorCode: updateDoctorDto.doctorCode ?? doctor.doctorCode,
         speciality: updateDoctorDto.speciality ?? doctor.speciality,
       },
     });
-
+  
     return {
       id: updatedDoctor.id,
       firstName: updatedUser.firstName,
@@ -808,6 +832,7 @@ export class UsersService {
       isActive: updatedUser.isActive,
     };
   }
+  
 
   async addManager(
     hospitalId: number,
