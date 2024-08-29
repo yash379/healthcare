@@ -10,16 +10,204 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum SuperRoleName {
-  ADMIN
-}
+// enum SuperRoleName {
+//   ADMIN
+// }
 
-enum HospitalRoleName {
-  SUPER_ADMIN
-  ADMIN
-  DOCTOR
-  PATIENT
-}
+// enum HospitalRoleName {
+//   SUPER_ADMIN
+//   ADMIN
+//   DOCTOR
+//   PATIENT
+// }
+
+// model User {
+//   id          Int         @id @default(autoincrement())
+//   email       String      @unique
+//   phoneNumber String?     @map("phone_number")
+//   firstName   String      @map("first_name")
+//   lastName    String      @map("last_name")
+//   isActive    Boolean     @default(true) @map("is_active")
+//   password    String?
+//   token       String?
+//   role        HospitalRoleName
+//   doctor      Doctor?
+//   patient     Patient?
+//   admin       Admin?
+//   superAdmin  SuperAdmin?
+// superRoles        UserSuperRole[]
+//   hospitalRoles UserHospitalRole[]
+//   @@map("users")
+// }
+
+// model Doctor {
+//   id             Int              @id @default(autoincrement())
+//   userId         Int              @unique
+//   gender         Gender           @map("gender")
+//   doctorCode     String           @map("doctor_code")
+//   speciality     String           @map("speciality")
+//   createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz()
+//   updatedAt      DateTime?        @updatedAt @map("updated_at") @db.Timestamptz()
+//   user           User             @relation(fields: [userId], references: [id])
+//   hospitals      Hospital[]       @relation("DoctorHospitals")
+//   patients       Patient[]        @relation("DoctorPatient")
+//   DoctorPatient  DoctorPatient[]
+//   DoctorHospital DoctorHospital[]
+
+//   @@unique([doctorCode])
+//   @@map("doctors")
+// }
+
+// model Patient {
+//   id                Int               @id @default(autoincrement())
+//   userId            Int               @unique
+//   gender            Gender            @map("gender")
+//   bloodGroup        String            @map("blood_group")
+//   dob               DateTime          @map("dob") @db.Timestamptz()
+//   digitalHealthCode String            @map("digital_health_code")
+//   addressLine1      String            @map("address_line_1")
+//   addressLine2      String?           @map("address_line_2")
+//   city              String
+//   postalCode        String            @map("postal_code")
+//   countryCode       String            @map("country_code")
+//   stateCode         String?           @map("state_code")
+//   createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+//   updatedAt         DateTime?         @updatedAt @map("updated_at") @db.Timestamptz()
+//   isActive          Boolean           @map("is_active")
+//   user              User              @relation(fields: [userId], references: [id])
+//   hospitals         Hospital[]        @relation("PatientHospitals")
+//   doctors           Doctor[]          @relation("DoctorPatient")
+//   DoctorPatient     DoctorPatient[]
+//   PatientHospital   PatientHospital[]
+
+//   @@unique([digitalHealthCode])
+//   @@map("patients")
+// }
+
+// model Hospital {
+//   id              Int               @id @default(autoincrement())
+//   name            String
+//   addressLine1    String
+//   addressLine2    String?
+//   city            String
+//   postalCode      String            @map("postal_code")
+//   countryCode     String            @map("country_code")
+//   stateCode       String?           @map("state_code")
+//   email           String?
+//   phoneNumber     String?
+//   createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+//   updatedAt       DateTime?         @updatedAt @map("updated_at") @db.Timestamptz()
+//   isActive        Boolean           @map("is_active")
+//   code            String            @map("code")
+//   doctors         Doctor[]          @relation("DoctorHospitals")
+//   patients        Patient[]         @relation("PatientHospitals")
+//   admins          Admin[]           @relation("AdminHospitals")
+//   DoctorHospital  DoctorHospital[]
+//   PatientHospital PatientHospital[]
+//   AdminHospital   AdminHospital[]
+//  users        UserHospitalRole[]
+//   @@unique([code])
+//   @@map("hospitals")
+// }
+
+// model Admin {
+//   id            Int             @id @default(autoincrement())
+//   userId        Int             @unique
+//   user          User            @relation(fields: [userId], references: [id])
+//   hospitals     Hospital[]      @relation("AdminHospitals")
+//   AdminHospital AdminHospital[]
+
+//   @@map("admins")
+// }
+
+// model SuperAdmin {
+//   id     Int  @id @default(autoincrement())
+//   userId Int  @unique
+//   user   User @relation(fields: [userId], references: [id])
+
+//   @@map("super_admins")
+// }
+
+// model DoctorPatient {
+//   doctorId  Int     @map("doctor_id")
+//   patientId Int     @map("patient_id")
+//   doctor    Doctor  @relation(fields: [doctorId], references: [id])
+//   patient   Patient @relation(fields: [patientId], references: [id])
+
+//   @@id([doctorId, patientId])
+//   @@map("doctor_patients")
+// }
+
+// model DoctorHospital {
+//   doctorId   Int      @map("doctor_id")
+//   hospitalId Int      @map("hospital_id")
+//   doctor     Doctor   @relation(fields: [doctorId], references: [id])
+//   hospital   Hospital @relation(fields: [hospitalId], references: [id])
+
+//   @@id([doctorId, hospitalId])
+//   @@map("doctor_hospitals")
+// }
+
+// model PatientHospital {
+//   patientId  Int      @map("patient_id")
+//   hospitalId Int      @map("hospital_id")
+//   patient    Patient  @relation(fields: [patientId], references: [id])
+//   hospital   Hospital @relation(fields: [hospitalId], references: [id])
+
+//   @@id([patientId, hospitalId])
+//   @@map("patient_hospitals")
+// }
+
+// model AdminHospital {
+//   adminId    Int      @map("admin_id")
+//   hospitalId Int      @map("hospital_id")
+//   admin      Admin    @relation(fields: [adminId], references: [id])
+//   hospital   Hospital @relation(fields: [hospitalId], references: [id])
+
+//   @@id([adminId, hospitalId])
+//   @@map("admin_hospitals")
+// }
+
+// model SuperRole {
+//   id    Int             @id @default(autoincrement())
+//   name  SuperRoleName   @unique
+//   users UserSuperRole[]
+
+//   @@map("super_roles")
+// }
+
+// model HospitalRole {
+//   id    Int                    @id @default(autoincrement())
+//   name  HospitalRoleName   @unique
+//   users UserHospitalRole[]
+
+//   @@map("hospital_roles")
+// }
+
+// model UserSuperRole {
+//   id          Int       @id @default(autoincrement())
+//   userId      Int       @map("user_id")
+//   superRoleId Int       @map("super_role_id")
+//   user        User      @relation(fields: [userId], references: [id])
+//   superRole   SuperRole @relation(fields: [superRoleId], references: [id])
+
+//   @@map("users_super_roles")
+// }
+
+// model UserHospitalRole {
+//   id                 Int              @id @default(autoincrement())
+//   userId             Int              @map("user_id")
+//   hospitalRoleId Int              @map("hospital_role_id")
+//   hospitalId     Int              @map("hospital_id")
+//   isPrimary      Boolean      @default(false) @map("is_primary")
+//   user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   hospitalRole   HospitalRole @relation(fields: [hospitalRoleId], references: [id])
+//   hospital       Hospital     @relation(fields: [hospitalId], references: [id])
+
+//   @@map("users_hospital_roles")
+// }
+
+// New-Schema//
 
 enum Gender {
   MALE
@@ -28,37 +216,99 @@ enum Gender {
 }
 
 model User {
-  id          Int         @id @default(autoincrement())
-  email       String      @unique
-  phoneNumber String?     @map("phone_number")
-  firstName   String      @map("first_name")
-  lastName    String      @map("last_name")
-  isActive    Boolean     @default(true) @map("is_active")
-  password    String?
-  token       String?
-  role        HospitalRoleName
-  doctor      Doctor?
-  patient     Patient?
-  admin       Admin?
-  superAdmin  SuperAdmin?
-superRoles        UserSuperRole[]
-  hospitalRoles UserHospitalRole[]
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  phoneNumber   String?        @map("phone_number")
+  firstName     String         @map("first_name")
+  lastName      String         @map("last_name")
+  isActive      Boolean        @map("is_active")
+  password      String?
+  token         String?
+  roles         UserRole[] // Correct relation for many-to-many
+  hospitalAdmin HospitalAdmin?
+  doctor        Doctor?
+  patient       Patient?
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt     DateTime?      @updatedAt @map("updated_at") @db.Timestamptz()
+
   @@map("users")
 }
 
+model Role {
+  id    Int        @id @default(autoincrement())
+  name  String     @unique @map("name")
+  users UserRole[] // Correct relation for many-to-many
+
+  @@map("roles")
+}
+
+model UserRole {
+  userId Int  @map("user_id")
+  roleId Int  @map("role_id")
+  user   User @relation(fields: [userId], references: [id])
+  role   Role @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId]) // Composite key ensures a unique combination of user and role
+  @@map("user_roles")
+}
+
+model Hospital {
+  id          Int                     @id @default(autoincrement())
+  name        String                  @map("name")
+  code        String                  @unique
+  email       String
+  address1    String                  @map("address_1")
+  address2    String?                 @map("address_2")
+  city        String                  @default("") @map("city")
+  postalCode  String                  @map("postal_code")
+  countryCode String                  @map("country_code")
+  stateCode   String?                 @map("state_code")
+  phoneNumber String?                 @map("phone_number")
+  createdAt   DateTime                @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt   DateTime?               @updatedAt @map("updated_at") @db.Timestamptz()
+  isActive    Boolean                 @map("is_active")
+  admins      HospitalAdminHospital[] // Many-to-many relationship with HospitalAdmin
+  doctors     DoctorHospital[] // Many-to-many relationship with Doctor
+  patients    HospitalPatient[] // Many-to-many relationship with Patient
+
+  @@map("hospitals")
+}
+
+model HospitalAdmin {
+  id        Int                     @id @default(autoincrement())
+  userId    Int                     @unique @map("user_id")
+  user      User                    @relation(fields: [userId], references: [id])
+  hospitals HospitalAdminHospital[]
+  createdAt DateTime                @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime?               @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@map("hospital_admins")
+}
+
+model HospitalAdminHospital {
+  hospitalAdminId Int           @map("hospital_admin_id")
+  hospitalId      Int           @map("hospital_id")
+  hospitalAdmin   HospitalAdmin @relation(fields: [hospitalAdminId], references: [id])
+  hospital        Hospital      @relation(fields: [hospitalId], references: [id])
+
+  @@id([hospitalAdminId, hospitalId])
+  @@map("hospital_admin_hospitals")
+}
+
 model Doctor {
-  id             Int              @id @default(autoincrement())
-  userId         Int              @unique
-  gender         Gender           @map("gender")
-  doctorCode     String           @map("doctor_code")
-  speciality     String           @map("speciality")
-  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt      DateTime?        @updatedAt @map("updated_at") @db.Timestamptz()
-  user           User             @relation(fields: [userId], references: [id])
-  hospitals      Hospital[]       @relation("DoctorHospitals")
-  patients       Patient[]        @relation("DoctorPatient")
-  DoctorPatient  DoctorPatient[]
-  DoctorHospital DoctorHospital[]
+  id            Int              @id @default(autoincrement())
+  userId        Int              @unique
+  gender        Gender           @map("gender")
+  doctorCode    String           @map("doctor_code")
+  speciality    String           @map("speciality")
+  user          User             @relation(fields: [userId], references: [id])
+  hospitals     DoctorHospital[] // Many-to-many relationship with Hospital
+  patients      DoctorPatient[] // Many-to-many relationship with Patient
+  appointments  Appointment[]
+  prescriptions Prescription[]
+  diagnoses     Diagnosis[]
+  createdAt     DateTime         @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt     DateTime?        @updatedAt @map("updated_at") @db.Timestamptz()
 
   @@unique([doctorCode])
   @@map("doctors")
@@ -68,80 +318,119 @@ model Patient {
   id                Int               @id @default(autoincrement())
   userId            Int               @unique
   gender            Gender            @map("gender")
+  age               Int               @map("age")
   bloodGroup        String            @map("blood_group")
   dob               DateTime          @map("dob") @db.Timestamptz()
   digitalHealthCode String            @map("digital_health_code")
   addressLine1      String            @map("address_line_1")
   addressLine2      String?           @map("address_line_2")
-  city              String
+  city              String            @map("city")
   postalCode        String            @map("postal_code")
   countryCode       String            @map("country_code")
   stateCode         String?           @map("state_code")
   createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt         DateTime?         @updatedAt @map("updated_at") @db.Timestamptz()
-  isActive          Boolean           @map("is_active")
   user              User              @relation(fields: [userId], references: [id])
-  hospitals         Hospital[]        @relation("PatientHospitals")
-  doctors           Doctor[]          @relation("DoctorPatient")
-  DoctorPatient     DoctorPatient[]
-  PatientHospital   PatientHospital[]
+  doctors           DoctorPatient[] // Many-to-many relationship with Doctor
+  appointments      Appointment[]
+  prescriptions     Prescription[]
+  diagnoses         Diagnosis[]
+  medicalHistory    MedicalHistory?
+  hospitals         HospitalPatient[] // Many-to-many relationship with Hospital
 
   @@unique([digitalHealthCode])
   @@map("patients")
 }
 
-model Hospital {
-  id              Int               @id @default(autoincrement())
-  name            String
-  addressLine1    String
-  addressLine2    String?
-  city            String
-  postalCode      String            @map("postal_code")
-  countryCode     String            @map("country_code")
-  stateCode       String?           @map("state_code")
-  email           String?
-  phoneNumber     String?
-  createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt       DateTime?         @updatedAt @map("updated_at") @db.Timestamptz()
-  isActive        Boolean           @map("is_active")
-  code            String            @map("code")
-  doctors         Doctor[]          @relation("DoctorHospitals")
-  patients        Patient[]         @relation("PatientHospitals")
-  admins          Admin[]           @relation("AdminHospitals")
-  DoctorHospital  DoctorHospital[]
-  PatientHospital PatientHospital[]
-  AdminHospital   AdminHospital[]
- users        UserHospitalRole[]
-  @@unique([code])
-  @@map("hospitals")
+model HospitalPatient {
+  hospitalId Int      @map("hospital_id")
+  patientId  Int      @map("patient_id")
+  hospital   Hospital @relation(fields: [hospitalId], references: [id])
+  patient    Patient  @relation(fields: [patientId], references: [id])
+
+  @@id([hospitalId, patientId]) // Composite key to ensure unique combinations of hospital and patient
+  @@map("hospital_patients")
 }
 
-model Admin {
-  id            Int             @id @default(autoincrement())
-  userId        Int             @unique
-  user          User            @relation(fields: [userId], references: [id])
-  hospitals     Hospital[]      @relation("AdminHospitals")
-  AdminHospital AdminHospital[]
+model Appointment {
+  id        Int               @id @default(autoincrement())
+  date      DateTime
+  doctorId  Int
+  doctor    Doctor            @relation(fields: [doctorId], references: [id])
+  patientId Int
+  patient   Patient           @relation(fields: [patientId], references: [id])
+  statusId  Int
+  status    AppointmentStatus @relation(fields: [statusId], references: [id])
+  createdAt DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime?         @updatedAt @map("updated_at") @db.Timestamptz()
 
-  @@map("admins")
+  @@map("appointments")
 }
 
-model SuperAdmin {
-  id     Int  @id @default(autoincrement())
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id])
+model AppointmentStatus {
+  id           Int           @id @default(autoincrement())
+  code         String
+  name         String
+  appointments Appointment[]
 
-  @@map("super_admins")
+  @@unique([code, name])
+  @@map("appointment_statuses")
 }
 
-model DoctorPatient {
-  doctorId  Int     @map("doctor_id")
-  patientId Int     @map("patient_id")
-  doctor    Doctor  @relation(fields: [doctorId], references: [id])
-  patient   Patient @relation(fields: [patientId], references: [id])
+model Prescription {
+  id               Int             @id @default(autoincrement())
+  medicineName     String
+  instructions     String
+  dose             String // e.g., "0-0-1"
+  when             String
+  frequency        String
+  duration         String
+  doctorId         Int
+  doctor           Doctor          @relation(fields: [doctorId], references: [id])
+  patientId        Int
+  patient          Patient         @relation(fields: [patientId], references: [id])
+  createdAt        DateTime        @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt        DateTime?       @updatedAt @map("updated_at") @db.Timestamptz()
+  MedicalHistory   MedicalHistory? @relation(fields: [medicalHistoryId], references: [id])
+  medicalHistoryId Int?
 
-  @@id([doctorId, patientId])
-  @@map("doctor_patients")
+  @@map("prescriptions")
+}
+
+model Diagnosis {
+  id              Int       @id @default(autoincrement())
+  details         String
+  height          Float?
+  weight          Float?
+  pulse           Int?
+  spo2            Float? // Blood oxygen saturation
+  bmi             Float?
+  temperature     Float?
+  chiefComplaints String
+  doctorId        Int
+  doctor          Doctor    @relation(fields: [doctorId], references: [id])
+  patientId       Int
+  patient         Patient   @relation(fields: [patientId], references: [id])
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt       DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
+
+  medicalHistoryDiagnoses MedicalHistory[] @relation("Diagnoses")
+
+  @@map("diagnoses")
+}
+
+model MedicalHistory {
+  id        Int       @id @default(autoincrement())
+  details   String
+  patientId Int       @unique
+  patient   Patient   @relation(fields: [patientId], references: [id])
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
+
+  diagnoses     Diagnosis[]    @relation("Diagnoses")
+  prescriptions Prescription[]
+
+  @@map("medical_histories")
 }
 
 model DoctorHospital {
@@ -154,62 +443,12 @@ model DoctorHospital {
   @@map("doctor_hospitals")
 }
 
-model PatientHospital {
-  patientId  Int      @map("patient_id")
-  hospitalId Int      @map("hospital_id")
-  patient    Patient  @relation(fields: [patientId], references: [id])
-  hospital   Hospital @relation(fields: [hospitalId], references: [id])
+model DoctorPatient {
+  doctorId  Int     @map("doctor_id")
+  patientId Int     @map("patient_id")
+  doctor    Doctor  @relation(fields: [doctorId], references: [id])
+  patient   Patient @relation(fields: [patientId], references: [id])
 
-  @@id([patientId, hospitalId])
-  @@map("patient_hospitals")
-}
-
-model AdminHospital {
-  adminId    Int      @map("admin_id")
-  hospitalId Int      @map("hospital_id")
-  admin      Admin    @relation(fields: [adminId], references: [id])
-  hospital   Hospital @relation(fields: [hospitalId], references: [id])
-
-  @@id([adminId, hospitalId])
-  @@map("admin_hospitals")
-}
-
-
-model SuperRole {
-  id    Int             @id @default(autoincrement())
-  name  SuperRoleName   @unique
-  users UserSuperRole[]
-
-  @@map("super_roles")
-}
-
-model HospitalRole {
-  id    Int                    @id @default(autoincrement())
-  name  HospitalRoleName   @unique
-  users UserHospitalRole[]
-
-  @@map("hospital_roles")
-}
-
-model UserSuperRole {
-  id          Int       @id @default(autoincrement())
-  userId      Int       @map("user_id")
-  superRoleId Int       @map("super_role_id")
-  user        User      @relation(fields: [userId], references: [id])
-  superRole   SuperRole @relation(fields: [superRoleId], references: [id])
-
-  @@map("users_super_roles")
-}
-
-model UserHospitalRole {
-  id                 Int              @id @default(autoincrement())
-  userId             Int              @map("user_id")
-  hospitalRoleId Int              @map("hospital_role_id")
-  hospitalId     Int              @map("hospital_id")
-  isPrimary      Boolean      @default(false) @map("is_primary")
-  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  hospitalRole   HospitalRole @relation(fields: [hospitalRoleId], references: [id])
-  hospital       Hospital     @relation(fields: [hospitalId], references: [id])
-
-  @@map("users_hospital_roles")
+  @@id([doctorId, patientId])
+  @@map("doctor_patients")
 }
