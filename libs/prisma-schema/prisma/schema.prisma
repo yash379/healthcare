@@ -232,7 +232,7 @@ model User {
   phoneNumber   String?        @map("phone_number")
   firstName     String         @map("first_name")
   lastName      String         @map("last_name")
-  isActive      Boolean        @map("is_active")
+  isActive      Boolean        @default(true) @map("is_active")
   password      String?
   token         String?
   roles         HospitalRoleName 
@@ -300,8 +300,8 @@ model Hospital {
   name        String                  @map("name")
   code        String                  @unique
   email       String
-  address1    String                  @map("address_1")
-  address2    String?                 @map("address_2")
+  addressLine1 String                  @map("address_1")
+  addressLine2 String?                 @map("address_2")
   city        String                  @default("") @map("city")
   postalCode  String                  @map("postal_code")
   countryCode String                  @map("country_code")
