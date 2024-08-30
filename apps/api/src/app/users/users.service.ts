@@ -274,7 +274,7 @@ export class UsersService {
     const newUser = await this.prisma.user.create({
       data: {
         ...newData,
-        role: SuperRoleName.ADMIN,
+        roles: SuperRoleName.ADMIN,
       },
     });
 
@@ -599,7 +599,7 @@ console.log('Data before saving:', {
           firstName: addDoctorDto.firstName,
           lastName: addDoctorDto.lastName,
           //   password: addDoctorDto.password, // assuming password is hashed
-          role: HospitalRoleName.DOCTOR,
+          roles: HospitalRoleName.DOCTOR,
           isActive: addDoctorDto.isActive,
           token: token,
         },
@@ -893,7 +893,7 @@ console.log('Data before saving:', {
           phoneNumber: addManagerDto.phoneNumber,
           firstName: addManagerDto.firstName,
           lastName: addManagerDto.lastName,
-          role: HospitalRoleName.ADMIN,
+          roles: HospitalRoleName.ADMIN,
           // isActive: addManagerDto.isActive,
           token: token,
         },
@@ -901,14 +901,14 @@ console.log('Data before saving:', {
     }
 
     // Check if admin already exists
-    let admin = await this.prisma.admin.findUnique({
+    let admin = await this.prisma.hospitalAdmin.findUnique({
       where: { userId: user.id },
     });
 
     // If admin doesn't exist, create a new one
     if (!admin) {
       try {
-        admin = await this.prisma.admin.create({
+        admin = await this.prisma.hospitalAdmin.create({
           data: {
             userId: user.id,
           },
@@ -923,10 +923,10 @@ console.log('Data before saving:', {
     }
 
     // Check if admin is already associated with the hospital in ManagerHospital table
-    const existingManagerHospital = await this.prisma.adminHospital.findUnique({
+    const existingManagerHospital = await this.prisma.hospitalAdminHospital.findUnique({
       where: {
-        adminId_hospitalId: {
-          adminId: admin.id,
+        hospitalAdminId_hospitalId: {
+          hospitalAdminId: admin.id,
           hospitalId: hospitalId,
         },
       },
@@ -941,9 +941,9 @@ console.log('Data before saving:', {
 
     // Create association in the ManagerHospital table
     try {
-      await this.prisma.adminHospital.create({
+      await this.prisma.hospitalAdminHospital.create({
         data: {
-          adminId: admin.id,
+          hospitalAdminId: admin.id,
           hospitalId: hospitalId,
         },
       });

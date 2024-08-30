@@ -1,6 +1,12 @@
 -- CreateEnum
 CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE', 'OTHER');
 
+-- CreateEnum
+CREATE TYPE "SuperRoleName" AS ENUM ('ADMIN');
+
+-- CreateEnum
+CREATE TYPE "HospitalRoleName" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'DOCTOR', 'PATIENT');
+
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
@@ -8,9 +14,10 @@ CREATE TABLE "users" (
     "phone_number" TEXT,
     "first_name" TEXT NOT NULL,
     "last_name" TEXT NOT NULL,
-    "is_active" BOOLEAN NOT NULL,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
     "password" TEXT,
     "token" TEXT,
+    "roles" "HospitalRoleName" NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ,
 
@@ -18,19 +25,46 @@ CREATE TABLE "users" (
 );
 
 -- CreateTable
-CREATE TABLE "roles" (
+CREATE TABLE "hospital_roles" (
     "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
+    "name" "HospitalRoleName" NOT NULL,
 
-    CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "hospital_roles_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "user_roles" (
-    "user_id" INTEGER NOT NULL,
-    "role_id" INTEGER NOT NULL,
+CREATE TABLE "super_roles" (
+    "id" SERIAL NOT NULL,
+    "name" "SuperRoleName" NOT NULL,
 
-    CONSTRAINT "user_roles_pkey" PRIMARY KEY ("user_id","role_id")
+    CONSTRAINT "super_roles_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "users_super_roles" (
+    "id" SERIAL NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "super_role_id" INTEGER NOT NULL,
+
+    CONSTRAINT "users_super_roles_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "super_admins" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+
+    CONSTRAINT "super_admins_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "users_hospital_roles" (
+    "user_id" INTEGER NOT NULL,
+    "hospital_role_id" INTEGER NOT NULL,
+    "hospital_id" INTEGER NOT NULL,
+    "is_primary" BOOLEAN NOT NULL DEFAULT false,
+
+    CONSTRAINT "users_hospital_roles_pkey" PRIMARY KEY ("user_id","hospital_role_id")
 );
 
 -- CreateTable
@@ -209,7 +243,13 @@ CREATE TABLE "_Diagnoses" (
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "roles_name_key" ON "roles"("name");
+CREATE UNIQUE INDEX "hospital_roles_name_key" ON "hospital_roles"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "super_roles_name_key" ON "super_roles"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "super_admins_userId_key" ON "super_admins"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "hospitals_code_key" ON "hospitals"("code");
@@ -242,10 +282,22 @@ CREATE UNIQUE INDEX "_Diagnoses_AB_unique" ON "_Diagnoses"("A", "B");
 CREATE INDEX "_Diagnoses_B_index" ON "_Diagnoses"("B");
 
 -- AddForeignKey
-ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "users_super_roles" ADD CONSTRAINT "users_super_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "users_super_roles" ADD CONSTRAINT "users_super_roles_super_role_id_fkey" FOREIGN KEY ("super_role_id") REFERENCES "super_roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "super_admins" ADD CONSTRAINT "super_admins_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "users_hospital_roles" ADD CONSTRAINT "users_hospital_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "users_hospital_roles" ADD CONSTRAINT "users_hospital_roles_hospital_role_id_fkey" FOREIGN KEY ("hospital_role_id") REFERENCES "hospital_roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "users_hospital_roles" ADD CONSTRAINT "users_hospital_roles_hospital_id_fkey" FOREIGN KEY ("hospital_id") REFERENCES "hospitals"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "hospital_admins" ADD CONSTRAINT "hospital_admins_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
