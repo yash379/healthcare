@@ -30,6 +30,7 @@ import AddPatientPage from './pages/list-patient/add-patient-page/add-patient-pa
 import EditPatientPage from './pages/list-patient/edit-patient-page/edit-patient-page';
 import AddAppointment from './add-appointment/add-appointment';
 import ListAppointment from './list-appointment/list-appointment';
+import EditAppointment from './edit-appointment/edit-appointment';
 
 export function App() {
 
@@ -95,6 +96,8 @@ const navigate = useNavigate();
 
             <Route path="/appointments" element={<ListAppointment />} />
             <Route path="/add-appointment" element={<AddAppointment />} />
+            <Route path="/edit-appointment" element={<EditAppointment />} />
+
 
             <Route path="/hospitals" element={<ListHospitals />}/>
             <Route path="/hospitals/add" element={<AddHospitalPage/>}/>

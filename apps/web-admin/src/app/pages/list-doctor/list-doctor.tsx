@@ -67,16 +67,16 @@ export function ListDoctors(props: ListDoctorsProps) {
   const [editData, setEditData] = useState<ViewDoctor | null>(null);
   const [viewData, setViewData] = useState<ViewDoctor | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [hospital,setHospital]=useState<Hospital | null>(null);
+  const [hospital, setHospital] = useState<Hospital | null>(null);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
 
   const { id } = useParams<{ id: string }>();
-  console.log("hospital id:",id);
-  const params=useParams();
-  const hospitalContext=useContext(HospitalContext);
-  console.log("Hospital Context:",hospitalContext);
-  console.log("hospital context hospital id:",hospitalContext?.id);
+  console.log("hospital id:", id);
+  const params = useParams();
+  const hospitalContext = useContext(HospitalContext);
+  console.log("Hospital Context:", hospitalContext);
+  console.log("hospital context hospital id:", hospitalContext?.id);
 
   const getDoctors = async () => {
     try {
@@ -97,7 +97,7 @@ export function ListDoctors(props: ListDoctorsProps) {
       const { content, total } = response.data;
       setTotalItems(total);
       setActiveDoctors(content);
-console.log("Doctor", response.data)
+      console.log("Doctor", response.data)
 
       const Doctors = response.data.content;
       console.log(Doctors)
@@ -185,8 +185,8 @@ console.log("Doctor", response.data)
     );
     if (selectedDoctor) {
       setViewData(selectedDoctor)
-    setDoctorToDeleteId(doctorId);
-    setIsDeleteModalOpen(true);
+      setDoctorToDeleteId(doctorId);
+      setIsDeleteModalOpen(true);
     }
   };
 
@@ -222,7 +222,7 @@ console.log("Doctor", response.data)
 
     try {
       const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${params.hospitalId}/doctor`,
-        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender,  email: formData.email, phoneNumber: '8734234232', doctorCode: formData.doctorCode, speciality: formData.speciality, isActive: formData.isActive },
+        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender, email: formData.email, phoneNumber: '8734234232', doctorCode: formData.doctorCode, speciality: formData.speciality, isActive: formData.isActive },
         {
           withCredentials: true,
 
@@ -253,7 +253,7 @@ console.log("Doctor", response.data)
         `${apiUrl}/hospitals/${params.hospitalId}/doctor/${selectedDoctorId}`,
         {
           firstName: updateData.firstName, lastName: updateData.lastName, email: updateData.email, phoneNumber: '9834235433',
-          gender: updateData.gender, doctorCode: updateData.doctorCode, speciality:updateData.speciality, isActive:true
+          gender: updateData.gender, doctorCode: updateData.doctorCode, speciality: updateData.speciality, isActive: true
         },
         {
           withCredentials: true,
@@ -400,16 +400,16 @@ console.log("Doctor", response.data)
             <Table>
               <TableHead>
                 <TableRow>
-                <TableCell><Checkbox
-                  {...label}
-                  checked={
-                    activeDoctors.length > 0 &&
-                    activeDoctors.every((building) =>
-                      selectedItems.includes(building.id)
-                    )
-                  }
-                  onChange={handleHeaderCheckboxChange}
-                /></TableCell>
+                  <TableCell><Checkbox
+                    {...label}
+                    checked={
+                      activeDoctors.length > 0 &&
+                      activeDoctors.every((building) =>
+                        selectedItems.includes(building.id)
+                      )
+                    }
+                    onChange={handleHeaderCheckboxChange}
+                  /></TableCell>
                   <TableCell sx={{ border: "hidden" }}>Name
                   </TableCell>
                   <TableCell sx={{ border: "hidden" }}>Email
@@ -431,20 +431,20 @@ console.log("Doctor", response.data)
                 <TableRow>
                 </TableRow>
                 {loading ? (
-                <TableCell align='center' colSpan={7}>
-                  <CircularProgress />
-                </TableCell>
-              ) : (Array.isArray(activeDoctors) && activeDoctors.length > 0 ? (
+                  <TableCell align='center' colSpan={7}>
+                    <CircularProgress />
+                  </TableCell>
+                ) : (Array.isArray(activeDoctors) && activeDoctors.length > 0 ? (
                   activeDoctors.map((doctor: ViewDoctor, index: number) => (
                     <TableRow className={styles['table_row']} onClick={(e) => { handleRowClick(doctor.id, e); setViewDoctorOpen(true); }} key={index}>
-                       <TableCell><Checkbox
-                      checked={selectedItems.includes(doctor.id)}
-                      onChange={() => handleCheckboxChange(doctor.id)}
-                      {...label}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                    /></TableCell>
+                      <TableCell><Checkbox
+                        checked={selectedItems.includes(doctor.id)}
+                        onChange={() => handleCheckboxChange(doctor.id)}
+                        {...label}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      /></TableCell>
                       <TableCell>{doctor.firstName} {doctor.lastName}
                       </TableCell>
                       <TableCell>{doctor.email}
@@ -461,16 +461,16 @@ console.log("Doctor", response.data)
                         {doctor.speciality}
                       </TableCell>
                       <TableCell align='center'>
-                      <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(doctor.id) }} sx={{ color:'black'}}>
-                        <EditIcon ></EditIcon>
-                      </IconButton>
-                      <IconButton color="error"  onClick={() =>
-                      openDeleteModal(doctor.id)
-                      }>
-                        <DeleteIcon></DeleteIcon>
-                      </IconButton>
+                        <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(doctor.id) }} sx={{ color: 'black' }}>
+                          <EditIcon ></EditIcon>
+                        </IconButton>
+                        <IconButton color="error" onClick={() =>
+                          openDeleteModal(doctor.id)
+                        }>
+                          <DeleteIcon></DeleteIcon>
+                        </IconButton>
 
-                        
+
                       </TableCell>
                     </TableRow>
                   ))
@@ -480,50 +480,52 @@ console.log("Doctor", response.data)
                       textAlign: 'center',
                     }} colSpan={8}>No Doctor found</TableCell>
                   </TableRow>
-                  )
-                  )}
+                )
+                )}
               </TableBody>
             </Table>
-            <Box sx={{  display:'flex',
-            flexDirection:'row',
-            justifyContent:"flex-end",
-           
-          }}>
-          <Stack sx={{marginBottom:"15px", marginRight:"20px", marginTop: "30px",}} spacing={2}>
-            <Pagination
-            sx={{  display:'flex',
-            flexDirection:'row',
-            justifyContent:"flex-end",
-           
-          }}
-              count={pageCount > pageCountThreshold ? pageCount + 1 : pageCount}
-              page={page + 1}
-              onChange={(event, value) => handleChangePage(event, value - 1)}
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: "flex-end",
 
-              renderItem={(item) => (
-                <PaginationItem
-                  component="div"
+            }}>
+              <Stack sx={{ marginBottom: "15px", marginRight: "20px", marginTop: "30px", }} spacing={2}>
+                <Pagination
                   sx={{
-                 
-                    marginLeft: "5px",
-                  
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: "flex-end",
+
                   }}
-                 
-                  {...item}
+                  count={pageCount > pageCountThreshold ? pageCount + 1 : pageCount}
+                  page={page + 1}
+                  onChange={(event, value) => handleChangePage(event, value - 1)}
+
+                  renderItem={(item) => (
+                    <PaginationItem
+                      component="div"
+                      sx={{
+
+                        marginLeft: "5px",
+
+                      }}
+
+                      {...item}
+                    />
+                  )}
                 />
-              )}
-            />
-          </Stack>
-            <TablePagination
-              sx={{ marginTop: "5px" }}
-              rowsPerPageOptions={[5, 10, 20]}
-              component="div"
-              count={totalItems}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+              </Stack>
+              <TablePagination
+                sx={{ marginTop: "5px" }}
+                rowsPerPageOptions={[5, 10, 20]}
+                component="div"
+                count={totalItems}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </Box>
           </TableContainer>
         </Box>
@@ -545,8 +547,8 @@ console.log("Doctor", response.data)
           onDelete={() => {
             handleDelete(DoctorToDeleteId);
             closeDeleteModal();
-          } } 
-          doctorData={viewData}          
+          }}
+          doctorData={viewData}
         />
       </Box >
 
