@@ -180,14 +180,7 @@ export function ListDoctors(props: ListDoctorsProps) {
 
   // Function to open the delete confirmation modal
   const openDeleteModal = (doctorId: number) => {
-    const selectedDoctor: ViewDoctor | undefined = activeDoctors.find(
-      (doctor) => doctor.id === doctorId
-    );
-    if (selectedDoctor) {
-      setViewData(selectedDoctor)
-      setDoctorToDeleteId(doctorId);
-      setIsDeleteModalOpen(true);
-    }
+    setIsDeleteModalOpen(true);
   };
 
   // Function to close the delete confirmation modal

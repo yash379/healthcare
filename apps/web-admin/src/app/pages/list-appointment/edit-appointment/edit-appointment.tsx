@@ -2,13 +2,14 @@ import styles from './edit-appointment.module.scss';
 import { GenderEnum } from '../add-appointment/add-appointment';
 import { Form } from '../add-appointment/add-appointment';
 import * as yup from 'yup';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Modal, Select, TextField } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, IconButton, InputLabel, MenuItem, Modal, Select, TextField } from '@mui/material';
 import { ViewAppointment } from '@healthcare/data-transfer-types';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 /* eslint-disable-next-line */
 export interface EditAppointmentProps {
@@ -46,7 +47,12 @@ const EditAppointment: React.FC<EditAppointmentProps> = ({ open, onClose, onUpda
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle className={styles['h2_tag']}>Edit Doctor</DialogTitle>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',padding:'' }}>
+      <DialogTitle className={styles['h2_tag']} >Edit Appointment </DialogTitle>
+      <IconButton onClick={() => { onClose(); reset(); }}>
+        <CancelIcon></CancelIcon>
+      </IconButton>
+      </Box>
       <form onSubmit={handleSubmit(handleUpdate)}>
         <DialogContent>
           <Grid container spacing={2}>
@@ -229,21 +235,21 @@ const EditAppointment: React.FC<EditAppointmentProps> = ({ open, onClose, onUpda
                   rules={{ required: 'Gender is required' }}
                   render={({ field }) => (
                     <Select
-                    sx={{
-                      width: '100%',
-                      marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
-                    }}
+                      sx={{
+                        width: '100%',
+                        marginBottom: 1,
+                        '& .MuiInputBase-root': {
+                          height: 50, // Adjust height here
+                        },
+                        '& .MuiInputBase-input': {
+                          padding: '10px 14px', // Adjust padding to fit height
+                          fontSize: '0.955rem', // Adjust font size if needed
+                        },
+                        '& .MuiInputLabel-root': {
+                          fontSize: '1rem', // Adjust label font size if needed
+                          top: -6, // Adjust label position if needed
+                        },
+                      }}
                       label="Gender*"
                       variant="outlined"
                       {...field}
@@ -268,10 +274,15 @@ const EditAppointment: React.FC<EditAppointmentProps> = ({ open, onClose, onUpda
             <Grid item xs={12} md={6} className={styles['grid_top']}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={['DatePicker']}>
-                  <DatePicker label="Basic date picker"
+                  <DatePicker
+                    label="Basic date picker"
                     sx={{
                       '& .MuiInputBase-root': {
-                        height: 40, // Adjust height here
+                        height: 50, // Adjust height here
+                        overflow: 'hidden', // Prevent overflow
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit within the height
                       },
                     }}
                   />

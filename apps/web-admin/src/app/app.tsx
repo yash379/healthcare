@@ -28,9 +28,10 @@ import ListDoctors from './pages/list-doctor/list-doctor';
 import ListPatients from './pages/list-patient/list-patient';
 import AddPatientPage from './pages/list-patient/add-patient-page/add-patient-page';
 import EditPatientPage from './pages/list-patient/edit-patient-page/edit-patient-page';
-import AddAppointment from './add-appointment/add-appointment';
-import ListAppointment from './list-appointment/list-appointment';
-import EditAppointment from './edit-appointment/edit-appointment';
+import AddAppointment from './pages/list-appointment/add-appointment/add-appointment';
+import ListAppointment from './pages/list-appointment/list-appointment';
+import EditAppointment from './pages/list-appointment/edit-appointment/edit-appointment';
+import DeleteAppointment from './pages/list-appointment/delete-appointment/delete-appointment';
 
 export function App() {
 
@@ -97,6 +98,7 @@ const navigate = useNavigate();
             <Route path="/appointments" element={<ListAppointment />} />
             <Route path="/add-appointment" element={<AddAppointment />} />
             <Route path="/edit-appointment" element={<EditAppointment />} />
+            <Route path="/delete-appointment" element={<DeleteAppointment />} />
 
 
             <Route path="/hospitals" element={<ListHospitals />}/>
