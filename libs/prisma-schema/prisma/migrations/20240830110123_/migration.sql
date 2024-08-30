@@ -5,6 +5,12 @@ CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE', 'OTHER');
 CREATE TYPE "SuperRoleName" AS ENUM ('ADMIN');
 
 -- CreateEnum
+CREATE TYPE "ChronicDisease" AS ENUM ('DIABETES', 'HYPERTENSION', 'ASTHMA', 'COPD');
+
+-- CreateEnum
+CREATE TYPE "AcuteDisease" AS ENUM ('FLU', 'PNEUMONIA', 'APPENDICITIS', 'MIGRAINE');
+
+-- CreateEnum
 CREATE TYPE "HospitalRoleName" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'DOCTOR', 'PATIENT');
 
 -- CreateTable
@@ -133,6 +139,8 @@ CREATE TABLE "patients" (
     "postal_code" TEXT NOT NULL,
     "country_code" TEXT NOT NULL,
     "state_code" TEXT,
+    "chronicDiseases" "ChronicDisease"[] DEFAULT ARRAY[]::"ChronicDisease"[],
+    "acuteDiseases" "AcuteDisease"[] DEFAULT ARRAY[]::"AcuteDisease"[],
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ,
 
@@ -180,6 +188,7 @@ CREATE TABLE "prescriptions" (
     "duration" TEXT NOT NULL,
     "doctorId" INTEGER NOT NULL,
     "patientId" INTEGER NOT NULL,
+    "prescription_date" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ,
     "medicalHistoryId" INTEGER,
@@ -200,6 +209,7 @@ CREATE TABLE "diagnoses" (
     "chiefComplaints" TEXT NOT NULL,
     "doctorId" INTEGER NOT NULL,
     "patientId" INTEGER NOT NULL,
+    "diagnosis_date" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ,
 

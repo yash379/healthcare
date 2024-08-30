@@ -219,6 +219,22 @@ enum SuperRoleName {
   ADMIN
 }
 
+enum ChronicDisease {
+  DIABETES
+  HYPERTENSION
+  ASTHMA
+  COPD
+  // Add other chronic diseases here
+}
+
+enum AcuteDisease {
+  FLU
+  PNEUMONIA
+  APPENDICITIS
+  MIGRAINE
+  // Add other acute diseases here
+}
+
 enum HospitalRoleName {
   SUPER_ADMIN
   ADMIN
@@ -227,23 +243,23 @@ enum HospitalRoleName {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  email         String         @unique
-  phoneNumber   String?        @map("phone_number")
-  firstName     String         @map("first_name")
-  lastName      String         @map("last_name")
-  isActive      Boolean        @default(true) @map("is_active")
+  id            Int                @id @default(autoincrement())
+  email         String             @unique
+  phoneNumber   String?            @map("phone_number")
+  firstName     String             @map("first_name")
+  lastName      String             @map("last_name")
+  isActive      Boolean            @default(true) @map("is_active")
   password      String?
   token         String?
-  roles         HospitalRoleName 
+  roles         HospitalRoleName
   hospitalAdmin HospitalAdmin?
   doctor        Doctor?
   patient       Patient?
   superAdmin    SuperAdmin?
   superRoles    UserSuperRole[]
   hospitalRoles UserHospitalRole[]
-  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt     DateTime?      @updatedAt @map("updated_at") @db.Timestamptz()
+  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt     DateTime?          @updatedAt @map("updated_at") @db.Timestamptz()
 
   @@map("users")
 }
@@ -291,29 +307,30 @@ model UserHospitalRole {
   hospitalRole   HospitalRole @relation(fields: [hospitalRoleId], references: [id])
   hospital       Hospital     @relation(fields: [hospitalId], references: [id])
 
-  @@id([userId, hospitalRoleId]) 
+  @@id([userId, hospitalRoleId])
   @@map("users_hospital_roles")
 }
 
 model Hospital {
-  id          Int                     @id @default(autoincrement())
-  name        String                  @map("name")
-  code        String                  @unique
-  email       String
+  id           Int                     @id @default(autoincrement())
+  name         String                  @map("name")
+  code         String                  @unique
+  email        String
   addressLine1 String                  @map("address_1")
   addressLine2 String?                 @map("address_2")
-  city        String                  @default("") @map("city")
-  postalCode  String                  @map("postal_code")
-  countryCode String                  @map("country_code")
-  stateCode   String?                 @map("state_code")
-  phoneNumber String?                 @map("phone_number")
-  createdAt   DateTime                @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt   DateTime?               @updatedAt @map("updated_at") @db.Timestamptz()
-  isActive    Boolean                 @map("is_active")
-  admins      HospitalAdminHospital[] // Many-to-many relationship with HospitalAdmin
-  doctors     DoctorHospital[] // Many-to-many relationship with Doctor
-  patients    HospitalPatient[] // Many-to-many relationship with Patient
-  users       UserHospitalRole[]
+  city         String                  @default("") @map("city")
+  postalCode   String                  @map("postal_code")
+  countryCode  String                  @map("country_code")
+  stateCode    String?                 @map("state_code")
+  phoneNumber  String?                 @map("phone_number")
+  createdAt    DateTime                @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt    DateTime?               @updatedAt @map("updated_at") @db.Timestamptz()
+  isActive     Boolean                 @map("is_active")
+  admins       HospitalAdminHospital[] // Many-to-many relationship with HospitalAdmin
+  doctors      DoctorHospital[] // Many-to-many relationship with Doctor
+  patients     HospitalPatient[] // Many-to-many relationship with Patient
+  users        UserHospitalRole[]
+
   @@map("hospitals")
 }
 
@@ -371,6 +388,8 @@ model Patient {
   postalCode        String            @map("postal_code")
   countryCode       String            @map("country_code")
   stateCode         String?           @map("state_code")
+  chronicDiseases   ChronicDisease[]  @default([]) // Enum array for chronic diseases
+  acuteDiseases     AcuteDisease[]    @default([]) // Enum array for acute diseases
   createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt         DateTime?         @updatedAt @map("updated_at") @db.Timestamptz()
   user              User              @relation(fields: [userId], references: [id])
@@ -432,6 +451,7 @@ model Prescription {
   doctor           Doctor          @relation(fields: [doctorId], references: [id])
   patientId        Int
   patient          Patient         @relation(fields: [patientId], references: [id])
+  prescriptionDate DateTime        @default(now()) @map("prescription_date") @db.Timestamptz() // Date of prescription
   createdAt        DateTime        @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt        DateTime?       @updatedAt @map("updated_at") @db.Timestamptz()
   MedicalHistory   MedicalHistory? @relation(fields: [medicalHistoryId], references: [id])
@@ -454,6 +474,7 @@ model Diagnosis {
   doctor          Doctor    @relation(fields: [doctorId], references: [id])
   patientId       Int
   patient         Patient   @relation(fields: [patientId], references: [id])
+  diagnosisDate   DateTime  @default(now()) @map("diagnosis_date") @db.Timestamptz() // Date of diagnosis
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt       DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
 
