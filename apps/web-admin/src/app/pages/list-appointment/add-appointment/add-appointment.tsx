@@ -25,7 +25,6 @@ export interface Form {
   gender: Gender
   age: number
   date: Date
-  status:
 }
 /* eslint-disable-next-line */
 export interface AddAppointmentProps {

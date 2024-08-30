@@ -13,9 +13,6 @@ import {
   TableRow,
   TextField,
   IconButton,
-  Card,
-  CardContent,
-  Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
@@ -215,135 +212,95 @@ export function ListAppointment(props: ListAppointmentProps) {
   };
 
   return (
-<>
-  <Box className={styles['btn_container']}>
-    <h1>Appointment</h1>
-    <Box>
-      <AddAppointment
-        open={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSubmit={handleAddAppointment}
-      />
-    </Box>
-    <Box className={styles['search-container']}>
-      <TextField
-        type="text"
-        variant="outlined"
-        size="small"
-        sx={{ mt: 2.3, mr: '10px' }}
-        onChange={handleSearchNameChange}
-        InputProps={{
-          startAdornment: <SearchIcon color="action" />,
-        }}
-      />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setIsAddModalOpen(true)}
-      >
-        <AddIcon fontSize="small" /> Add
-      </Button>
-    </Box>
+    <>
+      <Box className={styles['btn_container']}>
+        <h1>Appointment</h1>
+        <Box>
+          <AddAppointment
+            open={isAddModalOpen}
+            onClose={() => setIsAddModalOpen(false)}
+            onSubmit={handleAddAppointment}
+          />
+        </Box>
+        <Box className={styles['search-container']}>
+          <TextField
+            type="text"
+            variant="outlined"
+            size="small"
+            sx={{ mt: 2.3, mr: '10px' }}
+            onChange={handleSearchNameChange}
+            InputProps={{
+              startAdornment: <SearchIcon color="action" />,
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            <AddIcon fontSize="small" /> Add
+          </Button>
+        </Box>
 
-    {/* New Cards Section */}
-    <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-      <Card sx={{ minWidth: 200 }}>
-        <CardContent>
-          <Typography variant="h6" component="div">
-            Total Appointments
-          </Typography>
-          <Typography variant="h4">
-            {/* Replace with actual data */}
-            {totalAppointments}
-          </Typography>
-        </CardContent>
-      </Card>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="appointment table">
+            <TableHead>
+              <TableRow>
+                <TableCell>First Name</TableCell>
+                <TableCell>Last Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Mobile Number</TableCell>
+                <TableCell>Gender</TableCell>
+                <TableCell>Age</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {dummyAppointments.map((appointment) => (
+                <TableRow key={appointment.id}>
+                  <TableCell>{appointment.firstName}</TableCell>
+                  <TableCell>{appointment.lastName}</TableCell>
+                  <TableCell>{appointment.email}</TableCell>
+                  <TableCell>{appointment.mobileNumber}</TableCell>
+                  <TableCell>{appointment.gender}</TableCell>
+                  <TableCell>{appointment.age}</TableCell>
+                  <TableCell>{appointment.date.toDateString()}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => handleEditClick(appointment.id)}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton onClick={() => handleDeleteClick(appointment.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      <Card sx={{ minWidth: 200 }}>
-        <CardContent>
-          <Typography variant="h6" component="div">
-            Completed Appointments
-          </Typography>
-          <Typography variant="h4">
-            {/* Replace with actual data */}
-            {completedAppointments}
-          </Typography>
-        </CardContent>
-      </Card>
+        {isEditModalOpen && editData && (
+          <EditAppointment
+            open={isEditModalOpen}
+            onClose={closeEditModal}
+            onUpdate={(data) => {
+              closeEditModal();
+            }}
+            initialData={editData} // Passing selected appointment data
+          />
+        )}
 
-      <Card sx={{ minWidth: 200 }}>
-        <CardContent>
-          <Typography variant="h6" component="div">
-            Pending Appointments
-          </Typography>
-          <Typography variant="h4">
-            {/* Replace with actual data */}
-            {pendingAppointments}
-          </Typography>
-        </CardContent>
-      </Card>
-    </Box>
-
-    <TableContainer component={Paper} sx={{ mt: 3 }}>
-      <Table sx={{ minWidth: 650 }} aria-label="appointment table">
-        <TableHead>
-          <TableRow>
-            <TableCell>First Name</TableCell>
-            <TableCell>Last Name</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Mobile Number</TableCell>
-            <TableCell>Gender</TableCell>
-            <TableCell>Age</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {dummyAppointments.map((appointment) => (
-            <TableRow key={appointment.id}>
-              <TableCell>{appointment.firstName}</TableCell>
-              <TableCell>{appointment.lastName}</TableCell>
-              <TableCell>{appointment.email}</TableCell>
-              <TableCell>{appointment.mobileNumber}</TableCell>
-              <TableCell>{appointment.gender}</TableCell>
-              <TableCell>{appointment.age}</TableCell>
-              <TableCell>{appointment.date.toDateString()}</TableCell>
-              <TableCell>
-                <IconButton onClick={() => handleEditClick(appointment.id)}>
-                  <EditIcon />
-                </IconButton>
-                <IconButton onClick={() => handleDeleteClick(appointment.id)}>
-                  <DeleteIcon />
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-
-    {isEditModalOpen && editData && (
-      <EditAppointment
-        open={isEditModalOpen}
-        onClose={closeEditModal}
-        onUpdate={(data) => {
-          closeEditModal();
-        }}
-        initialData={editData} // Passing selected appointment data
-      />
-    )}
-
-    {isDeleteModalOpen && (
-      <DeleteAppointment
-        open={isDeleteModalOpen}
-        onClose={closeDeleteModal}
-        onDelete={deleteAppointment}
-        appointmentData={viewData}
-      />
-    )}
-  </Box>
-</>
-
+        {isDeleteModalOpen && (
+          <DeleteAppointment
+            open={isDeleteModalOpen}
+            onClose={closeDeleteModal}
+            onDelete={deleteAppointment}
+            appointmentData={viewData}
+          />
+        )}
+      </Box>
+    </>
   );
 }
 
