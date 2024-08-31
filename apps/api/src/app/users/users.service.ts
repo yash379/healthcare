@@ -882,7 +882,7 @@ export class UsersService {
   //   } else {
   //     const {
   //       superRole,
-  //       organizationRoles,
+  //       hospitalRoles,
   //       hospitalRole,
   //       isPrimary,
   //       ...newData
@@ -1108,53 +1108,53 @@ export class UsersService {
     return user;
   }
 
-  // async findById(id: number): Promise<
-  //   ViewUserDto & {
-  //     isPrimary: boolean;
-  //   }
-  // > {
-  //   const user = await this.prisma.user.findUnique({
-  //     where: { id: Number(id) },
-  //     select: {
-  //       id: true,
-  //       email: true,
-  //       phoneNumber: true,
-  //       firstName: true,
-  //       lastName: true,
-  //       isActive: true,
-  //       organizationRoles: {
-  //         select: {
-  //           organization: { select: { name: true } },
-  //           organizationRole: { select: { name: true } },
-  //         },
-  //       },
-  //       superRoles: { select: { superRole: { select: { name: true } } } },
-  //     },
-  //   });
-  //   if (!user) {
-  //     throw new NotFoundException();
-  //   } else {
-  //     const viewUser = {
-  //       id: user.id,
-  //       email: user.email,
-  //       phoneNumber: user.phoneNumber,
-  //       firstName: user.firstName,
-  //       lastName: user.lastName,
-  //       isActive: user.isActive,
-  //       //TODO: check primary status
-  //       isPrimary: false,
-  //       organizationRoles: user.organizationRoles.map((role) => ({
-  //         name: role.organization.name,
-  //         organizationRole: role.organizationRole.name,
-  //       })),
-  //       superRole:
-  //         user.superRoles.length > 0
-  //           ? (user.superRoles[0].superRole.name as SuperRoleName)
-  //           : undefined,
-  //     };
-  //     return viewUser;
-  //   }
-  // }
+  async findById(id: number): Promise<
+    ViewUserDto & {
+      isPrimary: boolean;
+    }
+  > {
+    const user = await this.prisma.user.findUnique({
+      where: { id: Number(id) },
+      select: {
+        id: true,
+        email: true,
+        phoneNumber: true,
+        firstName: true,
+        lastName: true,
+        isActive: true,
+        hospitalRoles: {
+          select: {
+            hospital: { select: { name: true } },
+            hospitalRole: { select: { name: true } },
+          },
+        },
+        superRoles: { select: { superRole: { select: { name: true } } } },
+      },
+    });
+    if (!user) {
+      throw new NotFoundException();
+    } else {
+      const viewUser = {
+        id: user.id,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        isActive: user.isActive,
+        //TODO: check primary status
+        isPrimary: false,
+        hospitalRoles: user.hospitalRoles.map((role) => ({
+          name: role.hospital.name,
+          hospitalRole: role.hospitalRole.name,
+        })),
+        superRole:
+          user.superRoles.length > 0
+            ? (user.superRoles[0].superRole.name as SuperRoleName)
+            : undefined,
+      };
+      return viewUser;
+    }
+  }
 
   async findByIdForSwitch(id: number): Promise<UserDto> {
     const user = await this.prisma.user.findUnique({
@@ -1208,36 +1208,36 @@ export class UsersService {
     return viewUser;
   }
 
-  // async editUserStatus(id: number, editUserStatus: EditUserStatus) {
-  //   const user = await this.prisma.user.findFirst({
-  //     where: {
-  //       id: id
-  //     }
-  //   });
-  //   if (!user) throw new HttpException("user not found", HttpStatus.NOT_FOUND);
+  async editUserStatus(id: number, editUserStatus: EditUserStatus) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: id
+      }
+    });
+    if (!user) throw new HttpException("user not found", HttpStatus.NOT_FOUND);
 
-  //   const editedUser = await this.prisma.user.update({
-  //     where: {
-  //       id: id
-  //     },
-  //     data: {
-  //       isActive: editUserStatus.isActive
-  //     }
-  //   })
+    const editedUser = await this.prisma.user.update({
+      where: {
+        id: id
+      },
+      data: {
+        isActive: editUserStatus.isActive
+      }
+    })
 
-  //   const templateContent = await fs.readFile('apps/api/src/assets/templates/deactivate-admin-user.ejs', 'utf-8');
+    const templateContent = await fs.readFile('apps/api/src/assets/templates/deactivate-admin-user.ejs', 'utf-8');
 
-  //   const message = ejs.render(templateContent, {
-  //     firstName: user.firstName,
-  //     lastName: user.lastName,
-  //   });
+    const message = ejs.render(templateContent, {
+      firstName: user.firstName,
+      lastName: user.lastName,
+    });
 
-  //   const sentMail = await this.notificationService.sendEmail(user.email, "You have been removed from Fountlab", message);
+    const sentMail = await this.notificationService.sendEmail(user.email, "You have been removed from Fountlab", message);
 
-  //   if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
+    if (!sentMail) throw new HttpException("there is some problem while sending mail", HttpStatus.INTERNAL_SERVER_ERROR);
 
-  //   return editUserStatus
-  // }
+    return editUserStatus
+  }
 
   // async edit(
   //   userDto: AddUserDto & {
@@ -1285,7 +1285,7 @@ export class UsersService {
   //       const data = userDto;
   //       const {
   //         superRole,
-  //         organizationRoles,
+  //         hospitalRoles,
   //         hospitalRole,
   //         isPrimary,
   //         ...newData
@@ -1293,7 +1293,7 @@ export class UsersService {
 
   //       // if (
   //       //   !superRole &&
-  //       //   (!organizationRoles || organizationRoles.length === 0)
+  //       //   (!hospitalRoles || hospitalRoles.length === 0)
   //       // ) {
   //       //   throw new BadRequestException();
   //       // }
@@ -1321,8 +1321,8 @@ export class UsersService {
   //       // const superRoleInDatabase = await prisma.userSuperRole.findFirst({
   //       //   where: { userId: id },
   //       // });
-  //       // const organizationRolesinDatabase =
-  //       //   await this.prisma.userOrganizationRole.findMany({
+  //       // const hospitalRolesinDatabase =
+  //       //   await this.prisma.userHospitalRole.findMany({
   //       //     where: { userId: user.id },
   //       //   });
 
@@ -1349,34 +1349,34 @@ export class UsersService {
 
   //       // const rolesPresentInDb = [];
 
-  //       // if (organizationRoles && organizationRoles.length > 0) {
-  //       //   for (const org of organizationRoles) {
-  //       //     const { organizationId, organizationRole } = org;
+  //       // if (hospitalRoles && hospitalRoles.length > 0) {
+  //       //   for (const org of hospitalRoles) {
+  //       //     const { hospitalId, hospitalRole } = org;
 
-  //       //     if (!organizationId) {
+  //       //     if (!hospitalId) {
   //       //       throw new BadRequestException();
   //       //     }
 
-  //       //     const orgCheck = await prisma.organization.findFirst({
-  //       //       where: { id: organizationId },
+  //       //     const orgCheck = await prisma.hospital.findFirst({
+  //       //       where: { id: hospitalId },
   //       //     });
 
   //       //     if (!orgCheck) {
   //       //       throw new BadRequestException();
   //       //     }
-  //       //     if (!organizationRole) {
+  //       //     if (!hospitalRole) {
   //       //       throw new BadRequestException();
   //       //     }
 
-  //       //     const orgrole = await prisma.organizationRole.findFirst({
-  //       //       where: { name: { equals: organizationRole } },
+  //       //     const orgrole = await prisma.hospitalRole.findFirst({
+  //       //       where: { name: { equals: hospitalRole } },
   //       //     });
 
-  //       //     const role = await prisma.userOrganizationRole.findFirst({
+  //       //     const role = await prisma.userHospitalRole.findFirst({
   //       //       where: {
   //       //         userId: id,
-  //       //         organizationRoleId: orgrole.id,
-  //       //         organizationId: organizationId,
+  //       //         hospitalRoleId: orgrole.id,
+  //       //         hospitalId: hospitalId,
   //       //       },
   //       //     });
 
@@ -1385,11 +1385,11 @@ export class UsersService {
   //       //     }
 
   //       //     if (!role) {
-  //       //       await prisma.userOrganizationRole.create({
+  //       //       await prisma.userHospitalRole.create({
   //       //         data: {
   //       //           userId: id,
-  //       //           organizationRoleId: orgrole.id,
-  //       //           organizationId: organizationId,
+  //       //           hospitalRoleId: orgrole.id,
+  //       //           hospitalId: hospitalId,
   //       //         },
   //       //       });
   //       //     }
@@ -1399,7 +1399,7 @@ export class UsersService {
   //       // const rolesPrsentInList = [];
   //       // rolesPresentInDb.forEach((value) => rolesPrsentInList.push(value.id));
   //       // const rolesPrsentinDb = [];
-  //       // organizationRolesinDatabase.forEach((value) =>
+  //       // hospitalRolesinDatabase.forEach((value) =>
   //       //   rolesPrsentinDb.push(value.id)
   //       // );
   //       // // add here
@@ -1408,7 +1408,7 @@ export class UsersService {
   //       // );
 
   //       // if (missing && missing.length > 0) {
-  //       //   await prisma.userOrganizationRole.deleteMany({
+  //       //   await prisma.userHospitalRole.deleteMany({
   //       //     where: { id: { in: missing } },
   //       //   });
   //       // }
@@ -1420,7 +1420,7 @@ export class UsersService {
   //         phoneNumber: updateuser.phoneNumber,
   //         firstName: updateuser.firstName,
   //         lastName: updateuser.lastName,
-  //         organizationRoles: organizationRoles,
+  //         hospitalRoles: hospitalRoles,
   //         superRole: superRole,
   //         isPrimary,
   //       };
@@ -1466,89 +1466,87 @@ export class UsersService {
 
   // }
 
-  // async editAdmin(
-  //   userDto: AddUserDto,
-  //   id: number
-  // ): Promise<
-  //   UserDto
-  // > {
-  //   let transaction;
-  //   try {
-  //     transaction = await this.prisma.$transaction(async (prisma) => {
-  //       const checkUser = await this.findById(id);
-  //       if (!checkUser) {
-  //         throw new NotFoundException();
-  //       }
-  //       //check user
+  async editAdmin(
+    userDto: AddUserDto,
+    id: number
+  ): Promise<
+    UserDto
+  > {
+    let transaction;
+    try {
+      transaction = await this.prisma.$transaction(async (prisma) => {
+        const checkUser = await this.findById(id);
+        if (!checkUser) {
+          throw new NotFoundException();
+        }
+        //check user
 
-  //       const user = await prisma.user.findUnique({
-  //         where: {
-  //           email: userDto.email,
-  //         },
-  //       });
+        const user = await prisma.user.findUnique({
+          where: {
+            email: userDto.email,
+          },
+        });
 
-  //       if (user && user.id != id) {
-  //         throw new HttpException(
-  //           'User with same email already exists',
-  //           HttpStatus.BAD_REQUEST
-  //         );
-  //       }
+        if (user && user.id != id) {
+          throw new HttpException(
+            'User with same email already exists',
+            HttpStatus.BAD_REQUEST
+          );
+        }
 
-  //       const data = userDto;
-  //       const {
-  //         superRole,
-  //         organizationRoles,
-  //         hospitalRole,
+        const data = userDto;
+        const {
+          superRole,
+          hospitalRoles,
+          ...newData
+        } = data;
 
-  //         ...newData
-  //       } = data;
+        const updateuser = await prisma.user.update({
+          where: { id: id },
+          data: newData,
+        });
 
-  //       const updateuser = await prisma.user.update({
-  //         where: { id: id },
-  //         data: newData,
-  //       });
+        const updatedUser: UserDto = {
+          id: updateuser.id,
+          email: updateuser.email,
+          phoneNumber: updateuser.phoneNumber,
+          firstName: updateuser.firstName,
+          lastName: updateuser.lastName,
+          hospitalRoles: hospitalRoles,
+          superRole: superRole,
 
-  //       const updatedUser: UserDto = {
-  //         id: updateuser.id,
-  //         email: updateuser.email,
-  //         phoneNumber: updateuser.phoneNumber,
-  //         firstName: updateuser.firstName,
-  //         lastName: updateuser.lastName,
-  //         organizationRoles: organizationRoles,
-  //         superRole: superRole,
+        };
 
-  //       };
+        return updatedUser;
+      });
+    } catch (error) {
+      // Handle transaction failure
+      console.log(error);
+      throw new BadRequestException('Failed to edit user.');
+    }
 
-  //       return updatedUser;
-  //     });
-  //   } catch (error) {
-  //     // Handle transaction failure
-  //     console.log(error);
-  //     throw new BadRequestException('Failed to edit user.');
-  //   }
+    return transaction;
+  }
 
-  //   return transaction;
-  // }
-
-  // async deleteAdminUser(id: number): Promise<void> {
-  //   const checkUser = await this.findById(id);
-  //   if (!checkUser) {
-  //     throw new NotFoundException();
-  //   } else {
-  //     const superUserRelation = await this.prisma.userSuperRole.findFirst({
-  //       where: {
-  //         userId: id,
-  //       },
-  //     });
-  //     await this.prisma.userSuperRole.delete({
-  //       where: {
-  //         id: superUserRelation.id,
-  //       },
-  //     });
-  //     await this.prisma.user.delete({ where: { id: Number(id) } });
-  //     return;
-  //   }
-  // }
+  async deleteAdminUser(id: number): Promise<void> {
+    const checkUser = await this.findById(id);
+    if (!checkUser) {
+      throw new NotFoundException();
+    } else {
+      const superUserRelation = await this.prisma.userSuperRole.findFirst({
+        where: {
+          userId: id,
+        },
+      });
+      await this.prisma.userSuperRole.delete({
+        where: {
+          id: superUserRelation.id,
+        },
+      });
+      await this.prisma.user.delete({ where: { id: Number(id) } });
+      return;
+    }
+  }
 
   // async getFilteredPosts(
   //   pageSize: number,
@@ -1598,10 +1596,10 @@ export class UsersService {
   //       phoneNumber: true,
   //       firstName: true,
   //       lastName: true,
-  //       organizationRoles: {
+  //       hospitalRoles: {
   //         select: {
-  //           organization: { select: { name: true } },
-  //           organizationRole: { select: { name: true } },
+  //           hospital: { select: { name: true } },
+  //           hospitalRole: { select: { name: true } },
   //         },
   //       },
   //       superRoles: { select: { superRole: { select: { name: true } } } },

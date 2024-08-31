@@ -1,22 +1,23 @@
-import styles from './edit-fl-admin.module.scss';
+import styles from './edit-poyv-admin.module.scss';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { useForm, Controller } from 'react-hook-form';
-import { Button, Checkbox, FormControl, FormHelperText, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Button, Checkbox, Dialog, FormControl, FormControlLabel, FormGroup, FormHelperText, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useEffect } from 'react';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 /* eslint-disable-next-line */
-export interface EditFLAdminProps {
+export interface EditPOYVAdminProps {
   open: boolean;
   onClose: () => void;
-  onUpdate: (data: AddFLuser) => void;
-  initialData: FLUser | null;
+  onUpdate: (data: AddPOYVUser) => void;
+  initialData: POYVUser | null;
 }
 
 
-interface FLUser {
+interface POYVUser {
   id: number;
   superRole: string;
   email: string;
@@ -25,7 +26,7 @@ interface FLUser {
   lastName: string;
 }
 
-interface AddFLuser {
+interface AddPOYVUser {
   superRole: string;
   email: string;
   phoneNumber: string;
@@ -33,7 +34,7 @@ interface AddFLuser {
   lastName: string;
 }
 
-export function EditFLAdmin({ open, onClose, onUpdate, initialData }: EditFLAdminProps) {
+export function EditPOYVAdmin({ open, onClose, onUpdate, initialData }: EditPOYVAdminProps) {
   const validationSchema = yup.object().shape({
     superRole: yup.string().required('Please Select One'),
     firstName: yup.string().required('First name is required'),
@@ -41,7 +42,7 @@ export function EditFLAdmin({ open, onClose, onUpdate, initialData }: EditFLAdmi
     email: yup.string().required('Email is required'),
     phoneNumber: yup.string().matches(/[6789][0-9]{9}/, 'Invalid phone number').min(10).max(10).required('Phone number is required'),
   });
-  const { handleSubmit, control, reset, formState: { errors }, setValue } = useForm<AddFLuser>({
+  const { handleSubmit, control, reset, formState: { errors }, setValue } = useForm<AddPOYVUser>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       ...initialData
@@ -60,18 +61,37 @@ export function EditFLAdmin({ open, onClose, onUpdate, initialData }: EditFLAdmi
 
 
 
-  const handleUpdate = (data: AddFLuser) => {
+  const handleUpdate = (data: AddPOYVUser) => {
     console.log("on update", data);
     onUpdate(data);
     onClose();
     reset();
   };
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box className={styles['modal-container']}>
-        <h2 className={styles['h2_tag']}>Edit User</h2>
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth >
+    <Box  p={"5px 24px 24px 24px"} >
+      <Typography
+       variant="h2"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          margin: '14px -10px 5px 0px',
+        }}
+        >
+        Edit User
+        <IconButton
+          onClick={() => {
+            onClose();
+            reset();
+          }}
+          aria-label="Close">
+          <CancelIcon />
+        </IconButton>
+      </Typography>
         <form onSubmit={handleSubmit(handleUpdate)}>
           <Box className={styles['modal_second_container']}>
+          <Box className={styles['grid_top']}>
             <Controller
               name="firstName"
               control={control}
@@ -82,14 +102,17 @@ export function EditFLAdmin({ open, onClose, onUpdate, initialData }: EditFLAdmi
                   type="text"
                   label="First Name"
                   variant="outlined"
-                  size="medium"
                   {...field}
                   error={!!errors.firstName}
                   helperText={errors.firstName?.message}
-                  sx={{ margin: '10px' }}
+                  sx={{
+                    width: '100%',
+                  }}
                 />
               )}
             />
+              </Box>
+              <Box className={styles['grid_top']}>
             <Controller
               name="lastName"
               control={control}
@@ -100,14 +123,17 @@ export function EditFLAdmin({ open, onClose, onUpdate, initialData }: EditFLAdmi
                   type="text"
                   label="Last Name"
                   variant="outlined"
-                  size="medium"
                   {...field}
                   error={!!errors.lastName}
                   helperText={errors.lastName?.message}
-                  sx={{ margin: '10px' }}
+                  sx={{
+                    width: '100%',
+                  }}
                 />
               )}
             />
+              </Box>
+              <Box className={styles['grid_top']}>
             <Controller
               name="email"
               control={control}
@@ -118,15 +144,18 @@ export function EditFLAdmin({ open, onClose, onUpdate, initialData }: EditFLAdmi
                   type="text"
                   label="Email"
                   variant="outlined"
-                  size="medium"
                   {...field}
                   error={!!errors.email}
                   helperText={errors.email?.message}
-                  sx={{ margin: '10px' }}
-                  disabled
+                  sx={{
+                    width: '100%',
+                  }}
+                  inputProps={{ readOnly: true }}
                 />
               )}
             />
+             </Box>
+             <Box className={styles['grid_top']}>
             <Controller
               name="phoneNumber"
               control={control}
@@ -137,11 +166,12 @@ export function EditFLAdmin({ open, onClose, onUpdate, initialData }: EditFLAdmi
                   type="text"
                   label="Phone Number"
                   variant="outlined"
-                  size="medium"
                   {...field}
                   error={!!errors.phoneNumber}
                   helperText={errors.phoneNumber?.message}
-                  sx={{ margin: '10px' }}
+                  sx={{
+                    width: '100%',
+                  }}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment sx={{mt:"1px"}} position="start">
@@ -152,8 +182,10 @@ export function EditFLAdmin({ open, onClose, onUpdate, initialData }: EditFLAdmi
                 />
               )}
             />
-            <FormControl sx={{ width: 340, m: "10px" }} error={!!errors.superRole}>
-              <InputLabel htmlFor="type"  >Role*</InputLabel>
+            </Box>
+            <Box sx={{ textAlignLast: 'start', marginTop: 2 }}>
+            <FormControl sx={{width:'100%'}} error={!!errors.superRole}>
+              <InputLabel htmlFor="type" >Role*</InputLabel>
               <Controller
                 name="superRole"
                 control={control}
@@ -163,6 +195,7 @@ export function EditFLAdmin({ open, onClose, onUpdate, initialData }: EditFLAdmi
                   <Select
                     label="Role*"
                     variant="outlined"
+                    
                     {...field}
                     error={!!errors.superRole}
                     MenuProps={{
@@ -180,32 +213,31 @@ export function EditFLAdmin({ open, onClose, onUpdate, initialData }: EditFLAdmi
               />
               <FormHelperText>{errors.superRole?.message}</FormHelperText>
             </FormControl>
-
-
-
+        </Box>
           </Box>
 
-          <Box sx={{ marginTop: "10px" }}>
+          <Box sx={{ mb: '5px', mt: '10px', textAlign: 'end' }}>
+          <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => { onClose(); reset() }}
+              sx={{ mr: '10px', borderRadius: '12px' }}
+            >
+              Cancel
+            </Button>
             <Button
               variant="contained"
               color="primary"
               type="submit"
-              sx={{ mr: "10px" }}
             >
               Save
             </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => { onClose(); reset() }}
-            >
-              Cancel
-            </Button>
+           
           </Box>
         </form>
-      </Box>
-    </Modal >
+        </Box>
+        </Dialog>
   );
 }
 
-export default EditFLAdmin;
+export default EditPOYVAdmin;

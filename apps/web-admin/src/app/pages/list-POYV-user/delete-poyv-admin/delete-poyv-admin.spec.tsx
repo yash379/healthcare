@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import DeleteAdmin from './delete-fl-admin';
+import DeleteAdmin from './delete-poyv-admin';
 
 describe('DeleteAdmin', () => {
   it('should render successfully', () => {

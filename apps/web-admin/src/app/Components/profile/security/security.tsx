@@ -33,7 +33,7 @@ export function Security(props: SecurityProps) {
       .required('Confirm password is required'),
       
   });
-  const { handleSubmit, control, reset, formState: { errors }, setValue } = useForm<Password>({
+  const { handleSubmit, control, reset, setError, formState: { errors }, setValue } = useForm<Password>({
     resolver: yupResolver(validationSchema),
 
   });
@@ -84,8 +84,24 @@ export function Security(props: SecurityProps) {
       }
     }
     catch (error) {
-      console.log('Something went wrong in Update', error);
-      enqueueSnackbar("Something went wrong in update", { variant: 'error' });
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        console.log('Old password is incorrect');
+        // enqueueSnackbar("Old password is incorrect", { variant: 'error' });
+        // Set error message for old password field
+        const errorData = error.response?.data;
+        const message = errorData?.message.toString();
+        
+        if (message === 'password not matched') {
+        setError('old_password', {
+          type: 'manual',
+          message: 'Old password was entered incorrectly. Please enter it again.',
+        });
+      }
+      // enqueueSnackbar(message, { variant: 'error' });
+      } else {
+        console.log('Something went wrong in Update', error);
+        enqueueSnackbar("Something went wrong in update", { variant: 'error' });
+      }
     }
   };
   return (
@@ -106,7 +122,7 @@ export function Security(props: SecurityProps) {
                     type="password"
                     label="Current password"
                     variant="outlined"
-                    size="medium"
+                    // size="medium"
                     {...field}
                     error={!!errors?.old_password}
                     helperText={errors?.old_password?.message}
@@ -124,7 +140,7 @@ export function Security(props: SecurityProps) {
                     type="password"
                     label="New password"
                     variant="outlined"
-                    size="medium"
+                    // size="medium"
                     {...field}
                     error={!!errors?.new_password}
                     helperText={errors?.new_password?.message}
@@ -142,7 +158,7 @@ export function Security(props: SecurityProps) {
                     type="password"
                     label="Confirm password"
                     variant="outlined"
-                    size="medium"
+                    // size="medium"
                     {...field}
                     error={!!errors?.confirmPassword}
                     helperText={errors?.confirmPassword?.message}
@@ -153,7 +169,7 @@ export function Security(props: SecurityProps) {
 
             </Box>
 
-            <Box className={styles['btn_container']} >
+            <Box className={styles['btn_container']} sx={{ marginTop: "10px" }}>
               <Button
                 variant="contained"
                 color="primary"

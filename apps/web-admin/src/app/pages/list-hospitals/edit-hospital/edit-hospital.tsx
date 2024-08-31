@@ -1,4 +1,4 @@
-import styles from './edit-society.module.scss';
+import styles from './edit-hospital.module.scss';
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import Modal from '@mui/material/Modal';
@@ -11,289 +11,550 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { environment } from '../../../../environments/environment';
 import axios from 'axios';
-import { AddFlat, AddSociety, Building, ViewFlat, ViewFloor } from '@fnt-flsy/data-transfer-types';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { FormControlLabel, FormHelperText, FormLabel, Radio, RadioGroup } from '@mui/material';
+import {
+  Dialog,
+  Divider,
+  FormControlLabel,
+  FormHelperText,
+  FormLabel,
+  IconButton,
+  InputAdornment,
+  Radio,
+  RadioGroup,
+  Typography,
+} from '@mui/material';
 import { CountriesStates } from '../../../core/consts/countries-states';
+import CancelIcon from '@mui/icons-material/Cancel';
 
-
-export interface EditSocietyProps {
-  open: boolean;
-  onClose: () => void;
-  onUpdate: (data: AddSociety) => void;
-  initialData: AddSociety | null;
+export interface AddHospital {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  stateCode?: string;
+  countryCode: string;
+  postalCode: string;
+  isActive: boolean;
+  code: string;
 }
 
-const EditSocietyComponent: React.FC<EditSocietyProps> = ({ open, onClose, onUpdate, initialData }) => {
+export interface ViewHospital {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  stateCode?: string;
+  countryCode: string;
+  postalCode: string;
+  isActive: boolean;
+  code: string;
+}
+
+export interface EditHospitalProps {
+  open: boolean;
+  onClose: () => void;
+  onUpdate: (data: AddHospital) => void;
+  initialData: AddHospital | null;
+}
+
+const EditHospitalComponent: React.FC<EditHospitalProps> = ({
+  open,
+  onClose,
+  onUpdate,
+  initialData,
+}) => {
+  const [isUploading, setIsUploading] = useState(false);
+  const [stateOptions, setStateOptions] = useState<
+    { name: string; code: string }[]
+  >([]);
 
   const [country, setCountry] = useState();
   const validationSchema = yup.object().shape({
     name: yup.string().required('Name is required'),
-    addressLine1: yup.string().notRequired(),
+    email: yup.string().email('Invalid email').required('Email is required'),
+    phoneNumber: yup
+      .string()
+      .matches(/[6789][0-9]{9}/, 'Invalid phone number')
+      .min(10)
+      .required('Phone Number is required'),
+    addressLine1: yup.string().required('Address line 1 is required'),
     addressLine2: yup.string().notRequired(),
-    city: yup.string().notRequired(),
-    stateCode: yup.string().required('StateCode is required'),
+    city: yup.string().required('City is required'),
+    stateCode: yup.string().notRequired(),
     countryCode: yup.string().required('CountryCode is required'),
     postalCode: yup.string().required('PostalCode is required'),
+    code: yup.string().required('code is required'),
   });
-  const { handleSubmit, control, reset, formState: { errors }, watch, setValue } = useForm<AddSociety>({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    resetField,
+    trigger,
+    formState: { errors, isSubmitted },
+    watch,
+    setValue,
+  } = useForm<ViewHospital>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      ...initialData,
-      isActive: true
-    }
+      isActive: true,
+    },
   });
 
   useEffect(() => {
     if (initialData) {
       setValue('name', initialData.name);
-      // setValue('email', initialData.email);
-      // setValue('phoneNumber', initialData.phoneNumber);
+      setValue('code', initialData.code);
+      setValue('email', initialData.email);
+      setValue('phoneNumber', initialData.phoneNumber);
       setValue('addressLine1', initialData.addressLine1);
       setValue('addressLine2', initialData.addressLine2);
       setValue('city', initialData.city);
       setValue('countryCode', initialData.countryCode);
+      setStateOptions(
+        CountriesStates.find((c) => c.code === initialData.countryCode)?.states ||
+          [],
+      );
       setValue('stateCode', initialData.stateCode);
       setValue('postalCode', initialData.postalCode);
-      // setValue('floorId', String(initialData.floorId));
     }
   }, [initialData, setValue]);
 
-  const handleUpdate = (data: AddSociety) => {
+  const handleUpdate = (data: AddHospital) => {
     // data.flatId = parseInt(data.flatId);
     onUpdate(data);
     reset();
   };
 
   const countryValue = watch('countryCode');
+  useEffect(() => {
+    if (countryValue) stateOptions.length <= 0 && setValue('stateCode', 'None');
+  }, [countryValue, setValue, stateOptions]);
 
-  const stateOptions = CountriesStates.find((c) => c.code === countryValue)?.states || [];
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box className={styles['modal-container']}>
-        <h2>Edit Society Name</h2>
-        <form onSubmit={handleSubmit(handleUpdate)}>
-          <Box className={styles['modal_form_containers']}>
-            <Box className={styles['modal_first_container']}>
-              <Controller
-                name="name"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Name is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter new Society Name"
-                    {...field}
-                    label="Name"
-                    error={!!errors.name}
-                    helperText={errors.name?.message}
-                    sx={{ marginTop: "5px" }}
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <div style={{ padding: '24px 24px 24px 24px' }}>
+        <div>
+          <Typography
+            variant="h2"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            Edit Hospital
+            <IconButton onClick={onClose} aria-label="Close">
+              <CancelIcon />
+            </IconButton>
+          </Typography>
+          <form onSubmit={handleSubmit(handleUpdate)}>
+            <Box>
+              <Typography
+                color="#727070"
+                sx={{ my: '10px', fontWeight: 500, fontSize: '16px' }}
+              >
+                {' '}
+                Profile Details
+              </Typography>
+              <div className={styles['form-row']}>
+                <div className={styles['form-item']}>
+                  <Controller
+                    name="name"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: 'Name is required' }}
+                    render={({ field }) => (
+                      <TextField
+                        label="Name*"
+                        variant="outlined"
+                        {...field}
+                        sx={{ width: '100%' }}
+                        fullWidth
+                        error={!!errors.name}
+                        helperText={errors.name?.message}
+                        inputProps={{ maxLength: 254 }}
+                      />
+                    )}
                   />
-                )}
-              />
-              {/* <Controller
-                name="email"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Email is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="email"
-                    className="form-control"
-                    placeholder="Enter new Society Email"
-                    {...field}
-                    label="Email"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    sx={{ marginTop: "5px" }}
+                </div>
+                <div className={styles['form-item']}>
+                  <Controller
+                    name="code"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: 'code is required' }}
+                    render={({ field }) => (
+                      <TextField
+                        label="Hospital Code*"
+                        variant="outlined"
+                        {...field}
+                        sx={{ width: '100%' }}
+                        fullWidth
+                        error={!!errors.code}
+                        
+                        helperText={errors.code?.message}
+                        inputProps={{ readOnly: true, maxLength: 254 }}
+                      />
+                    )}
                   />
-                )}
-              />
-              <Controller
-                name="phoneNumber"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'phoneNumber is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="number"
-                    className="form-control"
-                    placeholder="Enter new Society phoneNumber"
-                    {...field}
-                    label="phoneNumber"
-                    error={!!errors.phoneNumber}
-                    helperText={errors.phoneNumber?.message}
-                    sx={{ marginTop: "5px" }}
+                </div>
+              </div>
+              <Divider sx={{ mt: '20px', color: '#000000' }} />
+              <Typography
+                color="#727070"
+                sx={{ my: '10px', fontWeight: 500, fontSize: '16px' }}
+              >
+                {' '}
+                Contact Details
+              </Typography>
+              <div className={styles['form-row']}>
+                <div className={styles['form-item']}>
+                  <Controller
+                    name="email"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <TextField
+                        label="Email*"
+                        variant="outlined"
+                        {...field}
+                        sx={{ width: '100%' }}
+                        fullWidth
+                        inputProps={{ maxLength: 254 }}
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
+                      />
+                    )}
                   />
-                )}
-              /> */}
-              <Controller
-                name="addressLine1"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'addressLine1 is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter new Society addressLine1"
-                    {...field}
-                    label="addressLine1"
-                    error={!!errors.addressLine1}
-                    helperText={errors.addressLine1?.message}
-                    sx={{ marginTop: "5px" }}
+                </div>
+                <div className={styles['form-item']}>
+                  <Controller
+                    name="phoneNumber"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <TextField
+                        label="Phone Number*"
+                        variant="outlined"
+                        {...field}
+                        sx={{ width: '100%' }}
+                        fullWidth
+                        inputProps={{ maxLength: 50 }}
+                        error={!!errors.phoneNumber}
+                        helperText={errors.phoneNumber?.message}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              +91
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    )}
                   />
-                )}
-              />
-              <Controller
-                name="addressLine2"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'addressLine2 is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter new Society addressLine2"
-                    {...field}
-                    label="addressLine2"
-                    error={!!errors.addressLine2}
-                    helperText={errors.addressLine2?.message}
-                    sx={{ marginTop: "5px" }}
+                </div>
+              </div>
+              <div className={styles['form-row']}>
+                <div className={styles['form-item']}>
+                  <Controller
+                    name="addressLine1"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: 'Address_line1 is required' }}
+                    render={({ field }) => (
+                      <TextField
+                        label="Address 1*"
+                        variant="outlined"
+                        {...field}
+                        sx={{ width: '100%' }}
+                        inputProps={{ maxLength: 254 }}
+                        fullWidth
+                        error={!!errors.addressLine1}
+                        helperText={errors.addressLine1?.message}
+                      />
+                    )}
                   />
-                )}
-              />
-              <Controller
-                name="city"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'city is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter new Society city"
-                    {...field}
-                    label="city"
-                    error={!!errors.city}
-                    helperText={errors.city?.message}
-                    sx={{ marginTop: "5px" }}
+                </div>
+                <div className={styles['form-item']}>
+                  <Controller
+                    name="addressLine2"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: 'address_line2 is required' }}
+                    render={({ field }) => (
+                      <TextField
+                        label="Address 2"
+                        variant="outlined"
+                        {...field}
+                        sx={{ width: '100%' }}
+                        inputProps={{ maxLength: 254 }}
+                        fullWidth
+                        error={!!errors.addressLine2}
+                        helperText={errors.addressLine2?.message}
+                      />
+                    )}
                   />
-                )}
-              />
-              {/* <Controller
-                name="stateCode"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'stateCode is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter new Society stateCode"
-                    {...field}
-                    label="stateCode"
-                    error={!!errors.stateCode}
-                    helperText={errors.stateCode?.message}
-                    sx={{ marginTop: "5px" }}
-                  />
-                )}
-              />
-              <Controller
-                name="countryCode"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'countryCode is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter new Society countryCode"
-                    {...field}
-                    label="countryCode"
-                    error={!!errors.countryCode}
-                    helperText={errors.countryCode?.message}
-                    sx={{ marginTop: "5px" }}
-                  />
-                )}
-              /> */}
-              <Controller
-                name="countryCode"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <FormControl sx={{ m: 1, width: 260 }} variant="outlined" >
-                    <InputLabel>Country*</InputLabel>
-                    <Select
-                      {...field}
-                      label="Country*"
-                      error={!!errors.countryCode}
+                </div>
+              </div>
 
-                    >
-                      {CountriesStates.map((countryData, index) => (
-
-                        <MenuItem key={index} value={countryData.code} >
-                          {countryData.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              />
-              <Controller
-                name="stateCode"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <FormControl sx={{ m: 1, width: 260 }} variant="outlined" >
-                    <InputLabel>State</InputLabel>
-                    <Select {...field} label="State" >
-                      {stateOptions.map((stateData, index) => (
-                        <MenuItem key={index} value={stateData.code}>
-                          {stateData.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              />
-              <Controller
-                name="postalCode"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'postalCode is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter new Society postalCode"
-                    {...field}
-                    label="postalCode"
-                    error={!!errors.postalCode}
-                    helperText={errors.postalCode?.message}
-                    sx={{ marginTop: "5px" }}
+              <div className={styles['form-row']}>
+                <div className={styles['form-item']}>
+                  <Controller
+                    name="city"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: 'City is required' }}
+                    render={({ field }) => (
+                      <TextField
+                        label="City*"
+                        variant="outlined"
+                        {...field}
+                        sx={{ width: '100%' }}
+                        inputProps={{ maxLength: 254 }}
+                        fullWidth
+                        error={!!errors.city}
+                        helperText={errors.city?.message}
+                      />
+                    )}
                   />
-                )}
-              />
+                </div>
+                <div className={styles['form-item']}>
+                  <Controller
+                    name="countryCode"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      //     <FormControl fullWidth variant="outlined" >
+                      //       <InputLabel>Country*</InputLabel>
+                      //       <Select
+                      //         {...field}
+                      //         label="Country*"
+                      //         sx={{width: '100%'}}
+                      //         fullWidth
+                      //         error={!!errors.countryCode}
+                      //         disabled
+                      //       >
+                      //         {CountriesStates.map((countryData, index) => (
+                      //           <MenuItem key={index} value={countryData.code}>
+                      //             {countryData.name}
+                      //           </MenuItem>
+                      //         ))}
+                      //       </Select>
+                      //     </FormControl>
+                      //   )}
+                      // />
+                      // <FormHelperText sx={{ ml: "12px", color: "#d32f2f" }}>{errors.countryCode?.message}</FormHelperText>
+                      <FormControl
+                        error={!!errors.countryCode}
+                        variant="outlined"
+                        fullWidth
+                        disabled={isUploading}
+                        size="small"
+                        
+                        sx={{
+                          width: '100%',
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                          },
+                        }}
+                      >
+                        <InputLabel>
+                          {' '}
+                          {
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                              }}
+                            >
+                              Country
+                              <Typography
+                                fontSize="medium"
+                                color="error"
+                                sx={{ ml: '3px' }}
+                              >
+                                *
+                              </Typography>
+                            </Box>
+                          }
+                        </InputLabel>
+                        <Select
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setStateOptions(
+                              CountriesStates.find(
+                                (c) => c.code === e.target.value
+                              )?.states || []
+                            );
+                            resetField('stateCode', { defaultValue: '' });
+                            if (isSubmitted) {
+                              trigger('stateCode').then();
+                            }
+                          }}
+                          label="Country *"
+                          error={!!errors.countryCode}
+                          disabled={isUploading}
+                          inputProps={{ maxLength: 2 }}
+                        >
+                          {CountriesStates.map((countryData, index) => (
+                            <MenuItem key={index} value={countryData.code}>
+                              {countryData.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        <FormHelperText error={!!errors.countryCode}>
+                          {errors.countryCode?.message}
+                        </FormHelperText>
+                      </FormControl>
+                    )}
+                  />
+                </div>
+              </div>
+              <div className={styles['form-row']}>
+                <div className={styles['form-item']}>
+                  <Controller
+                    name="stateCode"
+                    control={control}
+                    defaultValue={initialData?.stateCode ?? ''}
+                    render={({ field }) => (
+                      //     <FormControl fullWidth variant="outlined" >
+                      //       <InputLabel>State</InputLabel>
+                      //       <Select {...field} label="State*"  sx={{width: '100%'}}>
+                      //         {stateOptions.map((stateData, index) => (
+                      //           <MenuItem key={index} value={stateData.code}>
+                      //             {stateData.name}
+                      //           </MenuItem>
+                      //         ))}
+                      //       </Select>
+                      //     </FormControl>
+                      //   )}
+                      // />
+                      <FormControl
+                        error={!!errors.stateCode}
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        sx={{
+                          width: '100%',
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                          },
+                        }}
+                        disabled={isUploading}
+                      >
+                        <InputLabel>
+                          {stateOptions.length > 0 ? (
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                              }}
+                            >
+                              State
+                              <Typography
+                                fontSize="medium"
+                                sx={{ ml: '3px', color: '#B12A28' }}
+                              >
+                                *
+                              </Typography>
+                            </Box>
+                          ) : (
+                            'State'
+                          )}
+                        </InputLabel>
+                        <Select
+                          {...field}
+                          label={
+                            stateOptions.length > 0 ? (
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                State
+                                <Typography
+                                  fontSize="medium"
+                                  sx={{ ml: '3px', color: '#B12A28' }}
+                                >
+                                  *
+                                </Typography>
+                              </Box>
+                            ) : (
+                              'State'
+                            )
+                          }
+                          error={!!errors.stateCode}
+                          disabled={isUploading}
+                          inputProps={{ maxLength: 3 }}
+                        >
+                          {stateOptions.map((stateData, index) => (
+                            <MenuItem key={index} value={stateData.code}>
+                              {stateData.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        <FormHelperText error={!!errors.stateCode}>
+                          {errors.stateCode?.message}
+                        </FormHelperText>
+                      </FormControl>
+                    )}
+                  />
+                </div>
+                <div className={styles['form-item']}>
+                  <Controller
+                    name="postalCode"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: 'postalcode is required' }}
+                    render={({ field }) => (
+                      <TextField
+                        label="Postal Code*"
+                        variant="outlined"
+                        {...field}
+                        sx={{ width: '100%' }}
+                        fullWidth
+                        inputProps={{ maxLength: 50 }}
+                        error={!!errors.postalCode}
+                        helperText={errors.postalCode?.message}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
             </Box>
-          </Box>
-
-          <Box className={styles['update_modal-buttons']}>
-            <Button className={styles['edit_button']} variant="contained" color="primary" type="submit" >
-              Edit
-            </Button>
-            <Button variant="contained" color="inherit" onClick={() => onClose()}>
-              Cancel
-            </Button>
-          </Box>
-        </form>
-      </Box>
-    </Modal>
+            <div style={{ textAlign: 'end' }}>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ mr: '8px', borderRadius: '12px' }}
+                onClick={onClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ borderRadius: '12px' }}
+                type="submit"
+              >
+                Save
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Dialog>
   );
-}
+};
 
-export default EditSocietyComponent;
+export default EditHospitalComponent;

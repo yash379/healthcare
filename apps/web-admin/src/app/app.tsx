@@ -18,7 +18,6 @@ import ViewHospitalPage from './pages/list-hospitals/view-hospital-page/view-hos
 // import ListResidents from './pages/list-resident/list-resident';
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 import HospitalLayout from './Routes/hospital-layout/hospital-layout';
-import ListFLUser from './pages/list-FL-user/list-fl-user';
 import PageNotFound from './Components/page-not-found/page-not-found';
 import Profile from './Components/profile/profile';
 import { Dashboard } from './pages/dashboard/dashboard';
@@ -28,6 +27,7 @@ import ListDoctors from './pages/list-doctor/list-doctor';
 import ListPatients from './pages/list-patient/list-patient';
 import AddPatientPage from './pages/list-patient/add-patient-page/add-patient-page';
 import EditPatientPage from './pages/list-patient/edit-patient-page/edit-patient-page';
+import ListPOYVUser from './pages/list-POYV-user/list-poyv-user';
 
 export function App() {
 
@@ -104,7 +104,7 @@ const navigate = useNavigate();
               <Route path="/hospitals/:hospitalId/patients/edit/:patientId" element={<EditPatientPage />}/>
               <Route path="/profile" element={<Profile />}/>
             </Route>
-            <Route path="/users"  element={<ListFLUser />}/>
+            <Route path="/users"  element={<ListPOYVUser />}/>
             </Route>
           <Route path="/forgot-password" element={<ForgetPassword/>}/>
           <Route path="/update-password/email/:emailId/token/:token" element={<UpdatePassword/>} />

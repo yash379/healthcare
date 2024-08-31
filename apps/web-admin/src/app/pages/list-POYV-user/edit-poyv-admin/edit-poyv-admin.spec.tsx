@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
+import EditFLAdmin from './edit-poyv-admin';
 
-import AddFLAdmin from './add-fl-admin';
 
 interface AddFLuser {
   superRole: string;
@@ -10,13 +10,13 @@ interface AddFLuser {
   lastName: string;
 }
 
-describe('AddAdmin', () => {
+describe('EditAdmin', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<AddFLAdmin open={false} onClose={function (): void {
+    const { baseElement } = render(<EditFLAdmin open={false} onClose={function (): void {
       throw new Error('Function not implemented.');
-    } } onSubmit={function (data: AddFLuser): void {
+    } } onUpdate={function (data: AddFLuser): void {
       throw new Error('Function not implemented.');
-    } }  />);
+    } } initialData={null}  />);
     expect(baseElement).toBeTruthy();
   });
 });

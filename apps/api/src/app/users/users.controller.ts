@@ -80,14 +80,14 @@ export class UsersController {
   // }
 
 
-  // @UseGuards(AuthGuard)
-  // @Put('/admins/:id')
-  // @HttpCode(HttpStatus.OK)
-  // @ApiOkResponse({ type: UserDto })
-  // @Roles(Role.POYV_ADMIN)
-  // editAdmin(@Body() data: AddUserDto , @Param('id') id: number): Promise<UserDto> {
-  //   return this.usersService.editAdmin(data,+id);
-  // }
+  @UseGuards(AuthGuard)
+  @Put('/admins/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: UserDto })
+  @Roles(Role.POYV_ADMIN)
+  editAdmin(@Body() data: AddUserDto , @Param('id') id: number): Promise<UserDto> {
+    return this.usersService.editAdmin(data,+id);
+  }
 
   
 
@@ -125,14 +125,14 @@ export class UsersController {
   // }
   
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Get('users/:id')
-  // @HttpCode(HttpStatus.OK)
-  // @ApiOkResponse({ type: ViewUserDto })
-  // @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
-  // findById(@Param('id') id: number): Promise<ViewUserDto> {
-  //   return this.usersService.findById(id);
-  // }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Get('users/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: ViewUserDto })
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
+  findById(@Param('id') id: number): Promise<ViewUserDto> {
+    return this.usersService.findById(id);
+  }
 
 
   @UseGuards(AuthGuard, RolesGuard)
@@ -146,14 +146,14 @@ export class UsersController {
   }
 
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Put('users/:id/status')
-  // @HttpCode(HttpStatus.OK)
-  // @ApiOkResponse({ type: ViewUserDto })
-  // @Roles(Role.POYV_ADMIN)
-  // editUserStatus(@Param('id') id: number,@Body() editUserStatus:EditUserStatus): Promise<EditUserStatus> {
-  //   return this.usersService.editUserStatus(+id,editUserStatus);
-  // }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Put('users/:id/status')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: ViewUserDto })
+  @Roles(Role.POYV_ADMIN)
+  editUserStatus(@Param('id') id: number,@Body() editUserStatus:EditUserStatus): Promise<EditUserStatus> {
+    return this.usersService.editUserStatus(+id,editUserStatus);
+  }
 
  
 

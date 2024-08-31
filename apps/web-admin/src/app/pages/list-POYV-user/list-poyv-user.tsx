@@ -1,23 +1,24 @@
 import axios from 'axios';
-import styles from './list-fl-user.module.scss';
+import styles from './list-poyv-user.module.scss';
 import { environment } from '../../../environments/environment';
 import { useCallback, useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, Autocomplete, TextField, Button, Modal, InputLabel, Checkbox, Box, CircularProgress, IconButton, Icon, Stack, Pagination, PaginationItem } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, Autocomplete, TextField, Button, Modal, InputLabel, Checkbox, Box, CircularProgress, IconButton, Icon, Stack, Pagination, PaginationItem, Typography } from '@mui/material';
 import Breadcrumbs from '../../Components/bread-crumbs/bread-crumbs';
-import AddFLAdmin from './add-fl-admin/add-fl-admin';
+import AddPOYVAdmin from './add-poyv-admin/add-poyv-admin';
 import { enqueueSnackbar } from 'notistack';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
-import EditFLAdmin from './edit-fl-admin/edit-fl-admin';
-import DeleteFLAdmin from './delete-fl-admin/delete-fl-admin';
-import ViewFLUserComponent from './view-fl-admin/view-fl-admin';
+import EditPOYVAdmin from './edit-poyv-admin/edit-poyv-admin';
+import DeletePOYVAdmin from './delete-poyv-admin/delete-poyv-admin';
+import ViewPOYVUserComponent from './view-poyv-admin/view-poyv-admin';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import BlockIcon from '@mui/icons-material/Block';
 import Loading from '../../Components/loading/loading';
+import Chip from '../../Components/chip/chip';
 
-interface FLUser {
+interface POYVUser {
   id:number;
   superRole:string;
   email: string;
@@ -28,7 +29,7 @@ interface FLUser {
   }
 
 
-interface AddFLuser {
+interface AddPOYVUser {
   superRole:string;
   email: string;
   phoneNumber: string;
@@ -37,44 +38,44 @@ interface AddFLuser {
 }
 
 /* eslint-disable-next-line */
-export interface ListFLUserProps {}
+export interface ListPOYVUserProps {}
 
-export function ListFLUser(props: ListFLUserProps) {
+export function ListPOYVUser(props: ListPOYVUserProps) {
   const apiUrl = environment.apiUrl;
-  const [flUserData, setFLUserData] = useState<FLUser[]>([]);
+  const [poyvUserData, setPOYVUserData] = useState<POYVUser[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [searchQueryName, setSearchQueryName] = useState<string>('');
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
-  const [selectedFLUserId, setSelectedFLUserId] = useState<number | null>(null);
-  const [editData, setEditData] = useState<FLUser | null>(null);
-  const [deleteData, setDeleteData] = useState<FLUser | null>(null);
+  const [selectedPOYVUserId, setSelectedPOYVUserId] = useState<number | null>(null);
+  const [editData, setEditData] = useState<POYVUser | null>(null);
+  const [deleteData, setDeleteData] = useState<POYVUser | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [userToDeleteId, setUserToDeleteId] = useState<{ id: number, isActive: boolean | undefined } | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [flUserToDeactive, setFlUserToDeActive] = useState<{  isActive: boolean | undefined }>();
-  const [viewFlUserOpen, setViewFlUserOpen] = useState(false);
-  const [viewData, setViewData] = useState<FLUser | null>(null);
+  const [poyvUserToDeactive, setPOYVUserToDeActive] = useState<{  isActive: boolean | undefined }>();
+  const [viewPOYVUserOpen, setViewPOYVUserOpen] = useState(false);
+  const [viewData, setViewData] = useState<POYVUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
 
-  const getAllFLUsers = useCallback(async () => {
+  const getAllPOYVUsers = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${apiUrl}/admins`, {
         withCredentials: true,
         params: {
           pageSize: rowsPerPage,
-          pageOffset: page,
+          pageOffset: page -1,
           name: searchQueryName,
         },
       });
       // console.log(response.data[0].user)
       const {content, total} = response.data;
-      setFLUserData(response.data.content);
+      setPOYVUserData(response.data.content);
       setTotalItems(total)
       console.log("Admin Data",response.data.content);
       setLoading(false);
@@ -82,15 +83,15 @@ export function ListFLUser(props: ListFLUserProps) {
       console.error('Error fetching hospital data:', error);
       setLoading(false);
     }
-  }, [apiUrl, setFLUserData, searchQueryName]);
+  }, [apiUrl, rowsPerPage, page, searchQueryName]);
   
 useEffect(() => {
  
-  getAllFLUsers();
-}, [apiUrl, getAllFLUsers, searchQueryName]);
+  getAllPOYVUsers();
+}, [apiUrl, getAllPOYVUsers, searchQueryName]);
   
 
-const addFLUser = async (formData: AddFLuser) => {
+const addPOYVUser = async (formData: AddPOYVUser) => {
   try {
      await setIsAddModalOpen(false);
     setIsLoadingModalOpen(true);
@@ -100,7 +101,7 @@ const addFLUser = async (formData: AddFLuser) => {
         withCredentials: true,
       })
     if (data) {
-      getAllFLUsers();
+      getAllPOYVUsers();
       // setIsAddModalOpen(false);
       setIsLoadingModalOpen(false);
       enqueueSnackbar("User added successfully!", { variant: 'success' });
@@ -118,7 +119,7 @@ const addFLUser = async (formData: AddFLuser) => {
 
 const handleSearchNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   setSearchQueryName(event.target.value);
-  getAllFLUsers();
+  getAllPOYVUsers();
 };
 
 const handleCheckboxChange = (UserId: number) => {
@@ -133,56 +134,56 @@ const handleCheckboxChange = (UserId: number) => {
 };
 
 const handleHeaderCheckboxChange = () => {
-  const allSelected = flUserData.every((user) =>
+  const allSelected = poyvUserData.every((user) =>
     selectedItems.includes(user.id)
   );
 
   if (allSelected) {
     setSelectedItems([]);
   } else {
-    const allUserIds = flUserData.map((user) => user.id);
+    const allUserIds = poyvUserData.map((user) => user.id);
     setSelectedItems(allUserIds);
   }
 };
 
 
  //Table Row Select Function
- const handleRowClick = (FLUserId: number, event: React.MouseEvent<HTMLTableRowElement>) => {
-  const selectedFlUser: FLUser | undefined = flUserData.find(
-    (user) => user.id === FLUserId
+ const handleRowClick = (POYVUserId: number, event: React.MouseEvent<HTMLTableRowElement>) => {
+  const selectedPOYVUser: POYVUser | undefined = poyvUserData.find(
+    (user) => user.id === POYVUserId
   );
 
-  if (selectedFlUser) {
-    setViewData(selectedFlUser)
-    getAllFLUsers();
-    setSelectedFLUserId(FLUserId);
+  if (selectedPOYVUser) {
+    setViewData(selectedPOYVUser)
+    getAllPOYVUsers();
+    setSelectedPOYVUserId(POYVUserId);
   }
 };
 
- //FLUser Update OpenModal
- const handleEditClick = (FLUserId: number) => {
-  const selectedFLUser: FLUser | undefined = flUserData.find(
-    (User) => User.id === FLUserId
+ //POYVUser Update OpenModal
+ const handleEditClick = (POYVUserId: number) => {
+  const selectedPOYVUser: POYVUser | undefined = poyvUserData.find(
+    (User) => User.id === POYVUserId
   );
 
-  if (selectedFLUser) {
-    setEditData(selectedFLUser)
-    setSelectedFLUserId(FLUserId);
-    console.log(FLUserId)
+  if (selectedPOYVUser) {
+    setEditData(selectedPOYVUser)
+    setSelectedPOYVUserId(POYVUserId);
+    console.log(POYVUserId)
     setIsEditModalOpen(true);
   }
 };
 
 const openDeleteModal = (user: { id: number, isActive: boolean | undefined } | null) => {
-  const selectedUser: FLUser | undefined = flUserData.find(
+  const selectedUser: POYVUser | undefined = poyvUserData.find(
     (Users) => Users.id === user?.id
   );
 
   if (selectedUser) {
   setDeleteData(selectedUser);
   setUserToDeleteId(user);
-  setFlUserToDeActive({ isActive: user?.isActive });
-  console.log("flatToDeleteId:", userToDeleteId);
+  setPOYVUserToDeActive({ isActive: user?.isActive });
+  console.log("userToDeleteId:", userToDeleteId);
   setIsDeleteModalOpen(true);
   }
 };
@@ -218,12 +219,12 @@ const pageCount = Math.ceil(totalItems / rowsPerPage);
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
- // Edit FL User
- const handleUpdate = async (formData: AddFLuser) => {
+ // Edit POYV User
+ const handleUpdate = async (formData: AddPOYVUser) => {
   try {
     console.log(editData);
     const response = await axios.put(
-      `${apiUrl}/admins/${selectedFLUserId}`,
+      `${apiUrl}/admins/${selectedPOYVUserId}`,
       formData,
       {
         withCredentials: true,
@@ -238,7 +239,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
       console.log('Building Name Updated Successfully');
       enqueueSnackbar("User updated successfully!", { variant: 'success' });
       // navigate(`/buildinglist/${params.id}`);
-      getAllFLUsers();
+      getAllPOYVUsers();
       setIsModalOpen(false)
     } else {
       console.log('Update data not received');
@@ -253,7 +254,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 };
 
 
-  //delete a FL User
+  //delete a POYV User
 
   const handleDelete = async (user: { id: number, isActive: boolean | undefined } | null) => {
     try {
@@ -262,10 +263,10 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
         withCredentials: true,
       });
       console.log(data);
-      console.log('Flat DeActive successfully');
+      console.log('User DeActive successfully');
       setIsLoadingModalOpen(false);
-      enqueueSnackbar(`User ${flUserToDeactive?.isActive===false ? 'activated': 'deactivated'} successfully!`, { variant: 'success' });
-      getAllFLUsers();
+      enqueueSnackbar(`User ${poyvUserToDeactive?.isActive===false ? 'activated': 'deactivated'} successfully!`, { variant: 'success' });
+      getAllPOYVUsers();
     } catch (error) {
       console.log(error);
       console.log("Something went wrong");
@@ -286,10 +287,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 }
 
 const breadcrumbs = [
-  {
-    to: '/hospitals',
-    label: 'Hospitals',
-  },
+ 
   {
     label: 'Users',
   },
@@ -299,20 +297,11 @@ const breadcrumbs = [
     <Box className={styles['container']}>
         <Breadcrumbs paths={breadcrumbs} />
         <Box className={styles['building_container']}>
-          <Box className={styles['btn_container']}>
-            <h1>Users</h1>
-            <Box>
-              <AddFLAdmin
-                open={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
-                onSubmit={addFLUser}
-              />
-                <Loading open={isLoadingModalOpen}
-                    onClose={() => setIsLoadingModalOpen(false)} />
-            </Box>
-            <Box className={styles['search-container']}>
-              <TextField
-                sx={{ mt: 2.3, mr: '10px' }}
+          <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}} >
+           <Box sx={{mt:'20px',display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+            <h1 style={{marginTop:'10px'}}>Users</h1>
+            <TextField
+                sx={{ ml: '10px' }}
                 type="text"
                 variant="outlined"
                 size="small"
@@ -323,7 +312,19 @@ const breadcrumbs = [
                   ),
                 }}
               />
-              <Button variant="contained" color="primary"
+              </Box>
+            <Box>
+              <AddPOYVAdmin
+                open={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSubmit={addPOYVUser}
+              />
+                <Loading open={isLoadingModalOpen}
+                    onClose={() => setIsLoadingModalOpen(false)} />
+            </Box>
+            <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}} className={styles['search-container']}>
+              
+              <Button variant="contained" color="primary" 
                 onClick={() => {
                   setIsAddModalOpen(true);
                 }}
@@ -331,15 +332,15 @@ const breadcrumbs = [
             </Box>
 
           </Box >
-          <TableContainer className={styles['table_container']}>
-            <Table stickyHeader>
-              <TableHead className={styles['table_head']}>
+          <TableContainer >
+            <Table  stickyHeader>
+              <TableHead>
               <TableRow>
                 <TableCell><Checkbox
                   {...label}
                   checked={
-                    flUserData.length > 0 &&
-                    flUserData.every((user) =>
+                    poyvUserData.length > 0 &&
+                    poyvUserData.every((user) =>
                       selectedItems.includes(user.id)
                     )
                   }
@@ -349,10 +350,10 @@ const breadcrumbs = [
                   </TableCell>
                   <TableCell sx={{ border: "hidden" }}>Email
                   </TableCell>
-                  <TableCell sx={{ border: "hidden", fontFamily: "Poppins" }}>Role
-                  </TableCell>
+                  {/* <TableCell sx={{ border: "hidden", fontFamily: "Poppins" }}>Role
+                  </TableCell> */}
                   <TableCell sx={{ border: "hidden" }}>Status</TableCell>
-                  <TableCell sx={{ border: "hidden" }}></TableCell>
+                  <TableCell sx={{ border: "hidden" }}>Actions</TableCell>
                 </TableRow>
 
               </TableHead>
@@ -369,12 +370,12 @@ const breadcrumbs = [
                 <TableCell align='center' colSpan={6}>
                   <CircularProgress />
                 </TableCell>
-              ) : (Array.isArray(flUserData) && flUserData.length > 0 ? (
-                  flUserData.map((flUser: FLUser) => (
-                    <TableRow className={styles['table-row']} onClick={(e) => {handleRowClick(flUser.id, e); setViewFlUserOpen(true); }}>
+              ) : (Array.isArray(poyvUserData) && poyvUserData.length > 0 ? (
+                  poyvUserData.map((poyvUser: POYVUser) => (
+                    <TableRow className={styles['table-row']} onClick={(e) => {handleRowClick(poyvUser.id, e); setViewPOYVUserOpen(true); }}>
                       <TableCell><Checkbox
-                      checked={selectedItems.includes(flUser.id)}
-                      onChange={() => handleCheckboxChange(flUser.id)}
+                      checked={selectedItems.includes(poyvUser.id)}
+                      onChange={() => handleCheckboxChange(poyvUser.id)}
                       {...label}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -382,25 +383,34 @@ const breadcrumbs = [
                     />
                     </TableCell >
                     <TableCell >
-                        {flUser.firstName} {flUser.lastName}
+                       <b> {poyvUser.firstName} {poyvUser.lastName}</b> 
+                        <br />
+                        {formatSuperRoleType(poyvUser.superRole)}
                       </TableCell>
                       <TableCell>
-                        {flUser.email}
+                        {poyvUser.email}
                       </TableCell>
-                      <TableCell>
-                      {formatSuperRoleType(flUser.superRole)}
-                      </TableCell>
+                      {/* <TableCell>
+                      {formatSuperRoleType(poyvUser.superRole)}
+                      </TableCell> */}
                       <TableCell >
-                        <Box className={`${styles.socname} ${flUser?.isActive ? styles.active : styles.inactive}`}>{flUser?.isActive ? (
+                        {/* <Box className={`${styles.socname} ${poyvUser?.isActive ? styles.active : styles.inactive}`}>{poyvUser?.isActive ? (
                           'Active'
                         ) : (
                           "InActive"
-                        )}</Box>
+                        )}</Box> */}
+                        <Typography>
+                        {poyvUser.isActive ? (
+                          <Chip label="Success">Active</Chip>
+                        ) : (
+                          <Chip label="Error">Inactive</Chip>
+                        )}
+                      </Typography>
                       </TableCell>
                       <TableCell >
                         <IconButton classes="btn btn-primary action-button" sx={{color:'black'}} onClick={(e) => {
                           e.stopPropagation();
-                          handleEditClick(flUser.id);
+                          handleEditClick(poyvUser.id);
                         }}>
                         <EditIcon >
                           Edit
@@ -410,14 +420,14 @@ const breadcrumbs = [
                         {/* <DeleteIcon sx={{ ml: 1 }} classes="btn btn-danger action-button" color="error" className={styles['row-action-button']} onClick={(e) => {
                           // handleDelete(building.id)
                           e.stopPropagation();
-                          openDeleteModal({ id: flUser.id, isActive: flUser.isActive })
+                          openDeleteModal({ id: poyvUser.id, isActive: poyvUser.isActive })
                         }}>
                           Delete
                         </DeleteIcon> */}
-                         {flUser.isActive ? (
+                         {poyvUser.isActive ? (
                           <IconButton classes="btn btn-danger action-button" color="error"  onClick={(e) => {
                             e.stopPropagation();
-                            openDeleteModal({ id: flUser.id, isActive: flUser.isActive })
+                            openDeleteModal({ id: poyvUser.id, isActive: poyvUser.isActive })
                           }}>
                             <BlockIcon>
                               Delete
@@ -427,7 +437,7 @@ const breadcrumbs = [
                         ) : (
                           <IconButton classes="btn btn-danger action-button"   onClick={(e) => {
                             e.stopPropagation();
-                            openDeleteModal({ id: flUser.id, isActive: flUser.isActive })
+                            openDeleteModal({ id: poyvUser.id, isActive: poyvUser.isActive })
                           }}>
                             <RadioButtonCheckedIcon className={styles['row-action-delete-button']}>
                               Delete
@@ -446,12 +456,12 @@ const breadcrumbs = [
                  )}
               </TableBody>
             </Table>
-            <Box sx={{  display:'flex',
+            {/* <Box sx={{  display:'flex',
             flexDirection:'row',
             justifyContent:"flex-end",
            
-          }}>
-          <Stack sx={{marginBottom:"15px", marginRight:"20px", marginTop: "30px",}} spacing={2}>
+          }}> */}
+          {/* <Stack sx={{marginBottom:"15px", marginRight:"20px", marginTop: "30px",}} spacing={2}>
             <Pagination
             sx={{  display:'flex',
             flexDirection:'row',
@@ -475,30 +485,49 @@ const breadcrumbs = [
                 />
               )}
             />
-          </Stack>
-            <TablePagination
-              className={styles['pagination']}
-              sx={{ marginTop: "5px" }}
-              rowsPerPageOptions={[5, 10, 20]}
-              component="div"
-              count={totalItems}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-            </Box>
-          </TableContainer>
+          </Stack> */}
+              {/* </Box> */}
+           </TableContainer>
+            {/* <Pagination
+              // rowsPerPageOptions={[5, 10, 20]}
+              // component="div"
+              // count={totalItems}
+              count={rowsPerPage}
+              // rowsPerPage={rowsPerPage}
+              // page={page}
+              // onPageChange={handleChangePage}
+              // onRowsPerPageChange={handleChangeRowsPerPage}
+            /> */}
+
+          <Stack spacing={2} className={styles['paginationContainer']}>
+          <Pagination
+            count={pageCount}
+            page={page}
+            onChange={handleChangePage}
+            color="primary"
+            renderItem={(item) => (
+              <PaginationItem
+                {...item}
+                className={styles['paginationItem']}
+              />
+            )}
+            siblingCount={1}
+            boundaryCount={1}
+            showFirstButton
+            showLastButton
+          />
+        </Stack>
+         
 
         </Box >
          
-        <ViewFLUserComponent
-                open={viewFlUserOpen}
-                onClose={() => setViewFlUserOpen(false)}
+        <ViewPOYVUserComponent
+                open={viewPOYVUserOpen}
+                onClose={() => setViewPOYVUserOpen(false)}
                 initialData={viewData}
               />
 
-        <EditFLAdmin
+        <EditPOYVAdmin
           open={isEditModalOpen}
           onClose={closeEditModal}
           onUpdate={(data) => {
@@ -508,18 +537,18 @@ const breadcrumbs = [
           initialData={editData}
         />
 
-        <DeleteFLAdmin
+        <DeletePOYVAdmin
           open={isDeleteModalOpen}
           onClose={closeDeleteModal}
           onDelete={() => {
             handleDelete(userToDeleteId);
             closeDeleteModal();
           }}
-          Status={flUserToDeactive?.isActive}
+          Status={poyvUserToDeactive?.isActive}
           userData={deleteData}
         />
       </Box >
   );
 }
 
-export default ListFLUser;
+export default ListPOYVUser;

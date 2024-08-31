@@ -1,5 +1,4 @@
-import styles from './delete-hospital.module.scss';
-import React, { useState } from 'react';
+import styles from './delete-poyv-admin.module.scss';
 import {
   Alert,
   Box,
@@ -12,24 +11,37 @@ import {
   Typography,
 } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { AddHospital } from '@healthcare/data-transfer-types';
+import { useState } from 'react';
 
-export interface DeleteHospitalProps {
+/* eslint-disable-next-line */
+export interface DeletePOYVAdminProps {
   open: boolean;
   onClose: () => void;
   onDelete: () => void;
-  hospitalData: AddHospital | null;
+  Status: boolean | undefined ;
+  userData: POYVUser | null;
 }
 
-const DeleteHospitalComponent: React.FC<DeleteHospitalProps> = ({
+interface POYVUser {
+  id: number;
+  superRole: string;
+  email: string;
+  phoneNumber: string;
+  firstName: string;
+  lastName: string;
+}
+
+
+export function DeletePOYVAdmin({
   open,
   onClose,
   onDelete,
-  hospitalData
-}) => {
+  Status,
+  userData
+}: DeletePOYVAdminProps) {
+
   const [uploadError, setUploadError] = useState<Error>();
   const [isUploading, setIsUploading] = useState(false);
-  
   return (
     <Dialog open={open} onClose={onClose} maxWidth='xs' fullWidth>
     <Box
@@ -52,7 +64,7 @@ const DeleteHospitalComponent: React.FC<DeleteHospitalProps> = ({
       }}>
       {uploadError && (
         <Alert severity="error" onClose={() => setUploadError(undefined)}>
-          There was an error Activating / Deactivating Hospital. Please try again.
+          There was an error Activating / Deactivating User. Please try again.
         </Alert>
       )}
       <Typography>
@@ -65,7 +77,7 @@ const DeleteHospitalComponent: React.FC<DeleteHospitalProps> = ({
               padding: '12px',
             }}
             variant='h2'>
-            {hospitalData?.isActive ? 'Deactivate' : 'Activate'} Hospital
+            {Status ? 'Deactivate' : 'Activate'} User
           </Typography>
           <IconButton
             onClick={() => {
@@ -76,31 +88,10 @@ const DeleteHospitalComponent: React.FC<DeleteHospitalProps> = ({
             <CancelIcon />
           </IconButton>
         </Box>
-        {/* <p>Are you sure you want to delete <b>{hospitalData?.name}</b> hospital?</p>
-        <Box className={styles['modal-buttons']}>
-         
-          <Button variant="contained" color="secondary" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-          className={styles['delete_btn']}
-            variant="contained"
-            color="error"
-            onClick={() => {
-              onDelete();
-              onClose();
-            }}
-          >
-            Confirm
-          </Button>
-        </Box>
-      </Box>
-    </Modal> */}
-
         <Typography p={'12px'} variant="body1">
-          {hospitalData?.isActive
-            ? `Are you sure you want to deactivate ${hospitalData?.name} ?`
-            : `Are you sure you want to activate ${hospitalData?.name}?`}
+          {Status
+            ? `Are you sure you want to deactivate ${userData?.firstName} ${userData?.lastName}?`
+            : `Are you sure you want to activate ${userData?.firstName} ${userData?.lastName}?`}
         </Typography>
       </Typography>
       <Typography
@@ -126,9 +117,9 @@ const DeleteHospitalComponent: React.FC<DeleteHospitalProps> = ({
           }}
           variant="contained"
           disabled={isUploading}
-          color={hospitalData?.isActive ? 'error' : 'success'}
+          color={Status ? 'error' : 'success'}
           sx={{  borderRadius: '12px' }}>
-          {hospitalData?.isActive ? 'Deactivate' : 'Activate'}
+          {Status ? 'Deactivate' : 'Activate'}
         </Button>
       </Typography>
     </Box>
@@ -136,4 +127,4 @@ const DeleteHospitalComponent: React.FC<DeleteHospitalProps> = ({
   );
 }
 
-export default DeleteHospitalComponent;
+export default DeletePOYVAdmin;

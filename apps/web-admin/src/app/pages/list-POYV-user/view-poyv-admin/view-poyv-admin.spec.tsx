@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import ViewFLUserComponent from './view-fl-admin';
+import ViewFLUserComponent from './view-poyv-admin';
 
 describe('ViewResident', () => {
   it('should render successfully', () => {

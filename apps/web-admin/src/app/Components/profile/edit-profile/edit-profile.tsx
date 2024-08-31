@@ -125,13 +125,13 @@ export function EditProfile({editUser, userEdit }: EditProfileProps) {
   }
 
   return (
-    <div className={styles['container']}>
+    <Box className={styles['container']}>
        {loadingUserInfo ? (
         <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", height: "30vh" }}><CircularProgress /></div>
       // eslint-disable-next-line react/jsx-no-useless-fragment
       ) : (<>
       {editUser ? (
-        <Box className={styles['modal-container']}>
+        <Box className={styles['modal-container']} >
           {/* <h2 className={styles['h2_tag']}>Edit Manager</h2> */}
           <form onSubmit={handleSubmit(handleUpdate)}>
             <Box className={styles['modal_first_container']}>
@@ -145,7 +145,7 @@ export function EditProfile({editUser, userEdit }: EditProfileProps) {
                   type="text"
                   label="First Name"
                   variant="outlined"
-                  size="medium"
+                  // size="medium"
                   {...field}
                   error={!!errors.firstName}
                   helperText={errors.firstName?.message}
@@ -163,7 +163,7 @@ export function EditProfile({editUser, userEdit }: EditProfileProps) {
                   type="text"
                   label="Last Name"
                   variant="outlined"
-                  size="medium"
+                  // size="medium"
                   {...field}
                   error={!!errors.lastName}
                   helperText={errors.lastName?.message}
@@ -181,12 +181,12 @@ export function EditProfile({editUser, userEdit }: EditProfileProps) {
                   type="text"
                   label="Email"
                   variant="outlined"
-                  size="medium"
+                  // size="medium"
                   {...field}
                   error={!!errors.email}
                   helperText={errors.email?.message}
                   sx={{ margin: '10px' }}
-                  disabled
+                  inputProps={{ readOnly: true }}
                 />
               )}
             />
@@ -200,7 +200,7 @@ export function EditProfile({editUser, userEdit }: EditProfileProps) {
                   type="text"
                   label="Phone Number"
                   variant="outlined"
-                  size="medium"
+                  // size="medium"
                   {...field}
                   error={!!errors.phoneNumber}
                   helperText={errors.phoneNumber?.message}
@@ -297,7 +297,7 @@ export function EditProfile({editUser, userEdit }: EditProfileProps) {
       )}
         </>)}
 
-    </div>
+    </Box>
   );
 }
 
