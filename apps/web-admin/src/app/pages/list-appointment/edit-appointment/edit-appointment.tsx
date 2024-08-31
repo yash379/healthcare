@@ -47,11 +47,11 @@ const EditAppointment: React.FC<EditAppointmentProps> = ({ open, onClose, onUpda
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',padding:'' }}>
-      <DialogTitle className={styles['h2_tag']} >Edit Appointment </DialogTitle>
-      <IconButton onClick={() => { onClose(); reset(); }}>
-        <CancelIcon></CancelIcon>
-      </IconButton>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '' }}>
+        <DialogTitle className={styles['h2_tag']} >Edit Appointment </DialogTitle>
+        <IconButton onClick={() => { onClose(); reset(); }}>
+          <CancelIcon></CancelIcon>
+        </IconButton>
       </Box>
       <form onSubmit={handleSubmit(handleUpdate)}>
         <DialogContent>

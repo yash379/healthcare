@@ -47,7 +47,7 @@ const DeleteAppointment: React.FC<DeleteAppointmentProps> = ({ open, onClose, on
                 onClose();
               }}
             >
-              Confirm
+              delete
             </Button>
           </Grid>
         </Grid>

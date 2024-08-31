@@ -13,6 +13,10 @@ import {
   TableRow,
   TextField,
   IconButton,
+  Card,
+  CardContent,
+  Typography,
+  styled,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
@@ -26,8 +30,15 @@ import { useParams } from 'react-router-dom';
 import EditAppointment from './edit-appointment/edit-appointment';
 import AddAppointment from './add-appointment/add-appointment';
 import DeleteAppointment from './delete-appointment/delete-appointment';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 
-export interface ListAppointmentProps {}
+import * as React from "react";
+import AllAppointmentLog from './all-appointment-log/all-appointment-log';
+
+
+
+
+export interface ListAppointmentProps { }
 
 interface Form {
   firstName: string;
@@ -49,6 +60,7 @@ interface ViewAppointment {
   age: number;
   date: Date;
 }
+
 
 export function ListAppointment(props: ListAppointmentProps) {
   const apiUrl = environment.apiUrl;
@@ -214,35 +226,125 @@ export function ListAppointment(props: ListAppointmentProps) {
   return (
     <>
       <Box className={styles['btn_container']}>
-        <h1>Appointment</h1>
-        <Box>
-          <AddAppointment
-            open={isAddModalOpen}
-            onClose={() => setIsAddModalOpen(false)}
-            onSubmit={handleAddAppointment}
-          />
-        </Box>
-        <Box className={styles['search-container']}>
-          <TextField
-            type="text"
-            variant="outlined"
-            size="small"
-            sx={{ mt: 2.3, mr: '10px' }}
-            onChange={handleSearchNameChange}
-            InputProps={{
-              startAdornment: <SearchIcon color="action" />,
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setIsAddModalOpen(true)}
+        <Box sx={{
+          display:'flex',
+          width: '100%'
+        }}
+        >
+          <Box sx={{marginRight:'25px'}}>
+            <Box>
+              <AddAppointment
+                open={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSubmit={handleAddAppointment}
+              />
+            </Box>
+            <Box className={styles['search-container']}>
+              <TextField
+                type="text"
+                variant="outlined"
+                size="small"
+                sx={{ mt: 2.3, mr: '10px' }}
+                onChange={handleSearchNameChange}
+                InputProps={{
+                  startAdornment: <SearchIcon color="action" />,
+                }}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setIsAddModalOpen(true)}
+              >
+                <AddIcon fontSize="small" /> Add
+              </Button>
+            </Box>
+
+            {/* Appointment Statistics Cards */}
+            <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
+              {/* Total Appointments Card */}
+              <Card sx={{ minWidth: 200, p: 2, borderRadius: 5 }}>
+                <CardContent sx={{ display: 'flex' }}>
+                  <DescriptionOutlinedIcon
+                    sx={{
+                      backgroundColor: '#5CA1D1',
+                      borderRadius: '50%',
+                      color: '#ffffff',
+                      width: 30,
+                      height: 30,
+                      padding: 1,
+                    }}
+                  />
+                  <Box sx={{ paddingLeft: 2 }}>
+                    <Typography variant="h6" component="div" sx={{ color: '#0B4FA6' }}>
+                      Total Appointments
+                    </Typography>
+                    <Typography variant="h4" sx={{ color: '#000000' }}>
+                      150
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+
+              {/* Completed Appointments Card */}
+              <Card sx={{ minWidth: 200, p: 2, borderRadius: 5 }}>
+                <CardContent sx={{ display: 'flex' }}>
+                  <DescriptionOutlinedIcon
+                    sx={{
+                      backgroundColor: '#4CAF50', // Different color for completed appointments
+                      borderRadius: '50%',
+                      color: '#ffffff',
+                      width: 30,
+                      height: 30,
+                      padding: 1,
+                    }}
+                  />
+                  <Box sx={{ paddingLeft: 2 }}>
+                    <Typography variant="h6" component="div" sx={{ color: '#388E3C' }}>
+                      Completed Appointments
+                    </Typography>
+                    <Typography variant="h4" sx={{ color: '#000000' }}>
+                      100
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+
+              {/* Pending Appointments Card */}
+              <Card sx={{ minWidth: 200, p: 2, borderRadius: 5 }}>
+                <CardContent sx={{ display: 'flex' }}>
+                  <DescriptionOutlinedIcon
+                    sx={{
+                      backgroundColor: '#FF9800', // Different color for pending appointments
+                      borderRadius: '50%',
+                      color: '#ffffff',
+                      width: 30,
+                      height: 30,
+                      padding: 1,
+                    }}
+                  />
+                  <Box sx={{ paddingLeft: 2 }}>
+                    <Typography variant="h6" component="div" sx={{ color: '#F57C00' }}>
+                      Pending Appointments
+                    </Typography>
+                    <Typography variant="h4" sx={{ color: '#000000' }}>
+                      50
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
+          </Box>
+          <AllAppointmentLog 
           >
-            <AddIcon fontSize="small" /> Add
-          </Button>
+
+          </AllAppointmentLog>
+
         </Box>
 
-        <TableContainer component={Paper}>
+
+
+        {/* Table displaying appointments */}
+        <TableContainer component={Paper} sx={{ mt: 3 }}>
           <Table sx={{ minWidth: 650 }} aria-label="appointment table">
             <TableHead>
               <TableRow>
@@ -268,7 +370,7 @@ export function ListAppointment(props: ListAppointmentProps) {
                   <TableCell>{appointment.date.toDateString()}</TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleEditClick(appointment.id)}>
-                      <EditIcon />
+                      <EditIcon sx={{ color: '' }} />
                     </IconButton>
                     <IconButton onClick={() => handleDeleteClick(appointment.id)}>
                       <DeleteIcon />
@@ -287,7 +389,7 @@ export function ListAppointment(props: ListAppointmentProps) {
             onUpdate={(data) => {
               closeEditModal();
             }}
-            initialData={editData} // Passing selected appointment data
+            initialData={editData}
           />
         )}
 

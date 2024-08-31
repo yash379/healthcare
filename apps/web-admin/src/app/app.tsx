@@ -32,6 +32,7 @@ import AddAppointment from './pages/list-appointment/add-appointment/add-appoint
 import ListAppointment from './pages/list-appointment/list-appointment';
 import EditAppointment from './pages/list-appointment/edit-appointment/edit-appointment';
 import DeleteAppointment from './pages/list-appointment/delete-appointment/delete-appointment';
+import AllAppointmentLog from './pages/list-appointment/all-appointment-log/all-appointment-log';
 
 export function App() {
 
@@ -99,6 +100,7 @@ const navigate = useNavigate();
             <Route path="/add-appointment" element={<AddAppointment />} />
             <Route path="/edit-appointment" element={<EditAppointment />} />
             <Route path="/delete-appointment" element={<DeleteAppointment />} />
+            <Route path="/all-appointment-log" element={<AllAppointmentLog />} />
 
 
             <Route path="/hospitals" element={<ListHospitals />}/>
