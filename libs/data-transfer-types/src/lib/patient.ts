@@ -1,14 +1,16 @@
-import { Gender } from '@prisma/client';
+import { Gender, SuperRoleName } from '@prisma/client';
 import { Page } from './page';
+import { ViewHospitalRoleDto } from './user';
 
 export interface Patient {
   id: number;
   firstName: string;
   lastName: string;
-  email?: string;
+  email: string;
   phoneNumber?: string;
   gender: Gender;
-  bloodgroup: string;
+  age:number;
+  bloodGroup: string;
   dob: Date;
   digitalHealthCode: string;
   addressLine1: string;
@@ -25,9 +27,10 @@ export interface ViewPatient {
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber: string;
+  phoneNumber?: string;
   gender: Gender;
-  bloodgroup: string;
+  age:number;
+  bloodGroup: string;
   dob: Date;
   digitalHealthCode: string;
   addressLine1: string;
@@ -36,11 +39,33 @@ export interface ViewPatient {
   stateCode?: string;
   countryCode: string;
   postalCode: string;
-  isActive: boolean;
-
+  hospitalRoles: ViewHospitalRoleDto[];
+  superRole?: SuperRoleName;
 }
 
-export type ListPatient = Pick<ViewPatient, 'id' | 'isActive'>;
+export type ListPatient = Pick<
+  ViewPatient,
+  | 'id'
+  | 'firstName'
+  | 'lastName'
+  | 'email'
+  | 'phoneNumber'
+  | 'gender'
+  | 'age'
+  | 'bloodGroup'
+  | 'dob'
+  | 'digitalHealthCode'
+  | 'addressLine1'
+  | 'addressLine2'
+  | 'city'
+  | 'stateCode'
+  | 'countryCode'
+  | 'postalCode'
+  | 'hospitalRoles'
+  | 'superRole'
+>;
+
+// export type ListPatient = Pick<ViewPatient, 'id' | 'isActive'>;
 
 export type AddPatient = Omit<Patient, 'id'>;
 

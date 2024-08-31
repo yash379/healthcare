@@ -27,6 +27,7 @@ import { LocalAuthGuard } from '../auth/local-auth.guard';
 import { AddDoctorDto } from './dto/add-doctor.dto';
 import { DoctorDto } from './dto/doctors.dto';
 import { ListDoctorPageDto } from './dto/list-doctor-page.dto';
+import { ViewDoctorDto } from './dto/view-doctor.dto';
 
 @ApiTags("Users")
 @Controller()
@@ -67,30 +68,7 @@ export class UsersController {
   }
 
   
-  @UseGuards(AuthGuard, RolesGuard)
-  @Get('/hospitals/:hospitalId/doctors')
-  @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: ListDoctorPageDto })
-  @Roles(Role.POYV_ADMIN)
-  listDoctors(
-    @Param('hospitalId') hospitalId: number,
-    @Query('pageSize') pageSize?: number,
-    @Query('pageOffset') pageOffset?: number,
-    @Query('name') name?: string,
-    @Query('email') email?: string,
-    @Query('sortBy') sortBy?: string,
-    @Query('sortOrder') sortOrder?: 'asc' | 'desc'
-  ): Promise<ListDoctorPageDto> {
-    return this.usersService.listDoctors(
-      +hospitalId,
-      +pageSize,
-      +pageOffset,
-      name,
-      email,
-      sortBy,
-      sortOrder
-    );
-  }
+ 
 
   // @UseGuards(AuthGuard, RolesGuard)
   // @Get('asset-count')
@@ -111,14 +89,7 @@ export class UsersController {
   //   return this.usersService.editAdmin(data,+id);
   // }
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  @Post('/hospitals/:hospitalId/doctor')
-  @ApiOkResponse({ type: UserDto })
-  @Roles(Role.POYV_ADMIN,  Role.HOSPITAL_ADMIN)
-  @HttpCode(HttpStatus.CREATED)
-  create(@Param('hospitalId') hospitalId: number,@Body() data: AddDoctorDto ): Promise<DoctorDto > {
-    return this.usersService.addDoctor(+hospitalId,data);
-  }
+  
 
   @Post('/hospitals/:hospitalId/manager')
   @ApiOkResponse({ type: UserDto })
@@ -184,14 +155,7 @@ export class UsersController {
   //   return this.usersService.editUserStatus(+id,editUserStatus);
   // }
 
-  @UseGuards(AuthGuard)
-  @Put('/hospitals/:hospitalId/doctor/:id')
-  @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: UserDto })
-  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
-  edit(@Body() data: AddDoctorDto, @Param('hospitalId') hospitalId: number, @Param('id') id: number): Promise<DoctorDto> {
-    return this.usersService.updateDoctor(data, +hospitalId,+id);
-  }
+ 
 
   // @UseGuards(AuthGuard)
   // @Delete('/hospitals/:hospitalId/managers/:id')
