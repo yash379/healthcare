@@ -69,7 +69,7 @@ const AddPatientComponent: React.FC<AddPatientProps> = ({ open, onClose, onSubmi
     countryCode: yup.string().required('Country Code is required'),
     postalCode: yup.string().required('Postal Code is required'),
   });
-  const {  handleSubmit, control, reset, formState: { errors }, watch, setValue } = useForm<Form>({
+  const { handleSubmit, control, reset, formState: { errors }, watch, setValue } = useForm<Form>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       isActive: true
@@ -79,7 +79,7 @@ const AddPatientComponent: React.FC<AddPatientProps> = ({ open, onClose, onSubmi
   // const selectedBuildingId = watch('buildingId');
   // const selectedFloorId = watch('floorId');
 
-  const params=useParams();
+  const params = useParams();
 
   const handleFormSubmit = (data: Form) => {
     console.log("handleAddForm:", data)
@@ -108,175 +108,171 @@ const AddPatientComponent: React.FC<AddPatientProps> = ({ open, onClose, onSubmi
 
   return (
     <Modal open={open} onClose={onClose}>
-    <Box className={styles['modal-container']}>
-      <h2 className={styles['h2_tag']}>Add Patient</h2>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <Box sx={{
-          display: 'grid',
-          columnGap: 2,
-          rowGap: 1,
-          paddingRight: 3,
-          paddingLeft: 3,
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          '@media (max-width: 600px)': {
-            gridTemplateColumns: '1fr',
-          },
-        }}
-        >
-          {/* <Box className={styles['modal_first_container']}> */}
-
-           
-          <Box className={styles['modal_second_container']}
+      <Box className={styles['modal-container']}>
+        <h2 className={styles['h2_tag']}>Add Patient</h2>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <Box sx={{
+            display: 'grid',
+            columnGap: 2,
+            rowGap: 1,
+            paddingRight: 3,
+            paddingLeft: 3,
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            '@media (max-width: 600px)': {
+              gridTemplateColumns: '1fr',
+            },
+          }}
           >
-
-            <Box className={styles['grid_top']}>
-              <Controller
-                name="firstName"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'First Name is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter First Name"
-                    {...field}
-                    label="First Name*"
-                    error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
-                    sx={{ width: '100%' }}
-                  />
-
-                )}
-              />
-            </Box>
-            <Box className={styles['grid_top']}>
-              <Controller
-                name="lastName"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Last Name is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter Last Name"
-                    {...field}
-                    label="Last Name*"
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
-                    sx={{ width: '100%' }}
-                  />
-
-                )}
-              />
-            </Box>
-            <Box className={styles['grid_top']}>
-              <Controller
-                name="email"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Email is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="email"
-                    className="form-control"
-                    placeholder="Enter Email"
-                    {...field}
-                    label="Email*"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    sx={{ width: '100%' }}
-                  />
-                )}
-              />
-            </Box>
-            <Box className={styles['grid_top']}>
-              <Controller
-                name="phoneNumber"
-                control={control}
-                defaultValue=""
-                rules={{
-                  required: 'Phone Number is required',
-                  // pattern: {
-                  //   value: /^[0-9]*$/,
-                  //   message: 'Invalid phone number',
-                  // },
-
-                }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    inputMode="numeric"
-                    className="form-control"
-                    placeholder="Enter Phone Number"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment sx={{mt:"1px"}} position="start">
-                          +91
-                        </InputAdornment>
-                      ),
-                    }}
-                    {...field}
-                    label="Phone Number*"
-                    error={!!errors.phoneNumber}
-                    helperText={errors.phoneNumber?.message}
-                    sx={{ width: '100%' }}
-                    
-                  />
-                )}
-              />
-            </Box>
-
-            <Box className={styles['grid_top']}>
-              <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
-                <InputLabel htmlFor="type"  >Gender*</InputLabel>
+            <Box className={styles['modal_second_container']}
+            >
+              <Box className={styles['grid_top']}>
                 <Controller
-                  name="gender"
+                  name="firstName"
                   control={control}
-                  // defaultValue=""
-                  rules={{ required: 'Gender is required' }}
+                  defaultValue=""
+                  rules={{ required: 'First Name is required' }}
                   render={({ field }) => (
-                    <Select
-                      label="Gender*"
-                      variant="outlined"
+                    <TextField
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter First Name"
                       {...field}
-                      error={!!errors.gender}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 97
-                          },
-                        },
-                      }}
-                    >
-                      <MenuItem sx={{ justifyContent: "start" }} value="MALE">Male</MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value="FEMALE">Female</MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value="OTHERS">Others</MenuItem>
-                    </Select>
+                      label="First Name*"
+                      error={!!errors.firstName}
+                      helperText={errors.firstName?.message}
+                      sx={{ width: '100%' }}
+                    />
 
                   )}
                 />
-                <FormHelperText>{errors.gender?.message}</FormHelperText>
-              </FormControl>
+              </Box>
+              <Box className={styles['grid_top']}>
+                <Controller
+                  name="lastName"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: 'Last Name is required' }}
+                  render={({ field }) => (
+                    <TextField
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Last Name"
+                      {...field}
+                      label="Last Name*"
+                      error={!!errors.lastName}
+                      helperText={errors.lastName?.message}
+                      sx={{ width: '100%' }}
+                    />
+
+                  )}
+                />
+              </Box>
+              <Box className={styles['grid_top']}>
+                <Controller
+                  name="email"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: 'Email is required' }}
+                  render={({ field }) => (
+                    <TextField
+                      type="email"
+                      className="form-control"
+                      placeholder="Enter Email"
+                      {...field}
+                      label="Email*"
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
+                      sx={{ width: '100%' }}
+                    />
+                  )}
+                />
+              </Box>
+              <Box className={styles['grid_top']}>
+                <Controller
+                  name="phoneNumber"
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: 'Phone Number is required',
+                    // pattern: {
+                    //   value: /^[0-9]*$/,
+                    //   message: 'Invalid phone number',
+                    // },
+
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      type="text"
+                      inputMode="numeric"
+                      className="form-control"
+                      placeholder="Enter Phone Number"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment sx={{ mt: "1px" }} position="start">
+                            +91
+                          </InputAdornment>
+                        ),
+                      }}
+                      {...field}
+                      label="Phone Number*"
+                      error={!!errors.phoneNumber}
+                      helperText={errors.phoneNumber?.message}
+                      sx={{ width: '100%' }}
+
+                    />
+                  )}
+                />
+              </Box>
+
+              <Box className={styles['grid_top']}>
+                <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
+                  <InputLabel htmlFor="type"  >Gender*</InputLabel>
+                  <Controller
+                    name="gender"
+                    control={control}
+                    // defaultValue=""
+                    rules={{ required: 'Gender is required' }}
+                    render={({ field }) => (
+                      <Select
+                        label="Gender*"
+                        variant="outlined"
+                        {...field}
+                        error={!!errors.gender}
+                        MenuProps={{
+                          PaperProps: {
+                            style: {
+                              maxHeight: 97
+                            },
+                          },
+                        }}
+                      >
+                        <MenuItem sx={{ justifyContent: "start" }} value="MALE">Male</MenuItem>
+                        <MenuItem sx={{ justifyContent: "start" }} value="FEMALE">Female</MenuItem>
+                        <MenuItem sx={{ justifyContent: "start" }} value="OTHERS">Others</MenuItem>
+                      </Select>
+
+                    )}
+                  />
+                  <FormHelperText>{errors.gender?.message}</FormHelperText>
+                </FormControl>
+              </Box>
+
+
             </Box>
-
-
           </Box>
-        </Box>
 
-        <Box className={styles['update_modal-buttons']}>
-          <Button sx={{ mr: "10px" }} variant="contained" color="primary" type="submit">
-             Add
-          </Button>
-          <Button variant="contained" color="secondary" onClick={()=>{onClose(); reset()}}>
-            Cancel
-          </Button>
-        </Box>
-      </form>
+          <Box className={styles['update_modal-buttons']}>
+            <Button sx={{ mr: "10px" }} variant="contained" color="primary" type="submit">
+              Add
+            </Button>
+            <Button variant="contained" color="secondary" onClick={() => { onClose(); reset() }}>
+              Cancel
+            </Button>
+          </Box>
+        </form>
 
-    </Box>
-  </Modal>
+      </Box>
+    </Modal>
   );
 }
 

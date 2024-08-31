@@ -1,4 +1,6 @@
 import { Gender } from '@prisma/client';
+import { ChronicDisease } from '@prisma/client';
+import { AcuteDisease } from '@prisma/client';
 import { Page } from './page';
 
 export interface Patient {
@@ -17,7 +19,10 @@ export interface Patient {
   stateCode?: string;
   countryCode: string;
   postalCode: string;
+  chronicDisease?:ChronicDisease;
+  acuteDisease?:AcuteDisease;
   isActive: boolean;
+  age: number;
 }
 
 export interface ViewPatient {
@@ -36,6 +41,8 @@ export interface ViewPatient {
   stateCode?: string;
   countryCode: string;
   postalCode: string;
+  chronicDisease?:ChronicDisease;
+  acuteDisease?:AcuteDisease;
   isActive: boolean;
 
 }

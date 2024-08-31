@@ -61,7 +61,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
   const apiUrl = environment.apiUrl;
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
   const navigate = useNavigate();
-  const hospitalContext=useContext(HospitalContext);
+  const hospitalContext = useContext(HospitalContext);
   const [errorMessage, setErrorMessage] = useState('');
   const [isSuccessSnackbarOpen, setIsSuccessSnackbarOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -99,13 +99,13 @@ export function AddPatientPage(props: AddPatientPageProps) {
   const countryValue = watch('countryCode');
 
   console.log("hospitalcontext : ", hospitalContext)
-  
+
   // Add Patient
   const handleAddPatient = async (formData: AddPatient) => {
 
     try {
       const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${hospitalContext?.id}/patients`,
-        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender,  email: formData.email, phoneNumber: formData.phoneNumber , bloodgroup: formData.bloodgroup, dob:formData.dob, digitalHealthCode:formData.digitalHealthCode, addressLine1:formData.addressLine1, addressLine2:formData.addressLine2, city:formData.city, stateCode:formData.stateCode, countryCode:formData.countryCode, postalCode:formData.postalCode, isActive: formData.isActive },
+        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender, email: formData.email, phoneNumber: formData.phoneNumber, bloodgroup: formData.bloodgroup, dob: formData.dob, digitalHealthCode: formData.digitalHealthCode, addressLine1: formData.addressLine1, addressLine2: formData.addressLine2, city: formData.city, stateCode: formData.stateCode, countryCode: formData.countryCode, postalCode: formData.postalCode, isActive: formData.isActive },
         {
           withCredentials: true,
 
@@ -169,7 +169,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
               />
             </div>
             <div className={styles['form-item']}>
-            <Controller
+              <Controller
                 name="firstName"
                 control={control}
                 defaultValue=""
@@ -193,7 +193,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
           </div>
           <div className={styles['form-row']}>
             <div className={styles['form-item']}>
-            <Controller
+              <Controller
                 name="lastName"
                 control={control}
                 defaultValue=""
@@ -214,7 +214,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
               />
             </div>
             <div className={styles['form-item']}>
-            <Controller
+              <Controller
                 name="email"
                 control={control}
                 defaultValue=""
@@ -233,62 +233,38 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </div>
-            </div>
-            <div className={styles['form-row']}>
+          </div>
+          <div className={styles['form-row']}>
             <div className={styles['form-item']}>
-            <Controller
+              <Controller
                 name="phoneNumber"
                 control={control}
                 defaultValue=""
                 rules={{
                   required: 'Phone Number is required',
-                  // pattern: {
-                  //   value: /^[0-9]*$/,
-                  //   message: 'Invalid phone number',
-                  // },
-
                 }}
                 render={({ field }) => (
-                  // <TextField
-                  //   type="text"
-                  //   inputMode="numeric"
-                  //   className="form-control"
-                  //   placeholder="Enter Phone Number"
-                  //   InputProps={{
-                  //     startAdornment: (
-                  //       <InputAdornment sx={{mt:"1px"}} position="start">
-                  //         +91
-                  //       </InputAdornment>
-                  //     ),
-                  //   }}
-                  //   {...field}
-                  //   label="Phone Number*"
-                  //   error={!!errors.phoneNumber}
-                  //   helperText={errors.phoneNumber?.message}
-                  //   sx={{ width: '100%' }}
-                    
-                  // />
                   <PhoneInput
-                  {...field}   
-                  inputStyle={{
-                    borderColor: (errors.phoneNumber) && "#de0835",
-                    boxSizing: 'inherit',
-                    height: '55px',
-                    width: '100%',
-                    maxWidth:"524px"                      
-                  }}                                                                                                     
-                  country={'in'}
-                  value={field.value}
-                  onChange={(phone: any) => field.onChange(phone)}
+                    {...field}
+                    inputStyle={{
+                      borderColor: (errors.phoneNumber) && "#de0835",
+                      boxSizing: 'inherit',
+                      height: '55px',
+                      width: '100%',
+                      maxWidth: "524px"
+                    }}
+                    country={'in'}
+                    value={field.value}
+                    onChange={(phone: any) => field.onChange(phone)}
                   // error={!!errors.phoneNumber}
                   // helperText={errors.phoneNumber?.message}
-                /> 
+                  />
                 )}
               />
-              {!!errors.phoneNumber && <Typography sx={{color:'#de0835',fontSize:[13,"!important"],marginLeft:'13px'}} >{errors.phoneNumber.message}</Typography>} 
+              {!!errors.phoneNumber && <Typography sx={{ color: '#de0835', fontSize: [13, "!important"], marginLeft: '13px' }} >{errors.phoneNumber.message}</Typography>}
             </div>
             <div className={styles['form-item']}>
-            <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
+              <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
                 <InputLabel htmlFor="type"  >Gender*</InputLabel>
                 <Controller
                   name="gender"
@@ -341,25 +317,25 @@ export function AddPatientPage(props: AddPatientPageProps) {
               />
             </div>
             <div className={styles['form-item']}>
-            <Controller
-                      name="dob"
-                      control={control}
-                      render={({ field, fieldState: { error } }) => (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
-                            {...field}
-                            label="DOB"
-                            slotProps={{
-                              textField: {
-                                error: !!error,
-                                helperText: error?.message,
-                                fullWidth: true,
-                              },
-                            }}
-                          />
-                        </LocalizationProvider>
-                      )}
+              <Controller
+                name="dob"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      {...field}
+                      label="DOB"
+                      slotProps={{
+                        textField: {
+                          error: !!error,
+                          helperText: error?.message,
+                          fullWidth: true,
+                        },
+                      }}
                     />
+                  </LocalizationProvider>
+                )}
+              />
             </div>
 
           </div>
@@ -400,11 +376,11 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </div>
-           
+
           </div>
 
           <div className={styles['form-row']}>
-          <div className={styles['form-item']}>
+            <div className={styles['form-item']}>
               <Controller
                 name="city"
                 control={control}
@@ -435,7 +411,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                       label="Country*"
                       value={field.value || ""}
                       error={!!errors.countryCode}
-              
+
                     >
                       {CountriesStates.map((countryData, index) => (
                         <MenuItem key={index} value={countryData.code} >
@@ -448,10 +424,10 @@ export function AddPatientPage(props: AddPatientPageProps) {
               />
               <FormHelperText sx={{ ml: "12px", color: "#d32f2f" }}>{errors.countryCode?.message}</FormHelperText>
             </div>
-           
+
           </div>
           <div className={styles['form-row']}>
-          <div className={styles['form-item']}>
+            <div className={styles['form-item']}>
               <Controller
                 name="stateCode"
                 control={control}
