@@ -34,6 +34,7 @@ import EditAppointment from './pages/list-appointment/edit-appointment/edit-appo
 import DeleteAppointment from './pages/list-appointment/delete-appointment/delete-appointment';
 import AllAppointmentLog from './pages/list-appointment/all-appointment-log/all-appointment-log';
 import ViewAppointmentDetail from './view-appointment-detail/view-appointment-detail';
+import DiagnosisPage from './diagnosis-page/diagnosis-page';
 
 export function App() {
 
@@ -102,6 +103,8 @@ const navigate = useNavigate();
             <Route path="/edit-appointment" element={<EditAppointment />} />
             <Route path="/delete-appointment" element={<DeleteAppointment />} />
             <Route path="/appointments/:id" element={<ViewAppointmentDetail/>} />
+            <Route path="/diagnosis" element={<DiagnosisPage/>} />
+
 
 
 

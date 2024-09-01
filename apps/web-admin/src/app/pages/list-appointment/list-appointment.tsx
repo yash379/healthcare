@@ -255,6 +255,8 @@ export function ListAppointment(props: ListAppointmentProps) {
 
   return (
     <>
+
+    
       <Box className={styles['btn_container']}>
         <Box sx={{
           display: 'flex',
@@ -337,23 +339,38 @@ export function ListAppointment(props: ListAppointmentProps) {
               </Card>
             </Box>
             <Box>
+
+            <Typography
+                  sx={{
+                    color: '#2B3674',
+                    fontWeight: 'Bold',
+                    fontFamily: 'DM Sans, sans-serif' ,// Using a fallback font
+                    my:'40px'
+                  }}
+                >
+                  Upcoming Appointments
+                </Typography>
+           
               <AddAppointment
                 open={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
                 onSubmit={handleAddAppointment}
               />
             </Box>
-            <Box className={styles['search-container']} sx={{ ml: 98, display: 'flex', direction: 'row', justifyContent: 'space-evenly' }}>
+          
+            <Box className={styles['search-container']} sx={{ ml: 98, display: 'flex', direction: 'row' }}>
+              
               <Box >
-                <Typography
+                {/* <Typography
                   sx={{
                     color: '#2B3674',
                     fontWeight: 'Bold',
-                    fontFamily: 'DM Sans, sans-serif' // Using a fallback font
+                    fontFamily: 'DM Sans, sans-serif' ,// Using a fallback font
+                    my:'20px'
                   }}
                 >
                   Upcoming Appointments
-                </Typography>
+                </Typography> */}
               </Box>
               <TextField
                 type="text"

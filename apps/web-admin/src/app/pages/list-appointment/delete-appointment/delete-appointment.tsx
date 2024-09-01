@@ -99,7 +99,6 @@ const DeleteAppointment: React.FC<DeleteAppointmentProps> = ({ open, onClose, on
             </Button>
           </Grid>
         </Grid>
-
       </Box>
     </Dialog>
 
