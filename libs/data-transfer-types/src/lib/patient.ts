@@ -1,4 +1,6 @@
 import { Gender, SuperRoleName } from '@prisma/client';
+import { ChronicDisease } from '@prisma/client';
+import { AcuteDisease } from '@prisma/client';
 import { Page } from './page';
 import { ViewHospitalRoleDto } from './user';
 
@@ -19,6 +21,8 @@ export interface Patient {
   stateCode?: string;
   countryCode: string;
   postalCode: string;
+  chronicDisease?:ChronicDisease;
+  acuteDisease?:AcuteDisease;
   isActive: boolean;
 }
 
@@ -39,6 +43,8 @@ export interface ViewPatient {
   stateCode?: string;
   countryCode: string;
   postalCode: string;
+  chronicDisease?:ChronicDisease;
+  acuteDisease?:AcuteDisease;
   hospitalRoles: ViewHospitalRoleDto[];
   superRole?: SuperRoleName;
 }

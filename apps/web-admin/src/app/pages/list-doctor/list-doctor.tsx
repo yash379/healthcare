@@ -68,17 +68,17 @@ export function ListDoctors(props: ListDoctorsProps) {
   const [editData, setEditData] = useState<ViewDoctor | null>(null);
   const [viewData, setViewData] = useState<ViewDoctor | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [hospital,setHospital]=useState<Hospital | null>(null);
+  const [hospital, setHospital] = useState<Hospital | null>(null);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
 
   const { id } = useParams<{ id: string }>();
-  console.log("hospital id:",id);
-  const params=useParams();
-  const hospitalContext=useContext(HospitalContext);
-  console.log("Hospital Context:",hospitalContext);
-  console.log("hospital context hospital id:",hospitalContext?.id);
+  console.log("hospital id:", id);
+  const params = useParams();
+  const hospitalContext = useContext(HospitalContext);
+  console.log("Hospital Context:", hospitalContext);
+  console.log("hospital context hospital id:", hospitalContext?.id);
 
   const getDoctors = async () => {
     try {
@@ -99,7 +99,7 @@ export function ListDoctors(props: ListDoctorsProps) {
       const { content, total } = response.data;
       setTotalItems(total);
       setActiveDoctors(content);
-console.log("Doctor", response.data)
+      console.log("Doctor", response.data)
 
       const Doctors = response.data.content;
       console.log(Doctors)
@@ -182,14 +182,7 @@ console.log("Doctor", response.data)
 
   // Function to open the delete confirmation modal
   const openDeleteModal = (doctorId: number) => {
-    const selectedDoctor: ViewDoctor | undefined = activeDoctors.find(
-      (doctor) => doctor.id === doctorId
-    );
-    if (selectedDoctor) {
-      setViewData(selectedDoctor)
-    setDoctorToDeleteId(doctorId);
     setIsDeleteModalOpen(true);
-    }
   };
 
   // Function to close the delete confirmation modal
@@ -227,7 +220,7 @@ console.log("Doctor", response.data)
     setIsLoadingModalOpen(true);
 
       const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${params.hospitalId}/doctor`,
-        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender,  email: formData.email, phoneNumber: '8734234232', doctorCode: formData.doctorCode, speciality: formData.speciality, isActive: formData.isActive },
+        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender, email: formData.email, phoneNumber: '8734234232', doctorCode: formData.doctorCode, speciality: formData.speciality, isActive: formData.isActive },
         {
           withCredentials: true,
 
@@ -262,7 +255,7 @@ console.log("Doctor", response.data)
         `${apiUrl}/hospitals/${params.hospitalId}/doctor/${selectedDoctorId}`,
         {
           firstName: updateData.firstName, lastName: updateData.lastName, email: updateData.email, phoneNumber: '9834235433',
-          gender: updateData.gender, doctorCode: updateData.doctorCode, speciality:updateData.speciality, isActive:true
+          gender: updateData.gender, doctorCode: updateData.doctorCode, speciality: updateData.speciality, isActive: true
         },
         {
           withCredentials: true,
@@ -390,8 +383,8 @@ console.log("Doctor", response.data)
                     onClose={() => setIsLoadingModalOpen(false)} />
             </Box>
             <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}} className={styles['search-container']}>
-              
-              <Button variant="contained" color="primary" 
+
+              <Button variant="contained" color="primary"
                 onClick={() => {
                   setIsAddModalOpen(true);
                 }}
@@ -406,7 +399,7 @@ console.log("Doctor", response.data)
               /> */}
             {/* </Box> */}
             {/* <Box className={styles['search-container']}>
-              
+
               <Button variant="contained" color="primary"
                 onClick={() => {
                   setIsAddModalOpen(true)
@@ -420,16 +413,16 @@ console.log("Doctor", response.data)
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
-                <TableCell><Checkbox
-                  {...label}
-                  checked={
-                    activeDoctors.length > 0 &&
-                    activeDoctors.every((building) =>
-                      selectedItems.includes(building.id)
-                    )
-                  }
-                  onChange={handleHeaderCheckboxChange}
-                /></TableCell>
+                  <TableCell><Checkbox
+                    {...label}
+                    checked={
+                      activeDoctors.length > 0 &&
+                      activeDoctors.every((building) =>
+                        selectedItems.includes(building.id)
+                      )
+                    }
+                    onChange={handleHeaderCheckboxChange}
+                  /></TableCell>
                   <TableCell sx={{ border: "hidden" }}>Name
                   </TableCell>
                   <TableCell sx={{ border: "hidden" }}>Email
@@ -451,20 +444,20 @@ console.log("Doctor", response.data)
                 <TableRow>
                 </TableRow>
                 {loading ? (
-                <TableCell align='center' colSpan={7}>
-                  <CircularProgress />
-                </TableCell>
-              ) : (Array.isArray(activeDoctors) && activeDoctors.length > 0 ? (
+                  <TableCell align='center' colSpan={7}>
+                    <CircularProgress />
+                  </TableCell>
+                ) : (Array.isArray(activeDoctors) && activeDoctors.length > 0 ? (
                   activeDoctors.map((doctor: ViewDoctor, index: number) => (
                     <TableRow className={styles['table_row']} onClick={(e) => { handleRowClick(doctor.id, e); setViewDoctorOpen(true); }} key={index}>
-                       <TableCell><Checkbox
-                      checked={selectedItems.includes(doctor.id)}
-                      onChange={() => handleCheckboxChange(doctor.id)}
-                      {...label}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                    /></TableCell>
+                      <TableCell><Checkbox
+                        checked={selectedItems.includes(doctor.id)}
+                        onChange={() => handleCheckboxChange(doctor.id)}
+                        {...label}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      /></TableCell>
                       <TableCell>{doctor.firstName} {doctor.lastName}
                       </TableCell>
                       <TableCell>{doctor.email}
@@ -481,16 +474,16 @@ console.log("Doctor", response.data)
                         {doctor.speciality}
                       </TableCell>
                       <TableCell align='center'>
-                      <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(doctor.id) }} sx={{ color:'black'}}>
-                        <EditIcon ></EditIcon>
-                      </IconButton>
-                      <IconButton color="error"  onClick={() =>
-                      openDeleteModal(doctor.id)
-                      }>
-                        <DeleteIcon></DeleteIcon>
-                      </IconButton>
+                        <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(doctor.id) }} sx={{ color: 'black' }}>
+                          <EditIcon ></EditIcon>
+                        </IconButton>
+                        <IconButton color="error" onClick={() =>
+                          openDeleteModal(doctor.id)
+                        }>
+                          <DeleteIcon></DeleteIcon>
+                        </IconButton>
 
-                        
+
                       </TableCell>
                     </TableRow>
                   ))
@@ -500,21 +493,21 @@ console.log("Doctor", response.data)
                       textAlign: 'center',
                     }} colSpan={8}>No Doctor found</TableCell>
                   </TableRow>
-                  )
-                  )}
+                )
+                )}
               </TableBody>
             </Table>
             {/* <Box sx={{  display:'flex',
             flexDirection:'row',
             justifyContent:"flex-end",
-           
+
           }}>
           <Stack sx={{marginBottom:"15px", marginRight:"20px", marginTop: "30px",}} spacing={2}>
             <Pagination
             sx={{  display:'flex',
             flexDirection:'row',
             justifyContent:"flex-end",
-           
+
           }}
               count={pageCount > pageCountThreshold ? pageCount + 1 : pageCount}
               page={page + 1}
@@ -524,11 +517,11 @@ console.log("Doctor", response.data)
                 <PaginationItem
                   component="div"
                   sx={{
-                 
+
                     marginLeft: "5px",
-                  
+
                   }}
-                 
+
                   {...item}
                 />
               )}
@@ -564,7 +557,7 @@ console.log("Doctor", response.data)
             showLastButton
           />
         </Stack>
-         
+
         </Box>
 
 
@@ -584,8 +577,8 @@ console.log("Doctor", response.data)
           onDelete={() => {
             handleDelete(DoctorToDeleteId);
             closeDeleteModal();
-          } } 
-          doctorData={viewData}          
+          }}
+          doctorData={viewData}
         />
       </Box >
   );

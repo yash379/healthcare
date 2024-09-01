@@ -35,6 +35,13 @@ import AddPatientPage from './pages/list-patient/add-patient-page/add-patient-pa
 import EditPatientPage from './pages/list-patient/edit-patient-page/edit-patient-page';
 import ListPOYVUser from './pages/list-POYV-user/list-poyv-user';
 import MedicalHistory from './pages/medical-history/medical-history';
+import AddAppointment from './pages/list-appointment/add-appointment/add-appointment';
+import ListAppointment from './pages/list-appointment/list-appointment';
+import EditAppointment from './pages/list-appointment/edit-appointment/edit-appointment';
+import DeleteAppointment from './pages/list-appointment/delete-appointment/delete-appointment';
+import AllAppointmentLog from './pages/list-appointment/all-appointment-log/all-appointment-log';
+import ViewAppointmentDetail from './view-appointment-detail/view-appointment-detail';
+import DiagnosisPage from './diagnosis-page/diagnosis-page';
 
 export function App() {
   const location = useLocation();
@@ -126,6 +133,30 @@ export function App() {
                 element={<EditPatientPage />}
               />
               <Route path="/profile" element={<Profile />} />
+
+            <Route path="/appointments" element={<ListAppointment />} />
+            <Route path="/add-appointment" element={<AddAppointment />} />
+            <Route path="/edit-appointment" element={<EditAppointment />} />
+            <Route path="/delete-appointment" element={<DeleteAppointment />} />
+            <Route path="/appointments/:id" element={<ViewAppointmentDetail/>} />
+            <Route path="/diagnosis" element={<DiagnosisPage/>} />
+
+
+
+
+            <Route path="/hospitals" element={<ListHospitals />}/>
+            <Route path="/hospitals/add" element={<AddHospitalPage/>}/>
+
+            <Route  element={<HospitalLayout/>}>
+
+              <Route path="/hospitals/:hospitalId/edit" element={<EditHospitalPage/>}/>
+              <Route path="/hospitals/:hospitalId" element={<View/>}/>
+              <Route path="/hospitals/:hospitalId/details" element={<ViewHospitalPage/>}/>
+              <Route path="/hospitals/:hospitalId/doctors" element={<ListDoctors/>}/>
+              <Route path="/hospitals/:hospitalId/patients" element={<ListPatients />}/>
+              <Route path="/hospitals/:hospitalId/patients/add" element={<AddPatientPage />}/>
+              <Route path="/hospitals/:hospitalId/patients/edit/:patientId" element={<EditPatientPage />}/>
+              <Route path="/profile" element={<Profile />}/>
             </Route>
             <Route path="/users" element={<ListPOYVUser />} />
           </Route>

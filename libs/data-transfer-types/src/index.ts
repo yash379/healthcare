@@ -5,5 +5,5 @@ export * from './lib/user';
 export * from './lib/doctor';
 export * from './lib/hospital';
 export * from './lib/patient';
-
+export * from './lib/appointment';
 export * from './lib/login';

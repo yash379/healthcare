@@ -1,3 +1,4 @@
+
 import styles from './add-patient-page.module.scss';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -14,6 +15,7 @@ import {
   Typography,
   FormHelperText,
   InputAdornment,
+  Grid,  // Import Grid component
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -28,7 +30,7 @@ import { useContext, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { enqueueSnackbar } from 'notistack';
 import { HospitalContext } from '../../../contexts/user-contexts';
-import { Gender } from '@prisma/client';
+import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 
@@ -38,6 +40,8 @@ export interface AddPatient {
   email?: string;
   phoneNumber?: string;
   gender: Gender;
+  chronicDisease?: ChronicDisease;
+  acuteDisease?: AcuteDisease;
   bloodgroup: string;
   dob: Date;
   digitalHealthCode: string;
@@ -48,6 +52,7 @@ export interface AddPatient {
   countryCode: string;
   postalCode: string;
   isActive: boolean;
+  age: number;
 }
 
 /* eslint-disable-next-line */
@@ -59,7 +64,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
   const apiUrl = environment.apiUrl;
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
   const navigate = useNavigate();
-  const hospitalContext=useContext(HospitalContext);
+  const hospitalContext = useContext(HospitalContext);
   const [errorMessage, setErrorMessage] = useState('');
   const [isSuccessSnackbarOpen, setIsSuccessSnackbarOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -73,12 +78,15 @@ export function AddPatientPage(props: AddPatientPageProps) {
     bloodgroup: yup.string().required('Blood Group is required'),
     dob: yup.date().required('Date Of Birth is required'),
     digitalHealthCode: yup.string().required('Digital Health Code is required'),
-    addressLine1: yup.string().required('addressLine1 is required'),
+    addressLine1: yup.string().required('Address Line 1 is required'),
     addressLine2: yup.string().notRequired(),
     city: yup.string().required('City is required'),
     stateCode: yup.string().required('State Code is required'),
     countryCode: yup.string().required('Country Code is required'),
     postalCode: yup.string().required('Postal Code is required'),
+    age: yup.number().required('Age is required').min(0,'Age cannot be less than 0').max(200,'Age cannot be Greater then 200'),
+    chronicDisease: yup.number().required('chronicDisease is required'),
+    acuteDisease: yup.number().required('acuteDisease is required'),
   });
   const {
     handleSubmit,
@@ -97,34 +105,49 @@ export function AddPatientPage(props: AddPatientPageProps) {
   const countryValue = watch('countryCode');
 
   console.log("hospitalcontext : ", hospitalContext)
-  
+
   // Add Patient
   const handleAddPatient = async (formData: AddPatient) => {
-
     try {
-      const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${hospitalContext?.id}/patients`,
-        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender,  email: formData.email, phoneNumber: formData.phoneNumber , bloodgroup: formData.bloodgroup, dob:formData.dob, digitalHealthCode:formData.digitalHealthCode, addressLine1:formData.addressLine1, addressLine2:formData.addressLine2, city:formData.city, stateCode:formData.stateCode, countryCode:formData.countryCode, postalCode:formData.postalCode, isActive: formData.isActive },
+      const { data: responseData } = await axios.post(
+        `${apiUrl}/hospitals/${hospitalContext?.id}/patients`,
+        {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          gender: formData.gender,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          bloodgroup: formData.bloodgroup,
+          dob: formData.dob,
+          digitalHealthCode: formData.digitalHealthCode,
+          addressLine1: formData.addressLine1,
+          addressLine2: formData.addressLine2,
+          city: formData.city,
+          stateCode: formData.stateCode,
+          countryCode: formData.countryCode,
+          postalCode: formData.postalCode,
+          isActive: formData.isActive,
+          age: formData.age,
+          chronicDisease: formData.chronicDisease,
+          acuteDisease: formData.acuteDisease
+        },
         {
           withCredentials: true,
-
-        },)
+        },
+      );
       if (responseData) {
         reset();
         enqueueSnackbar("Patient added successfully!", { variant: 'success' });
         navigate(`/hospitals/${hospitalContext?.id}`);
-        // setIsAddModalOpen(false);
-        // getPatients();
-
       } else {
-        console.log("Something went wrong")
+        console.log("Something went wrong");
       }
-
     } catch (error) {
       console.log(error);
-      console.log("Something went wrong in input form")
+      console.log("Something went wrong in input form");
       enqueueSnackbar('Something went wrong', { variant: 'error' });
     }
-  }
+  };
 
   const stateOptions =
     CountriesStates.find((c) => c.code === countryValue)?.states || [];
@@ -147,8 +170,8 @@ export function AddPatientPage(props: AddPatientPageProps) {
           <Icon component={AddIcon} /> Add Patient
         </Typography>
         <form onSubmit={handleSubmit(handleAddPatient)}>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="digitalHealthCode"
                 control={control}
@@ -157,6 +180,21 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 render={({ field }) => (
                   <TextField
                     label="Digital Health Code*"
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                      '& .MuiInputBase-root': {
+                        height: 50, // Adjust height here
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit height
+                        fontSize: '0.955rem', // Adjust font size if needed
+                      },
+                      '& .MuiInputLabel-root': {
+                        fontSize: '1rem', // Adjust label font size if needed
+                        top: -6, // Adjust label position if needed
+                      },
+                    }}
                     variant="outlined"
                     {...field}
                     fullWidth
@@ -165,54 +203,9 @@ export function AddPatientPage(props: AddPatientPageProps) {
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
-            <Controller
-                name="firstName"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'First Name is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter First Name"
-                    {...field}
-                    label="First Name*"
-                    error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
-                    sx={{ width: '100%' }}
-                  />
-
-                )}
-              />
-            </div>
-
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
-            <Controller
-                name="lastName"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Last Name is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter Last Name"
-                    {...field}
-                    label="Last Name*"
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
-                    sx={{ width: '100%' }}
-                  />
-
-                )}
-              />
-            </div>
-            <div className={styles['form-item']}>
-            <Controller
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
                 name="email"
                 control={control}
                 defaultValue=""
@@ -226,25 +219,100 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     label="Email*"
                     error={!!errors.email}
                     helperText={errors.email?.message}
-                    sx={{ width: '100%' }}
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                      '& .MuiInputBase-root': {
+                        height: 50, // Adjust height here
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit height
+                        fontSize: '0.955rem', // Adjust font size if needed
+                      },
+                      '& .MuiInputLabel-root': {
+                        fontSize: '1rem', // Adjust label font size if needed
+                        top: -6, // Adjust label position if needed
+                      },
+                    }}
                   />
                 )}
               />
-            </div>
-            </div>
-            <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
-            <Controller
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="firstName"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'First Name is required' }}
+                render={({ field }) => (
+                  <TextField
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter First Name"
+                    {...field}
+                    label="First Name*"
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                      '& .MuiInputBase-root': {
+                        height: 50, // Adjust height here
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit height
+                        fontSize: '0.955rem', // Adjust font size if needed
+                      },
+                      '& .MuiInputLabel-root': {
+                        fontSize: '1rem', // Adjust label font size if needed
+                        top: -6, // Adjust label position if needed
+                      },
+                    }}
+                    error={!!errors.firstName}
+                    helperText={errors.firstName?.message}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="lastName"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Last Name is required' }}
+                render={({ field }) => (
+                  <TextField
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter Last Name"
+                    {...field}
+                    label="Last Name*"
+                    error={!!errors.lastName}
+                    helperText={errors.lastName?.message}
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                      '& .MuiInputBase-root': {
+                        height: 50, // Adjust height here
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit height
+                        fontSize: '0.955rem', // Adjust font size if needed
+                      },
+                      '& .MuiInputLabel-root': {
+                        fontSize: '1rem', // Adjust label font size if needed
+                        top: -6, // Adjust label position if needed
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
                 name="phoneNumber"
                 control={control}
                 defaultValue=""
                 rules={{
                   required: 'Phone Number is required',
-                  // pattern: {
-                  //   value: /^[0-9]*$/,
-                  //   message: 'Invalid phone number',
-                  // },
-
                 }}
                 render={({ field }) => (
                   <TextField
@@ -254,7 +322,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     placeholder="Enter Phone Number"
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment sx={{mt:"1px"}} position="start">
+                        <InputAdornment sx={{ mt: "1px" }} position="start">
                           +91
                         </InputAdornment>
                       ),
@@ -263,48 +331,98 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     label="Phone Number*"
                     error={!!errors.phoneNumber}
                     helperText={errors.phoneNumber?.message}
-                    sx={{ width: '100%' }}
-                    
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                      '& .MuiInputBase-root': {
+                        height: 50, // Adjust height here
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit height
+                        fontSize: '0.955rem', // Adjust font size if needed
+                      },
+                      '& .MuiInputLabel-root': {
+                        fontSize: '1rem', // Adjust label font size if needed
+                        top: -6, // Adjust label position if needed
+                      },
+                    }}
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
-            <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
-                <InputLabel htmlFor="type"  >Gender*</InputLabel>
-                <Controller
-                  name="gender"
-                  control={control}
-                  // defaultValue=""
-                  rules={{ required: 'Gender is required' }}
-                  render={({ field }) => (
-                    <Select
-                      label="Gender*"
-                      variant="outlined"
-                      {...field}
-                      error={!!errors.gender}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 97
-                          },
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="gender"
+                control={control}
+                rules={{ required: 'Gender is required' }}
+                render={({ field }) => (
+                  <FormControl sx={{
+                    width: '100%',
+                    marginBottom: 1,
+                    '& .MuiInputBase-root': {
+                      height: 50, // Adjust height here
+                    },
+                    '& .MuiInputBase-input': {
+                      padding: '10px 14px', // Adjust padding to fit height
+                      fontSize: '0.955rem', // Adjust font size if needed
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: '1rem', // Adjust label font size if needed
+                      top: -6, // Adjust label position if needed
+                    },
+                  }} error={!!errors.gender}>
+                    <InputLabel>Gender</InputLabel>
+                    <Select {...field} label="Gender*">
+                      {Object.keys(Gender).map((gender, i) => (
+                        <MenuItem key={i} value={gender}>
+                          {gender}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <FormHelperText>{errors.gender?.message}</FormHelperText>
+                  </FormControl>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="dob"
+                control={control}
+                rules={{ required: 'Date of Birth is required' }}
+                render={({ field }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Date of Birth*"
+                      value={field.value}
+                      onChange={field.onChange}
+                      slotProps={{
+                        textField: {
+                          error: !!errors.dob,
+                          helperText: errors.dob?.message,
+                          fullWidth: true,
                         },
                       }}
-                    >
-                      <MenuItem sx={{ justifyContent: "start" }} value="MALE">Male</MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value="FEMALE">Female</MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value="OTHERS">Others</MenuItem>
-                    </Select>
-
-                  )}
-                />
-                {/* <FormHelperText>{errors.gender?.message}</FormHelperText> */}
-              </FormControl>
-            </div>
-
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+                      sx={{
+                        width: '100%',
+                        marginBottom: 1,
+                        '& .MuiInputBase-root': {
+                          height: 50, // Adjust height here
+                        },
+                        '& .MuiInputBase-input': {
+                          padding: '10px 14px', // Adjust padding to fit height
+                          fontSize: '0.955rem', // Adjust font size if needed
+                        },
+                        '& .MuiInputLabel-root': {
+                          fontSize: '1rem', // Adjust label font size if needed
+                          top: -6, // Adjust label position if needed
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="bloodgroup"
                 control={control}
@@ -312,81 +430,146 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 rules={{ required: 'Blood Group is required' }}
                 render={({ field }) => (
                   <TextField
-                    label="Blood Group*"
-                    variant="outlined"
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter Blood Group"
                     {...field}
-                    fullWidth
+                    label="Blood Group*"
                     error={!!errors.bloodgroup}
                     helperText={errors.bloodgroup?.message}
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                      '& .MuiInputBase-root': {
+                        height: 50, // Adjust height here
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit height
+                        fontSize: '0.955rem', // Adjust font size if needed
+                      },
+                      '& .MuiInputLabel-root': {
+                        fontSize: '1rem', // Adjust label font size if needed
+                        top: -6, // Adjust label position if needed
+                      },
+                    }}
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
-            <Controller
-                      name="dob"
-                      control={control}
-                      render={({ field, fieldState: { error } }) => (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
-                            {...field}
-                            label="DOB"
-                            slotProps={{
-                              textField: {
-                                error: !!error,
-                                helperText: error?.message,
-                                fullWidth: true,
-                              },
-                            }}
-                          />
-                        </LocalizationProvider>
-                      )}
-                    />
-            </div>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="age"
+                control={control}
+                defaultValue={0}
+                rules={{
+                  required: 'Age is required',
+                  min: {
+                    value: 0,
+                    message: 'Age cannot be less than 0',
+                  },
+                  max: {
+                    value: 200,
+                    message: 'Age cannot be Greater than 200',
+                  },
+                }}
+                render={({ field }) => (
+                  <TextField
+                    type="number"
+                    className="form-control"
+                    placeholder="Enter Age"
+                    {...field}
+                    label="Age*"
+                    error={!!errors.age}
+                    helperText={errors.age?.message}
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                      '& .MuiInputBase-root': {
+                        height: 50, // Adjust height here
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit height
+                        fontSize: '0.955rem', // Adjust font size if needed
+                      },
+                      '& .MuiInputLabel-root': {
+                        fontSize: '1rem', // Adjust label font size if needed
+                        top: -6, // Adjust label position if needed
+                      },
+                    }}
+                    inputProps={{
+                      min: 0, // Set minimum value for the input
+                    }}
+                  />
+                )}
+              />
+            </Grid>
 
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="addressLine1"
                 control={control}
                 defaultValue=""
-                rules={{ required: 'Address_line1 is required' }}
+                rules={{ required: 'Address Line 1 is required' }}
                 render={({ field }) => (
                   <TextField
-                    label="Address 1*"
-                    variant="outlined"
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter Address Line 1"
                     {...field}
-                    fullWidth
+                    label="Address Line 1*"
                     error={!!errors.addressLine1}
                     helperText={errors.addressLine1?.message}
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                      '& .MuiInputBase-root': {
+                        height: 50, // Adjust height here
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit height
+                        fontSize: '0.955rem', // Adjust font size if needed
+                      },
+                      '& .MuiInputLabel-root': {
+                        fontSize: '1rem', // Adjust label font size if needed
+                        top: -6, // Adjust label position if needed
+                      },
+                    }}
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="addressLine2"
                 control={control}
                 defaultValue=""
-                rules={{ required: 'address_line2 is required' }}
                 render={({ field }) => (
                   <TextField
-                    label="Address 2"
-                    variant="outlined"
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter Address Line 2"
                     {...field}
-                    fullWidth
-                    error={!!errors.addressLine2}
-                    helperText={errors.addressLine2?.message}
+                    label="Address Line 2"
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                      '& .MuiInputBase-root': {
+                        height: 50, // Adjust height here
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit height
+                        fontSize: '0.955rem', // Adjust font size if needed
+                      },
+                      '& .MuiInputLabel-root': {
+                        fontSize: '1rem', // Adjust label font size if needed
+                        top: -6, // Adjust label position if needed
+                      },
+                    }}
                   />
                 )}
               />
-            </div>
-           
-          </div>
-
-          <div className={styles['form-row']}>
-          <div className={styles['form-item']}>
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="city"
                 control={control}
@@ -394,93 +577,215 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 rules={{ required: 'City is required' }}
                 render={({ field }) => (
                   <TextField
-                    label="City*"
-                    variant="outlined"
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter City"
                     {...field}
-                    fullWidth
+                    label="City*"
                     error={!!errors.city}
                     helperText={errors.city?.message}
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                      '& .MuiInputBase-root': {
+                        height: 50, // Adjust height here
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit height
+                        fontSize: '0.955rem', // Adjust font size if needed
+                      },
+                      '& .MuiInputLabel-root': {
+                        fontSize: '1rem', // Adjust label font size if needed
+                        top: -6, // Adjust label position if needed
+                      },
+                    }}
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="countryCode"
                 control={control}
-                defaultValue={CountriesStates.find(countryData => countryData.name === "India")?.code || ""}
+                defaultValue=""
+                rules={{ required: 'Country is required' }}
                 render={({ field }) => (
-                  <FormControl fullWidth variant="outlined">
+                  <FormControl sx={{
+                    width: '100%',
+                    marginBottom: 1,
+                    '& .MuiInputBase-root': {
+                      height: 50, // Adjust height here
+                    },
+                    '& .MuiInputBase-input': {
+                      padding: '10px 14px', // Adjust padding to fit height
+                      fontSize: '0.955rem', // Adjust font size if needed
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: '1rem', // Adjust label font size if needed
+                      top: -6, // Adjust label position if needed
+                    },
+                  }} error={!!errors.countryCode}>
                     <InputLabel>Country*</InputLabel>
-                    <Select
-                      {...field}
-                      label="Country*"
-                      value={field.value || ""}
-                      error={!!errors.countryCode}
-              
-                    >
-                      {CountriesStates.map((countryData, index) => (
-                        <MenuItem key={index} value={countryData.code} >
-                          {countryData.name}
+                    <Select {...field} label="Country*">
+                      {CountriesStates.map((country, i) => (
+                        <MenuItem key={i} value={country.code}>
+                          {country.name}
                         </MenuItem>
                       ))}
                     </Select>
+                    <FormHelperText>{errors.countryCode?.message}</FormHelperText>
                   </FormControl>
                 )}
               />
-              <FormHelperText sx={{ ml: "12px", color: "#d32f2f" }}>{errors.countryCode?.message}</FormHelperText>
-            </div>
-           
-          </div>
-          <div className={styles['form-row']}>
-          <div className={styles['form-item']}>
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="stateCode"
                 control={control}
                 defaultValue=""
+                rules={{ required: 'State is required' }}
                 render={({ field }) => (
-                  <FormControl fullWidth variant="outlined">
-                    <InputLabel>State</InputLabel>
+                  <FormControl sx={{
+                    width: '100%',
+                    marginBottom: 1,
+                    '& .MuiInputBase-root': {
+                      height: 50, // Adjust height here
+                    },
+                    '& .MuiInputBase-input': {
+                      padding: '10px 14px', // Adjust padding to fit height
+                      fontSize: '0.955rem', // Adjust font size if needed
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: '1rem', // Adjust label font size if needed
+                      top: -6, // Adjust label position if needed
+                    },
+                  }} error={!!errors.stateCode}>
+                    <InputLabel>State*</InputLabel>
                     <Select {...field} label="State*">
-                      {stateOptions.map((stateData, index) => (
-                        <MenuItem key={index} value={stateData.code}>
-                          {stateData.name}
+                      {stateOptions.map((s) => (
+                        <MenuItem key={s.code} value={s.code}>
+                          {s.name}
                         </MenuItem>
                       ))}
                     </Select>
+                    <FormHelperText>{errors.stateCode?.message}</FormHelperText>
                   </FormControl>
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="postalCode"
                 control={control}
                 defaultValue=""
-                rules={{ required: 'postalcode is required' }}
+                rules={{ required: 'Postal Code is required' }}
                 render={({ field }) => (
                   <TextField
-                    label="Postal Code*"
-                    variant="outlined"
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter Postal Code"
                     {...field}
-                    fullWidth
+                    label="Postal Code*"
                     error={!!errors.postalCode}
                     helperText={errors.postalCode?.message}
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                      '& .MuiInputBase-root': {
+                        height: 50, // Adjust height here
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '10px 14px', // Adjust padding to fit height
+                        fontSize: '0.955rem', // Adjust font size if needed
+                      },
+                      '& .MuiInputLabel-root': {
+                        fontSize: '1rem', // Adjust label font size if needed
+                        top: -6, // Adjust label position if needed
+                      },
+                    }}
                   />
                 )}
               />
-            </div>
-
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
-              <Button variant="contained" color="primary" type="submit">
-                Save
-              </Button>
-            </div>
-          </div>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="chronicDisease"
+                control={control}
+                rules={{ required: 'chronicDisease is required' }}
+                render={({ field }) => (
+                  <FormControl sx={{
+                    width: '100%',
+                    marginBottom: 1,
+                    '& .MuiInputBase-root': {
+                      height: 50, // Adjust height here
+                    },
+                    '& .MuiInputBase-input': {
+                      padding: '10px 14px', // Adjust padding to fit height
+                      fontSize: '0.955rem', // Adjust font size if needed
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: '1rem', // Adjust label font size if needed
+                      top: -6, // Adjust label position if needed
+                    },
+                  }} error={!!errors.chronicDisease}>
+                    <InputLabel>ChronicDisease</InputLabel>
+                    <Select {...field} label="chronicDisease*">
+                      {Object.keys(ChronicDisease).map((chronicDisease, i) => (
+                        <MenuItem key={i} value={chronicDisease}>
+                          {chronicDisease}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <FormHelperText>{errors.chronicDisease?.message}</FormHelperText>
+                  </FormControl>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="acuteDisease"
+                control={control}
+                rules={{ required: 'acuteDisease is required' }}
+                render={({ field }) => (
+                  <FormControl sx={{
+                    width: '100%',
+                    marginBottom: 1,
+                    '& .MuiInputBase-root': {
+                      height: 50, // Adjust height here
+                    },
+                    '& .MuiInputBase-input': {
+                      padding: '10px 14px', // Adjust padding to fit height
+                      fontSize: '0.955rem', // Adjust font size if needed
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: '1rem', // Adjust label font size if needed
+                      top: -6, // Adjust label position if needed
+                    },
+                  }} error={!!errors.acuteDisease}>
+                    <InputLabel>AcuteDisease</InputLabel>
+                    <Select {...field} label="acuteDisease*">
+                      {Object.keys(AcuteDisease).map((acuteDisease, i) => (
+                        <MenuItem key={i} value={acuteDisease}>
+                          {acuteDisease}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <FormHelperText>{errors.acuteDisease?.message}</FormHelperText>
+                  </FormControl>
+                )}
+              />
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2, width: '20%' }}
+          >
+            Submit
+          </Button>
         </form>
-
       </div>
     </>
   );

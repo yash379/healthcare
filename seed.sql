@@ -14,7 +14,7 @@ INSERT INTO public.users_super_roles(
 	VALUES ( 1, 1);
 
 INSERT INTO public.hospitals(name, code, email, address_1, address_2, city, postal_code, country_code, state_code, phone_number, is_active)
-VALUES ( 'I2IT', '111', 'i2it@gmail.com', 'Hinjewadi', 'Pune', 'Pune', '344212', 'IN', 'MH', '3432343231', true);
+VALUES ( 'I2IT','1', 'i2it@gmail.com', 'Hinjewadi', 'Pune', 'Pune',  '411019', 'IN','MH', '3432343231',true   );
 
 INSERT INTO public.users_hospital_roles(
 	 user_id, hospital_role_id, hospital_id, is_primary)
