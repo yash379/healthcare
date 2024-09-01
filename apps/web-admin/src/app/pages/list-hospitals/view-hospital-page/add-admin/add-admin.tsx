@@ -2,10 +2,11 @@ import styles from './add-admin.module.scss';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { useForm, Controller } from 'react-hook-form';
-import { Button, Checkbox, InputAdornment, TextField } from '@mui/material';
+import { Button, Checkbox, Dialog, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useEffect } from 'react';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 /* eslint-disable-next-line */
 export interface AddAdminProps {
@@ -50,11 +51,30 @@ export function AddAdmin({ open, onClose, onSubmit }: AddAdminProps) {
     }
   }, [open, reset]);
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box className={styles['modal-container']}>
-        <h2 className={styles['h2_tag']}>Add Hospital Manager</h2>
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth >
+    <Box  p={"5px 24px 24px 24px"} >
+      <Typography
+       variant="h2"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          margin: '14px -10px 5px 0px',
+        }}
+        >
+        Add Hospital Manager
+        <IconButton
+          onClick={() => {
+            onClose();
+            reset();
+          }}
+          aria-label="Close">
+          <CancelIcon />
+        </IconButton>
+      </Typography>
         <form onSubmit={handleSubmit(handleFormSubmit)}>
         <Box className={styles['modal_second_container']}>
+        <Box className={styles['grid_top']}>
           <Controller
             name="firstName"
             control={control}
@@ -63,16 +83,30 @@ export function AddAdmin({ open, onClose, onSubmit }: AddAdminProps) {
             render={({ field }) => (
               <TextField
                 type="text"
-                label="First Name"
+                label={
+                  <Box sx={{ display: 'flex'}}>
+                    First Name
+                    <Typography
+                      fontSize="medium"
+                      color="error"
+                      sx={{ ml: '3px', mb:"10px" }}>
+                      *
+                    </Typography>
+                  </Box>
+                }
                 variant="outlined"
-                size="medium"
+                // size="medium"
                 {...field}
                 error={!!errors.firstName}
                 helperText={errors.firstName?.message}
-                sx={{ margin: '10px' }}
+                sx={{
+                  width: '100%',
+                }}
               />
             )}
           />
+          </Box>
+            <Box className={styles['grid_top']}>
           <Controller
             name="lastName"
             control={control}
@@ -81,16 +115,30 @@ export function AddAdmin({ open, onClose, onSubmit }: AddAdminProps) {
             render={({ field }) => (
               <TextField
                 type="text"
-                label="Last Name"
+                label={
+                  <Box sx={{ display: 'flex'}}>
+                   Last Name
+                    <Typography
+                      fontSize="medium"
+                      color="error"
+                      sx={{ ml: '3px' }}>
+                      *
+                    </Typography>
+                  </Box>
+                }
                 variant="outlined"
-                size="medium"
+                // size="medium"
                 {...field}
                 error={!!errors.lastName}
                 helperText={errors.lastName?.message}
-                sx={{ margin: '10px' }}
+                sx={{
+                  width: '100%',
+                }}
               />
             )}
           />
+          </Box>
+            <Box className={styles['grid_top']}>
           <Controller
             name="email"
             control={control}
@@ -99,16 +147,30 @@ export function AddAdmin({ open, onClose, onSubmit }: AddAdminProps) {
             render={({ field }) => (
               <TextField
                 type="text"
-                label="Email"
+                label={
+                  <Box sx={{ display: 'flex'}}>
+                    Email Address
+                    <Typography
+                      fontSize="medium"
+                      color="error"
+                      sx={{ ml: '3px' }}>
+                      *
+                    </Typography>
+                  </Box>
+                }
                 variant="outlined"
-                size="medium"
+                // size="medium"
+                sx={{
+                  width: '100%',
+                }}
                 {...field}
                 error={!!errors.email}
                 helperText={errors.email?.message}
-                sx={{ margin: '10px' }}
               />
             )}
           />
+          </Box>
+           <Box className={styles['grid_top']}>
           <Controller
             name="phoneNumber"
             control={control}
@@ -118,13 +180,24 @@ export function AddAdmin({ open, onClose, onSubmit }: AddAdminProps) {
               <TextField
                 type="text"
                 inputMode="numeric"
-                label="Phone Number"
+                label={
+                  <Box sx={{ display: 'flex'}}>
+                  Phone Number
+                    <Typography
+                      fontSize="medium"
+                      color="error"
+                      sx={{ ml: '3px' }}>
+                      *
+                    </Typography>
+                  </Box>
+                }
                 variant="outlined"
-                size="medium"
                 {...field}
                 error={!!errors.phoneNumber}
                 helperText={errors.phoneNumber?.message}
-                sx={{ margin: '10px' }}
+                sx={{
+                  width: '100%',
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment sx={{mt:"1px"}} position="start">
@@ -135,41 +208,55 @@ export function AddAdmin({ open, onClose, onSubmit }: AddAdminProps) {
               />
             )}
           />
+          </Box>
+          <Box className={styles['grid_top']}>
           <Controller
             name="isPrimary"
             control={control}
             defaultValue={false}
             rules={{ required: 'Check if primary contact' }}
             render={({ field }) => (
-              <div style={{display:"flex",flexDirection:"row",justifyContent:"flex-start",alignItems:"center", paddingLeft:"18px"}}>
-              <label htmlFor={field.name} style={{fontSize:"medium",fontFamily:"poppins",}}>Is it a Primary Contact?</label>
+              <div style={{display:"flex",flexDirection:"row",justifyContent:"flex-start",alignItems:"center", paddingLeft:"7px"}}>
+              <label htmlFor={field.name} style={{fontSize:"medium",fontFamily:"poppins",}}>{
+                      <Box sx={{ display: 'flex'}}>
+                       Is it a Primary Contact?
+                        <Typography
+                          fontSize="medium"
+                          color="error"
+                          sx={{ ml: '3px' }}>
+                          *
+                        </Typography>
+                      </Box>
+                    }</label>
               <Checkbox  {...field} sx={{ display: "flex", flexDirection: "row" }}/>
               </div>
             )}
           />
-          
+          </Box>
         </Box>
 
-        <Box sx={{ marginTop: "10px" }}>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            sx={{ mr: "10px" }}
-          >
-            Add
-          </Button>
+        <Box sx={{ mb: '5px', mt: '10px', textAlign: 'end' }}>
+        
           <Button
             variant="contained"
             color="secondary"
+            sx={{ mr: "10px" }}
             onClick={()=>{onClose(); reset()}}
           >
             Cancel
           </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+       
+          >
+            Add
+          </Button>
         </Box>
       </form>
       </Box>
-    </Modal >
+    </Dialog>
   );
 }
 
