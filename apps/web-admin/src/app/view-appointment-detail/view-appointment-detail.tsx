@@ -1,6 +1,6 @@
 // view-appointment-detail.tsx
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Paper, Typography, Box, Avatar, Divider, Card } from '@mui/material';
 import styles from './view-appointment-detail.module.scss';
 import { Gender } from '@prisma/client';
@@ -23,13 +23,13 @@ interface ViewAppointment {
 const dummyAppointments: ViewAppointment[] = [
   {
     id: 1,
-    firstName: 'John',
-    lastName: 'Doe',
+    firstName: 'Omkar',
+    lastName: 'Patil',
     mobileNumber: '1234567890',
-    email: 'john.doe@example.com',
+    email: 'omkar.patil@example.com',
     gender: Gender.MALE,
     status: StatusEnum.InProgress,
-    age: 30,
+    age: 32,
     date: new Date(),
   },
   {
@@ -50,10 +50,13 @@ const ViewAppointmentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [appointment, setAppointment] = useState<ViewAppointment | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAppointment = () => {
-      const appointmentData = dummyAppointments.find(app => app.id === Number(id));
+      const appointmentData = dummyAppointments.find(
+        (app) => app.id === Number(id)
+      );
       if (appointmentData) {
         setAppointment(appointmentData);
       } else {
@@ -67,7 +70,6 @@ const ViewAppointmentDetail: React.FC = () => {
 
   if (loading) return <div>Loading...</div>;
 
-
   if (!appointment) {
     return <div>Appointment not found</div>;
   }
@@ -76,16 +78,41 @@ const ViewAppointmentDetail: React.FC = () => {
     return `${firstName[0]}${lastName[0]}`.toUpperCase();
   };
 
+  const handleClick = () => {
+    navigate('/medical-history');
+  };
+
+  const handleStartDiagnosisClick = () => {
+    navigate('/diagnosis');
+  };
+
   return (
-    <Box className={styles['container']}
-      sx={{ display: 'flex' }}
-    >
-      <Paper sx={{ padding: 3, width: '50rem', backgroundColor: '#f8f9fa', borderRadius: 2, boxShadow: 3 }}>
+    <Box className={styles['container']} sx={{ display: 'flex' }}>
+      <Paper
+        sx={{
+          padding: 3,
+          width: '50rem',
+          backgroundColor: '#f8f9fa',
+          borderRadius: 2,
+          boxShadow: 3,
+        }}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <Avatar sx={{ bgcolor: '#4FD1C5', width: 60, height: 60, fontSize: '24px', mr: 2 }}>
+          <Avatar
+            sx={{
+              bgcolor: '#4FD1C5',
+              width: 60,
+              height: 60,
+              fontSize: '24px',
+              mr: 2,
+            }}
+          >
             {getInitials(appointment.firstName, appointment.lastName)}
           </Avatar>
-          <Typography variant="h5" sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}>
+          <Typography
+            variant="h5"
+            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          >
             {`${appointment.firstName} ${appointment.lastName}`}
           </Typography>
         </Box>
@@ -93,38 +120,75 @@ const ViewAppointmentDetail: React.FC = () => {
         <Divider sx={{ mb: 2 }} />
 
         <Box sx={{ mb: 2 }}>
-          <Typography variant="body1" sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}>
-            Gender: <Typography component="span" sx={{ fontWeight: 'normal' }}>{appointment.gender}</Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          >
+            Gender:{' '}
+            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+              {appointment.gender}
+            </Typography>
           </Typography>
-          <Typography variant="body1" sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}>
-            Age: <Typography component="span" sx={{ fontWeight: 'normal' }}>{appointment.age}</Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          >
+            Age:{' '}
+            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+              {appointment.age}
+            </Typography>
           </Typography>
-          <Typography variant="body1" sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}>
-            Email: <Typography component="span" sx={{ fontWeight: 'normal' }}>{appointment.email}</Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          >
+            Email:{' '}
+            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+              {appointment.email}
+            </Typography>
           </Typography>
-          <Typography variant="body1" sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}>
-            Mobile Number: <Typography component="span" sx={{ fontWeight: 'normal' }}>{appointment.mobileNumber}</Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          >
+            Mobile Number:{' '}
+            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+              {appointment.mobileNumber}
+            </Typography>
           </Typography>
-          <Typography variant="body1" sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}>
-            Date: <Typography component="span" sx={{ fontWeight: 'normal' }}>{appointment.date.toDateString()}</Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          >
+            Date:{' '}
+            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+              {appointment.date.toDateString()}
+            </Typography>
           </Typography>
-          <Typography variant="body1" sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}>
-            Status: <Typography component="span" sx={{ fontWeight: 'normal' }}>{appointment.status}</Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          >
+            Status:{' '}
+            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+              {appointment.status}
+            </Typography>
           </Typography>
         </Box>
       </Paper>
-      <Box sx={{marginTop:'40px'}}>
-        <Box sx={{marginBottom:'25px'}}>
+      <Box sx={{ marginTop: '40px' }}>
+        <Box sx={{ marginBottom: '25px' }}>
           <Box sx={{ width: '300px', ml: '30px' }}>
             <Card
+              onClick={handleClick}
               sx={{
                 display: 'flex',
-                // justifyContent: 'space-between',
                 alignItems: 'center',
-                height: '60px', // Adjust this value to increase the height
-                padding: '16px', // Optional: add padding for better spacing inside the card
+                height: '60px',
+                padding: '16px',
                 borderRadius: '20px',
-                boxShadow: '-moz-initial'
+                boxShadow: '-moz-initial',
+                cursor: 'pointer', // Optional: changes cursor to pointer on hover
               }}
             >
               <Avatar sx={{ background: '#F4F7FE', width: 56, height: 56 }}>
@@ -132,27 +196,34 @@ const ViewAppointmentDetail: React.FC = () => {
                   sx={{
                     width: 36,
                     height: 36,
-                    color: 'black'
+                    color: 'black',
                   }}
                 />
               </Avatar>
-              <Typography sx={{ color: '#0B4FA6', fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold', ml: '40px' }}>
+              <Typography
+                sx={{
+                  color: '#0B4FA6',
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontWeight: 'bold',
+                  ml: '40px',
+                }}
+              >
                 Medical History
               </Typography>
             </Card>
           </Box>
-
         </Box>
         <Box sx={{ width: '300px', ml: '30px' }}>
           <Card
+            onClick={handleStartDiagnosisClick}
             sx={{
               display: 'flex',
-              // justifyContent: 'space-between',
               alignItems: 'center',
-              height: '60px', // Adjust this value to increase the height
-              padding: '16px', // Optional: add padding for better spacing inside the card
+              height: '60px',
+              padding: '16px',
               borderRadius: '20px',
-              boxShadow: '-moz-initial'
+              boxShadow: '-moz-initial',
+              cursor: 'pointer', // Added cursor pointer here as well
             }}
           >
             <Avatar sx={{ background: '#F4F7FE', width: 56, height: 56 }}>
@@ -160,18 +231,23 @@ const ViewAppointmentDetail: React.FC = () => {
                 sx={{
                   width: 36,
                   height: 36,
-                  color: 'black'
+                  color: 'black',
                 }}
               />
             </Avatar>
-            <Typography sx={{ color: '#139C94', fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold', ml: '40px' }}>
+            <Typography
+              sx={{
+                color: '#139C94',
+                fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 'bold',
+                ml: '40px',
+              }}
+            >
               Start Diagnosis
             </Typography>
           </Card>
         </Box>
       </Box>
-
-
     </Box>
   );
 };

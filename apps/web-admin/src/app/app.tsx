@@ -134,29 +134,50 @@ export function App() {
               />
               <Route path="/profile" element={<Profile />} />
 
-            <Route path="/appointments" element={<ListAppointment />} />
-            <Route path="/add-appointment" element={<AddAppointment />} />
-            <Route path="/edit-appointment" element={<EditAppointment />} />
-            <Route path="/delete-appointment" element={<DeleteAppointment />} />
-            <Route path="/appointments/:id" element={<ViewAppointmentDetail/>} />
-            <Route path="/diagnosis" element={<DiagnosisPage/>} />
+              <Route path="/appointments" element={<ListAppointment />} />
+              <Route path="/add-appointment" element={<AddAppointment />} />
+              <Route path="/edit-appointment" element={<EditAppointment />} />
+              <Route
+                path="/delete-appointment"
+                element={<DeleteAppointment />}
+              />
+              <Route
+                path="/appointments/:id"
+                element={<ViewAppointmentDetail />}
+              />
+              <Route path="/diagnosis" element={<DiagnosisPage />} />
+            </Route>
 
+            <Route path="/hospitals" element={<ListHospitals />} />
+            <Route path="/hospitals/add" element={<AddHospitalPage />} />
 
-
-
-            <Route path="/hospitals" element={<ListHospitals />}/>
-            <Route path="/hospitals/add" element={<AddHospitalPage/>}/>
-
-            <Route  element={<HospitalLayout/>}>
-
-              <Route path="/hospitals/:hospitalId/edit" element={<EditHospitalPage/>}/>
-              <Route path="/hospitals/:hospitalId" element={<View/>}/>
-              <Route path="/hospitals/:hospitalId/details" element={<ViewHospitalPage/>}/>
-              <Route path="/hospitals/:hospitalId/doctors" element={<ListDoctors/>}/>
-              <Route path="/hospitals/:hospitalId/patients" element={<ListPatients />}/>
-              <Route path="/hospitals/:hospitalId/patients/add" element={<AddPatientPage />}/>
-              <Route path="/hospitals/:hospitalId/patients/edit/:patientId" element={<EditPatientPage />}/>
-              <Route path="/profile" element={<Profile />}/>
+            <Route element={<HospitalLayout />}>
+              <Route
+                path="/hospitals/:hospitalId/edit"
+                element={<EditHospitalPage />}
+              />
+              <Route path="/hospitals/:hospitalId" element={<View />} />
+              <Route
+                path="/hospitals/:hospitalId/details"
+                element={<ViewHospitalPage />}
+              />
+              <Route
+                path="/hospitals/:hospitalId/doctors"
+                element={<ListDoctors />}
+              />
+              <Route
+                path="/hospitals/:hospitalId/patients"
+                element={<ListPatients />}
+              />
+              <Route
+                path="/hospitals/:hospitalId/patients/add"
+                element={<AddPatientPage />}
+              />
+              <Route
+                path="/hospitals/:hospitalId/patients/edit/:patientId"
+                element={<EditPatientPage />}
+              />
+              <Route path="/profile" element={<Profile />} />
             </Route>
             <Route path="/users" element={<ListPOYVUser />} />
           </Route>

@@ -36,18 +36,15 @@ import AddAppointment from './add-appointment/add-appointment';
 import DeleteAppointment from './delete-appointment/delete-appointment';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 
-import * as React from "react";
+import * as React from 'react';
 
-
-
-
-export interface ListAppointmentProps { }
+export interface ListAppointmentProps {}
 
 export enum StatusEnum {
-  Scheduled = "Scheduled",
-  InProgress = "In Progress",
-  Cancelled = "Cancelled",
-  PendingConfirmation = "Pending Confirmation",
+  Scheduled = 'Scheduled',
+  InProgress = 'In Progress',
+  Cancelled = 'Cancelled',
+  PendingConfirmation = 'Pending Confirmation',
 }
 
 // Define a mapping of status to background color
@@ -57,7 +54,6 @@ const statusColorMap: Record<StatusEnum, string> = {
   [StatusEnum.Cancelled]: '#f8d7da', // light red
   [StatusEnum.PendingConfirmation]: '#fff3cd', // light orange
 };
-
 
 interface Form {
   firstName: string;
@@ -70,8 +66,6 @@ interface Form {
   status: StatusEnum;
 }
 
-
-
 interface ViewAppointment {
   id: number;
   firstName: string;
@@ -82,9 +76,7 @@ interface ViewAppointment {
   age: number;
   date: Date;
   status: StatusEnum;
-
 }
-
 
 export function ListAppointment(props: ListAppointmentProps) {
   const apiUrl = environment.apiUrl;
@@ -92,7 +84,9 @@ export function ListAppointment(props: ListAppointmentProps) {
   const [searchQueryName, setSearchQueryName] = useState<string>('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selectedAppointmentId, setSelectedAppointmentId] = useState<number | null>(null);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<
+    number | null
+  >(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [viewData, setViewData] = useState<ViewAppointment | null>(null);
   const [loading, setLoading] = useState(true);
@@ -105,10 +99,10 @@ export function ListAppointment(props: ListAppointmentProps) {
   const dummyAppointments: ViewAppointment[] = [
     {
       id: 1,
-      firstName: 'John',
-      lastName: 'Doe',
+      firstName: 'Omkar',
+      lastName: 'Patil',
       mobileNumber: '1234567890',
-      email: 'john.doe@example.com',
+      email: 'omkar.patil@example.com',
       gender: Gender.MALE,
       status: StatusEnum.InProgress,
       age: 30,
@@ -134,9 +128,8 @@ export function ListAppointment(props: ListAppointmentProps) {
   };
 
   const handleEditClick = (appointmentId: number) => {
-    const selectedAppointment: ViewAppointment | undefined = dummyAppointments.find(
-      (appointment) => appointment.id === appointmentId
-    );
+    const selectedAppointment: ViewAppointment | undefined =
+      dummyAppointments.find((appointment) => appointment.id === appointmentId);
 
     if (selectedAppointment) {
       setEditData(selectedAppointment);
@@ -147,9 +140,8 @@ export function ListAppointment(props: ListAppointmentProps) {
 
   // Function to open the delete confirmation modal
   const handleDeleteClick = (appointmentId: number) => {
-    const selectedAppointment: ViewAppointment | undefined = dummyAppointments.find(
-      (appointment) => appointment.id === appointmentId
-    );
+    const selectedAppointment: ViewAppointment | undefined =
+      dummyAppointments.find((appointment) => appointment.id === appointmentId);
 
     if (selectedAppointment) {
       setViewData(selectedAppointment);
@@ -167,10 +159,15 @@ export function ListAppointment(props: ListAppointmentProps) {
   const deleteAppointment = async () => {
     try {
       if (selectedAppointmentId !== null) {
-        await axios.delete(`${apiUrl}/hospitals/${params.hospitalId}/appointments/${selectedAppointmentId}`, {
-          withCredentials: true,
+        await axios.delete(
+          `${apiUrl}/hospitals/${params.hospitalId}/appointments/${selectedAppointmentId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        enqueueSnackbar('Appointment deleted successfully', {
+          variant: 'success',
         });
-        enqueueSnackbar('Appointment deleted successfully', { variant: 'success' });
         closeDeleteModal();
         getAppointment();
       }
@@ -183,14 +180,17 @@ export function ListAppointment(props: ListAppointmentProps) {
   const getAppointment = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/doctors`, {
-        withCredentials: true,
-        params: {
-          pageSize: rowsPerPage,
-          pageOffset: page,
-          name: searchQueryName,
-        },
-      });
+      const response = await axios.get(
+        `${apiUrl}/hospitals/${params.hospitalId}/doctors`,
+        {
+          withCredentials: true,
+          params: {
+            pageSize: rowsPerPage,
+            pageOffset: page,
+            name: searchQueryName,
+          },
+        }
+      );
 
       const { content, total } = response.data;
       setTotalItems(total);
@@ -214,7 +214,9 @@ export function ListAppointment(props: ListAppointmentProps) {
     handleFilterChange();
   }, [searchQueryName]);
 
-  const handleSearchNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setSearchQueryName(event.target.value);
     getAppointment();
   };
@@ -255,13 +257,12 @@ export function ListAppointment(props: ListAppointmentProps) {
 
   return (
     <>
-
-    
       <Box className={styles['btn_container']}>
-        <Box sx={{
-          display: 'flex',
-          width: '100%'
-        }}
+        <Box
+          sx={{
+            display: 'flex',
+            width: '100%',
+          }}
         >
           <Box sx={{ marginRight: '25px' }}>
             {/* Appointment Statistics Cards */}
@@ -280,7 +281,11 @@ export function ListAppointment(props: ListAppointmentProps) {
                     }}
                   />
                   <Box sx={{ paddingLeft: 2 }}>
-                    <Typography variant="h6" component="div" sx={{ color: '#0B4FA6' }}>
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      sx={{ color: '#0B4FA6' }}
+                    >
                       Total Appointments
                     </Typography>
                     <Typography variant="h4" sx={{ color: '#000000' }}>
@@ -304,7 +309,11 @@ export function ListAppointment(props: ListAppointmentProps) {
                     }}
                   />
                   <Box sx={{ paddingLeft: 2 }}>
-                    <Typography variant="h6" component="div" sx={{ color: '#388E3C' }}>
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      sx={{ color: '#388E3C' }}
+                    >
                       Completed Appointments
                     </Typography>
                     <Typography variant="h4" sx={{ color: '#000000' }}>
@@ -328,7 +337,11 @@ export function ListAppointment(props: ListAppointmentProps) {
                     }}
                   />
                   <Box sx={{ paddingLeft: 2 }}>
-                    <Typography variant="h6" component="div" sx={{ color: '#F57C00' }}>
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      sx={{ color: '#F57C00' }}
+                    >
                       Pending Appointments
                     </Typography>
                     <Typography variant="h4" sx={{ color: '#000000' }}>
@@ -339,28 +352,29 @@ export function ListAppointment(props: ListAppointmentProps) {
               </Card>
             </Box>
             <Box>
+              <Typography
+                sx={{
+                  color: '#2B3674',
+                  fontWeight: 'Bold',
+                  fontFamily: 'DM Sans, sans-serif', // Using a fallback font
+                  my: '40px',
+                }}
+              >
+                Upcoming Appointments
+              </Typography>
 
-            <Typography
-                  sx={{
-                    color: '#2B3674',
-                    fontWeight: 'Bold',
-                    fontFamily: 'DM Sans, sans-serif' ,// Using a fallback font
-                    my:'40px'
-                  }}
-                >
-                  Upcoming Appointments
-                </Typography>
-           
               <AddAppointment
                 open={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
                 onSubmit={handleAddAppointment}
               />
             </Box>
-          
-            <Box className={styles['search-container']} sx={{ ml: 98, display: 'flex', direction: 'row' }}>
-              
-              <Box >
+
+            <Box
+              className={styles['search-container']}
+              sx={{ ml: 98, display: 'flex', direction: 'row' }}
+            >
+              <Box>
                 {/* <Typography
                   sx={{
                     color: '#2B3674',
@@ -389,7 +403,6 @@ export function ListAppointment(props: ListAppointmentProps) {
               >
                 <AddIcon fontSize="small" /> Add
               </Button>
-
             </Box>
           </Box>
         </Box>
@@ -412,7 +425,12 @@ export function ListAppointment(props: ListAppointmentProps) {
                   <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
                     <NavLink
                       to={`/appointments/${appointment.id}`}
-                      style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
                     >
                       <Box
                         sx={{
@@ -420,20 +438,21 @@ export function ListAppointment(props: ListAppointmentProps) {
                           alignItems: 'center',
                           '&:hover': {
                             backgroundColor: '#f0f0f0', // Change this to your desired hover color
-                            borderRadius: '8px',        // Optional: adds rounded corners
-                            padding: '4px',             // Optional: adds padding inside the hover area
+                            borderRadius: '8px', // Optional: adds rounded corners
+                            padding: '4px', // Optional: adds padding inside the hover area
                           },
                         }}
                       >
                         <Avatar sx={{ bgcolor: '#4FD1C5', marginRight: 2 }}>
-                          {getInitials(appointment.firstName, appointment.lastName)}
+                          {getInitials(
+                            appointment.firstName,
+                            appointment.lastName
+                          )}
                         </Avatar>
                         {`${appointment.firstName} ${appointment.lastName}`}
                       </Box>
                     </NavLink>
-
                   </TableCell>
-
 
                   <TableCell>{appointment.gender}</TableCell>
                   <TableCell>{appointment.date.toDateString()}</TableCell>
@@ -455,7 +474,10 @@ export function ListAppointment(props: ListAppointmentProps) {
                     <IconButton onClick={() => handleEditClick(appointment.id)}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton onClick={() => handleDeleteClick(appointment.id)} color='error'>
+                    <IconButton
+                      onClick={() => handleDeleteClick(appointment.id)}
+                      color="error"
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -482,7 +504,6 @@ export function ListAppointment(props: ListAppointmentProps) {
             onClose={closeDeleteModal}
             onDelete={deleteAppointment}
             appointmentData={viewData}
-
           />
         )}
       </Box>
