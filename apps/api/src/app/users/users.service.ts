@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AssetCountDashboardDto, ManagerDto, UserDto } from './dto/user.dto';
+import {  ManagerDto, UserDto } from './dto/user.dto';
 import { ListUserPageDto } from './dto/list-user-page.dto';
 import { AddManagerDto, AddUserDto } from './dto/add-user.dto';
 import { HospitalRoleName, PrismaClient, SuperRoleName } from '@prisma/client';
@@ -1095,7 +1095,54 @@ export class UsersService {
   //   });
   // }
 
+  async getAdminCounts(): Promise<{ total: number; active: number; inactive: number }> {
+    const hospitalAdminRoleId = await this.prisma.hospitalRole.findFirst({
+      where: {
+        name: SuperRoleName.ADMIN,
+      },
+      select: {
+        id: true,
+      },
+    });
   
+    const total = await this.prisma.user.count({
+      where: {
+        superRoles: {
+          some: {
+            superRoleId: hospitalAdminRoleId.id,
+          },
+        },
+      },
+    });
+  
+    const active = await this.prisma.user.count({
+      where: {
+        superRoles: {
+          some: {
+            superRoleId: hospitalAdminRoleId.id,
+          },
+        },
+        isActive: true,
+      },
+    });
+  
+    const inactive = await this.prisma.user.count({
+      where: {
+        superRoles: {
+          some: {
+            superRoleId: hospitalAdminRoleId.id,
+          },
+        },
+        isActive: false,
+      },
+    });
+  
+    return {
+      total,
+      active,
+      inactive,
+    };
+  }
 
   async findByEmail(email: string) {
     const user = await this.prisma.user.findFirst({

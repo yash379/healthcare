@@ -109,7 +109,7 @@ export function Dashboard(props: DashboardProps) {
   const [loadingCount, setLoadingCount] = useState(true);
   const [loadingDetails, setLoadingDetails] = useState(true);
   const [loadingAllAdmin, setLoadingAllAdmin] = useState(true);
-  const [adminData, setAdminData] = useState<Manager[]>([]);
+  // const [adminData, setAdminData] = useState<Manager[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [adminToDeleteId, setAdminToDeleteId] = useState<{ id: number } | null>(null);
@@ -137,6 +137,30 @@ export function Dashboard(props: DashboardProps) {
     getHospitaldetails();
   }, [user]);
 
+
+  const [adminData, setAdminData] = useState({ total: 0, active: 0, inactive: 0 });
+  const [orgData, setOrgData] = useState({ totalHospitalsCount: 0, activeHospitalsCount: 0, inactiveHospitalsCount: 0 });
+  const [loadingData, setLoadingData] = useState(false);
+  useEffect(() => {
+    getCounts();
+  }, []);
+
+  const getCounts = async () => {
+    try {
+      setLoadingData(true);
+      const [adminResponse, orgResponse] = await Promise.all([
+        axios.get(`${apiUrl}/asset-count`, { withCredentials: true }),
+        axios.get(`${apiUrl}/hospital-count`, { withCredentials: true })
+      ]);
+
+      setAdminData(adminResponse.data);
+      setOrgData(orgResponse.data);
+      setLoadingData(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setLoadingData(false);
+    }
+  };
 
   // const getAllAdmin = async () => {
   //   try {
@@ -346,138 +370,101 @@ export function Dashboard(props: DashboardProps) {
     setEditData(null);
   };
 
-  const handleEditClick = (AdminId: number) => {
-    const selectedAdmin: Manager | undefined = adminData.find(
-      (admin) => admin.user.id === AdminId
-    );
+  // const handleEditClick = (AdminId: number) => {
+  //   const selectedAdmin: Manager | undefined = adminData.find(
+  //     (admin) => admin.user.id === AdminId
+  //   );
 
-    if (selectedAdmin) {
-      setEditData(selectedAdmin)
-      setSelectedAdminId(AdminId);
-      console.log("Admin Id:", AdminId);
-      setIsEditModalOpen(true);
-    }
-  };
+  //   if (selectedAdmin) {
+  //     setEditData(selectedAdmin)
+  //     setSelectedAdminId(AdminId);
+  //     console.log("Admin Id:", AdminId);
+  //     setIsEditModalOpen(true);
+  //   }
+  // };
 
-  const openDeleteModal = (Admin: { id: number } | null) => {
-    const selectedAdmin: Manager | undefined = adminData.find(
-      (Admins) => Admins.user.id === Admin?.id
-    );
+  // const openDeleteModal = (Admin: { id: number } | null) => {
+  //   const selectedAdmin: Manager | undefined = adminData.find(
+  //     (Admins) => Admins.user.id === Admin?.id
+  //   );
 
-    if (selectedAdmin) {
-      setDeleteData(selectedAdmin);
-      setAdminToDeleteId(Admin);
-      console.log("AdminToDeleteId:", adminToDeleteId);
-      setIsDeleteModalOpen(true);
-    }
-  };
+  //   if (selectedAdmin) {
+  //     setDeleteData(selectedAdmin);
+  //     setAdminToDeleteId(Admin);
+  //     console.log("AdminToDeleteId:", adminToDeleteId);
+  //     setIsDeleteModalOpen(true);
+  //   }
+  // };
 
   return (
-    <div className={styles['container']}>
-      {loadingDetails ? (
-        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", height: "75vh" }}><CircularProgress /></div>
-      ) : (
-        <div className={styles['main_container']}>
-          <div className={styles['first_container']}>
-            <div className={styles['header']}>
-              <h1 style={{ marginLeft: '0px' }}>Welcome {user?.firstName}!</h1><p>
-                {/* <div color="text.secondary">{Hospital?.addressLine1},</div>
-                <div color="text.secondary">{Hospital?.addressLine2}</div> */}
-              </p>
-
-            </div><div>
-
-              {/* <div className={styles['dashboard-cards']}>
-                {countArray.map(([item, value]) => (
-                  <Card className={styles['cards']}>
-                  
-                      <CardContent className={styles['cardcontent']}>
-                        <Typography variant="h6" color="text.secondary" gutterBottom className={styles['fields']}>
-                          {item}
-                        </Typography>
-                        <Typography className={styles['count']}>
-                          {value}
-                          <br />
-                        </Typography>
-                      </CardContent>
-                    
-                  </Card>
-                ))}
-              </div> */}
-            </div>
-
-            {/* <div className={styles['horizontal-line']} /> */}
-
-            {/* <div>
-  {data.map((item) => (
-    <Card
-      key={item.id}
-      className={styles['logs-card']}
-      sx={{
-        display: 'flex',
-        maxWidth: 300,
-        border: '1px solid #ddd',
-        borderRadius: 5,
-        margin: 2,
-      }}
-    >
-      <div className={styles['active-logs']} />
-      <CardMedia
-        component="img"
-        height="140"
-        image={item.imageUrl}
-        alt="Image Description"
-        className={styles['cardmedia']}
-      />
-      <CardContent sx={{ flex: 1 }}>
-        <Typography variant="body2" component="div" className={styles['logs-name']}>
-          {item.name}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Car Number: {item.carNumber}
-        </Typography>
-      </CardContent>
-    </Card>
-  ))}
-</div> */}
-
-
-
-            {/* <Box sx={{ height: 400, width: '90%', display:'flex', flexDirection:'row', margin:'20px' }}>
-  <DataGrid
-    rows={data}
-    columns={columns}
-    initialState={{
-      pagination: {
-        paginationModel: {
-          pageSize: 5,
-        },
-      },
-    }}
-    pageSizeOptions={[5]}
-    checkboxSelection
-    disableRowSelectionOnClick
-  />
-</Box> */}
-
-            {/* <Box className={styles['logs']}>
-              <Box style={{ margin: '9px', float: 'right', display: 'flex', justifyContent: 'flex-end' }}>
-                <RefreshIcon onClick={handleRefresh} style={{ cursor: 'pointer' }} />
-              </Box>
-              <AllVehicleLogs refreshLogs={refreshLogs} />
-            </Box> */}
-
-          </div>
-
-          {/* <div className={styles['vertical-line']} /> */}
-
-          {/* <div className={styles['column_second']}>
-
-          </div> */}
-        </div>
-      )
-      }
-    </div >
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', padding: '20px', justifyContent: 'center' }}>
+    {loadingData ? (
+      <CircularProgress />
+    ) : (
+      <>
+        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+          <CardContent>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              Total Users
+            </Typography>
+            <Typography variant="h4" style={{ color: '#ff9800' }}>
+              {adminData.total}
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+          <CardContent>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              Active Users
+            </Typography>
+            <Typography variant="h4" style={{ color: '#4caf50' }}>
+              {adminData.active}
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+          <CardContent>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              Inactive Users
+            </Typography>
+            <Typography variant="h4" style={{ color: '#f44336' }}>
+              {adminData.inactive}
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+          <CardContent>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              Total Hospitals
+            </Typography>
+            <Typography variant="h4" style={{ color: '#ff9800' }}>
+              {orgData.totalHospitalsCount}
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+          <CardContent>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              Active Hospitals
+            </Typography>
+            <Typography variant="h4" style={{ color: '#4caf50' }}>
+              {orgData.activeHospitalsCount}
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+          <CardContent>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              Inactive Hospitals
+            </Typography>
+            <Typography variant="h4" style={{ color: '#f44336' }}>
+              {orgData.inactiveHospitalsCount}
+            </Typography>
+          </CardContent>
+        </Card>
+      </>
+    )}
+  </div>
   );
 }
 

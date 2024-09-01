@@ -84,3 +84,13 @@ export class ManagerDto implements User {
 }
 
 
+export class AdminCountsDto {
+  @ApiProperty()
+  total: number;
+
+  @ApiProperty()
+  active: number;
+
+  @ApiProperty()
+  inactive: number;
+}

@@ -19,8 +19,8 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
 import { ListUserPageDto } from './dto/list-user-page.dto';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AssetCountDashboardDto, ManagerDto, UserDto } from './dto/user.dto';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AdminCountsDto, AssetCountDashboardDto, ManagerDto, UserDto } from './dto/user.dto';
 import { EditUserStatus, ViewUserDto } from './dto/view-user.dto';
 import { ForgotPasswordDto, LoginDto, UpdatePasswordDto, UpdatePasswordThroughProfileDto } from '../core/dto/user-login.dto';
 import { LocalAuthGuard } from '../auth/local-auth.guard';
@@ -70,14 +70,15 @@ export class UsersController {
   
  
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Get('asset-count')
-  // @ApiOkResponse({ type: AssetCountDashboardDto })
-  // @HttpCode(HttpStatus.OK)
-  // @Roles(Role.POYV_ADMIN)
-  // assetCount() {
-  //   return this.usersService.assetCount();
-  // }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Get('/asset-count')
+  @ApiOperation({ summary: 'Get counts of total, active, and inactive admins' })
+  @ApiOkResponse({ type: AdminCountsDto })
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.POYV_ADMIN)
+  async getAdminCounts(): Promise<AdminCountsDto> {
+    return await this.usersService.getAdminCounts();
+  }
 
 
   @UseGuards(AuthGuard)

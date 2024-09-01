@@ -2,7 +2,7 @@ import styles from './view-hospital-page.module.scss';
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Typography, Paper, Grid, Box, Button, Divider, Chip, IconButton, CircularProgress } from '@mui/material';
+import { Typography, Paper, Grid, Box, Button, Divider,  IconButton, CircularProgress, Card, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 import Breadcrumbs from '../../../Components/bread-crumbs/bread-crumbs';
 import { environment } from '../../../../environments/environment';
 import AddIcon from '@mui/icons-material/Add';
@@ -14,6 +14,8 @@ import EditAdmin from './edit-admin/edit-admin';
 import DeleteAdmin from './delete-admin/delete-admin';
 import { HospitalContext } from '../../../contexts/user-contexts';
 import Loading from '../../../Components/loading/loading';
+import { CountriesStates } from '../../../core/consts/countries-states';
+import Chip from '../../../Components/chip/chip';
 
 interface Form {
   id: number;
@@ -61,6 +63,8 @@ export function ViewHospitalPage(props: ViewHospitalPageProps) {
   const [loadingHospitalInfo, setLoadingHospitalInfo] = useState(true);
   const [loadingAllAdmin, setLoadingAllAdmin] = useState(true);
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
+  const [countryName, setCountryName] = useState('');
+  const [stateName, setStateName] = useState('');
 
   const [hospitalData, setHospitalData] = useState({
     id:'',
@@ -97,6 +101,17 @@ export function ViewHospitalPage(props: ViewHospitalPageProps) {
         setHospitalData(response.data);
         console.log(response.data);
         setLoadingHospitalInfo(false);
+        const country =
+        CountriesStates.find(
+          (country) => country.code === response.data.countryCode
+        )?.name || '';
+      const state =
+        CountriesStates.find(
+          (country) => country.code === response.data.countryCode
+        )?.states.find((state) => state.code === response.data.stateCode)
+          ?.name || '';
+      setCountryName(country);
+      setStateName(state);
       } catch (error) {
         console.error('Error fetching hospital data:', error);
         setLoadingHospitalInfo(false);
@@ -275,139 +290,410 @@ export function ViewHospitalPage(props: ViewHospitalPageProps) {
   return (
     <div className={styles['container']}>
       <Breadcrumbs paths={breadcrumbs} />
-      <Box sx={{ marginLeft: '25px' }}>
+      <Box >
       <Typography variant="h1" sx={{ my: '20px' }}>
-      Hospital Details
-            </Typography>
-            {loadingHospitalInfo ? (
-      <Paper elevation={3} sx={{ padding: '20px', marginBottom: '20px' }} style={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", height:"30vh"}}><CircularProgress /></Paper>
-      ):(
+          Hospital Details
+        </Typography>
+        <Box sx={{display:'flex'}}>
         
-            <Paper elevation={3} sx={{ padding: '20px', marginBottom: '20px' }}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={styles['hospital-field']}>
-                      Name: {hospitalData.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={styles['hospital-field']}>
-                      Email: {hospitalData.email}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={styles['hospital-field']}>
-                      Phone Number: +91-{hospitalData.phoneNumber}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={styles['hospital-field']}>
-                      Address 1: {hospitalData.addressLine1}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={styles['hospital-field']}>
-                      Address 2: {hospitalData.addressLine2 || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={styles['hospital-field']}>
-                      City: {hospitalData.city}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={styles['hospital-field']}>
-                      Country: {hospitalData.countryCode}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={styles['hospital-field']}>
-                      State: {hospitalData.stateCode || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={styles['hospital-field']}>
-                      Postal Code: {hospitalData.postalCode}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={styles['hospital-field']}>
-                      Code: {hospitalData.code}
-                    </Typography>
-                  </Grid>
+        {loadingHospitalInfo ? (
+          <Paper
+            elevation={3}
+            sx={{ padding: '20px', marginBottom: '20px' }}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '30vh',
+            }}
+          >
+            <CircularProgress />
+          </Paper>
+        ) : (
+          <>
+            <Card className={styles['details-card']}>
+              <Typography
+                variant="h4"
+                borderBottom="1px solid black"
+                marginBottom="10px"
+                paddingBottom="10px"
+              >
+                Profile Details
+              </Typography>
+              <Grid
+                sx={{ mb: '10px' }}
+                container
+                rowSpacing={2}
+                spacing={1}
+                columns={2}
+              >
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+                    Hospital Code:
+                  </Typography>
                 </Grid>
-              </Paper>
-              )
-        }
-              <Divider />
-        
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      textWrap: 'wrap',
+                      lineBreak: 'anywhere',
+                      whiteSpace: 'break-spaces',
+                    }}
+                  >
+                    {hospitalData.code}
+                  </Typography>
+                </Grid>
+
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+                    Email:
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      textWrap: 'wrap',
+                      lineBreak: 'anywhere',
+                      whiteSpace: 'break-spaces',
+                    }}
+                  >
+                    {hospitalData.email}
+                  </Typography>
+                </Grid>
+
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+                    Phone Number:
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      textWrap: 'wrap',
+                      lineBreak: 'anywhere',
+                      whiteSpace: 'break-spaces',
+                    }}
+                  >
+                    {hospitalData.phoneNumber}
+                  </Typography>
+                </Grid>
+
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+                    Country
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      textWrap: 'wrap',
+                      lineBreak: 'anywhere',
+                      whiteSpace: 'break-spaces',
+                    }}
+                  >
+                    {countryName}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Card>
+            <Card className={styles['details-card']}>
+              <Typography
+                variant="h4"
+                borderBottom="1px solid black"
+                marginBottom="10px"
+                paddingBottom="10px"
+              >
+                Contact Details
+              </Typography>
+              <Grid
+                sx={{ mb: '10px' }}
+                container
+                rowSpacing={2}
+                spacing={1}
+                columns={2}
+              >
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+                    Address Line 1:
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      textWrap: 'wrap',
+                      lineBreak: 'anywhere',
+                      whiteSpace: 'break-spaces',
+                    }}
+                  >
+                    {hospitalData.addressLine1}
+                  </Typography>
+                </Grid>
+
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+                    Address Line 2:
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      textWrap: 'wrap',
+                      lineBreak: 'anywhere',
+                      whiteSpace: 'break-spaces',
+                    }}
+                  >
+                    {hospitalData.addressLine2}
+                  </Typography>
+                </Grid>
+
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+                    City:
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      textWrap: 'wrap',
+                      lineBreak: 'anywhere',
+                      whiteSpace: 'break-spaces',
+                    }}
+                  >
+                    {hospitalData.city}
+                  </Typography>
+                </Grid>
+
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+                    State:
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      textWrap: 'wrap',
+                      lineBreak: 'anywhere',
+                      whiteSpace: 'break-spaces',
+                    }}
+                  >
+                    {stateName}
+                  </Typography>
+                </Grid>
+
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+                    Postal Code:
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={1}
+                  md={1}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography variant="body1">
+                    {hospitalData.postalCode}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Card>
+          </>
+        )}
+        </Box>
+        <Divider />
+
         <Box id={styles['Asset-container']}>
           <Box>
             <Grid container className={styles['headerStyles']}>
-              <Grid item >
+              <Grid item>
                 <div className={styles['grid-header']}>
                   <h3 id={styles['grid_detail']}>Hospital Manager</h3>
                 </div>
               </Grid>
-              <Grid xs={2} item>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Box>
                   <AddAdmin
                     open={isAddModalOpen}
                     onClose={() => setIsAddModalOpen(false)}
                     onSubmit={addadmin}
                   />
-                    <Loading open={isLoadingModalOpen}
-                    onClose={() => setIsLoadingModalOpen(false)} />
+                  <Loading
+                    open={isLoadingModalOpen}
+                    onClose={() => setIsLoadingModalOpen(false)}
+                  />
                 </Box>
                 <Button
-                  className={styles['add_btn']}
+                  color="primary"
+                  variant="contained"
                   onClick={() => {
-                    setIsAddModalOpen(true)
-                  }}>
-                  <AddIcon fontSize='small' />Add
+                    setIsAddModalOpen(true);
+                  }}
+                >
+                  <AddIcon fontSize="small" />
+                  Add
                 </Button>
-              </Grid>
+              </Box>
             </Grid>
           </Box>
-          <Box className={styles['grid-box']}>
-          {loadingAllAdmin ? (
-            <div className={styles['no-data']}><CircularProgress /></div>
-                  
-              ) : (Array.isArray(adminData) && adminData.length > 0 ? (
-              adminData.map((response: Manager, index: number) => (
-                <Grid container key={index} columnGap={2} className={styles['grid-container']}>
-                   <Grid item xs={12} md={1}><div className={styles['resident-primary']}>{response.isPrimary===true ?(<Chip label="primary" color="primary" variant="outlined" />):(<></>)}</div></Grid>
-                  <Grid item xs={2}><div className={styles['resident-name']}>{response.user.firstName}</div></Grid>
-                  <Grid item xs={2}> <div className={styles['resident-phone']}>{response.user.lastName}</div></Grid>
-                  <Grid item xs={2}> <div className={styles['resident-phone']}>{response.user.email}</div></Grid>
-                  <Grid item xs={2}> <div className={styles['resident-phone']}>+91-{response.user.phoneNumber}</div></Grid>
-                  <Grid item xs={2}><div className={styles['resident-actions']}>
-                    
-                    <IconButton onClick={(e) => {
-                        e.stopPropagation()
-                        handleEditClick(response.user.id)
-                      }} sx={{mt:"-13px", color:'black'}}>
-                      <EditIcon>
-                        Edit
-                      </EditIcon>
-                    </IconButton>
-                    <IconButton sx={{mt:"-13px"}} onClick={(e) => {
-                      e.stopPropagation();
-                      openDeleteModal({ id: response.user.id })
-                    }}>
-                    <DeleteIcon color="error">
-                      Delete
-                    </DeleteIcon>
-                    </IconButton>
-                    
-                  </div>
-                  </Grid>
-                </Grid>
-              ))
-            ) : (
-              <div className={styles['no-data']}>No Admin found</div>
-              )
+          {/* <Box className={styles['grid-box']}> */}
+            <Box className={styles['grid-box']}>
+              {loadingAllAdmin ? (
+                <div className={styles['no-data']}>
+                  <CircularProgress />
+                </div>
+               ) : (
+                <TableContainer sx={{ borderRadius: '12px' }} component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Primary</TableCell>
+                        <TableCell>First Name</TableCell>
+                        <TableCell>Last Name</TableCell>
+                        <TableCell>Email</TableCell>
+                        <TableCell>Phone Number</TableCell>
+                        <TableCell>Actions</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {Array.isArray(adminData) && adminData.length > 0 ? (
+                        adminData.map((response, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              {response.isPrimary && <Chip label="Primary">Primary</Chip>}
+                            </TableCell>
+                            <TableCell>{response.user.firstName}</TableCell>
+                            <TableCell>{response.user.lastName}</TableCell>
+                            <TableCell>{response.user.email}</TableCell>
+                            <TableCell>+91-{response.user.phoneNumber}</TableCell>
+                            <TableCell>
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditClick(response.user.id);
+                                }}
+                                sx={{ color: 'black' }}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openDeleteModal({ id: response.user.id });
+                                }}
+                              >
+                                <DeleteIcon color="error" />
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell align="center" colSpan={6}>
+                            No Admin found
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               )}
+               
+              
+            {/* </Box> */}
           </Box>
           <EditAdmin
             open={isEditModalOpen}

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import styles from './login.module.scss';
 import { environment } from '../../../environments/environment';
 import Button from '@mui/material/Button';
-import { Box, Grid, TextField } from '@mui/material';
+import { Box, CssBaseline, Grid, IconButton, InputAdornment, Paper, TextField } from '@mui/material';
 import axios, { AxiosError } from 'axios';
 import { User, ViewUser } from '@healthcare/data-transfer-types';
 import { UserContext } from '../../contexts/user-contexts';
@@ -12,6 +12,9 @@ import * as yup from 'yup';
 import { enqueueSnackbar } from 'notistack';
 import { Link, useNavigate } from 'react-router-dom';
 import loginImg from '../../../assets/loginImg.jpg';
+import logoImg from '../../../assets/DigiMedic_logo.svg';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 /* eslint-disable-next-line */
 export interface LoginProps {
@@ -25,7 +28,13 @@ export function Login({ onLogin }: LoginProps) {
   const usercontext = useContext(UserContext);
   const navigate=useNavigate();
   const apiUrl = environment.apiUrl;
+  const [showPassword, setShowPassword] = React.useState(false);
 
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
   const validationSchema = yup.object().shape({
     email: yup.string().email('Must be a valid email').required('Email is required'),
     password: yup.string().required('Password is required'),
@@ -58,85 +67,117 @@ export function Login({ onLogin }: LoginProps) {
 
 
   return (
-    <Box className={styles['main_root']}>
-    <Box className={styles['main_container']}>
-      <Box className={styles['first_container']}>
-        <Grid className={styles['image']}>
-          <img
-            src={loginImg}
-            alt="Background"
-            // style={{
-            //   width: '50vh',
-            //   height: '65vh',
-            //   objectFit: 'cover',
-            //   borderTopLeftRadius: '40px',
-            //   borderBottomLeftRadius: '40px',
-            // }}
-          />
-        </Grid>
-      </Box>
-      <Box className={styles['second_container']}>
-        <Grid className={styles['logo_image']}>
-          {/* <img
-            // src={logoImg}
-            alt="Background"
-            style={{ marginTop: '30px', objectFit: 'cover' }}
-          /> */}
-        </Grid>
-        <h2 style={{ fontFamily: 'Secular One' }}>SIGN IN</h2>
-        <form onSubmit={handleSubmit(handleOnSubmit)}>
-          {/* <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></div> */}
-          {/* <div className={styles['login-header']}>Welcome Back <span className={styles['login-emoji']}>👋</span></div> */}
-          <div className={styles['login-form']}>
-            <div className={styles['email']}>
-              <TextField
-                type="email"
-                {...register('email')}
-                label="Email"
-                error={!!errors.email}
-                helperText={
-                  errors.email && errors.email.message
-                    ? errors.email.message
-                    : ''
-                }
-                fullWidth
-                className="form-control"
-                placeholder="Enter Your Email Id"
-              />
-            </div>
-            <div className={styles['password']}>
-              <TextField
-                type="password"
-                {...register('password')}
-                label="Password"
-                error={!!errors.password}
-                helperText={errors.password?.message}
-                className="form-control"
-                placeholder="Enter Your Password"
-                sx={{ width: '280px' }}
-              />
-            </div>
-            <div className={styles['forgot-password']}>
-              <Link to="/forgot-password" style={{ textDecoration: 'none' }}>
-                Forgot Password?
-              </Link>
-            </div>
-          </div>
+    <Grid container component="main" sx={{ height: '100vh' }}>
+    <CssBaseline />
+    <Grid
+      item
+      xs={false}
+      sm={4}
+      md={6}
+      sx={{
+        backgroundImage: `url(${loginImg})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundColor: (t) =>
+          t.palette.mode === 'light'
+            ? t.palette.grey[50]
+            : t.palette.grey[900],
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    />
+    <Grid
+      item
+      xs={12}
+      sm={8}
+      md={6}
+      component={Paper}
+      square
+      sx={{
+        height: '100vh',
+        overflow: 'auto',
+      }}>
+      <Box
+        sx={{
+          mx: 4,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+   <Box
+  display="flex"
+  flexDirection="column"
+  alignItems="center"
+>
+  {/* <Box
+    component={'img'}
+    src={logoImg}
+    sx={{ width: '6rem', height: 'auto', objectFit: 'cover', mb: 2 }}
+  /> */}
+  <Box
+    component={'img'}
+    src={logoImg}
+    sx={{ width: '10rem', height: 'auto', objectFit: 'cover', mb: 4 }}
+  />
+</Box>
 
-          <div className={styles['submit_btn']}>
-            <Button
-              type="submit"
-              variant="contained"
-              className="btn btn-primary"
-              sx={{width:"110px", height:"40px"}}
-            >
-              Log In
-            </Button>
-          </div>
-        </form>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={handleSubmit(handleOnSubmit)}
+          sx={{ mt: 1 }}>
+          <TextField
+            {...register('email')}
+            error={!!errors.email}
+            helperText={errors.email?.message}
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="email"
+            name="email"
+            autoComplete="email"
+            autoFocus
+          />
+          <TextField
+            {...register('password')}
+            error={!!errors.password}
+            helperText={errors.password?.message}
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type={showPassword ? 'text' : 'password'}
+            id="password"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            autoComplete="current-password"
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}>
+            Sign In
+          </Button>
+        </Box>
       </Box>
-    </Box>
-  </Box>
+    </Grid>
+  </Grid>
   );
 
 

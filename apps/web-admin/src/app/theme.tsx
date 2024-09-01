@@ -4,7 +4,7 @@ import { alignProperty } from '@mui/material/styles/cssUtils';
 const baseThemeOptions: ThemeOptions = {
   palette: {
     primary: {
-      main: "#03c9d7",
+      main: "#4FD1C5",
       light: "#e5fafb",
       dark: "#05b2bd",
       contrastText: "#ffffff",

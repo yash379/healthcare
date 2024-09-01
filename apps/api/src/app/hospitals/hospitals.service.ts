@@ -338,6 +338,29 @@ export class HospitalsService {
     });
   }
 
+  async getHospitalCounts() {
+    const totalHospitalsCount = await this.prisma.hospital.count();
+  
+    const activeHospitalsCount = await this.prisma.hospital.count({
+      where: {
+        isActive: true,
+      },
+    });
+  
+    const inactiveHospitalsCount = await this.prisma.hospital.count({
+      where: {
+        isActive: false,
+      },
+    });
+  
+    return {
+      totalHospitalsCount,
+      activeHospitalsCount,
+      inactiveHospitalsCount,
+    };
+  }
+  
+  
   async getFilteredHospitals(
     pageSize: number,
     pageOffset: number,

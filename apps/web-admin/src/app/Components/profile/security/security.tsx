@@ -169,23 +169,25 @@ export function Security(props: SecurityProps) {
 
             </Box>
 
-            <Box className={styles['btn_container']} sx={{ marginTop: "10px" }}>
-              <Button
-                variant="contained"
-                color="primary"
-                type="submit"
-                sx={{ mr: "10px" }}
-                className={styles['buttons_container']}
-              >
-                Save
-              </Button>
+            <Box className={styles['btn_container']} sx={{ marginTop: "10px", display:'flex', flexDirection:'row', justifyContent:'flex-end' }}>
+             
               <Button
                 variant="contained"
                 color="secondary"
+                sx={{ mr: "10px" }}
                 className={styles['buttons_container']}
               onClick={() => reset()}
               >
                 Cancel
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+               
+                className={styles['buttons_container']}
+              >
+                Save
               </Button>
             </Box>
           </form>

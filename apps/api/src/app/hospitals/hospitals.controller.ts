@@ -30,14 +30,14 @@ import { FileDto } from '../core/dto/page-base.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('hospitals')
-@Controller('hospitals')
+@Controller()
 export class HospitalsController {
   constructor(private hospitalService: HospitalsService) {}
 
   @UseGuards(AuthGuard,RolesGuard)
   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN, Role.HOSPITAL_ADMIN)  
   @ApiOperation({summary: "add hospital"})
-  @Post()
+  @Post('/hospitals')
   @HttpCode(HttpStatus.CREATED)
   @ApiOkResponse({ type: AddHospitalResponseDto })
   add(@Body() addHospitalDto: AddHospitalDto): Promise<AddHospitalResponseDto> {
@@ -47,7 +47,7 @@ export class HospitalsController {
   @UseGuards(AuthGuard,RolesGuard)
   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
   @ApiOperation({summary: "get hospitals by id"})
-  @Get('/:id')
+  @Get('hospitals/:id')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: ListHospitalDto })
   findById(@Param('id') id: number): Promise<ListHospitalDto> {
@@ -61,7 +61,7 @@ export class HospitalsController {
   // @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({summary: "bulk upload hospital data"})
-  @Post('/bulkupload')
+  @Post('hospitals/bulkupload')
   @HttpCode(HttpStatus.CREATED)
   // @ApiOkResponse({ type: ListHospitalDto })
   bulkUploadHospitalData(
@@ -89,7 +89,7 @@ export class HospitalsController {
   @UseGuards(AuthGuard,RolesGuard)
   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
   @ApiOperation({summary: "Edit hospital"})
-  @Put('/:id')
+  @Put('hospitals/:id')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: HospitalDto })
   edit(
@@ -111,7 +111,7 @@ export class HospitalsController {
   @UseGuards(AuthGuard,RolesGuard)
   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
   @ApiOperation({summary: "Delete hospital"})
-  @Delete('/:id')
+  @Delete('hospitals/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteHospital(@Param('id') id: number): Promise<void> {
     return this.hospitalService.deleteHospital(+id);
@@ -120,14 +120,23 @@ export class HospitalsController {
   @UseGuards(AuthGuard,RolesGuard)
   @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
   @ApiOperation({summary: "Edit hospital active status"})
-  @Put('/:id/status')
+  @Put('hospitals/:id/status')
   @ApiOkResponse({ type: EditHospitalStatusDto })
   softDeleteHospital(@Body() editHospitalStatusDto: EditHospitalStatusDto, @Param('id') id: number): Promise<EditHospitalStatusDto> {
     return this.hospitalService.softDeleteHospital(+id, editHospitalStatusDto);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.POYV_ADMIN)
+  @ApiOperation({ summary: "Get counts of all hospitals, active and inactive" })
+  @Get('hospital-count')
+  @HttpCode(HttpStatus.OK)
+  getHospitalCounts() {
+    return this.hospitalService.getHospitalCounts();
+  }
+
   @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)  
   @ApiOperation({summary: "get filtered hospitals"})
   @ApiQuery({ name: 'pageSize', type: 'number', required: false })
   @ApiQuery({ name: 'pageOffset', type: 'number', required: false })
@@ -136,7 +145,7 @@ export class HospitalsController {
   @ApiQuery({ name: 'status', type: "'active'| 'inactive'| 'all'", required: false })
   @ApiQuery({ name: 'sortBy', type: 'string', required: false })
   @ApiQuery({ name: 'sortOrder', type: "'asc' | 'desc'", required: false })
-  @Get()
+  @Get('hospitals')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: ListHospitalPageDto })
   async getFilteredHospitals(
