@@ -193,7 +193,7 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
                     rules={{ required: 'code is required' }}
                     render={({ field }) => (
                       <TextField
-                        label="Hospital Code*"
+                        label="Code*"
                         variant="outlined"
                         {...field}
                         sx={{ width: '100%' }}
@@ -308,26 +308,6 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
               <div className={styles['form-row']}>
                 <div className={styles['form-item']}>
                   <Controller
-                    name="city"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: 'City is required' }}
-                    render={({ field }) => (
-                      <TextField
-                        label="City*"
-                        variant="outlined"
-                        {...field}
-                        sx={{ width: '100%' }}
-                        inputProps={{ maxLength: 254 }}
-                        fullWidth
-                        error={!!errors.city}
-                        helperText={errors.city?.message}
-                      />
-                    )}
-                  />
-                </div>
-                <div className={styles['form-item']}>
-                  <Controller
                     name="countryCode"
                     control={control}
                     defaultValue=""
@@ -418,8 +398,6 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
                     )}
                   />
                 </div>
-              </div>
-              <div className={styles['form-row']}>
                 <div className={styles['form-item']}>
                   <Controller
                     name="stateCode"
@@ -507,6 +485,28 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
                           {errors.stateCode?.message}
                         </FormHelperText>
                       </FormControl>
+                    )}
+                  />
+                </div>
+              </div>
+              <div className={styles['form-row']}>
+              <div className={styles['form-item']}>
+                  <Controller
+                    name="city"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: 'City is required' }}
+                    render={({ field }) => (
+                      <TextField
+                        label="City*"
+                        variant="outlined"
+                        {...field}
+                        sx={{ width: '100%' }}
+                        inputProps={{ maxLength: 254 }}
+                        fullWidth
+                        error={!!errors.city}
+                        helperText={errors.city?.message}
+                      />
                     )}
                   />
                 </div>

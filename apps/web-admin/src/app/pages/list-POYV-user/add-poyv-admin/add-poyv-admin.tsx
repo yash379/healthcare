@@ -99,7 +99,7 @@ export function AddPOYVAdmin({ open, onClose, onSubmit }: AddPOYVAdminProps) {
                     placeholder="Enter First Name"
                     {...field}
                     label={
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box sx={{ display: 'flex'}}>
                         First Name
                         <Typography
                           fontSize="medium"
@@ -156,7 +156,7 @@ export function AddPOYVAdmin({ open, onClose, onSubmit }: AddPOYVAdminProps) {
                     placeholder="Enter Email Address"
                     {...field}
                     label={
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box sx={{ display: 'flex'}}>
                         Email Address
                         <Typography
                           fontSize="medium"
@@ -208,7 +208,17 @@ export function AddPOYVAdmin({ open, onClose, onSubmit }: AddPOYVAdminProps) {
             </Box>
             <Box sx={{ textAlignLast: 'start', marginTop: 2 }}>
             <FormControl sx={{width:'100%'}} error={!!errors.superRole}>
-              <InputLabel htmlFor="type" >Role*</InputLabel>
+              <InputLabel htmlFor="type" >{
+                      <Box sx={{ display: 'flex'}}>
+                        Role
+                        <Typography
+                          fontSize="medium"
+                          color="error"
+                          sx={{ ml: '3px' }}>
+                          *
+                        </Typography>
+                      </Box>
+                    }</InputLabel>
               <Controller
                 name="superRole"
                 control={control}

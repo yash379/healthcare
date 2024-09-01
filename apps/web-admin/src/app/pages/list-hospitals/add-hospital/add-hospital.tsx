@@ -141,9 +141,19 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                       <TextField
                         type="text"
                         className="form-control"
-                        placeholder="Enter Hospital Name"
+                        // placeholder="Enter Hospital Name"
                         {...field}
-                        label="Name"
+                        label={
+                          <Box sx={{ display: 'flex'}}>
+                            Name
+                            <Typography
+                              fontSize="medium"
+                              color="error"
+                              sx={{ ml: '3px', mb:"10px" }}>
+                              *
+                            </Typography>
+                          </Box>
+                        }
                         error={!!errors.name}
                         helperText={errors.name?.message}
                         sx={{ width: '100%' }}
@@ -163,7 +173,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                       <TextField
                         label={
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            Hospital Code
+                            Code
                             <Typography
                               fontSize="medium"
                               color="error"
@@ -323,36 +333,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
               </div>
 
               <div className={styles['form-row']}>
-                <div className={styles['form-item']}>
-                  <Controller
-                    name="city"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: 'City is required' }}
-                    render={({ field }) => (
-                      <TextField
-                      inputProps={{ maxLength: 254 }}
-                        label={
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            City
-                            <Typography
-                              fontSize="medium"
-                              color="error"
-                              sx={{ ml: '3px' }}
-                            >
-                              *
-                            </Typography>
-                          </Box>
-                        }
-                        variant="outlined"
-                        {...field}
-                        fullWidth
-                        error={!!errors.city}
-                        helperText={errors.city?.message}
-                      />
-                    )}
-                  />
-                </div>
+              
                 <div className={styles['form-item']}>
                   <Controller
                     name="countryCode"
@@ -415,8 +396,6 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                     )}
                   />
                 </div>
-              </div>
-              <div className={styles['form-row']}>
                 <div className={styles['form-item']}>
                   <Controller
                     name="stateCode"
@@ -483,6 +462,39 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                     )}
                   />
                 </div>
+              </div>
+              <div className={styles['form-row']}>
+              <div className={styles['form-item']}>
+                  <Controller
+                    name="city"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: 'City is required' }}
+                    render={({ field }) => (
+                      <TextField
+                      inputProps={{ maxLength: 254 }}
+                        label={
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            City
+                            <Typography
+                              fontSize="medium"
+                              color="error"
+                              sx={{ ml: '3px' }}
+                            >
+                              *
+                            </Typography>
+                          </Box>
+                        }
+                        variant="outlined"
+                        {...field}
+                        fullWidth
+                        error={!!errors.city}
+                        helperText={errors.city?.message}
+                      />
+                    )}
+                  />
+                </div>
+                
                 <div className={styles['form-item']}>
                   <Controller
                     name="postalCode"
