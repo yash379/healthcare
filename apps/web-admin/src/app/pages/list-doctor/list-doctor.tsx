@@ -19,6 +19,7 @@ import { Doctor, Hospital, ViewDoctor } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/user-contexts';
 import { Gender } from '@prisma/client';
+import Loading from '../../Components/loading/loading';
 
 /* eslint-disable-next-line */
 export interface ListDoctorsProps { }
@@ -70,6 +71,7 @@ export function ListDoctors(props: ListDoctorsProps) {
   const [hospital,setHospital]=useState<Hospital | null>(null);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
 
   const { id } = useParams<{ id: string }>();
   console.log("hospital id:",id);
@@ -221,6 +223,9 @@ console.log("Doctor", response.data)
   const handleAddDoctor = async (formData: Form) => {
 
     try {
+      await setIsAddModalOpen(false);
+    setIsLoadingModalOpen(true);
+
       const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${params.hospitalId}/doctor`,
         { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender,  email: formData.email, phoneNumber: '8734234232', doctorCode: formData.doctorCode, speciality: formData.speciality, isActive: formData.isActive },
         {
@@ -228,18 +233,22 @@ console.log("Doctor", response.data)
 
         },)
       if (responseData) {
+        setIsLoadingModalOpen(false);
         enqueueSnackbar('Doctor added successfully', { variant: 'success' });
         setIsAddModalOpen(false);
         getDoctors();
 
       } else {
-        console.log("Something went wrong")
+        console.log("Something went wrong");
+        setIsLoadingModalOpen(false);
       }
+      console.log("User added successfully", responseData);
 
     } catch (error) {
       console.log(error);
       console.log("Something went wrong in input form")
       enqueueSnackbar('Something went wrong', { variant: 'error' });
+      setIsLoadingModalOpen(false);
     }
   }
 
@@ -352,34 +361,17 @@ console.log("Doctor", response.data)
 
 
   return (
-    <>
       <Box className={styles['container']}>
         <Breadcrumbs paths={breadcrumbs} />
         <Box className={styles['building_container']}>
-
-          <Box className={styles['btn_container']}>
-            <h1>Doctors</h1>
-            <Box>
-              <AddDoctorComponent
-                open={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
-                onSubmit={handleAddDoctor}
-              />
-            </Box>
-            <Box>
-              {/* <ViewDoctorComponent
-                open={viewDoctorOpen}
-                onClose={() => setViewDoctorOpen(false)}
-                doctorId={selectedDoctor}
-                initialData={viewData}
-              /> */}
-            </Box>
-            <Box className={styles['search-container']}>
-              <TextField
+          <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}} >
+           <Box sx={{mt:'20px',display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+            <h1 style={{marginTop:'10px'}}>Doctors</h1>
+            <TextField
                 type="text"
                 variant="outlined"
                 size="small"
-                sx={{ mt: 2.3, mr: '10px' }}
+                sx={{ml: '10px' }}
                 onChange={handleSearchNameChange}
                 InputProps={{
                   startAdornment: (
@@ -387,17 +379,45 @@ console.log("Doctor", response.data)
                   ),
                 }}
               />
+                </Box>
+            <Box>
+              <AddDoctorComponent
+                open={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSubmit={handleAddDoctor}
+              />
+               <Loading open={isLoadingModalOpen}
+                    onClose={() => setIsLoadingModalOpen(false)} />
+            </Box>
+            <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}} className={styles['search-container']}>
+              
+              <Button variant="contained" color="primary" 
+                onClick={() => {
+                  setIsAddModalOpen(true);
+                }}
+              > <AddIcon fontSize='small' />Add</Button>
+            </Box>
+            {/* <Box> */}
+              {/* <ViewDoctorComponent
+                open={viewDoctorOpen}
+                onClose={() => setViewDoctorOpen(false)}
+                doctorId={selectedDoctor}
+                initialData={viewData}
+              /> */}
+            {/* </Box> */}
+            {/* <Box className={styles['search-container']}>
+              
               <Button variant="contained" color="primary"
                 onClick={() => {
                   setIsAddModalOpen(true)
                 }}
               > <AddIcon fontSize='small' /> Add</Button>
-            </Box>
+            </Box> */}
 
           </Box >
 
           <TableContainer>
-            <Table>
+            <Table stickyHeader>
               <TableHead>
                 <TableRow>
                 <TableCell><Checkbox
@@ -424,7 +444,7 @@ console.log("Doctor", response.data)
                   </TableCell>
                   {/* <TableCell sx={{ border: "hidden" }}>Flat Number</TableCell>
                   <TableCell sx={{ border: "hidden" }}>Building Name</TableCell> */}
-                  <TableCell sx={{ border: "hidden" }}></TableCell>
+                  <TableCell sx={{ border: "hidden" }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -484,7 +504,7 @@ console.log("Doctor", response.data)
                   )}
               </TableBody>
             </Table>
-            <Box sx={{  display:'flex',
+            {/* <Box sx={{  display:'flex',
             flexDirection:'row',
             justifyContent:"flex-end",
            
@@ -513,8 +533,8 @@ console.log("Doctor", response.data)
                 />
               )}
             />
-          </Stack>
-            <TablePagination
+          </Stack> */}
+            {/* <TablePagination
               sx={{ marginTop: "5px" }}
               rowsPerPageOptions={[5, 10, 20]}
               component="div"
@@ -523,9 +543,28 @@ console.log("Doctor", response.data)
               page={page}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-            </Box>
+            /> */}
+            {/* </Box> */}
           </TableContainer>
+          <Stack spacing={2} className={styles['paginationContainer']}>
+          <Pagination
+            count={pageCount}
+            page={page}
+            onChange={handleChangePage}
+            color="primary"
+            renderItem={(item) => (
+              <PaginationItem
+                {...item}
+                className={styles['paginationItem']}
+              />
+            )}
+            siblingCount={1}
+            boundaryCount={1}
+            showFirstButton
+            showLastButton
+          />
+        </Stack>
+         
         </Box>
 
 
@@ -549,8 +588,6 @@ console.log("Doctor", response.data)
           doctorData={viewData}          
         />
       </Box >
-
-    </>
   );
 }
 

@@ -173,7 +173,17 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
                     rules={{ required: 'Name is required' }}
                     render={({ field }) => (
                       <TextField
-                        label="Name*"
+                        label={
+                          <Box sx={{ display: 'flex'}}>
+                            Name
+                            <Typography
+                              fontSize="medium"
+                              color="error"
+                              sx={{ ml: '3px', mb:"10px" }}>
+                              *
+                            </Typography>
+                          </Box>
+                        }
                         variant="outlined"
                         {...field}
                         sx={{ width: '100%' }}
@@ -193,7 +203,18 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
                     rules={{ required: 'code is required' }}
                     render={({ field }) => (
                       <TextField
-                        label="Code*"
+                        label={
+                          <Box sx={{ display: 'flex' }}>
+                            Code
+                            <Typography
+                              fontSize="medium"
+                              color="error"
+                              sx={{ ml: '3px' }}
+                            >
+                              *
+                            </Typography>
+                          </Box>
+                        }
                         variant="outlined"
                         {...field}
                         sx={{ width: '100%' }}
@@ -223,7 +244,18 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
                     defaultValue=""
                     render={({ field }) => (
                       <TextField
-                        label="Email*"
+                        label={
+                          <Box sx={{ display: 'flex'}}>
+                            Email
+                            <Typography
+                              fontSize="medium"
+                              color="error"
+                              sx={{ ml: '3px' }}
+                            >
+                              *
+                            </Typography>
+                          </Box>
+                        }
                         variant="outlined"
                         {...field}
                         sx={{ width: '100%' }}
@@ -242,7 +274,18 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
                     defaultValue=""
                     render={({ field }) => (
                       <TextField
-                        label="Phone Number*"
+                        label={
+                          <Box sx={{ display: 'flex' }}>
+                            Phone Number
+                            <Typography
+                              fontSize="medium"
+                              color="error"
+                              sx={{ ml: '3px' }}
+                            >
+                              *
+                            </Typography>
+                          </Box>
+                        }
                         variant="outlined"
                         {...field}
                         sx={{ width: '100%' }}
@@ -271,7 +314,18 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
                     rules={{ required: 'Address_line1 is required' }}
                     render={({ field }) => (
                       <TextField
-                        label="Address 1*"
+                        label={
+                          <Box sx={{ display: 'flex' }}>
+                            Address 1
+                            <Typography
+                              fontSize="medium"
+                              color="error"
+                              sx={{ ml: '3px' }}
+                            >
+                              *
+                            </Typography>
+                          </Box>
+                        }
                         variant="outlined"
                         {...field}
                         sx={{ width: '100%' }}
@@ -498,7 +552,18 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
                     rules={{ required: 'City is required' }}
                     render={({ field }) => (
                       <TextField
-                        label="City*"
+                        label={
+                          <Box sx={{ display: 'flex' }}>
+                            City
+                            <Typography
+                              fontSize="medium"
+                              color="error"
+                              sx={{ ml: '3px' }}
+                            >
+                              *
+                            </Typography>
+                          </Box>
+                        }
                         variant="outlined"
                         {...field}
                         sx={{ width: '100%' }}
@@ -518,7 +583,18 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
                     rules={{ required: 'postalcode is required' }}
                     render={({ field }) => (
                       <TextField
-                        label="Postal Code*"
+                        label={
+                          <Box sx={{ display: 'flex' }}>
+                            Postal Code
+                            <Typography
+                              fontSize="medium"
+                              color="error"
+                              sx={{ ml: '3px' }}
+                            >
+                              *
+                            </Typography>
+                          </Box>
+                        }
                         variant="outlined"
                         {...field}
                         sx={{ width: '100%' }}
