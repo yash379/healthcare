@@ -172,7 +172,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                     render={({ field }) => (
                       <TextField
                         label={
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Box sx={{ display: 'flex' }}>
                             Code
                             <Typography
                               fontSize="medium"
@@ -211,7 +211,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                     render={({ field }) => (
                       <TextField
                         label={
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Box sx={{ display: 'flex'}}>
                             Email
                             <Typography
                               fontSize="medium"
@@ -240,7 +240,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                     render={({ field }) => (
                       <TextField
                         label={
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Box sx={{ display: 'flex' }}>
                             Phone Number
                             <Typography
                               fontSize="medium"
@@ -279,7 +279,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                     render={({ field }) => (
                       <TextField
                         label={
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Box sx={{ display: 'flex' }}>
                             Address 1
                             <Typography
                               fontSize="medium"
@@ -310,7 +310,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                       <TextField
                       inputProps={{ maxLength: 254 }}
                         label={
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Box sx={{ display: 'flex' }}>
                             Address 2
                             <Typography
                               fontSize="medium"
@@ -351,7 +351,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                       >
                         <InputLabel>
                           {
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Box sx={{ display: 'flex' }}>
                               Country
                               <Typography
                                 fontSize="medium"
@@ -413,7 +413,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                       >
                         <InputLabel>
                           {stateOptions.length > 0 ? (
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Box sx={{ display: 'flex' }}>
                               State
                               <Typography
                                 fontSize="medium"
@@ -431,7 +431,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                           label={
                             stateOptions.length > 0 ? (
                               <Box
-                                sx={{ display: 'flex', alignItems: 'center' }}
+                                sx={{ display: 'flex' }}
                               >
                                 State
                                 <Typography
@@ -474,7 +474,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                       <TextField
                       inputProps={{ maxLength: 254 }}
                         label={
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Box sx={{ display: 'flex' }}>
                             City
                             <Typography
                               fontSize="medium"
@@ -504,7 +504,7 @@ const AddHospitalComponent: React.FC<AddHospitalProps> = ({
                     render={({ field }) => (
                       <TextField
                         label={
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Box sx={{ display: 'flex' }}>
                             Postal Code
                             <Typography
                               fontSize="medium"

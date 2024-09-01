@@ -23,11 +23,6 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AdminCountsDto, AssetCountDashboardDto, ManagerDto, UserDto } from './dto/user.dto';
 import { EditUserStatus, ViewUserDto } from './dto/view-user.dto';
 import { ForgotPasswordDto, LoginDto, UpdatePasswordDto, UpdatePasswordThroughProfileDto } from '../core/dto/user-login.dto';
-import { LocalAuthGuard } from '../auth/local-auth.guard';
-import { AddDoctorDto } from './dto/add-doctor.dto';
-import { DoctorDto } from './dto/doctors.dto';
-import { ListDoctorPageDto } from './dto/list-doctor-page.dto';
-import { ViewDoctorDto } from './dto/view-doctor.dto';
 
 @ApiTags("Users")
 @Controller()
@@ -100,6 +95,18 @@ export class UsersController {
     return this.usersService.addManager(+hospitalId,data);
   }
 
+  @Put('/hospitals/:hospitalId/managers/:managerId')
+  @ApiOkResponse({ type: ManagerDto })
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
+  @HttpCode(HttpStatus.OK)
+  async updateManager(
+    @Param('hospitalId') hospitalId: number,
+    @Param('managerId') managerId: number,
+    @Body() data: AddManagerDto & { isPrimary?: boolean }
+  ): Promise<ManagerDto & { isPrimary: boolean }> {
+    return this.usersService.updateManager(+hospitalId, +managerId, data);
+  }
+
   
   @Put('update-password/email/:emailId/token/:token')
   @ApiOkResponse({ type: UserDto })
@@ -116,14 +123,14 @@ export class UsersController {
     return this.usersService.forgotPassword(forgotPasswordDto);
   }
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Get('/hospitals/:hospitalId/managers')
-  // @HttpCode(HttpStatus.OK)
-  // // @ApiOkResponse({ type: ViewUserDto })
-  // @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
-  // listMangers(@Param('hospitalId') hospitalId: number) {
-  //   return this.usersService.listMangers(+hospitalId);
-  // }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Get('/hospitals/:hospitalId/managers')
+  @HttpCode(HttpStatus.OK)
+  // @ApiOkResponse({ type: ViewUserDto })
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
+  listMangers(@Param('hospitalId') hospitalId: number) {
+    return this.usersService.listMangers(+hospitalId);
+  }
   
 
   @UseGuards(AuthGuard, RolesGuard)
@@ -158,13 +165,13 @@ export class UsersController {
 
  
 
-  // @UseGuards(AuthGuard)
-  // @Delete('/hospitals/:hospitalId/managers/:id')
-  // @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // deleteUser(@Param('hospitalId') hospitalId: number,@Param('id') id: number): Promise<void> {
-  //   return this.usersService.deleteUser(+hospitalId,+id);
-  // }
+  @UseGuards(AuthGuard)
+  @Delete('/hospitals/:hospitalId/managers/:id')
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteUser(@Param('hospitalId') hospitalId: number,@Param('id') id: number): Promise<void> {
+    return this.usersService.deleteUser(+hospitalId,+id);
+  }
 
 
   // @UseGuards(AuthGuard)

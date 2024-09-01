@@ -78,13 +78,13 @@ export function DeletePOYVAdmin({
             }}
             variant='h2'>
             {Status ? 'Deactivate' : 'Activate'} User
-          </Typography>
+         
           <IconButton
             onClick={() => {
               onClose();
             }}
             aria-label="Close"
-            sx={{ p: '12px' }}>
+            sx </Typography>={{ p: '12px' }}>
             <CancelIcon />
           </IconButton>
         </Box>

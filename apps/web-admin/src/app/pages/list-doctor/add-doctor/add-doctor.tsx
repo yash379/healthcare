@@ -14,11 +14,24 @@ import { environment } from '../../../../environments/environment';
 import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Checkbox, Dialog, FormControlLabel, FormHelperText, FormLabel, Grid, InputAdornment, Radio, RadioGroup } from '@mui/material';
+import {
+  Checkbox,
+  Dialog,
+  FormControlLabel,
+  FormHelperText,
+  FormLabel,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Radio,
+  RadioGroup,
+  Typography,
+} from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { Gender } from '@prisma/client';
-import PhoneInput from 'react-phone-input-2'
-import 'react-phone-input-2/lib/style.css'
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 export interface AddDoctorProps {
   open: boolean;
@@ -38,7 +51,6 @@ interface Form {
   isActive: boolean;
 }
 
-
 interface EditForm {
   firstName: string;
   lastName: string;
@@ -50,10 +62,15 @@ interface EditForm {
   isActive: boolean;
 }
 
-
-const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit }) => {
+const AddDoctorComponent: React.FC<AddDoctorProps> = ({
+  open,
+  onClose,
+  onSubmit,
+}) => {
   const apiUrl = environment.apiUrl;
-  const [totalbuildingValue, setTotalbuildingValue] = useState<number | null>(null);
+  const [totalbuildingValue, setTotalbuildingValue] = useState<number | null>(
+    null
+  );
   const [totalValue, setTotalValue] = useState<number | null>(null);
   const [totalFlatValue, setTotalFlatValue] = useState<number | null>(null);
   const [page, setPage] = useState(0);
@@ -68,20 +85,27 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
     doctorCode: yup.string().required('Doctor Code is required'),
     speciality: yup.string().required('Speciality is required'),
   });
-  const {  handleSubmit, control, reset, formState: { errors }, watch, setValue } = useForm<Form>({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useForm<Form>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      isActive: true
-    }
+      isActive: true,
+    },
   });
 
   // const selectedBuildingId = watch('buildingId');
   // const selectedFloorId = watch('floorId');
 
-  const params=useParams();
+  const params = useParams();
 
   const handleFormSubmit = (data: Form) => {
-    console.log("handleAddForm:", data)
+    console.log('handleAddForm:', data);
     onSubmit(data);
   };
 
@@ -104,89 +128,136 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
   //   }
   // }, [initialData, setValue]);
 
-
   return (
-    <Modal open={open} onClose={onClose}>
-    <Box className={styles['modal-container']}>
-      <h2 className={styles['h2_tag']}>Add Doctor</h2>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <Box sx={{
-          display: 'grid',
-          columnGap: 2,
-          rowGap: 1,
-          paddingRight: 3,
-          paddingLeft: 3,
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          '@media (max-width: 600px)': {
-            gridTemplateColumns: '1fr',
-          },
-        }}
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <Box p={'5px 24px 24px 24px'}>
+        <Typography
+          variant="h2"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            margin: '14px -10px 5px 0px',
+          }}
         >
-          <Box className={styles['modal_first_container']}>
-
-          <Box className={styles['grid_top']}>
-              <Controller
-                name="firstName"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'First Name is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter First Name"
-                    {...field}
-                    label="First Name*"
-                    error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
-                    sx={{ width: '100%' }}
-                  />
-
-                )}
-              />
-            </Box>
-            <Box className={styles['grid_top']}>
-              <Controller
-                name="lastName"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Last Name is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter Last Name"
-                    {...field}
-                    label="Last Name*"
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
-                    sx={{ width: '100%' }}
-                  />
-
-                )}
-              />
-            </Box>
-            <Box className={styles['grid_top']}>
-              <Controller
-                name="email"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Email is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="email"
-                    className="form-control"
-                    placeholder="Enter Email"
-                    {...field}
-                    label="Email*"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    sx={{ width: '100%' }}
-                  />
-                )}
-              />
-            </Box>
-            {/* <Box className={styles['grid_top']}>
+          Add Doctor
+          <IconButton
+            onClick={() => {
+              onClose();
+              reset();
+            }}
+            aria-label="Close"
+          >
+            <CancelIcon />
+          </IconButton>
+        </Typography>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <Box
+            sx={{
+              display: 'grid',
+              columnGap: 2,
+              rowGap: 1,
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              '@media (max-width: 600px)': {
+                gridTemplateColumns: '1fr',
+              },
+            }}
+          >
+            <Box className={styles['modal_first_container']}>
+              <Box className={styles['grid_top']}>
+                <Controller
+                  name="firstName"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: 'First Name is required' }}
+                  render={({ field }) => (
+                    <TextField
+                      type="text"
+                      className="form-control"
+                      // placeholder="Enter First Name"
+                      {...field}
+                      label={
+                        <Box sx={{ display: 'flex' }}>
+                          First Name
+                          <Typography
+                            fontSize="medium"
+                            color="error"
+                            sx={{ ml: '3px', mb: '10px' }}
+                          >
+                            *
+                          </Typography>
+                        </Box>
+                      }
+                      error={!!errors.firstName}
+                      helperText={errors.firstName?.message}
+                      sx={{ width: '100%' }}
+                    />
+                  )}
+                />
+              </Box>
+              <Box className={styles['grid_top']}>
+                <Controller
+                  name="lastName"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: 'Last Name is required' }}
+                  render={({ field }) => (
+                    <TextField
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Last Name"
+                      {...field}
+                      label={
+                        <Box sx={{ display: 'flex' }}>
+                          Last Name
+                          <Typography
+                            fontSize="medium"
+                            color="error"
+                            sx={{ ml: '3px', mb: '10px' }}
+                          >
+                            *
+                          </Typography>
+                        </Box>
+                      }
+                      error={!!errors.lastName}
+                      helperText={errors.lastName?.message}
+                      sx={{ width: '100%' }}
+                    />
+                  )}
+                />
+              </Box>
+              <Box className={styles['grid_top']}>
+                <Controller
+                  name="email"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: 'Email is required' }}
+                  render={({ field }) => (
+                    <TextField
+                      type="email"
+                      className="form-control"
+                      placeholder="Enter Email"
+                      {...field}
+                      label={
+                        <Box sx={{ display: 'flex' }}>
+                          Email Address
+                          <Typography
+                            fontSize="medium"
+                            color="error"
+                            sx={{ ml: '3px' }}
+                          >
+                            *
+                          </Typography>
+                        </Box>
+                      }
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
+                      sx={{ width: '100%' }}
+                    />
+                  )}
+                />
+              </Box>
+              {/* <Box className={styles['grid_top']}>
               <Controller
                 name="phoneNumber"
                 control={control}
@@ -212,103 +283,160 @@ const AddDoctorComponent: React.FC<AddDoctorProps> = ({ open, onClose, onSubmit 
                 )}
               />
             </Box> */}
-
-            
-           
-           </Box>
-          <Box className={styles['modal_second_container']}
-          >
-<Box className={styles['grid_top']}>
-              <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
-                <InputLabel htmlFor="type"  >Gender*</InputLabel>
+            </Box>
+            <Box className={styles['modal_second_container']}>
+              <Box className={styles['grid_top']}>
+                <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
+                  <InputLabel htmlFor="type">
+                    {
+                      <Box sx={{ display: 'flex' }}>
+                        Gender
+                        <Typography
+                          fontSize="medium"
+                          color="error"
+                          sx={{ ml: '3px' }}
+                        >
+                          *
+                        </Typography>
+                      </Box>
+                    }
+                  </InputLabel>
+                  <Controller
+                    name="gender"
+                    control={control}
+                    // defaultValue=""
+                    rules={{ required: 'Gender is required' }}
+                    render={({ field }) => (
+                      <Select
+                        label={
+                          <Box sx={{ display: 'flex' }}>
+                            Gender
+                            <Typography
+                              fontSize="medium"
+                              color="error"
+                              sx={{ ml: '3px' }}
+                            >
+                              *
+                            </Typography>
+                          </Box>
+                        }
+                        variant="outlined"
+                        {...field}
+                        error={!!errors.gender}
+                        // MenuProps={{
+                        //   PaperProps: {
+                        //     style: {
+                        //       maxHeight: 97
+                        //     },
+                        //   },
+                        // }}
+                      >
+                        <MenuItem sx={{ justifyContent: 'start' }} value="MALE">
+                          Male
+                        </MenuItem>
+                        <MenuItem
+                          sx={{ justifyContent: 'start' }}
+                          value="FEMALE"
+                        >
+                          Female
+                        </MenuItem>
+                        <MenuItem
+                          sx={{ justifyContent: 'start' }}
+                          value="OTHERS"
+                        >
+                          Others
+                        </MenuItem>
+                      </Select>
+                    )}
+                  />
+                  <FormHelperText>{errors.gender?.message}</FormHelperText>
+                </FormControl>
+              </Box>
+              <Box className={styles['grid_top']}>
                 <Controller
-                  name="gender"
+                  name="doctorCode"
                   control={control}
-                  // defaultValue=""
-                  rules={{ required: 'Gender is required' }}
+                  defaultValue=""
+                  rules={{ required: 'Doctor Code is required' }}
                   render={({ field }) => (
-                    <Select
-                      label="Gender*"
-                      variant="outlined"
+                    <TextField
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Doctor Code"
                       {...field}
-                      error={!!errors.gender}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 97
-                          },
-                        },
-                      }}
-                    >
-                      <MenuItem sx={{ justifyContent: "start" }} value="MALE">Male</MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value="FEMALE">Female</MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value="OTHERS">Others</MenuItem>
-                    </Select>
-
+                      label={
+                        <Box sx={{ display: 'flex' }}>
+                          Doctor Code
+                          <Typography
+                            fontSize="medium"
+                            color="error"
+                            sx={{ ml: '3px' }}
+                          >
+                            *
+                          </Typography>
+                        </Box>
+                      }
+                      error={!!errors.doctorCode}
+                      helperText={errors.doctorCode?.message}
+                      sx={{ width: '100%' }}
+                    />
                   )}
                 />
-                <FormHelperText>{errors.gender?.message}</FormHelperText>
-              </FormControl>
+              </Box>
+              <Box className={styles['grid_top']}>
+                <Controller
+                  name="speciality"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: 'Speciality is required' }}
+                  render={({ field }) => (
+                    <TextField
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Speciality"
+                      {...field}
+                      label={
+                        <Box sx={{ display: 'flex' }}>
+                          Speciality
+                          <Typography
+                            fontSize="medium"
+                            color="error"
+                            sx={{ ml: '3px' }}
+                          >
+                            *
+                          </Typography>
+                        </Box>
+                      }
+                      error={!!errors.speciality}
+                      helperText={errors.speciality?.message}
+                      sx={{ width: '100%' }}
+                    />
+                  )}
+                />
+              </Box>
             </Box>
-            <Box className={styles['grid_top']}>
-              <Controller
-                name="doctorCode"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Doctor Code is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter Doctor Code"
-                    {...field}
-                    label="Doctor Code*"
-                    error={!!errors.doctorCode}
-                    helperText={errors.doctorCode?.message}
-                    sx={{ width: '100%' }}
-                  />
-
-                )}
-              />
-            </Box>
-            <Box className={styles['grid_top']}>
-              <Controller
-                name="speciality"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Speciality is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter Speciality"
-                    {...field}
-                    label="Speciality*"
-                    error={!!errors.speciality}
-                    helperText={errors.speciality?.message}
-                    sx={{ width: '100%' }}
-                  />
-
-                )}
-              />
-            </Box>
-
           </Box>
-        </Box>
 
-        <Box className={styles['update_modal-buttons']}>
-          <Button sx={{ mr: "10px" }} variant="contained" color="primary" type="submit">
-             Add
-          </Button>
-          <Button variant="contained" color="secondary" onClick={()=>{onClose(); reset()}}>
-            Cancel
-          </Button>
-        </Box>
-      </form>
-
-    </Box>
-  </Modal>
+          <Box sx={{ mb: '5px', mt: '20px', textAlign: 'end' }}>
+            <Button
+              sx={{ mr: '10px' }}
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                onClose();
+                reset();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button variant="contained" color="primary" type="submit">
+              Add
+            </Button>
+          </Box>
+        </form>
+      </Box>
+    </Dialog>
   );
-}
+};
 
 export default AddDoctorComponent;
