@@ -1,6 +1,9 @@
 import { Gender } from '@prisma/client';
 import styles from './list-appointment.module.scss';
 import AddDoctorComponent from '../list-doctor/add-doctor/add-doctor';
+import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+
 import {
   Box,
   Button,
@@ -17,6 +20,7 @@ import {
   CardContent,
   Typography,
   styled,
+  Avatar,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
@@ -33,12 +37,27 @@ import DeleteAppointment from './delete-appointment/delete-appointment';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 
 import * as React from "react";
-import AllAppointmentLog from './all-appointment-log/all-appointment-log';
 
 
 
 
 export interface ListAppointmentProps { }
+
+export enum StatusEnum {
+  Scheduled = "Scheduled",
+  InProgress = "In Progress",
+  Cancelled = "Cancelled",
+  PendingConfirmation = "Pending Confirmation",
+}
+
+// Define a mapping of status to background color
+const statusColorMap: Record<StatusEnum, string> = {
+  [StatusEnum.Scheduled]: '#d1e7dd', // light green
+  [StatusEnum.InProgress]: '#ffebcc', // light yellow
+  [StatusEnum.Cancelled]: '#f8d7da', // light red
+  [StatusEnum.PendingConfirmation]: '#fff3cd', // light orange
+};
+
 
 interface Form {
   firstName: string;
@@ -48,7 +67,10 @@ interface Form {
   gender: Gender;
   age: number;
   date: Date;
+  status: StatusEnum;
 }
+
+
 
 interface ViewAppointment {
   id: number;
@@ -59,6 +81,8 @@ interface ViewAppointment {
   gender: Gender;
   age: number;
   date: Date;
+  status: StatusEnum;
+
 }
 
 
@@ -86,6 +110,7 @@ export function ListAppointment(props: ListAppointmentProps) {
       mobileNumber: '1234567890',
       email: 'john.doe@example.com',
       gender: Gender.MALE,
+      status: StatusEnum.InProgress,
       age: 30,
       date: new Date(),
     },
@@ -96,6 +121,7 @@ export function ListAppointment(props: ListAppointmentProps) {
       mobileNumber: '0987654321',
       email: 'jane.smith@example.com',
       gender: Gender.FEMALE,
+      status: StatusEnum.InProgress,
       age: 25,
       date: new Date(),
     },
@@ -223,42 +249,19 @@ export function ListAppointment(props: ListAppointmentProps) {
     }
   };
 
+  const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName[0]}${lastName[0]}`.toUpperCase();
+  };
+
   return (
     <>
       <Box className={styles['btn_container']}>
         <Box sx={{
-          display:'flex',
+          display: 'flex',
           width: '100%'
         }}
         >
-          <Box sx={{marginRight:'25px'}}>
-            <Box>
-              <AddAppointment
-                open={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
-                onSubmit={handleAddAppointment}
-              />
-            </Box>
-            <Box className={styles['search-container']}>
-              <TextField
-                type="text"
-                variant="outlined"
-                size="small"
-                sx={{ mt: 2.3, mr: '10px' }}
-                onChange={handleSearchNameChange}
-                InputProps={{
-                  startAdornment: <SearchIcon color="action" />,
-                }}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setIsAddModalOpen(true)}
-              >
-                <AddIcon fontSize="small" /> Add
-              </Button>
-            </Box>
-
+          <Box sx={{ marginRight: '25px' }}>
             {/* Appointment Statistics Cards */}
             <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
               {/* Total Appointments Card */}
@@ -286,7 +289,7 @@ export function ListAppointment(props: ListAppointmentProps) {
               </Card>
 
               {/* Completed Appointments Card */}
-              <Card sx={{ minWidth: 200, p: 2, borderRadius: 5 }}>
+              <Card sx={{ p: 2, borderRadius: 5 }}>
                 <CardContent sx={{ display: 'flex' }}>
                   <DescriptionOutlinedIcon
                     sx={{
@@ -310,7 +313,7 @@ export function ListAppointment(props: ListAppointmentProps) {
               </Card>
 
               {/* Pending Appointments Card */}
-              <Card sx={{ minWidth: 200, p: 2, borderRadius: 5 }}>
+              <Card sx={{ Width: 200, p: 2, borderRadius: 5 }}>
                 <CardContent sx={{ display: 'flex' }}>
                   <DescriptionOutlinedIcon
                     sx={{
@@ -333,46 +336,109 @@ export function ListAppointment(props: ListAppointmentProps) {
                 </CardContent>
               </Card>
             </Box>
+            <Box>
+              <AddAppointment
+                open={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSubmit={handleAddAppointment}
+              />
+            </Box>
+            <Box className={styles['search-container']} sx={{ ml: 98, display: 'flex', direction: 'row', justifyContent: 'space-evenly' }}>
+              <Box >
+                <Typography
+                  sx={{
+                    color: '#2B3674',
+                    fontWeight: 'Bold',
+                    fontFamily: 'DM Sans, sans-serif' // Using a fallback font
+                  }}
+                >
+                  Upcoming Appointments
+                </Typography>
+              </Box>
+              <TextField
+                type="text"
+                variant="outlined"
+                size="small"
+                sx={{ mt: 2.3, mr: '10px' }}
+                onChange={handleSearchNameChange}
+                InputProps={{
+                  startAdornment: <SearchIcon color="action" />,
+                }}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setIsAddModalOpen(true)}
+              >
+                <AddIcon fontSize="small" /> Add
+              </Button>
+
+            </Box>
           </Box>
-          <AllAppointmentLog 
-          >
-
-          </AllAppointmentLog>
-
         </Box>
-
-
 
         {/* Table displaying appointments */}
         <TableContainer component={Paper} sx={{ mt: 3 }}>
           <Table sx={{ minWidth: 650 }} aria-label="appointment table">
             <TableHead>
               <TableRow>
-                <TableCell>First Name</TableCell>
-                <TableCell>Last Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Mobile Number</TableCell>
+                <TableCell>Patient Name</TableCell>
                 <TableCell>Gender</TableCell>
-                <TableCell>Age</TableCell>
                 <TableCell>Date</TableCell>
+                <TableCell>Status</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {dummyAppointments.map((appointment) => (
                 <TableRow key={appointment.id}>
-                  <TableCell>{appointment.firstName}</TableCell>
-                  <TableCell>{appointment.lastName}</TableCell>
-                  <TableCell>{appointment.email}</TableCell>
-                  <TableCell>{appointment.mobileNumber}</TableCell>
+                  <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+                    <NavLink
+                      to={`/appointments/${appointment.id}`}
+                      style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}
+                    >
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          '&:hover': {
+                            backgroundColor: '#f0f0f0', // Change this to your desired hover color
+                            borderRadius: '8px',        // Optional: adds rounded corners
+                            padding: '4px',             // Optional: adds padding inside the hover area
+                          },
+                        }}
+                      >
+                        <Avatar sx={{ bgcolor: '#4FD1C5', marginRight: 2 }}>
+                          {getInitials(appointment.firstName, appointment.lastName)}
+                        </Avatar>
+                        {`${appointment.firstName} ${appointment.lastName}`}
+                      </Box>
+                    </NavLink>
+
+                  </TableCell>
+
+
                   <TableCell>{appointment.gender}</TableCell>
-                  <TableCell>{appointment.age}</TableCell>
                   <TableCell>{appointment.date.toDateString()}</TableCell>
                   <TableCell>
+                    <Box
+                      sx={{
+                        display: 'inline-block',
+                        padding: '2px 6px',
+                        borderRadius: '12px',
+                        backgroundColor: statusColorMap[appointment.status],
+                        color: '#000',
+                        textAlign: 'center',
+                      }}
+                    >
+                      {appointment.status}
+                    </Box>
+                  </TableCell>
+                  <TableCell>
                     <IconButton onClick={() => handleEditClick(appointment.id)}>
-                      <EditIcon sx={{ color: '' }} />
+                      <EditIcon />
                     </IconButton>
-                    <IconButton onClick={() => handleDeleteClick(appointment.id)}>
+                    <IconButton onClick={() => handleDeleteClick(appointment.id)} color='error'>
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -399,6 +465,7 @@ export function ListAppointment(props: ListAppointmentProps) {
             onClose={closeDeleteModal}
             onDelete={deleteAppointment}
             appointmentData={viewData}
+
           />
         )}
       </Box>
