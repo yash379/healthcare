@@ -17,10 +17,10 @@ export enum GenderEnum {
 }
 
 export enum StatusEnum {
-  scheduled = "Scheduled",
-  inProgress = "In Progress",
-  cancelled = "Cancelled",
-  pendingConfirmation = "Pending Confirmation",
+  Scheduled = "Scheduled",
+  InProgress = "In Progress",
+  Cancelled = "Cancelled",
+  PendingConfirmation = "Pending Confirmation",
 }
 
 export interface Form {
@@ -374,22 +374,22 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({ open, onClose, onSubmit
                         },
                       }}
                     >
-                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.scheduled}>
-                        {StatusEnum.scheduled}
+                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.Scheduled}>
+                        {StatusEnum.Scheduled}
                       </MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.inProgress}>
-                        {StatusEnum.inProgress}
+                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.InProgress}>
+                        {StatusEnum.InProgress}
                       </MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.cancelled}>
-                        {StatusEnum.cancelled}
+                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.Cancelled}>
+                        {StatusEnum.Cancelled}
                       </MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.pendingConfirmation}>
-                        {StatusEnum.pendingConfirmation}
+                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.PendingConfirmation}>
+                        {StatusEnum.PendingConfirmation}
                       </MenuItem>
                     </Select>
                   )}
                 />
-                <FormHelperText sx={{ color: "#d32f2f" }}>{errors.gender?.message}</FormHelperText>
+                <FormHelperText sx={{ color: "#d32f2f" }}>{errors.status?.message}</FormHelperText>
               </FormControl>
             </Grid>
           </Grid>

@@ -4,6 +4,7 @@ import AddDoctorComponent from '../list-doctor/add-doctor/add-doctor';
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
+
 import {
   Box,
   Button,
@@ -102,7 +103,7 @@ export function ListAppointment(props: ListAppointmentProps) {
   const { id } = useParams<{ id: string }>();
   const params = useParams();
 
-  const dummyAppointments: ViewAppointment[] = [
+  const [dummyAppointments, setDummyAppointments]=useState< ViewAppointment[]> ( [
     {
       id: 1,
       firstName: 'John',
@@ -126,7 +127,7 @@ export function ListAppointment(props: ListAppointmentProps) {
       date: new Date(),
     },
     // More dummy data...
-  ];
+  ]);
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);
@@ -221,33 +222,33 @@ export function ListAppointment(props: ListAppointmentProps) {
 
   const handleAddAppointment = async (formData: Form) => {
     try {
-      const { data: responseData } = await axios.post(
-        `${apiUrl}/hospitals/${params.hospitalId}/doctors`,
-        {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          gender: formData.gender,
-          email: formData.email,
-          mobileNumber: formData.mobileNumber,
-          age: formData.age,
-          date: formData.date,
-        },
-        { withCredentials: true }
-      );
-
-      if (responseData) {
-        enqueueSnackbar('Doctor added successfully', { variant: 'success' });
-        setIsAddModalOpen(false);
-        getAppointment();
-      } else {
-        console.log('Something went wrong');
-      }
+      const newAppointment = {
+        id: dummyAppointments.length + 1, // This is just a dummy ID
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        gender: formData.gender,
+        email: formData.email,
+        mobileNumber: formData.mobileNumber,
+        age: formData.age,
+        date: new Date(formData.date),
+        status: formData.status, 
+      };
+  
+      dummyAppointments.push(newAppointment); // For testing with dummy data
+      setDummyAppointments([...dummyAppointments]); // Update state to trigger re-render
+  
+      enqueueSnackbar('Appointment added successfully', { variant: 'success' });
+      setIsAddModalOpen(false);
+      
+      // Uncomment this if you're using an API to fetch appointments
+      // getAppointment();
+  
     } catch (error) {
       console.log(error);
-      console.log('Something went wrong in input form');
       enqueueSnackbar('Something went wrong', { variant: 'error' });
     }
   };
+  
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName[0]}${lastName[0]}`.toUpperCase();

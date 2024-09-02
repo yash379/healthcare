@@ -91,8 +91,23 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
 
                 />
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center',marginLeft:'10%' }}>
-                <Typography sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'Bold', fontSize: '25px' }}>Height(cm)</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '4%' }}>
+                <Typography sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'Bold', fontSize: '25px' }}>Weight (Kg)</Typography>
+                <TextField
+                  type="text"
+                  sx={{
+                    width: '15rem',
+                    marginBottom: 1,
+                    marginLeft: '10px'
+                  }}
+                  className="form-control"
+                  placeholder="Enter "
+                  label="Height"
+
+                />
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'Bold', fontSize: '25px' }}>SpO2 (%)</Typography>
                 <TextField
                   type="text"
                   sx={{
@@ -108,8 +123,8 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
               </Box>
             </Box>
             <Box sx={{ display: 'flex' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'Bold', fontSize: '25px' }}>Height(cm)</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '10%' }}>
+                <Typography sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'Bold', fontSize: '25px' }}>BMI Kg/hr</Typography>
                 <TextField
                   type="text"
                   sx={{
@@ -123,8 +138,23 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
 
                 />
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center',marginLeft:'10%' }}>
-                <Typography sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'Bold', fontSize: '25px' }}>Height(cm)</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'Bold', fontSize: '25px' }}>Pulse (bmp)</Typography>
+                <TextField
+                  type="text"
+                  sx={{
+                    width: '15rem',
+                    marginBottom: 1,
+                    marginLeft: '10px'
+                  }}
+                  className="form-control"
+                  placeholder="Enter "
+                  label="Height"
+
+                />
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '10%' }}>
+                <Typography sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'Bold', fontSize: '25px' }}>Temperature (F)</Typography>
                 <TextField
                   type="text"
                   sx={{
