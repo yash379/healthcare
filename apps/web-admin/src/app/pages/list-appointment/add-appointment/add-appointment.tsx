@@ -349,11 +349,10 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
                   >
                     <MenuItem
                       sx={{ justifyContent: 'start' }}
-                      value={StatusEnum.scheduled}
-                    >
-                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.Scheduled}>
+                      value={StatusEnum.Scheduled}>
                         {StatusEnum.Scheduled}
-                      </MenuItem>
+                         </MenuItem>
+
                       <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.InProgress}>
                         {StatusEnum.InProgress}
                       </MenuItem>
@@ -364,17 +363,15 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
                         {StatusEnum.PendingConfirmation}
                       </MenuItem>
                     </Select>
+                    
                   )}
                 />
                 <FormHelperText sx={{ color: "#d32f2f" }}>{errors.status?.message}</FormHelperText>
               </FormControl>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="contained" color="primary" type="submit">
-            Save
-          </Button>
+            </Box>
+            </Box>
+            </Box>
+        <Box sx={{ mb: '5px', mt: '20px', textAlign: 'end' }}>
           <Button variant="contained" color="secondary" onClick={() => { onClose(); reset(); }}>
             Cancel
           </Button>
