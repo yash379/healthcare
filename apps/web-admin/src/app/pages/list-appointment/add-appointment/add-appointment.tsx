@@ -34,10 +34,10 @@ export enum GenderEnum {
 }
 
 export enum StatusEnum {
-  scheduled = 'Scheduled',
-  inProgress = 'In Progress',
-  cancelled = 'Cancelled',
-  pendingConfirmation = 'Pending Confirmation',
+  Scheduled = "Scheduled",
+  InProgress = "In Progress",
+  Cancelled = "Cancelled",
+  PendingConfirmation = "Pending Confirmation",
 }
 
 export interface Form {
@@ -246,7 +246,7 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
                   />
                 )}
               />
-            
+
           </Box>
           <Box className={styles['grid_top']}>
           <Controller
@@ -269,7 +269,7 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
                   />
                 )}
               />
-           
+
           </Box>
           <Box className={styles['grid_top']}>
             <FormControl sx={{ width: '100%' }}>
@@ -321,7 +321,7 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
               </FormHelperText>
             </FormControl>
           </Box>
-          
+
           <Box className={styles['grid_top']}>
             <FormControl sx={{ width: '100%' }}>
               <InputLabel htmlFor="status">Status</InputLabel>
@@ -351,46 +351,31 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
                       sx={{ justifyContent: 'start' }}
                       value={StatusEnum.scheduled}
                     >
-                      {StatusEnum.scheduled}
-                    </MenuItem>
-                    <MenuItem
-                      sx={{ justifyContent: 'start' }}
-                      value={StatusEnum.inProgress}
-                    >
-                      {StatusEnum.inProgress}
-                    </MenuItem>
-                    <MenuItem
-                      sx={{ justifyContent: 'start' }}
-                      value={StatusEnum.cancelled}
-                    >
-                      {StatusEnum.cancelled}
-                    </MenuItem>
-                    <MenuItem
-                      sx={{ justifyContent: 'start' }}
-                      value={StatusEnum.pendingConfirmation}
-                    >
-                      {StatusEnum.pendingConfirmation}
-                    </MenuItem>
-                  </Select>
-                )}
-              />
-              <FormHelperText sx={{ color: '#d32f2f' }}>
-                {errors.gender?.message}
-              </FormHelperText>
-            </FormControl>
-          </Box>
-        </Box>
-        </Box>
-
-        <Box sx={{ mb: '5px', mt: '20px', textAlign: 'end' }}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => {
-              onClose();
-              reset();
-            }}
-          >
+                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.Scheduled}>
+                        {StatusEnum.Scheduled}
+                      </MenuItem>
+                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.InProgress}>
+                        {StatusEnum.InProgress}
+                      </MenuItem>
+                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.Cancelled}>
+                        {StatusEnum.Cancelled}
+                      </MenuItem>
+                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.PendingConfirmation}>
+                        {StatusEnum.PendingConfirmation}
+                      </MenuItem>
+                    </Select>
+                  )}
+                />
+                <FormHelperText sx={{ color: "#d32f2f" }}>{errors.status?.message}</FormHelperText>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color="primary" type="submit">
+            Save
+          </Button>
+          <Button variant="contained" color="secondary" onClick={() => { onClose(); reset(); }}>
             Cancel
           </Button>
           <Button sx={{ml:'10px'}} variant="contained" color="primary" type="submit">
