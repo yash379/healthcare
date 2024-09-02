@@ -40,7 +40,7 @@ import ListAppointment from './pages/list-appointment/list-appointment';
 import EditAppointment from './pages/list-appointment/edit-appointment/edit-appointment';
 import DeleteAppointment from './pages/list-appointment/delete-appointment/delete-appointment';
 import AllAppointmentLog from './pages/list-appointment/all-appointment-log/all-appointment-log';
-import ViewAppointmentDetail from './view-appointment-detail/view-appointment-detail';
+import ViewAppointmentDetail from './pages/list-appointment/view-appointment-detail/view-appointment-detail';
 import DiagnosisPage from './diagnosis-page/diagnosis-page';
 
 export function App() {

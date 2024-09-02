@@ -475,7 +475,7 @@ export function ListDoctors(props: ListDoctorsProps) {
                       </TableCell>
                       <TableCell align='center'>
                         <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(doctor.id) }} sx={{ color: 'black' }}>
-                          <EditIcon ></EditIcon>
+                          <EditIcon color="primary" ></EditIcon>
                         </IconButton>
                         <IconButton color="error" onClick={() =>
                           openDeleteModal(doctor.id)

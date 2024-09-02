@@ -37,6 +37,7 @@ import DeleteAppointment from './delete-appointment/delete-appointment';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 
 import * as React from 'react';
+import Chip from '../../Components/chip/chip';
 
 export interface ListAppointmentProps {}
 
@@ -256,126 +257,174 @@ export function ListAppointment(props: ListAppointmentProps) {
   };
 
   return (
-    <>
-      <Box className={styles['btn_container']}>
+    <Box className={styles['btn_container']}>
+      <Box>
         <Box
           sx={{
             display: 'flex',
-            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            m: 2,
           }}
         >
-          <Box sx={{ marginRight: '25px' }}>
-            {/* Appointment Statistics Cards */}
-            <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-              {/* Total Appointments Card */}
-              <Card sx={{ minWidth: 200, p: 2, borderRadius: 5 }}>
-                <CardContent sx={{ display: 'flex' }}>
-                  <DescriptionOutlinedIcon
-                    sx={{
-                      backgroundColor: '#5CA1D1',
-                      borderRadius: '50%',
-                      color: '#ffffff',
-                      width: 30,
-                      height: 30,
-                      padding: 1,
-                    }}
-                  />
-                  <Box sx={{ paddingLeft: 2 }}>
-                    <Typography
-                      variant="h6"
-                      component="div"
-                      sx={{ color: '#0B4FA6' }}
-                    >
-                      Total Appointments
-                    </Typography>
-                    <Typography variant="h4" sx={{ color: '#000000' }}>
-                      150
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-
-              {/* Completed Appointments Card */}
-              <Card sx={{ p: 2, borderRadius: 5 }}>
-                <CardContent sx={{ display: 'flex' }}>
-                  <DescriptionOutlinedIcon
-                    sx={{
-                      backgroundColor: '#4CAF50', // Different color for completed appointments
-                      borderRadius: '50%',
-                      color: '#ffffff',
-                      width: 30,
-                      height: 30,
-                      padding: 1,
-                    }}
-                  />
-                  <Box sx={{ paddingLeft: 2 }}>
-                    <Typography
-                      variant="h6"
-                      component="div"
-                      sx={{ color: '#388E3C' }}
-                    >
-                      Completed Appointments
-                    </Typography>
-                    <Typography variant="h4" sx={{ color: '#000000' }}>
-                      100
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-
-              {/* Pending Appointments Card */}
-              <Card sx={{ Width: 200, p: 2, borderRadius: 5 }}>
-                <CardContent sx={{ display: 'flex' }}>
-                  <DescriptionOutlinedIcon
-                    sx={{
-                      backgroundColor: '#FF9800', // Different color for pending appointments
-                      borderRadius: '50%',
-                      color: '#ffffff',
-                      width: 30,
-                      height: 30,
-                      padding: 1,
-                    }}
-                  />
-                  <Box sx={{ paddingLeft: 2 }}>
-                    <Typography
-                      variant="h6"
-                      component="div"
-                      sx={{ color: '#F57C00' }}
-                    >
-                      Pending Appointments
-                    </Typography>
-                    <Typography variant="h4" sx={{ color: '#000000' }}>
-                      50
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Box>
-            <Box>
-              <Typography
+          {/* Total Appointments Card */}
+          <Card
+            sx={{
+              minWidth: 400,
+              p: 2,
+              borderRadius: 5,
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <CardContent sx={{ display: 'flex' }}>
+              <DescriptionOutlinedIcon
                 sx={{
-                  color: '#2B3674',
-                  fontWeight: 'Bold',
-                  fontFamily: 'DM Sans, sans-serif', // Using a fallback font
-                  my: '40px',
+                  backgroundColor: '#5CA1D1',
+                  borderRadius: '50%',
+                  color: '#ffffff',
+                  width: 30,
+                  height: 30,
+                  padding: 1,
                 }}
-              >
-                Upcoming Appointments
-              </Typography>
-
-              <AddAppointment
-                open={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
-                onSubmit={handleAddAppointment}
               />
-            </Box>
+              <Box sx={{ paddingLeft: 2 }}>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{ color: '#0B4FA6' }}
+                >
+                  Total Appointments
+                </Typography>
+                <Typography variant="h4" sx={{ color: '#000000' }}>
+                  150
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
 
-            <Box
-              className={styles['search-container']}
-              sx={{ ml: 98, display: 'flex', direction: 'row' }}
-            >
-              <Box>
-                {/* <Typography
+          {/* Completed Appointments Card */}
+          <Card
+            sx={{
+              minWidth: 400,
+              p: 2,
+              borderRadius: 5,
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <CardContent sx={{ display: 'flex' }}>
+              <DescriptionOutlinedIcon
+                sx={{
+                  backgroundColor: '#4CAF50', // Different color for completed appointments
+                  borderRadius: '50%',
+                  color: '#ffffff',
+                  width: 30,
+                  height: 30,
+                  padding: 1,
+                }}
+              />
+              <Box sx={{ paddingLeft: 2 }}>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{ color: '#388E3C' }}
+                >
+                  Completed Appointments
+                </Typography>
+                <Typography variant="h4" sx={{ color: '#000000' }}>
+                  100
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Pending Appointments Card */}
+          <Card
+            sx={{
+              minWidth: 400,
+              p: 2,
+              borderRadius: 5,
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <CardContent sx={{ display: 'flex' }}>
+              <DescriptionOutlinedIcon
+                sx={{
+                  backgroundColor: '#FF9800', // Different color for pending appointments
+                  borderRadius: '50%',
+                  color: '#ffffff',
+                  width: 30,
+                  height: 30,
+                  padding: 1,
+                }}
+              />
+              <Box sx={{ paddingLeft: 2 }}>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{ color: '#F57C00' }}
+                >
+                  Pending Appointments
+                </Typography>
+                <Typography variant="h4" sx={{ color: '#000000' }}>
+                  50
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Box
+            sx={{
+              mt: '20px',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <h1 style={{ marginTop: '10px' }}>Upcoming Appointments</h1>
+
+            <AddAppointment
+              open={isAddModalOpen}
+              onClose={() => setIsAddModalOpen(false)}
+              onSubmit={handleAddAppointment}
+            />
+            <TextField
+              type="text"
+              variant="outlined"
+              size="small"
+              sx={{ ml: '10px' }}
+              onChange={handleSearchNameChange}
+              InputProps={{
+                startAdornment: <SearchIcon color="action" />,
+              }}
+            />
+          </Box>
+          <Button
+            sx={{ mr: '10px' }}
+            variant="contained"
+            color="primary"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            <AddIcon fontSize="small" /> Add
+          </Button>
+        </Box>
+        <Box
+          className={styles['search-container']}
+          sx={{ ml: 98, display: 'flex', direction: 'row' }}
+        >
+          <Box>
+            {/* <Typography
                   sx={{
                     color: '#2B3674',
                     fontWeight: 'Bold',
@@ -385,129 +434,111 @@ export function ListAppointment(props: ListAppointmentProps) {
                 >
                   Upcoming Appointments
                 </Typography> */}
-              </Box>
-              <TextField
-                type="text"
-                variant="outlined"
-                size="small"
-                sx={{ mt: 2.3, mr: '10px' }}
-                onChange={handleSearchNameChange}
-                InputProps={{
-                  startAdornment: <SearchIcon color="action" />,
-                }}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setIsAddModalOpen(true)}
-              >
-                <AddIcon fontSize="small" /> Add
-              </Button>
-            </Box>
           </Box>
         </Box>
+      </Box>
 
-        {/* Table displaying appointments */}
-        <TableContainer component={Paper} sx={{ mt: 3 }}>
-          <Table sx={{ minWidth: 650 }} aria-label="appointment table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Patient Name</TableCell>
-                <TableCell>Gender</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {dummyAppointments.map((appointment) => (
-                <TableRow key={appointment.id}>
-                  <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-                    <NavLink
-                      to={`/appointments/${appointment.id}`}
-                      style={{
-                        textDecoration: 'none',
-                        color: 'inherit',
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          '&:hover': {
-                            backgroundColor: '#f0f0f0', // Change this to your desired hover color
-                            borderRadius: '8px', // Optional: adds rounded corners
-                            padding: '4px', // Optional: adds padding inside the hover area
-                          },
-                        }}
-                      >
-                        <Avatar sx={{ bgcolor: '#4FD1C5', marginRight: 2 }}>
-                          {getInitials(
-                            appointment.firstName,
-                            appointment.lastName
-                          )}
-                        </Avatar>
-                        {`${appointment.firstName} ${appointment.lastName}`}
-                      </Box>
-                    </NavLink>
-                  </TableCell>
-
-                  <TableCell>{appointment.gender}</TableCell>
-                  <TableCell>{appointment.date.toDateString()}</TableCell>
-                  <TableCell>
+      {/* Table displaying appointments */}
+      <TableContainer component={Paper} sx={{ mt: 3 }}>
+        <Table sx={{ minWidth: 650 }} aria-label="appointment table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Patient Name</TableCell>
+              <TableCell>Gender</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {dummyAppointments.map((appointment) => (
+              <TableRow key={appointment.id}>
+                <TableCell>
+                  <NavLink
+                    to={`/appointments/${appointment.id}`}
+                    style={{
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
                     <Box
                       sx={{
-                        display: 'inline-block',
-                        padding: '2px 6px',
-                        borderRadius: '12px',
-                        backgroundColor: statusColorMap[appointment.status],
-                        color: '#000',
-                        textAlign: 'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                        '&:hover': {
+                          backgroundColor: '#f0f0f0', // Change this to your desired hover color
+                          borderRadius: '8px', // Optional: adds rounded corners
+                          padding: '4px', // Optional: adds padding inside the hover area
+                        },
                       }}
                     >
-                      {appointment.status}
+                      <Avatar sx={{ bgcolor: '#4FD1C5', marginRight: 2 }}>
+                        {getInitials(
+                          appointment.firstName,
+                          appointment.lastName
+                        )}
+                      </Avatar>
+                      {`${appointment.firstName} ${appointment.lastName}`}
                     </Box>
-                  </TableCell>
-                  <TableCell>
-                    <IconButton onClick={() => handleEditClick(appointment.id)}>
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => handleDeleteClick(appointment.id)}
-                      color="error"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                  </NavLink>
+                </TableCell>
 
-        {isEditModalOpen && editData && (
-          <EditAppointment
-            open={isEditModalOpen}
-            onClose={closeEditModal}
-            onUpdate={(data) => {
-              closeEditModal();
-            }}
-            initialData={editData}
-          />
-        )}
+                <TableCell>{appointment.gender}</TableCell>
+                <TableCell>{appointment.date.toDateString()}</TableCell>
+                <TableCell>
+                  {/* <Box
+                    sx={{
+                      display: 'inline-block',
+                      padding: '2px 6px',
+                      borderRadius: '12px',
+                      backgroundColor: statusColorMap[appointment.status],
+                      color: '#000',
+                      textAlign: 'center',
+                    }}
+                  > */}
+                  <Chip label="Info">{appointment.status}</Chip>
 
-        {isDeleteModalOpen && (
-          <DeleteAppointment
-            open={isDeleteModalOpen}
-            onClose={closeDeleteModal}
-            onDelete={deleteAppointment}
-            appointmentData={viewData}
-          />
-        )}
-      </Box>
-    </>
+                  {/* </Box> */}
+                </TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleEditClick(appointment.id)}>
+                    <EditIcon color="primary" />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleDeleteClick(appointment.id)}
+                    color="error"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {isEditModalOpen && editData && (
+        <EditAppointment
+          open={isEditModalOpen}
+          onClose={closeEditModal}
+          onUpdate={(data) => {
+            closeEditModal();
+          }}
+          initialData={editData}
+        />
+      )}
+
+      {isDeleteModalOpen && (
+        <DeleteAppointment
+          open={isDeleteModalOpen}
+          onClose={closeDeleteModal}
+          onDelete={deleteAppointment}
+          appointmentData={viewData}
+        />
+      )}
+    </Box>
   );
 }
 

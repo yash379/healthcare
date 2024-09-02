@@ -21,6 +21,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Autocomplete from '@mui/material/Autocomplete';
 import styles from './diagnosis-page.module.scss';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DiagnosisPageProps {}
 
 export function DiagnosisPage(props: DiagnosisPageProps) {
@@ -77,14 +78,13 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
       <Paper
         sx={{
           padding: 3,
-          backgroundColor: '#f8f9fa',
           borderRadius: 2,
           boxShadow: 3,
         }}
       >
         {/* Patient Information */}
         <Box sx={{ display: 'flex', marginBottom: '20px' }}>
-          <Avatar>OP</Avatar>
+          <Avatar sx={{ bgcolor: '#4FD1C5' }}>OP</Avatar>
           <Box sx={{ marginLeft: '10px' }}>
             <Typography
               sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}

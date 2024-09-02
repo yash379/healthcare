@@ -831,7 +831,7 @@ export function ViewHospitalPage(props: ViewHospitalPageProps) {
                               }}
                               sx={{ color: 'black' }}
                             >
-                              <EditIcon />
+                              <EditIcon color="primary" />
                             </IconButton>
                             <IconButton
                               onClick={(e) => {

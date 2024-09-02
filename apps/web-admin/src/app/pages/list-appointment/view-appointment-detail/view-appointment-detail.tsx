@@ -1,10 +1,18 @@
 // view-appointment-detail.tsx
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Paper, Typography, Box, Avatar, Divider, Card } from '@mui/material';
+import {
+  Paper,
+  Typography,
+  Box,
+  Avatar,
+  Divider,
+  Card,
+  Grid,
+} from '@mui/material';
 import styles from './view-appointment-detail.module.scss';
 import { Gender } from '@prisma/client';
-import { StatusEnum } from '../pages/list-appointment/list-appointment';
+import { StatusEnum } from '../list-appointment';
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined';
 
@@ -91,7 +99,7 @@ const ViewAppointmentDetail: React.FC = () => {
       <Paper
         sx={{
           padding: 3,
-          width: '50rem',
+          width: '60rem',
           backgroundColor: '#f8f9fa',
           borderRadius: 2,
           boxShadow: 3,
@@ -119,76 +127,207 @@ const ViewAppointmentDetail: React.FC = () => {
 
         <Divider sx={{ mb: 2 }} />
 
-        <Box sx={{ mb: 2 }}>
-          <Typography
-            variant="body1"
-            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
           >
-            Gender:{' '}
-            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+              Gender:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
               {appointment.gender}
             </Typography>
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          </Grid>
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
           >
-            Age:{' '}
-            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+              Age:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
               {appointment.age}
             </Typography>
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
           >
-            Email:{' '}
-            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+              Email:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
               {appointment.email}
             </Typography>
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
           >
-            Mobile Number:{' '}
-            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+              Mobile Number:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
               {appointment.mobileNumber}
             </Typography>
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          </Grid>
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
           >
-            Date:{' '}
-            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+              Date:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
               {appointment.date.toDateString()}
             </Typography>
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
+          </Grid>
+        </Grid>
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
           >
-            Status:{' '}
-            <Typography component="span" sx={{ fontWeight: 'normal' }}>
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+              Status:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
               {appointment.status}
             </Typography>
-          </Typography>
-        </Box>
+          </Grid>
+        </Grid>
       </Paper>
       <Box sx={{ marginTop: '40px' }}>
         <Box sx={{ marginBottom: '25px' }}>
-          <Box sx={{ width: '300px', ml: '30px' }}>
+          <Box sx={{ width: '350px', ml: '30px' }}>
             <Card
               onClick={handleClick}
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                height: '60px',
+                height: '100px',
                 padding: '16px',
                 borderRadius: '20px',
-                boxShadow: '-moz-initial',
+                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                 cursor: 'pointer', // Optional: changes cursor to pointer on hover
+              
               }}
             >
               <Avatar sx={{ background: '#F4F7FE', width: 56, height: 56 }}>
@@ -205,6 +344,7 @@ const ViewAppointmentDetail: React.FC = () => {
                   color: '#0B4FA6',
                   fontFamily: 'DM Sans, sans-serif',
                   fontWeight: 'bold',
+                  fontSize: '20px',
                   ml: '40px',
                 }}
               >
@@ -213,16 +353,16 @@ const ViewAppointmentDetail: React.FC = () => {
             </Card>
           </Box>
         </Box>
-        <Box sx={{ width: '300px', ml: '30px' }}>
+        <Box sx={{ width: '350px', ml: '30px' }}>
           <Card
             onClick={handleStartDiagnosisClick}
             sx={{
               display: 'flex',
               alignItems: 'center',
-              height: '60px',
+              height: '100px',
               padding: '16px',
               borderRadius: '20px',
-              boxShadow: '-moz-initial',
+              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
               cursor: 'pointer', // Added cursor pointer here as well
             }}
           >
@@ -240,6 +380,7 @@ const ViewAppointmentDetail: React.FC = () => {
                 color: '#139C94',
                 fontFamily: 'DM Sans, sans-serif',
                 fontWeight: 'bold',
+                fontSize: '20px',
                 ml: '40px',
               }}
             >

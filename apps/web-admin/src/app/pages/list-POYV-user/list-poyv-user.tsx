@@ -412,7 +412,7 @@ const breadcrumbs = [
                           e.stopPropagation();
                           handleEditClick(poyvUser.id);
                         }}>
-                        <EditIcon >
+                        <EditIcon color="primary">
                           Edit
                         </EditIcon>
                         </IconButton>

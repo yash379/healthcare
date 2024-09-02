@@ -20,7 +20,8 @@ import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import mediPlus from '../../../assets/DigiMedic_logo.svg';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { IconHome } from '@tabler/icons-react';
-
+import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 /* eslint-disable-next-line */
 export interface DrawerComponentProps {}
 
@@ -116,7 +117,9 @@ export function DrawerComponent(props: DrawerComponentProps) {
                 }`}
               >
                 <ListItemIcon sx={{ minWidth: '100px' }}>
-                  <MapsHomeWorkIcon className={styles['drawer-icons']} />
+                  <CorporateFareOutlinedIcon
+                    className={styles['drawer-icons']}
+                  />
                 </ListItemIcon>
                 <ListItemText
                   primary="Hospitals"
@@ -143,6 +146,30 @@ export function DrawerComponent(props: DrawerComponentProps) {
                 </ListItemIcon>
                 <ListItemText
                   primary="Users"
+                  className={styles['drawertab']}
+                ></ListItemText>
+              </ListItemButton>
+            </ListItem>
+          </Link>
+          <Link
+            style={{ textDecoration: 'none' }}
+            to={`/appointments`}
+            onClick={() => handleComponentChange('appointments')}
+          >
+            <ListItem>
+              <ListItemButton
+                sx={{ padding: '10px 20px' }}
+                className={`${styles['button-tabs']} ${
+                  selectedComponent === 'appointments' && styles['active-tab']
+                }`}
+              >
+                <ListItemIcon sx={{ minWidth: '100px' }}>
+                  <CalendarMonthOutlinedIcon
+                    className={styles['drawer-icons']}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Appointments"
                   className={styles['drawertab']}
                 ></ListItemText>
               </ListItemButton>

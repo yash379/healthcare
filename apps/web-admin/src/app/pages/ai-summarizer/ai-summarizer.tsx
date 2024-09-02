@@ -4,9 +4,10 @@ import { Typography, Card, CardContent, Divider } from '@mui/material';
 export function Summarizer() {
   // Sample summary data
   const summary = {
-    majorIssues: "Major issues include Flu, common cold, and Mild Gastritis.",
-    latestDiagnosis: "The latest diagnosis is Flu and common cold.",
-    summaryText: "The patient has been experiencing symptoms such as fever, cough, and gastritis. Prescriptions included Paracetamol and Cough Syrup for the Flu and Antacid for Gastritis."
+    majorIssues: 'Major issues include Flu, common cold, and Mild Gastritis.',
+    latestDiagnosis: 'The latest diagnosis is Flu and common cold.',
+    summaryText:
+      'The patient has been experiencing symptoms such as fever, cough, and gastritis. Prescriptions included Paracetamol and Cough Syrup for the Flu and Antacid for Gastritis.',
   };
 
   return (
@@ -26,7 +27,7 @@ export function Summarizer() {
               padding: '8px',
               borderRadius: '4px',
               fontWeight: 'bold', // Bold text
-              marginBottom: '12px' // Gap below the header
+              marginBottom: '12px', // Gap below the header
             }}
           >
             Major Issues:
@@ -47,7 +48,7 @@ export function Summarizer() {
               padding: '8px',
               borderRadius: '4px',
               fontWeight: 'bold', // Bold text
-              marginBottom: '12px' // Gap below the header
+              marginBottom: '12px', // Gap below the header
             }}
           >
             Latest Diagnosis:
@@ -64,15 +65,16 @@ export function Summarizer() {
             variant="subtitle1"
             gutterBottom
             sx={{
+              backgroundColor: '#fffde7', // Lighter yellow background
+              padding: '8px',
+              borderRadius: '4px',
               fontWeight: 'bold', // Bold text
-              marginBottom: '12px' // Gap below the header
+              marginBottom: '12px', // Gap below the header
             }}
           >
             Summary:
           </Typography>
-          <Typography variant="body1">
-            {summary.summaryText}
-          </Typography>
+          <Typography variant="body1">{summary.summaryText}</Typography>
         </CardContent>
       </Card>
     </div>

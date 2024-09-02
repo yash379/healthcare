@@ -11,7 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { enqueueSnackbar } from 'notistack';
 import { Link, useNavigate } from 'react-router-dom';
-import loginImg from '../../../assets/loginImg.jpg';
+import loginImg from '../../../assets/LoginImage.jpg';
 import logoImg from '../../../assets/DigiMedic_logo.svg';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -118,7 +118,7 @@ export function Login({ onLogin }: LoginProps) {
   <Box
     component={'img'}
     src={logoImg}
-    sx={{ width: '10rem', height: 'auto', objectFit: 'cover', mb: 4 }}
+    sx={{ width: '15rem', height: 'auto', objectFit: 'cover', mb: 4 }}
   />
 </Box>
 

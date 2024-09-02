@@ -976,7 +976,7 @@ export function ListHospitals(props: ListHospitalsProps) {
                       sx={{ color: 'black' }}
                       onClick={() => handleEditClick(hospital.id)}
                     >
-                      <EditIcon>{/* Edit */}</EditIcon>
+                      <EditIcon color="primary">{/* Edit */}</EditIcon>
                     </IconButton>
                     {hospital.isActive ? (
                       <IconButton

@@ -1,6 +1,23 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, IconButton, InputLabel, MenuItem, Modal, Select, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormHelperText,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Modal,
+  Select,
+  TextField,
+  Typography,
+} from '@mui/material';
 import styles from './add-appointment.module.scss';
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -11,27 +28,27 @@ import { Gender } from '@prisma/client';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 export enum GenderEnum {
-  female = "female",
-  male = "male",
-  other = "other",
+  female = 'female',
+  male = 'male',
+  other = 'other',
 }
 
 export enum StatusEnum {
-  scheduled = "Scheduled",
-  inProgress = "In Progress",
-  cancelled = "Cancelled",
-  pendingConfirmation = "Pending Confirmation",
+  scheduled = 'Scheduled',
+  inProgress = 'In Progress',
+  cancelled = 'Cancelled',
+  pendingConfirmation = 'Pending Confirmation',
 }
 
 export interface Form {
-  firstName: string
-  lastName: string
-  mobileNumber: string
-  email: string
-  gender: Gender
-  age: number
-  date: Date
-  status: StatusEnum
+  firstName: string;
+  lastName: string;
+  mobileNumber: string;
+  email: string;
+  gender: Gender;
+  age: number;
+  date: Date;
+  status: StatusEnum;
 }
 /* eslint-disable-next-line */
 export interface AddAppointmentProps {
@@ -40,9 +57,11 @@ export interface AddAppointmentProps {
   onSubmit: (data: Form) => void;
 }
 
-const AddAppointment: React.FC<AddAppointmentProps> = ({ open, onClose, onSubmit }) => {
-
-
+const AddAppointment: React.FC<AddAppointmentProps> = ({
+  open,
+  onClose,
+  onSubmit,
+}) => {
   const validationSchema = yup.object().shape({
     firstName: yup.string().required('First Name is required'),
     lastName: yup.string().required('Last Name is required'),
@@ -51,16 +70,22 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({ open, onClose, onSubmit
     gender: yup.string().required('Gender is required'),
     status: yup.string().required('status is required'),
     age: yup.number().required('Age is required'),
-    date: yup.date().required('Date is Required')
+    date: yup.date().required('Date is Required'),
   });
 
-  const { handleSubmit, control, reset, formState: { errors }, watch, setValue } = useForm<Form>({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useForm<Form>({
     resolver: yupResolver(validationSchema),
-
   });
 
   const handleFormSubmit = (data: Form) => {
-    console.log("handleAddForm:", data)
+    console.log('handleAddForm:', data);
     onSubmit(data);
   };
 
@@ -71,22 +96,42 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({ open, onClose, onSubmit
   }, [open, reset]);
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullWidth maxWidth="md"
-    >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '' }}>
-        <DialogTitle className={styles['h2_tag']} >Add Appointment </DialogTitle>
-        <IconButton onClick={() => { onClose(); reset(); }}>
-          <CancelIcon></CancelIcon>
-        </IconButton>
-      </Box>
-
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+       <Box p={'5px 24px 24px 24px'}>
+        <Typography
+          variant="h2"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            margin: '14px -10px 5px 0px',
+          }}
+        >
+          Add Appointment
+          <IconButton
+            onClick={() => {
+              onClose();
+              reset();
+            }}
+            aria-label="Close"
+          >
+            <CancelIcon />
+          </IconButton>
+          </Typography>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6} className={styles['grid_top']}>
+        <Box
+          sx={{
+            display: 'grid',
+            columnGap: 2,
+            rowGap: 1,
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            '@media (max-width: 600px)': {
+              gridTemplateColumns: '1fr',
+            },
+          }}
+        >
+          <Box className={styles['modal_first_container']}>
+            <Box className={styles['grid_top']}>
               <Controller
                 name="firstName"
                 control={control}
@@ -97,18 +142,6 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({ open, onClose, onSubmit
                     type="text"
                     sx={{
                       width: '100%',
-                      marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                     className="form-control"
                     placeholder="Enter Doctor First Name"
@@ -119,9 +152,81 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({ open, onClose, onSubmit
                   />
                 )}
               />
-            </Grid>
-            <Grid item xs={12} md={6} className={styles['grid_top']}>
-              <Controller
+            </Box>
+            <Box className={styles['grid_top']}>
+            <Controller
+              name="email"
+              control={control}
+              defaultValue=""
+              rules={{ required: 'email is required' }}
+              render={({ field }) => (
+                <TextField
+                  type="text"
+                  sx={{
+                    width: '100%',
+                  }}
+                  className="form-control"
+                  placeholder="Enter Doctor email"
+                  {...field}
+                  label="email"
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
+                />
+              )}
+            />
+            </Box>
+            <Box className={styles['grid_top']}>
+            <Controller
+              name="age"
+              control={control}
+              rules={{ required: 'age is required' }}
+              render={({ field }) => (
+                <TextField
+                  type="text"
+                  sx={{
+                    width: '100%',
+                  }}
+                  className="form-control"
+                  placeholder="Enter Doctor age"
+                  {...field}
+                  label="age"
+                  error={!!errors.age}
+                  helperText={errors.age?.message}
+                />
+              )}
+            />
+            </Box>
+            <Box className={styles['grid_top']}>
+            <Controller
+              name="date"
+              control={control}
+              rules={{ required: 'Date of Appointment is required' }}
+              render={({ field }) => (
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Date of Appointment"
+                    value={field.value}
+                    onChange={field.onChange}
+                    slotProps={{
+                      textField: {
+                        error: !!errors.date,
+                        helperText: errors.date?.message,
+                        fullWidth: true,
+                      },
+                    }}
+                    sx={{
+                      width: '100%',
+                    }}
+                  />
+                </LocalizationProvider>
+              )}
+            />
+          </Box>
+          {/* </Box> */}
+          </Box>
+          <Box className={styles['modal_second_container']}>
+            <Box className={styles['grid_top']}>
+            <Controller
                 name="lastName"
                 control={control}
                 defaultValue=""
@@ -131,18 +236,6 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({ open, onClose, onSubmit
                     type="text"
                     sx={{
                       width: '100%',
-                      marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                     className="form-control"
                     placeholder="Enter Doctor First Name"
@@ -153,9 +246,10 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({ open, onClose, onSubmit
                   />
                 )}
               />
-            </Grid>
-            <Grid item xs={12} md={6} className={styles['grid_top']}>
-              <Controller
+            
+          </Box>
+          <Box className={styles['grid_top']}>
+          <Controller
                 name="mobileNumber"
                 control={control}
                 defaultValue=""
@@ -165,18 +259,6 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({ open, onClose, onSubmit
                     type="text"
                     sx={{
                       width: '100%',
-                      marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                     className="form-control"
                     placeholder="Enter Doctor First Name"
@@ -187,224 +269,138 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({ open, onClose, onSubmit
                   />
                 )}
               />
-            </Grid>
-            <Grid item xs={12} md={6} className={styles['grid_top']}>
+           
+          </Box>
+          <Box className={styles['grid_top']}>
+            <FormControl sx={{ width: '100%' }}>
+              <InputLabel htmlFor="gender">Gender</InputLabel>
               <Controller
-                name="email"
+                name="gender"
                 control={control}
-                defaultValue=""
-                rules={{ required: 'email is required' }}
+                rules={{ required: 'Gender is required' }}
                 render={({ field }) => (
-                  <TextField
-                    type="text"
+                  <Select
+                    sx={{
+                      width: '100%',
+                    }}
+                    label="Gender*"
+                    variant="outlined"
+                    {...field}
+                    error={!!errors.gender}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 100,
+                        },
+                      },
+                    }}
+                  >
+                    <MenuItem
+                      sx={{ justifyContent: 'start' }}
+                      value={GenderEnum.male}
+                    >
+                      {GenderEnum.male}
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ justifyContent: 'start' }}
+                      value={GenderEnum.female}
+                    >
+                      {GenderEnum.female}
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ justifyContent: 'start' }}
+                      value={GenderEnum.other}
+                    >
+                      {GenderEnum.other}
+                    </MenuItem>
+                  </Select>
+                )}
+              />
+              <FormHelperText sx={{ color: '#d32f2f' }}>
+                {errors.gender?.message}
+              </FormHelperText>
+            </FormControl>
+          </Box>
+          
+          <Box className={styles['grid_top']}>
+            <FormControl sx={{ width: '100%' }}>
+              <InputLabel htmlFor="status">Status</InputLabel>
+              <Controller
+                name="status"
+                control={control}
+                rules={{ required: 'status is required' }}
+                render={({ field }) => (
+                  <Select
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
+                    }}
+                    label="status*"
+                    variant="outlined"
+                    {...field}
+                    error={!!errors.status}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 100,
+                        },
                       },
                     }}
-                    className="form-control"
-                    placeholder="Enter Doctor email"
-                    {...field}
-                    label="email"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} md={6} className={styles['grid_top']}>
-              <Controller
-                name="age"
-                control={control}
-                rules={{ required: 'age is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    sx={{
-                      width: '100%',
-                      marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
-                    }}
-                    className="form-control"
-                    placeholder="Enter Doctor age"
-                    {...field}
-                    label="age"
-                    error={!!errors.age}
-                    helperText={errors.age?.message}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} md={6} className={styles['grid_top']}>
-              <FormControl sx={{ width: '100%' }}>
-                <InputLabel htmlFor="gender">Gender</InputLabel>
-                <Controller
-                  name="gender"
-                  control={control}
-                  rules={{ required: 'Gender is required' }}
-                  render={({ field }) => (
-                    <Select
-                      sx={{
-                        width: '100%',
-                        marginBottom: 1,
-                        '& .MuiInputBase-root': {
-                          height: 50, // Adjust height here
-                        },
-                        '& .MuiInputBase-input': {
-                          padding: '10px 14px', // Adjust padding to fit height
-                          fontSize: '0.955rem', // Adjust font size if needed
-                        },
-                        '& .MuiInputLabel-root': {
-                          fontSize: '1rem', // Adjust label font size if needed
-                          top: -6, // Adjust label position if needed
-                        },
-                      }}
-                      label="Gender*"
-                      variant="outlined"
-                      {...field}
-                      error={!!errors.gender}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 100
-                          },
-                        },
-                      }}
+                  >
+                    <MenuItem
+                      sx={{ justifyContent: 'start' }}
+                      value={StatusEnum.scheduled}
                     >
-                      <MenuItem sx={{ justifyContent: "start" }} value={GenderEnum.male}>{GenderEnum.male}</MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value={GenderEnum.female}>{GenderEnum.female}</MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value={GenderEnum.other}>{GenderEnum.other}</MenuItem>
-                    </Select>
-                  )}
-                />
-                <FormHelperText sx={{ color: "#d32f2f" }}>{errors.gender?.message}</FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Controller
-                name="date"
-                control={control}
-                rules={{ required: 'Date of Appointment is required' }}
-                render={({ field }) => (
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label="Date of Appointment"
-                      value={field.value}
-                      onChange={field.onChange}
-                      slotProps={{
-                        textField: {
-                          error: !!errors.date,
-                          helperText: errors.date?.message,
-                          fullWidth: true,
-                        },
-                      }}
-                      sx={{
-                        width: '100%',
-                        marginBottom: 1,
-                        '& .MuiInputBase-root': {
-                          height: 50, // Adjust height here
-                        },
-                        '& .MuiInputBase-input': {
-                          padding: '10px 14px', // Adjust padding to fit height
-                          fontSize: '0.955rem', // Adjust font size if needed
-                        },
-                        '& .MuiInputLabel-root': {
-                          fontSize: '1rem', // Adjust label font size if needed
-                          top: -6, // Adjust label position if needed
-                        },
-                      }}
-                    />
-                  </LocalizationProvider>
+                      {StatusEnum.scheduled}
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ justifyContent: 'start' }}
+                      value={StatusEnum.inProgress}
+                    >
+                      {StatusEnum.inProgress}
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ justifyContent: 'start' }}
+                      value={StatusEnum.cancelled}
+                    >
+                      {StatusEnum.cancelled}
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ justifyContent: 'start' }}
+                      value={StatusEnum.pendingConfirmation}
+                    >
+                      {StatusEnum.pendingConfirmation}
+                    </MenuItem>
+                  </Select>
                 )}
               />
-            </Grid>
-            <Grid item xs={12} md={6} className={styles['grid_top']}>
-              <FormControl sx={{ width: '100%' }}>
-                <InputLabel htmlFor="status">Status</InputLabel>
-                <Controller
-                  name="status"
-                  control={control}
-                  rules={{ required: 'status is required' }}
-                  render={({ field }) => (
-                    <Select
-                      sx={{
-                        width: '100%',
-                        marginBottom: 1,
-                        '& .MuiInputBase-root': {
-                          height: 50, // Adjust height here
-                        },
-                        '& .MuiInputBase-input': {
-                          padding: '10px 14px', // Adjust padding to fit height
-                          fontSize: '0.955rem', // Adjust font size if needed
-                        },
-                        '& .MuiInputLabel-root': {
-                          fontSize: '1rem', // Adjust label font size if needed
-                          top: -6, // Adjust label position if needed
-                        },
-                      }}
-                      label="status*"
-                      variant="outlined"
-                      {...field}
-                      error={!!errors.status}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 100
-                          },
-                        },
-                      }}
-                    >
-                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.scheduled}>
-                        {StatusEnum.scheduled}
-                      </MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.inProgress}>
-                        {StatusEnum.inProgress}
-                      </MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.cancelled}>
-                        {StatusEnum.cancelled}
-                      </MenuItem>
-                      <MenuItem sx={{ justifyContent: "start" }} value={StatusEnum.pendingConfirmation}>
-                        {StatusEnum.pendingConfirmation}
-                      </MenuItem>
-                    </Select>
-                  )}
-                />
-                <FormHelperText sx={{ color: "#d32f2f" }}>{errors.gender?.message}</FormHelperText>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="contained" color="primary" type="submit">
-            Save
-          </Button>
-          <Button variant="contained" color="secondary" onClick={() => { onClose(); reset(); }}>
+              <FormHelperText sx={{ color: '#d32f2f' }}>
+                {errors.gender?.message}
+              </FormHelperText>
+            </FormControl>
+          </Box>
+        </Box>
+        </Box>
+
+        <Box sx={{ mb: '5px', mt: '20px', textAlign: 'end' }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              onClose();
+              reset();
+            }}
+          >
             Cancel
           </Button>
-        </DialogActions>
+          <Button sx={{ml:'10px'}} variant="contained" color="primary" type="submit">
+            Save
+          </Button>
+        </Box>
       </form>
+      </Box>
     </Dialog>
   );
-}
+};
 
 export default AddAppointment;
