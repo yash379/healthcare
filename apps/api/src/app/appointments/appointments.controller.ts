@@ -30,30 +30,32 @@ export class AppointmentsController {
     return this.appointmentsService.createAppointment(+hospitalId, +doctorId, +patientId, data);
   }
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Get('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments')
-  // @ApiOkResponse({ type: ListAppointmentPageDto })
-  // @Roles(Role.POYV_ADMIN)
-  // @HttpCode(HttpStatus.OK)
-  // listAppointments(
-  //   @Param('hospitalId') hospitalId: number,
-  //   @Param('doctorId') doctorId: number,
-  //   @Param('patientId') patientId: number,
-  //   @Query('pageSize') pageSize?: number,
-  //   @Query('pageOffset') pageOffset?: number,
-  //   @Query('sortBy') sortBy?: string,
-  //   @Query('sortOrder') sortOrder?: 'asc' | 'desc'
-  // ): Promise<ListAppointmentPageDto> {
-  //   return this.appointmentsService.listAppointments(
-  //     +hospitalId,
-  //     +doctorId,
-  //     +patientId,
-  //     +pageSize,
-  //     +pageOffset,
-  //     sortBy,
-  //     sortOrder
-  //   );
-  // }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Get('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments')
+  @ApiOkResponse({ type: ListAppointmentPageDto })
+  @Roles(Role.POYV_ADMIN)
+  @HttpCode(HttpStatus.OK)
+  listAppointments(
+    @Param('hospitalId') hospitalId: number,
+    @Param('doctorId') doctorId: number,
+    @Param('patientId') patientId: number,
+    @Query('pageSize') pageSize?: number,
+    @Query('pageOffset') pageOffset?: number,
+    @Query('appointmentDate') appointmentDate?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc'
+  ): Promise<ListAppointmentPageDto> {
+    return this.appointmentsService.listAppointments(
+      +hospitalId,
+      +doctorId,
+      +patientId,
+      +pageSize,
+      +pageOffset,
+      appointmentDate,
+      sortBy,
+      sortOrder
+    );
+  }
 
   @UseGuards(AuthGuard, RolesGuard)
   @Get('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
@@ -77,41 +79,41 @@ export class AppointmentsController {
     return appointment;
   }
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Put('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
-  // @HttpCode(HttpStatus.OK)
-  // async updateAppointment(
-  //   @Param('hospitalId') hospitalId: number,
-  //   @Param('doctorId') doctorId: number,
-  //   @Param('patientId') patientId: number,
-  //   @Param('id') appointmentId: number,
-  //   @Body() updateAppointmentDto: UpdateAppointmentDto
-  // ): Promise<AppointmentDto> {
-  //   return this.appointmentsService.updateAppointment(
-  //     +hospitalId,
-  //     +doctorId,
-  //     +patientId,
-  //     +appointmentId,
-  //     updateAppointmentDto
-  //   );
-  // }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Put('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
+  @HttpCode(HttpStatus.OK)
+  async updateAppointment(
+    @Param('hospitalId') hospitalId: number,
+    @Param('doctorId') doctorId: number,
+    @Param('patientId') patientId: number,
+    @Param('id') appointmentId: number,
+    @Body() updateAppointmentDto: UpdateAppointmentDto
+  ): Promise<ViewAppointmentDto> {
+    return this.appointmentsService.updateAppointment(
+      +hospitalId,
+      +doctorId,
+      +patientId,
+      +appointmentId,
+      updateAppointmentDto
+    );
+  }
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Delete('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // async deleteAppointment(
-  //   @Param('hospitalId') hospitalId: number,
-  //   @Param('doctorId') doctorId: number,
-  //   @Param('patientId') patientId: number,
-  //   @Param('id') appointmentId: number
-  // ): Promise<void> {
-  //   await this.appointmentsService.deleteAppointment(
-  //     +hospitalId,
-  //     +doctorId,
-  //     +patientId,
-  //     +appointmentId
-  //   );
-  // }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Delete('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteAppointment(
+    @Param('hospitalId') hospitalId: number,
+    @Param('doctorId') doctorId: number,
+    @Param('patientId') patientId: number,
+    @Param('id') appointmentId: number
+  ): Promise<void> {
+    await this.appointmentsService.deleteAppointment(
+      +hospitalId,
+      +doctorId,
+      +patientId,
+      +appointmentId
+    );
+  }
 
   @ApiOperation({ summary: 'Use this API to list appointment Status' })
   @UseGuards(AuthGuard)
