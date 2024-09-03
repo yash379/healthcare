@@ -4,6 +4,7 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { AppointmentDto } from './dto/appointment.dto';
 import { ListAppointmentPageDto } from './dto/list-appointment-page.dto';
 import { PrismaClient } from '@prisma/client';
+import { ViewAppointmentDto } from './dto/view-appointment.dto';
 
 @Injectable()
 export class AppointmentsService {
@@ -14,8 +15,8 @@ export class AppointmentsService {
     doctorId: number,
     patientId: number,
     data: AddAppointmentDto
-  ): Promise<AppointmentDto> {
-    // Check if doctor exists
+  ): Promise<ViewAppointmentDto> {
+   
     const hospital = await this.prisma.hospital.findUnique({
       where: { id: hospitalId },
     });
@@ -23,7 +24,7 @@ export class AppointmentsService {
       throw new NotFoundException('Hospital not found');
     }
 
-
+ // Check if doctor exists
     const doctor = await this.prisma.doctor.findUnique({
       where: { id: doctorId },
     });
@@ -39,13 +40,23 @@ export class AppointmentsService {
       throw new NotFoundException('Patient not found');
     }
 
+     // Check if statusId exists
+  const status = await this.prisma.appointmentStatus.findUnique({
+    where: { id: data.statusId },
+  });
+  if (!status) {
+    throw new NotFoundException('Status not found');
+  }
+
     // Create the appointment
     const appointment = await this.prisma.appointment.create({
       data: {
         doctorId,
         patientId,
         statusId: data.statusId,
-        date: new Date(data.appointmentDate),
+        date: data.appointmentDate
+        ? new Date(data.appointmentDate) 
+        : null,
       },
       include: {
         status: true,
@@ -55,12 +66,12 @@ export class AppointmentsService {
     return {
       id: appointment.id,
       appointmentDate: appointment.date.toISOString(), // Convert Date object to ISO string
-      statusId: appointment.statusId,
-      // status: {
-      //   id: appointment.status.id,
-      //   code: appointment.status.code,
-      //   name: appointment.status.name,
-      // },
+      // statusId: appointment.statusId,
+      status: {
+        id: status.id,
+        code: status.code,
+        name: status.name,
+      },
     };
   }
 
@@ -137,60 +148,75 @@ export class AppointmentsService {
   //   };
   // }
 
-  // async findAppointmentById(
-  //   hospitalId: number,
-  //   doctorId: number,
-  //   patientId: number,
-  //   appointmentId: number
-  // ): Promise<AppointmentDto> {
-  //   // Validate doctor existence
-  //   const doctor = await this.prisma.doctor.findUnique({
-  //     where: { id: doctorId },
-  //   });
-  //   if (!doctor) {
-  //     throw new NotFoundException('Doctor not found');
-  //   }
+  async findAppointmentById(
+    hospitalId: number,
+    doctorId: number,
+    patientId: number,
+    appointmentId: number
+  ): Promise<ViewAppointmentDto> {
+    
+    const hospital = await this.prisma.hospital.findUnique({
+      where: { id: hospitalId },
+    });
+    if (!hospital) {
+      throw new NotFoundException('Hospital not found');
+    }
 
-  //   // Validate patient existence
-  //   const patient = await this.prisma.patient.findUnique({
-  //     where: { id: patientId },
-  //   });
-  //   if (!patient) {
-  //     throw new NotFoundException('Patient not found');
-  //   }
+    // Validate doctor existence
+    const doctor = await this.prisma.doctor.findUnique({
+      where: { id: doctorId },
+    });
+    if (!doctor) {
+      throw new NotFoundException('Doctor not found');
+    }
 
-  //   // Find appointment by ID
-  //   const appointment = await this.prisma.appointment.findFirst({
-  //     where: {
-  //       id: appointmentId,
-  //       doctorId,
-  //       patientId,
-  //       doctor: {
-  //         hospitals: {
-  //           some: { hospitalId },
-  //         },
-  //       },
-  //     },
-  //     include: {
-  //       status: true,
-  //     },
-  //   });
+    // Validate patient existence
+    const patient = await this.prisma.patient.findUnique({
+      where: { id: patientId },
+    });
+    if (!patient) {
+      throw new NotFoundException('Patient not found');
+    }
 
-  //   if (!appointment) {
-  //     throw new NotFoundException('Appointment not found');
-  //   }
+    // Find appointment by ID
+    const appointment = await this.prisma.appointment.findFirst({
+      where: {
+        id: appointmentId,
+        doctorId,
+        patientId,
+        doctor: {
+          hospitals: {
+            some: { hospitalId },
+          },
+        },
+      },
+      include: {
+        status: true,
+      },
+    });
 
-  //   return {
-  //     id: appointment.id,
-  //     appointmentDate: appointment.date.toISOString(), // Convert Date object to ISO string
-  //     statusId: appointment.statusId,
-  //     status: {
-  //       id: appointment.status.id,
-  //       code: appointment.status.code,
-  //       name: appointment.status.name,
-  //     },
-  //   };
-  // }
+    if (!appointment) {
+      throw new NotFoundException('Appointment not found');
+    }
+
+    const status = await this.prisma.appointmentStatus.findUnique({
+      where: { id: appointment.statusId },
+    });
+    if (!status) {
+      throw new NotFoundException('Status not found');
+    }
+
+    return {
+      id: appointment.id,
+      appointmentDate: appointment.date.toISOString(), // Convert Date object to ISO string
+      // statusId: appointment.statusId,
+      status: {
+        id: status.id,
+        code: status.code,
+        name: status.name,
+      },
+    };
+  }
 
   // async updateAppointment(
   //   hospitalId: number,

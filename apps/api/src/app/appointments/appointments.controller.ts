@@ -9,7 +9,7 @@ import { AddAppointmentDto } from './dto/add-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { AppointmentDto } from './dto/appointment.dto';
 import { ListAppointmentPageDto } from './dto/list-appointment-page.dto';
-import { AppointmentStatus } from './dto/view-appointment.dto';
+import { AppointmentStatus, ViewAppointmentDto } from './dto/view-appointment.dto';
 
 @ApiTags('Appointments')
 @Controller()
@@ -26,7 +26,7 @@ export class AppointmentsController {
     @Param('doctorId') doctorId: number,
     @Param('patientId') patientId: number,
     @Body() data: AddAppointmentDto
-  ): Promise<AppointmentDto> {
+  ): Promise<ViewAppointmentDto> {
     return this.appointmentsService.createAppointment(+hospitalId, +doctorId, +patientId, data);
   }
 
@@ -55,27 +55,27 @@ export class AppointmentsController {
   //   );
   // }
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Get('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
-  // @ApiOkResponse({ type: AppointmentDto })
-  // @ApiNotFoundResponse({ description: 'Appointment not found' })
-  // async findAppointmentById(
-  //   @Param('hospitalId') hospitalId: number,
-  //   @Param('doctorId') doctorId: number,
-  //   @Param('patientId') patientId: number,
-  //   @Param('id') appointmentId: number
-  // ): Promise<AppointmentDto> {
-  //   const appointment = await this.appointmentsService.findAppointmentById(
-  //     +hospitalId,
-  //     +doctorId,
-  //     +patientId,
-  //     +appointmentId
-  //   );
-  //   if (!appointment) {
-  //     throw new HttpException('Appointment not found', HttpStatus.NOT_FOUND);
-  //   }
-  //   return appointment;
-  // }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Get('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
+  @ApiOkResponse({ type: AppointmentDto })
+  @ApiNotFoundResponse({ description: 'Appointment not found' })
+  async findAppointmentById(
+    @Param('hospitalId') hospitalId: number,
+    @Param('doctorId') doctorId: number,
+    @Param('patientId') patientId: number,
+    @Param('id') appointmentId: number
+  ): Promise<ViewAppointmentDto> {
+    const appointment = await this.appointmentsService.findAppointmentById(
+      +hospitalId,
+      +doctorId,
+      +patientId,
+      +appointmentId
+    );
+    if (!appointment) {
+      throw new HttpException('Appointment not found', HttpStatus.NOT_FOUND);
+    }
+    return appointment;
+  }
 
   // @UseGuards(AuthGuard, RolesGuard)
   // @Put('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
