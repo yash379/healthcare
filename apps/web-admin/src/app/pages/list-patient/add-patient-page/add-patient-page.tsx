@@ -1,7 +1,7 @@
 import styles from './add-patient-page.module.scss';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import {
   TextField,
@@ -59,7 +59,7 @@ export interface AddPatientPageProps {}
 
 export function AddPatientPage(props: AddPatientPageProps) {
   const [country, setCountry] = useState<string>('');
-
+const params = useParams();
   const apiUrl = environment.apiUrl;
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
   const navigate = useNavigate();
@@ -117,9 +117,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
 
   // Add Patient
   const handleAddPatient = async (formData: any) => {
-    const date = new Date('Sun Sep 08 2024 00:00:00 GMT+0530 (India Standard Time)');
-    const isoString = date.toISOString();
-    console.log('formdata', date)
     try {
       const { data: responseData } = await axios.post(
         `${apiUrl}/hospitals/${hospitalContext?.id}/doctors/${params.doctorId}/patient`,
@@ -129,8 +126,9 @@ export function AddPatientPage(props: AddPatientPageProps) {
           gender: formData.gender,
           email: formData.email,
           phoneNumber: formData.phoneNumber,
-          bloodgroup: formData.bloodgroup,
-          dob: formData.dob,
+          bloodGroup: formData.bloodgroup,
+          // dob: formData.dob,
+          dob: '2024-09-03T17:54:34.885Z',
           digitalHealthCode: formData.digitalHealthCode,
           addressLine1: formData.addressLine1,
           addressLine2: formData.addressLine2,
