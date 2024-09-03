@@ -1,3 +1,16 @@
+INSERT INTO public.appointment_statuses(
+	 code, name)
+	VALUES ( '1', 'PENDING');
+INSERT INTO public.appointment_statuses(
+	 code, name)
+	VALUES ( '2', 'INPROGRESS');
+INSERT INTO public.appointment_statuses(
+	 code, name)
+	VALUES ( '3', 'CANCELLED');
+INSERT INTO public.appointment_statuses(
+	 code, name)
+	VALUES ( '4', 'CONFIRMED');
+	
 INSERT INTO public.users(
 	 email, phone_number, first_name, last_name, is_active, password, roles)
 	VALUES ( 'admin@gmail.com', '1234567890', 'admin', 'admin', true, '$2b$10$vr9LTN7XZjBCVrKobZZtiOg1UdNnqhGB0Qde1KqEAWMU7AN7gAulG', 'ADMIN');
