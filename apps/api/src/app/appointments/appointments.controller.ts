@@ -5,9 +5,9 @@ import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
 import { ApiTags, ApiOkResponse, ApiNotFoundResponse } from '@nestjs/swagger';
 import { AppointmentsService } from './appointments.service';
-import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { AddAppointmentDto } from './dto/add-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import { AppointmentDto } from './dto/appointment.dto.ts';
+import { AppointmentDto } from './dto/appointment.dto';
 import { ListAppointmentPageDto } from './dto/list-appointment-page.dto';
 
 @ApiTags('Appointments')
@@ -24,7 +24,7 @@ export class AppointmentsController {
     @Param('hospitalId') hospitalId: number,
     @Param('doctorId') doctorId: number,
     @Param('patientId') patientId: number,
-    @Body() data: CreateAppointmentDto
+    @Body() data: AddAppointmentDto
   ): Promise<AppointmentDto> {
     return this.appointmentsService.createAppointment(+hospitalId, +doctorId, +patientId, data);
   }
