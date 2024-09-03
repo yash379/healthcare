@@ -138,6 +138,8 @@ export class PatientsService {
             postalCode: addPatientDto.postalCode,
             countryCode: addPatientDto.countryCode,
             stateCode: addPatientDto.stateCode,
+            chronicDiseases: addPatientDto.chronicDiseases,
+            acuteDiseases: addPatientDto.acuteDiseases,
             // isActive:addPatientDto.isActive
           },
         });
@@ -303,6 +305,8 @@ export class PatientsService {
       addressLine2: patient.addressLine2,
       city: patient.city,
       postalCode: patient.postalCode,
+      chronicDiseases: patient.chronicDiseases,
+      acuteDiseases: patient.acuteDiseases,
       countryCode: patient.countryCode,
       stateCode: patient.stateCode,
       isActive: user.isActive,
@@ -408,6 +412,8 @@ export class PatientsService {
             addressLine2: true,
             city: true,
             postalCode: true,
+            chronicDiseases: true,
+            acuteDiseases: true,
             countryCode: true,
             stateCode: true,
           },
@@ -460,6 +466,8 @@ export class PatientsService {
         addressLine2: patient.patient.addressLine2,
         city: patient.patient.city,
         postalCode: patient.patient.postalCode,
+        chronicDiseases: patient.patient.chronicDiseases,
+        acuteDiseases: patient.patient.acuteDiseases,
         countryCode: patient.patient.countryCode,
         stateCode: patient.patient.stateCode,
         isActive: patient.isActive,
@@ -555,6 +563,8 @@ export class PatientsService {
       stateCode: patient.stateCode,
       countryCode: patient.countryCode,
       postalCode: patient.postalCode,
+      chronicDisease: patient.chronicDiseases,
+      acuteDisease: patient.acuteDiseases,
       hospitalRoles: [], // Populate this if you have roles
       isActive: patient.user.isActive,
     };
@@ -629,6 +639,8 @@ export class PatientsService {
         stateCode: updatePatientDto.stateCode,
         countryCode: updatePatientDto.countryCode,
         postalCode: updatePatientDto.postalCode,
+        chronicDiseases: updatePatientDto.chronicDiseases,
+        acuteDiseases: updatePatientDto.acuteDiseases,
         user: {
           update: {
             firstName: updatePatientDto.firstName,
@@ -677,6 +689,8 @@ export class PatientsService {
       stateCode: updatedPatient.stateCode,
       countryCode: updatedPatient.countryCode,
       postalCode: updatedPatient.postalCode,
+      chronicDisease: updatedPatient.chronicDiseases,
+      acuteDisease: updatedPatient.acuteDiseases,
       hospitalRoles: [], // Populate this if you have roles
       isActive: updatedPatient.user.isActive,
     };

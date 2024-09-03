@@ -1,10 +1,11 @@
-import { Gender } from '@prisma/client';
+import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
 import {
   IsString,
   IsOptional,
   IsBoolean,
   IsEmail,
   IsNumber,
+  IsEnum,
 } from 'class-validator';
 
 export class UpdatePatientDto {
@@ -66,6 +67,14 @@ export class UpdatePatientDto {
 
   @IsOptional()
   postalCode?: string;
+
+  @IsOptional()
+  @IsEnum(ChronicDisease, { each: true })
+  chronicDiseases?: ChronicDisease[];
+
+  @IsOptional()
+  @IsEnum(AcuteDisease, { each: true })
+  acuteDiseases?: AcuteDisease[];
 
   @IsOptional()
   @IsBoolean()

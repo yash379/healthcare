@@ -20,7 +20,9 @@ export class ListPatientDto
     'stateCode',
     'countryCode',
     'postalCode',
+    'chronicDisease',
+    'acuteDisease',
     'hospitalRoles',
-    'superRole'
+    'superRole',
   ])
   implements ListPatient {}

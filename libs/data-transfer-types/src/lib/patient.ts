@@ -11,7 +11,7 @@ export interface Patient {
   email: string;
   phoneNumber?: string;
   gender: Gender;
-  age:number;
+  age: number;
   bloodGroup: string;
   dob: Date;
   digitalHealthCode: string;
@@ -21,8 +21,8 @@ export interface Patient {
   stateCode?: string;
   countryCode: string;
   postalCode: string;
-  chronicDisease?:ChronicDisease;
-  acuteDisease?:AcuteDisease;
+  chronicDisease?: ChronicDisease[]; // Array of ChronicDisease enums
+  acuteDisease?: AcuteDisease[]; // Array of AcuteDisease enums
   isActive: boolean;
 }
 
@@ -33,7 +33,7 @@ export interface ViewPatient {
   email: string;
   phoneNumber?: string;
   gender: Gender;
-  age:number;
+  age: number;
   bloodGroup: string;
   dob: Date;
   digitalHealthCode: string;
@@ -43,8 +43,8 @@ export interface ViewPatient {
   stateCode?: string;
   countryCode: string;
   postalCode: string;
-  chronicDisease?:ChronicDisease;
-  acuteDisease?:AcuteDisease;
+  chronicDisease?: ChronicDisease[]; // Array of ChronicDisease enums
+  acuteDisease?: AcuteDisease[]; // Array of AcuteDisease enums
   hospitalRoles: ViewHospitalRoleDto[];
   superRole?: SuperRoleName;
 }
@@ -67,6 +67,8 @@ export type ListPatient = Pick<
   | 'stateCode'
   | 'countryCode'
   | 'postalCode'
+  | 'chronicDisease'
+  | 'acuteDisease'
   | 'hospitalRoles'
   | 'superRole'
 >;

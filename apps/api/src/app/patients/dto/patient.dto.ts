@@ -1,8 +1,13 @@
 import { Patient } from '@healthcare/data-transfer-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { Gender } from '@prisma/client';
-import { IsEmail, IsNotEmpty, IsBoolean , IsEnum, IsOptional} from 'class-validator';
-
+import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+} from 'class-validator';
 
 export class PatientDto implements Patient {
   @ApiProperty()
@@ -41,7 +46,7 @@ export class PatientDto implements Patient {
   @ApiProperty()
   @IsNotEmpty()
   dob: Date;
-  
+
   @ApiProperty()
   @IsNotEmpty()
   digitalHealthCode: string;
@@ -50,14 +55,14 @@ export class PatientDto implements Patient {
   @IsNotEmpty()
   addressLine1: string;
 
-  @ApiProperty() 
+  @ApiProperty()
   addressLine2: string;
 
   @ApiProperty()
   @IsNotEmpty()
   city: string;
 
-  @ApiProperty() 
+  @ApiProperty()
   @IsOptional()
   stateCode?: string;
 
@@ -69,8 +74,17 @@ export class PatientDto implements Patient {
   @IsNotEmpty()
   postalCode: string;
 
+  @ApiProperty({ type: [String], enum: ChronicDisease, isArray: true })
+  @IsOptional()
+  @IsEnum(ChronicDisease, { each: true })
+  chronicDiseases?: ChronicDisease[];
+
+  @ApiProperty({ type: [String], enum: AcuteDisease, isArray: true })
+  @IsOptional()
+  @IsEnum(AcuteDisease, { each: true })
+  acuteDiseases?: AcuteDisease[];
+
   @ApiProperty()
   @IsBoolean()
-  isActive:boolean
+  isActive: boolean;
 }
-
