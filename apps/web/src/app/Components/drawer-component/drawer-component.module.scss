@@ -9,7 +9,7 @@
  .Nav{
     display:flex;
     flex-direction:column;
-   color: white;
+    color: white;
  }
 
  .button-tabs{
@@ -24,11 +24,11 @@
   background-color: #6B7587 !important;
 
   .drawertab{
-    color:black;
+    color:#A0AEC0;
   }
 
   .drawer-icons{
-    color:white;
+    color: white;
   }
 }
 
@@ -36,7 +36,7 @@
   border-radius: 5px !important;
   border: 1px solid !important;
   background-color: #6B7587 !important;
-
+  color: black !important;
   // .drawertab{
   //   color:white;
   // }
@@ -61,7 +61,7 @@
 
  .active-tab {
 
-  background: linear-gradient(90deg, #139C94 95%, #94127F 5%) !important;
+  background:  #EBFAF9  !important;
   border-top: var(--none, 0px) solid #054B7D !important;
   border-right: var(--none, 0px) solid #054B7D !important;
   border-bottom: var(--none, 0px) solid #054B7D !important;
@@ -70,10 +70,20 @@
 
 
   .drawertab{
-    color:white !important;
+    color:black !important;
   }
  
   .drawer-icons{
     color: white;
+    align-items: center;
   }
+
+  .icon-bg{
+    background-color: #4FD1C5;
+    background-size: 100px;
+    border-radius: 50%;
+    background-size: 100px;
+  }
+
+  
 }

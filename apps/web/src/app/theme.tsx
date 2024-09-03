@@ -1,3 +1,4 @@
+import { Height } from '@mui/icons-material';
 import { createTheme, responsiveFontSizes, ThemeOptions } from '@mui/material';
 import { alignProperty } from '@mui/material/styles/cssUtils';
 
@@ -199,7 +200,7 @@ const componentThemeOptions: ThemeOptions = {
             '&:hover fieldset': {
               borderColor: '#ededed',
             },
-            size:'small'
+            size:'medium'
           },
         },
       },
