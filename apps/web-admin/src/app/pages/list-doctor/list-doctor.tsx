@@ -14,7 +14,7 @@ import EditDoctorComponent from './edit-doctor/edit-doctor';
 import DeleteDoctorComponent from './delete-doctor/delete-doctor';
 // import ViewDoctorComponent from '../view-doctor/view-doctor';
 import { enqueueSnackbar } from 'notistack';
-import { useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { Doctor, Hospital, ViewDoctor } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/user-contexts';
@@ -458,7 +458,13 @@ export function ListDoctors(props: ListDoctorsProps) {
                           e.stopPropagation();
                         }}
                       /></TableCell>
-                      <TableCell>{doctor.firstName} {doctor.lastName}
+                      <TableCell>
+                      <NavLink
+                      to={`/hospitals/${params.hospitalId}/doctors/${doctor.id}/patients`}
+                      className={styles['socname']}
+                    >
+                        {doctor.firstName} {doctor.lastName}
+                        </NavLink>
                       </TableCell>
                       <TableCell>{doctor.email}
                       </TableCell>

@@ -119,13 +119,13 @@ export function App() {
                 element={<ListDoctors />}
               />
               <Route
-                path="/hospitals/:hospitalId/patients"
+                path="/hospitals/:hospitalId/doctors/:doctorId/patients"
                 element={<ListPatients />}
               />
               <Route path="/medical-history" element={<MedicalHistory />} />
 
               <Route
-                path="/hospitals/:hospitalId/patients/add"
+                path="/hospitals/:hospitalId/doctors/:doctorId/patients/add"
                 element={<AddPatientPage />}
               />
               <Route

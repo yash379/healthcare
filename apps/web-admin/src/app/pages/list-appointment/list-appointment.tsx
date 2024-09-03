@@ -28,7 +28,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { enqueueSnackbar } from 'notistack';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { environment } from '../../../environments/environment';
 import { useParams } from 'react-router-dom';
@@ -40,6 +40,7 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import * as React from 'react';
 import Chip from '../../Components/chip/chip';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ListAppointmentProps {}
 
 export enum StatusEnum {
@@ -97,6 +98,7 @@ export function ListAppointment(props: ListAppointmentProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
   const params = useParams();
+  // const [appointmentsData, setAppointmentsData] = useState<ListAppointment[]>([]);
 
   const [dummyAppointments, setDummyAppointments]=useState< ViewAppointment[]> ( [
     {
@@ -123,6 +125,36 @@ export function ListAppointment(props: ListAppointmentProps) {
     },
     // More dummy data...
   ]);
+
+  const getAllAppointments= useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/doctors/1/patients/2/appointments`, {
+        withCredentials: true,
+        // params: {
+        //   pageSize: rowsPerPage,
+        //   pageOffset: page -1,
+        //   name: searchQueryName,
+        // },
+      });
+      // console.log(response.data[0].user)
+      const {content, total} = response.data;
+      setAppointmentsData(response.data.content);
+      setTotalItems(total)
+      console.log("Admin Data",response.data.content);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching hospital data:', error);
+      setLoading(false);
+    }
+  }, [apiUrl]);
+  
+useEffect(() => {
+ 
+  getAllAppointments();
+}, [apiUrl, getAllAppointments]);
+  
+
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);
