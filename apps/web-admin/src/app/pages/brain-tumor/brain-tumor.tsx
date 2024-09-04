@@ -33,6 +33,9 @@ export function BrainTumor() {
         setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
+
+      // Clear previous prediction when a new file is selected
+      setPrediction(null);
     }
   };
 
@@ -74,9 +77,24 @@ export function BrainTumor() {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
+            position: 'relative',
           }}
         >
-          <Box textAlign="center" style={{ width: '100%' }}>
+          {/* Predict Button at Top Left */}
+          <Box position="absolute" top="10px" left="10px">
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleUpload}
+              style={{ padding: '10px 20px' }}
+              disabled={!selectedFile || loading}
+            >
+              Predict
+            </Button>
+          </Box>
+
+          {/* Centered Upload Section */}
+          <Box textAlign="center" style={{ width: '100%', paddingTop: '50px' }}>
             <input
               accept="image/*"
               style={{ display: 'none' }}
@@ -92,13 +110,13 @@ export function BrainTumor() {
                 startIcon={<CloudUploadIcon />}
                 style={{ padding: '10px 20px', marginBottom: '10px' }}
               >
-                Upload Brain Image
+                Upload Image
               </Button>
             </label>
             {imagePreview && (
               <Box
                 position="relative"
-                style={{ width: '100%', maxWidth: '300px' }}
+                style={{ width: '100%', maxWidth: '300px', marginTop: '20px' }}
               >
                 <img
                   src={imagePreview as string}
@@ -113,6 +131,7 @@ export function BrainTumor() {
                   onClick={() => {
                     setImagePreview(null);
                     setSelectedFile(null);
+                    setPrediction(null);
                   }}
                   style={{ position: 'absolute', top: '8px', right: '8px' }}
                 >
@@ -120,15 +139,6 @@ export function BrainTumor() {
                 </IconButton>
               </Box>
             )}
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleUpload}
-              style={{ marginTop: '20px', padding: '10px 20px' }}
-              disabled={!selectedFile || loading}
-            >
-              Predict
-            </Button>
           </Box>
         </Grid>
 
