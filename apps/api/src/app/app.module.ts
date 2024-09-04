@@ -18,6 +18,12 @@ import { CancerDetectionModule } from './cancer-detection/cancer-detection.modul
 import { ChatRequestController } from './chat-request/chat-request.controller';
 import { ChatRequestService } from './chat-request/chat-request.service';
 import { ChatRequestModule } from './chat-request/chat-request.module';
+import { DiagnosisController } from './diagnosis/diagnosis.controller';
+import { DiagnosisService } from './diagnosis/diagnosis.service';
+import { DiagnosisModule } from './diagnosis/diagnosis.module';
+import { PrescriptionController } from './prescription/prescription.controller';
+import { PrescriptionService } from './prescription/prescription.service';
+import { PrescriptionModule } from './prescription/prescription.module';
 
 @Module({
   imports: [
@@ -31,6 +37,8 @@ import { ChatRequestModule } from './chat-request/chat-request.module';
     AppointmentsModule,
     CancerDetectionModule,
     ChatRequestModule,
+    DiagnosisModule,
+    PrescriptionModule,
     // DoctorsModule,
     // PatientsModule,
   ],
