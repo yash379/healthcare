@@ -60,6 +60,11 @@ export class AppointmentsService {
       },
       include: {
         status: true,
+        patient: {
+          include: {
+            user: true
+          },
+        },
       },
     });
 
@@ -72,6 +77,15 @@ export class AppointmentsService {
         code: status.code,
         name: status.name,
       },
+      patient: {
+        user:{
+          id: appointment.patient.user.id,
+          firstName: appointment.patient.user.firstName,
+          lastName: appointment.patient.user.lastName,
+          email: appointment.patient.user.email,
+          phoneNumber: appointment.patient.user.phoneNumber
+        }
+      }
     };
   }
 
@@ -148,6 +162,11 @@ export class AppointmentsService {
       orderBy,
       include: {
         status: true,
+        patient: {
+          include: {
+            user: true
+          },
+        },
       },
     });
 
@@ -169,6 +188,128 @@ export class AppointmentsService {
           code: appointment.status.code,
           name: appointment.status.name,
         },
+        patient: {
+          user:{
+            id: appointment.patient.user.id,
+            firstName: appointment.patient.user.firstName,
+            lastName: appointment.patient.user.lastName,
+            email: appointment.patient.user.email,
+            phoneNumber: appointment.patient.user.phoneNumber
+          }
+        }
+      })),
+    };
+  }
+
+
+  async listDoctorAppointments(
+    hospitalId: number,
+    doctorId: number,
+    // patientId: number,
+    pageSize: number,
+    pageOffset: number,
+    appointmentDate:string,
+    sortBy: string,
+    sortOrder: 'asc' | 'desc'
+  ): Promise<ListAppointmentPageDto> {
+
+    const hospital = await this.prisma.hospital.findUnique({
+      where: { id: hospitalId },
+    });
+    if (!hospital) {
+      throw new NotFoundException('Hospital not found');
+    }
+
+    // Validate doctor existence
+    const doctor = await this.prisma.doctor.findUnique({
+      where: { id: doctorId },
+    });
+    if (!doctor) {
+      throw new NotFoundException('Doctor not found');
+    }
+
+    // Validate patient existence
+    // const patient = await this.prisma.patient.findUnique({
+    //   where: { id: patientId },
+    // });
+    // if (!patient) {
+    //   throw new NotFoundException('Patient not found');
+    // }
+
+    const whereArray = [];
+    let whereQuery = {};
+
+    if (appointmentDate !== undefined) {
+      whereArray.push({ appointmentDate: { contains: appointmentDate, mode: 'insensitive' } });
+    }
+
+    if (whereArray.length > 0) {
+      if (whereArray.length > 1) {
+        whereQuery = { AND: whereArray };
+      } else {
+        whereQuery = whereArray[0];
+      }
+    }
+
+    const sort = (sortBy ? sortBy : 'id').toString();
+    const order = sortOrder ? sortOrder : 'asc';
+    const size = pageSize ? pageSize : 10;
+    const offset = pageOffset ? pageOffset : 0;
+    const orderBy = { [sort]: order };
+    const count = await this.prisma.appointment.count({
+      where: whereQuery,
+    });
+    // Find appointments
+    const appointments = await this.prisma.appointment.findMany({
+      where: {
+        doctorId,
+        // patientId,
+        doctor: {
+          hospitals: {
+            some: { hospitalId },
+          },
+        },
+      },
+      take: Number(size),
+      skip: Number(size * offset),
+      orderBy,
+      include: {
+        status: true,
+        patient: {
+          include: {
+            user: true
+          },
+        },
+      },
+    });
+
+    return {
+      size: size,
+      number: offset,
+      total: count,
+      sort: [
+        {
+          by: sort,
+          order: order,
+        },
+      ],
+      content: appointments.map((appointment) => ({
+        id: appointment.id,
+        appointmentDate: appointment.date.toISOString(), // Convert Date object to ISO string
+        status: {
+          id: appointment.status.id,
+          code: appointment.status.code,
+          name: appointment.status.name,
+        },
+        patient: {
+          user:{
+            id: appointment.patient.user.id,
+            firstName: appointment.patient.user.firstName,
+            lastName: appointment.patient.user.lastName,
+            email: appointment.patient.user.email,
+            phoneNumber: appointment.patient.user.phoneNumber
+          }
+        }
       })),
     };
   }
@@ -217,6 +358,11 @@ export class AppointmentsService {
       },
       include: {
         status: true,
+        patient: {
+          include: {
+            user: true
+          },
+        },
       },
     });
 
@@ -240,6 +386,15 @@ export class AppointmentsService {
         code: status.code,
         name: status.name,
       },
+      patient: {
+        user:{
+          id: appointment.patient.user.id,
+          firstName: appointment.patient.user.firstName,
+          lastName: appointment.patient.user.lastName,
+          email: appointment.patient.user.email,
+          phoneNumber: appointment.patient.user.phoneNumber
+        }
+      }
     };
   }
 
@@ -288,6 +443,11 @@ export class AppointmentsService {
       },
       include: {
         status: true,
+        patient: {
+          include: {
+            user: true
+          },
+        },
       },
     });
 
@@ -306,6 +466,15 @@ export class AppointmentsService {
         code: status.code,
         name: status.name,
       },
+      patient: {
+        user:{
+          id: appointment.patient.user.id,
+          firstName: appointment.patient.user.firstName,
+          lastName: appointment.patient.user.lastName,
+          email: appointment.patient.user.email,
+          phoneNumber: appointment.patient.user.phoneNumber
+        }
+      }
     };
   }
 

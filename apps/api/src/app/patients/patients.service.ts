@@ -131,7 +131,7 @@ export class PatientsService {
             digitalHealthCode: addPatientDto.digitalHealthCode,
             bloodGroup: addPatientDto.bloodGroup,
             age: addPatientDto.age,
-            dob: addPatientDto.dob,
+            dob: new Date(addPatientDto.dob),
             addressLine1: addPatientDto.addressLine1,
             addressLine2: addPatientDto.addressLine2,
             city: addPatientDto.city,
@@ -144,9 +144,8 @@ export class PatientsService {
           },
         });
       } catch (error) {
-        throw new HttpException(
-          'Failed to create patient.',
-          HttpStatus.INTERNAL_SERVER_ERROR
+        throw new BadRequestException(error.message
+          
         );
       }
     }
@@ -300,7 +299,7 @@ export class PatientsService {
       gender: patient.gender,
       age: patient.age,
       bloodGroup: patient.bloodGroup,
-      dob: patient.dob,
+      dob: patient.dob.toISOString(),
       addressLine1: patient.addressLine1,
       addressLine2: patient.addressLine2,
       city: patient.city,
@@ -402,7 +401,7 @@ export class PatientsService {
         lastName: true,
         patient: {
           select: {
-            userId: true,
+            id: true,
             gender: true,
             digitalHealthCode: true,
             age: true,
@@ -452,7 +451,7 @@ export class PatientsService {
       throw new BadRequestException();
     } else {
       return patients.map((patient) => ({
-        id: patient.id,
+        id: patient.patient.id,
         firstName: patient.firstName,
         lastName: patient.lastName,
         email: patient.email,
@@ -461,7 +460,7 @@ export class PatientsService {
         gender: patient.patient.gender,
         age: patient.patient.age,
         bloodGroup: patient.patient.bloodGroup,
-        dob: patient.patient.dob,
+        dob: patient.patient.dob.toISOString(),
         addressLine1: patient.patient.addressLine1,
         addressLine2: patient.patient.addressLine2,
         city: patient.patient.city,
@@ -555,7 +554,7 @@ export class PatientsService {
       age: patient.age,
       bloodGroup: patient.bloodGroup,
       doctorCode: doctorCode, // Ensure it matches the expected type
-      dob: patient.dob,
+      dob: patient.dob.toISOString(),
       digitalHealthCode: patient.digitalHealthCode,
       addressLine1: patient.addressLine1,
       addressLine2: patient.addressLine2,
@@ -631,7 +630,7 @@ export class PatientsService {
         gender: updatePatientDto.gender,
         age: updatePatientDto.age,
         bloodGroup: updatePatientDto.bloodGroup,
-        dob: updatePatientDto.dob,
+        dob: new Date(updatePatientDto.dob),
         digitalHealthCode: updatePatientDto.digitalHealthCode,
         addressLine1: updatePatientDto.addressLine1,
         addressLine2: updatePatientDto.addressLine2,
@@ -681,7 +680,7 @@ export class PatientsService {
       age: updatedPatient.age,
       bloodGroup: updatedPatient.bloodGroup,
       doctorCode: doctorCode, // Ensure it matches the expected type
-      dob: updatedPatient.dob,
+      dob: updatedPatient.dob.toISOString(),
       digitalHealthCode: updatedPatient.digitalHealthCode,
       addressLine1: updatedPatient.addressLine1,
       addressLine2: updatedPatient.addressLine2,

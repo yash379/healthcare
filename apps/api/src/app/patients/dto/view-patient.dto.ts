@@ -20,7 +20,7 @@ export class ViewPatientDto implements ViewPatient {
   @ApiProperty() age: number;
   @ApiProperty() bloodGroup: string;
   @ApiProperty() doctorCode: string;
-  @ApiProperty() dob: Date;
+  @ApiProperty() dob: string;
   @ApiProperty() digitalHealthCode: string;
   @ApiProperty() addressLine1: string;
   @ApiProperty() addressLine2?: string;

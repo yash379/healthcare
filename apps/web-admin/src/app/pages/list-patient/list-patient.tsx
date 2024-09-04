@@ -30,8 +30,8 @@ import EditPatientComponent from './edit-patient/edit-patient';
 import DeletePatientComponent from './delete-patient/delete-patient';
 // import ViewPatientComponent from '../view-patient/view-patient';
 import { enqueueSnackbar } from 'notistack';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Hospital } from '@healthcare/data-transfer-types';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { Hospital, ViewPatient } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/user-contexts';
 import { Gender } from '@prisma/client';
@@ -57,24 +57,6 @@ interface Form {
   isActive: boolean;
 }
 
-interface ViewPatient {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email?: string;
-  phoneNumber?: string;
-  gender: Gender;
-  bloodgroup: string;
-  dob: Date;
-  digitalHealthCode: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  stateCode?: string;
-  countryCode: string;
-  postalCode: string;
-  isActive: boolean;
-}
 
 export interface EditForm {
   firstName: string;
@@ -527,7 +509,7 @@ export function ListPatients(props: ListPatientsProps) {
               ) : Array.isArray(activePatients) && activePatients.length > 0 ? (
                 activePatients.map((patient: ViewPatient, index: number) => (
                   <TableRow
-                    className={styles['table_row']}
+                    // className={styles['table_row']}
                     onClick={(e) => {
                       handleRowClick(patient.id, e);
                       setViewPatientOpen(true);
@@ -545,12 +527,17 @@ export function ListPatients(props: ListPatientsProps) {
                       />
                     </TableCell>
                     <TableCell>
+                    <NavLink
+                      to={`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/patient/${patient.id}`}
+                      className={styles['socname']}
+                    >
                       {patient.firstName} {patient.lastName}
+                      </NavLink>
                     </TableCell>
                     <TableCell>{patient.email}</TableCell>
                     <TableCell>+91-{patient.phoneNumber}</TableCell>
                     <TableCell>{patient.gender}</TableCell>
-                    <TableCell>{patient.bloodgroup}</TableCell>
+                    <TableCell>{patient.bloodGroup}</TableCell>
                     <TableCell>{patient.digitalHealthCode}</TableCell>
                     <TableCell>
                       {patient.addressLine1} {patient.addressLine2} ,
@@ -561,7 +548,7 @@ export function ListPatients(props: ListPatientsProps) {
                         onClick={(e) => {
                           e.stopPropagation();
                           navigate(
-                            `/hospitals/${hospitalContext?.id}/patients/edit/${patient.id}`
+                            `/hospitals/${hospitalContext?.id}/doctors/${params.doctorId}/patients/${patient.id}/edit`
                           );
                         }}
                         sx={{ color: 'black' }}
@@ -616,7 +603,7 @@ export function ListPatients(props: ListPatientsProps) {
         </Stack>
       </Box>
 
-      <EditPatientComponent
+      {/* <EditPatientComponent
         open={isEditModalOpen}
         onClose={closeEditModal}
         onUpdate={(data) => {
@@ -634,7 +621,7 @@ export function ListPatients(props: ListPatientsProps) {
           closeDeleteModal();
         }}
         patientData={deleteData}
-      />
+      /> */}
     </Box>
   );
 }

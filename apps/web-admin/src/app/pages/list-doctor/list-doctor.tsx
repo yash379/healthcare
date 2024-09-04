@@ -435,8 +435,6 @@ export function ListDoctors(props: ListDoctorsProps) {
                   </TableCell>
                   <TableCell sx={{ border: "hidden" }}>Speciality
                   </TableCell>
-                  {/* <TableCell sx={{ border: "hidden" }}>Flat Number</TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Building Name</TableCell> */}
                   <TableCell sx={{ border: "hidden" }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -458,7 +456,7 @@ export function ListDoctors(props: ListDoctorsProps) {
                           e.stopPropagation();
                         }}
                       /></TableCell>
-                      <TableCell>
+                      <TableCell align='left'>
                       <NavLink
                       to={`/hospitals/${params.hospitalId}/doctors/${doctor.id}/patients`}
                       className={styles['socname']}
@@ -503,47 +501,6 @@ export function ListDoctors(props: ListDoctorsProps) {
                 )}
               </TableBody>
             </Table>
-            {/* <Box sx={{  display:'flex',
-            flexDirection:'row',
-            justifyContent:"flex-end",
-
-          }}>
-          <Stack sx={{marginBottom:"15px", marginRight:"20px", marginTop: "30px",}} spacing={2}>
-            <Pagination
-            sx={{  display:'flex',
-            flexDirection:'row',
-            justifyContent:"flex-end",
-
-          }}
-              count={pageCount > pageCountThreshold ? pageCount + 1 : pageCount}
-              page={page + 1}
-              onChange={(event, value) => handleChangePage(event, value - 1)}
-
-              renderItem={(item) => (
-                <PaginationItem
-                  component="div"
-                  sx={{
-
-                    marginLeft: "5px",
-
-                  }}
-
-                  {...item}
-                />
-              )}
-            />
-          </Stack> */}
-            {/* <TablePagination
-              sx={{ marginTop: "5px" }}
-              rowsPerPageOptions={[5, 10, 20]}
-              component="div"
-              count={totalItems}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            /> */}
-            {/* </Box> */}
           </TableContainer>
           <Stack spacing={2} className={styles['paginationContainer']}>
           <Pagination

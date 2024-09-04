@@ -87,6 +87,22 @@ export class PatientsController {
     return patient;
   }
 
+  // @Get('/hospitals/:hospitalId/patients')
+  // @ApiOkResponse({ type: ViewPatientDto })
+  // @ApiNotFoundResponse({ description: 'Patient not found' })
+  // async findPatientByHospital(
+  //   @Param('hospitalId') hospitalId: number
+  // ): Promise<ViewPatientDto> {
+  //   const patient = await this.patientsService.findPatientByHospital(
+  //     +hospitalId
+  //   );
+  //   if (!patient) {
+  //     throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+  //   }
+  //   return patient;
+  // }
+  
+
   @Put('/hospitals/:hospitalId/doctors/:doctorId/patient/:id')
   @HttpCode(HttpStatus.OK) // Optionally set the HTTP status code
   async updatePatientById(

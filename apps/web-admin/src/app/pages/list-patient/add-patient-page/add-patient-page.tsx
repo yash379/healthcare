@@ -14,7 +14,9 @@ import {
   Typography,
   FormHelperText,
   InputAdornment,
-  Grid, // Import Grid component
+  Grid,
+  Autocomplete,
+  Chip, // Import Grid component
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -32,17 +34,31 @@ import { HospitalContext } from '../../../contexts/user-contexts';
 import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+// import { AddPatient } from '@healthcare/data-transfer-types';
+
+// const AcuteDisease = [
+//   "FLU",
+//   "PNEUMONIA",
+//   "APPENDICITIS",
+//   "MIGRAINE"
+// ];
+// const ChronicDisease = [
+//   "DIABETES",
+//   "HYPERTENSION",
+//   "ASTHMA",
+//   "COPD"
+// ];
 
 export interface AddPatient {
+  id: number;
   firstName: string;
   lastName: string;
-  email?: string;
+  email: string;
   phoneNumber?: string;
   gender: Gender;
-  chronicDisease?: ChronicDisease;
-  acuteDisease?: AcuteDisease;
-  bloodgroup: string;
-  dob: Date;
+  age: number;
+  bloodGroup: string;
+  dob: Date | null;
   digitalHealthCode: string;
   addressLine1: string;
   addressLine2?: string;
@@ -50,8 +66,9 @@ export interface AddPatient {
   stateCode?: string;
   countryCode: string;
   postalCode: string;
+  chronicDisease?: ChronicDisease[]; // Array of ChronicDisease enums
+  acuteDisease?: AcuteDisease[]; // Array of AcuteDisease enums
   isActive: boolean;
-  age: number;
 }
 
 /* eslint-disable-next-line */
@@ -59,7 +76,7 @@ export interface AddPatientPageProps {}
 
 export function AddPatientPage(props: AddPatientPageProps) {
   const [country, setCountry] = useState<string>('');
-const params = useParams();
+  const params = useParams();
   const apiUrl = environment.apiUrl;
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
   const navigate = useNavigate();
@@ -79,7 +96,7 @@ const params = useParams();
       .required('Phone number is required'),
     gender: yup.string().required('Please Select One'),
     isActive: yup.boolean().required('Please Select One'),
-    bloodgroup: yup.string().required('Blood Group is required'),
+    bloodGroup: yup.string().required('Blood Group is required'),
     dob: yup.date().required('Date Of Birth is required'),
     digitalHealthCode: yup.string().required('Digital Health Code is required'),
     addressLine1: yup.string().required('Address Line 1 is required'),
@@ -94,8 +111,17 @@ const params = useParams();
       .required('Age is required')
       .min(0, 'Age cannot be less than 0')
       .max(200, 'Age cannot be Greater then 200'),
-    chronicDisease: yup.string().required('chronicDisease is required'),
-    acuteDisease: yup.string().required('acuteDisease is required'),
+    chronicDisease: yup
+      .array()
+      .of(yup.string().required('Each chronic disease must be a valid string'))
+      .min(1, 'At least one chronic disease is required')
+      .required('chronicDiseases is required'),
+
+    acuteDisease: yup
+      .array()
+      .of(yup.string().required('Each acute disease must be a valid string'))
+      .min(1, 'At least one acute disease is required')
+      .required('acuteDiseases is required'),
   });
   const {
     handleSubmit,
@@ -112,11 +138,12 @@ const params = useParams();
   });
 
   const countryValue = watch('countryCode');
-
+  const chronicDiseaseOptions = Object.values(ChronicDisease);
+  const acuteDiseaseOptions = Object.values(AcuteDisease);
   console.log('hospitalcontext : ', hospitalContext);
 
   // Add Patient
-  const handleAddPatient = async (formData: any) => {
+  const handleAddPatient = async (formData: AddPatient) => {
     try {
       const { data: responseData } = await axios.post(
         `${apiUrl}/hospitals/${hospitalContext?.id}/doctors/${params.doctorId}/patient`,
@@ -126,9 +153,9 @@ const params = useParams();
           gender: formData.gender,
           email: formData.email,
           phoneNumber: formData.phoneNumber,
-          bloodGroup: formData.bloodgroup,
-          // dob: formData.dob,
-          dob: '2024-09-03T17:54:34.885Z',
+          bloodGroup: formData.bloodGroup,
+          dob: formData.dob ? formData.dob.toISOString() : undefined,
+          // dob:'2024-09-03T17:54:34.885Z',
           digitalHealthCode: formData.digitalHealthCode,
           addressLine1: formData.addressLine1,
           addressLine2: formData.addressLine2,
@@ -332,7 +359,7 @@ const params = useParams();
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Controller
+              {/* <Controller
                 name="dob"
                 control={control}
                 rules={{ required: 'Date of Birth is required' }}
@@ -356,11 +383,30 @@ const params = useParams();
                     />
                   </LocalizationProvider>
                 )}
+              /> */}
+              <Controller
+                name="dob"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      {...field}
+                      label="Date of Birth"
+                      slotProps={{
+                        textField: {
+                          error: !!error,
+                          helperText: error?.message,
+                          fullWidth: true,
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
+                )}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <Controller
-                name="bloodgroup"
+                name="bloodGroup"
                 control={control}
                 defaultValue=""
                 rules={{ required: 'Blood Group is required' }}
@@ -371,8 +417,8 @@ const params = useParams();
                     placeholder="Enter Blood Group"
                     {...field}
                     label="Blood Group*"
-                    error={!!errors.bloodgroup}
-                    helperText={errors.bloodgroup?.message}
+                    error={!!errors.bloodGroup}
+                    helperText={errors.bloodGroup?.message}
                     sx={{
                       width: '100%',
                       marginBottom: 1,
@@ -565,7 +611,7 @@ const params = useParams();
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Controller
+              {/* <Controller
                 name="chronicDisease"
                 control={control}
                 rules={{ required: 'chronicDisease is required' }}
@@ -590,35 +636,89 @@ const params = useParams();
                     </FormHelperText>
                   </FormControl>
                 )}
-              />
+              /> */}
+              <FormControl
+                sx={{ width: '100%', marginBottom: 2 }}
+                error={!!errors.chronicDisease}
+              >
+                <Controller
+                  name="chronicDisease"
+                  control={control}
+                  rules={{ required: 'ChronicDiseases is required' }}
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      multiple
+                      options={chronicDiseaseOptions}
+                      renderTags={(value: string[], getTagProps) =>
+                        value.map((option, index) => (
+                          <Chip
+                            variant="outlined"
+                            label={option}
+                            {...getTagProps({ index })}
+                          />
+                        ))
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          label="Select Chronic Diseases"
+                          placeholder="Chronic Diseases"
+                          error={!!errors.chronicDisease}
+                        />
+                      )}
+                      onChange={(_, value) =>
+                        field.onChange(value.map((v) => v.toUpperCase()))
+                      } // Important: Update field value
+                    />
+                  )}
+                />
+                <FormHelperText>
+                  {errors.chronicDisease?.message}
+                </FormHelperText>
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Controller
-                name="acuteDisease"
-                control={control}
-                rules={{ required: 'acuteDisease is required' }}
-                render={({ field }) => (
-                  <FormControl
-                    sx={{
-                      width: '100%',
-                      marginBottom: 1,
-                    }}
-                    error={!!errors.acuteDisease}
-                  >
-                    <InputLabel>AcuteDisease</InputLabel>
-                    <Select {...field} label="acuteDisease*">
-                      {Object.keys(AcuteDisease).map((acuteDisease, i) => (
-                        <MenuItem key={i} value={acuteDisease}>
-                          {acuteDisease}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    <FormHelperText>
-                      {errors.acuteDisease?.message}
-                    </FormHelperText>
-                  </FormControl>
-                )}
-              />
+              <FormControl
+                sx={{ width: '100%', marginBottom: 2 }}
+                error={!!errors.acuteDisease}
+              >
+                <Controller
+                  name="acuteDisease"
+                  control={control}
+                  rules={{ required: 'Acute Disease is required' }}
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      multiple
+                      options={acuteDiseaseOptions}
+                      renderTags={(value: string[], getTagProps) =>
+                        value.map((option, index) => (
+                          <Chip
+                            variant="outlined"
+                            label={option}
+                            {...getTagProps({ index })}
+                          />
+                        ))
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          label="Select Acute Diseases"
+                          placeholder="Acute Diseases"
+                          error={!!errors.acuteDisease}
+                        />
+                      )}
+                      onChange={(_, value) =>
+                        field.onChange(value.map((v) => v.toUpperCase()))
+                      }
+                    />
+                  )}
+                />
+                <FormHelperText>{errors.acuteDisease?.message}</FormHelperText>
+              </FormControl>
             </Grid>
           </Grid>
           <Button
