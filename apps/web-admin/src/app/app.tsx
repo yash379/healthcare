@@ -41,7 +41,8 @@ import EditAppointment from './pages/list-appointment/edit-appointment/edit-appo
 import DeleteAppointment from './pages/list-appointment/delete-appointment/delete-appointment';
 import AllAppointmentLog from './pages/list-appointment/all-appointment-log/all-appointment-log';
 import ViewAppointmentDetail from './pages/list-appointment/view-appointment-detail/view-appointment-detail';
-import DiagnosisPage from './diagnosis-page/diagnosis-page';
+import DiagnosisPage from './pages/diagnosis-page/diagnosis-page';
+import BrainTumor from './pages/brain-tumor/brain-tumor';
 
 export function App() {
   const location = useLocation();
@@ -146,6 +147,8 @@ export function App() {
                 element={<ViewAppointmentDetail />}
               />
               <Route path="/diagnosis" element={<DiagnosisPage />} />
+              <Route path="/cancer-detection" element={<BrainTumor />} />
+
             </Route>
 
             <Route path="/hospitals" element={<ListHospitals />} />

@@ -12,6 +12,9 @@ import { PatientsModule } from './patients/patients.module';
 import { AppointmentsController } from './appointments/appointments.controller';
 import { AppointmentsService } from './appointments/appointments.service';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { CancerDetectionController } from './cancer-detection/cancer-detection.controller';
+import { CancerDetectionService } from './cancer-detection/cancer-detection.service';
+import { CancerDetectionModule } from './cancer-detection/cancer-detection.module';
 
 @Module({
   imports: [
@@ -23,6 +26,7 @@ import { AppointmentsModule } from './appointments/appointments.module';
     DoctorsModule,
     PatientsModule,
     AppointmentsModule,
+    CancerDetectionModule,
     // DoctorsModule,
     // PatientsModule,
   ],
