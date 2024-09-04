@@ -39,6 +39,8 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 
 import * as React from 'react';
 import Chip from '../../Components/chip/chip';
+import StatusChip from '../../Components/chip/statusChip';
+// import { ListAppointment } from '@healthcare/data-transfer-types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ListAppointmentProps {}
@@ -58,6 +60,26 @@ const statusColorMap: Record<StatusEnum, string> = {
   [StatusEnum.PendingConfirmation]: '#fff3cd', // light orange
 };
 
+interface ViewAppointment {
+  id: number;
+  appointmentDate: string;
+  status: { id: number; code: string; name: string };
+  patient: PatientDetailsDto;
+}
+
+interface PatientDetailsDto {
+  user: UserDetailsDto;
+}
+
+// DTO for detailed user information (part of PatientDetails)
+interface UserDetailsDto {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+}
+
 interface Form {
   firstName: string;
   lastName: string;
@@ -69,17 +91,17 @@ interface Form {
   status: StatusEnum;
 }
 
-interface ViewAppointment {
-  id: number;
-  firstName: string;
-  lastName: string;
-  mobileNumber: string;
-  email: string;
-  gender: Gender;
-  age: number;
-  date: Date;
-  status: StatusEnum;
-}
+// interface ViewAppointment {
+//   id: number;
+//   firstName: string;
+//   lastName: string;
+//   mobileNumber: string;
+//   email: string;
+//   gender: Gender;
+//   age: number;
+//   date: Date;
+//   status: StatusEnum;
+// }
 
 export function ListAppointment(props: ListAppointmentProps) {
   const apiUrl = environment.apiUrl;
@@ -98,38 +120,38 @@ export function ListAppointment(props: ListAppointmentProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
   const params = useParams();
-  // const [appointmentsData, setAppointmentsData] = useState<ListAppointment[]>([]);
+  const [appointmentsData, setAppointmentsData] = useState<ViewAppointment[]>([]);
 
-  const [dummyAppointments, setDummyAppointments]=useState< ViewAppointment[]> ( [
-    {
-      id: 1,
-      firstName: 'Omkar',
-      lastName: 'Patil',
-      mobileNumber: '1234567890',
-      email: 'omkar.patil@example.com',
-      gender: Gender.MALE,
-      status: StatusEnum.InProgress,
-      age: 30,
-      date: new Date(),
-    },
-    {
-      id: 2,
-      firstName: 'Jane',
-      lastName: 'Smith',
-      mobileNumber: '0987654321',
-      email: 'jane.smith@example.com',
-      gender: Gender.FEMALE,
-      status: StatusEnum.InProgress,
-      age: 25,
-      date: new Date(),
-    },
-    // More dummy data...
-  ]);
+  // const [dummyAppointments, setDummyAppointments]=useState< ViewAppointment[]> ( [
+  //   {
+  //     id: 1,
+  //     firstName: 'Omkar',
+  //     lastName: 'Patil',
+  //     mobileNumber: '1234567890',
+  //     email: 'omkar.patil@example.com',
+  //     gender: Gender.MALE,
+  //     status: StatusEnum.InProgress,
+  //     age: 30,
+  //     date: new Date(),
+  //   },
+  //   {
+  //     id: 2,
+  //     firstName: 'Jane',
+  //     lastName: 'Smith',
+  //     mobileNumber: '0987654321',
+  //     email: 'jane.smith@example.com',
+  //     gender: Gender.FEMALE,
+  //     status: StatusEnum.InProgress,
+  //     age: 25,
+  //     date: new Date(),
+  //   },
+  //   // More dummy data...
+  // ]);
 
   const getAllAppointments= useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/doctors/1/patients/2/appointments`, {
+      const response = await axios.get(`${apiUrl}/hospitals/1/doctors/1/appointments`, {
         withCredentials: true,
         // params: {
         //   pageSize: rowsPerPage,
@@ -255,34 +277,34 @@ useEffect(() => {
     getAppointment();
   };
 
-  const handleAddAppointment = async (formData: Form) => {
-    try {
-      const newAppointment = {
-        id: dummyAppointments.length + 1, // This is just a dummy ID
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        gender: formData.gender,
-        email: formData.email,
-        mobileNumber: formData.mobileNumber,
-        age: formData.age,
-        date: new Date(formData.date),
-        status: formData.status, 
-      };
+  // const handleAddAppointment = async (formData: Form) => {
+  //   try {
+  //     const newAppointment = {
+  //       id: dummyAppointments.length + 1, // This is just a dummy ID
+  //       firstName: formData.firstName,
+  //       lastName: formData.lastName,
+  //       gender: formData.gender,
+  //       email: formData.email,
+  //       mobileNumber: formData.mobileNumber,
+  //       age: formData.age,
+  //       date: new Date(formData.date),
+  //       status: formData.status, 
+  //     };
   
-      dummyAppointments.push(newAppointment); // For testing with dummy data
-      setDummyAppointments([...dummyAppointments]); // Update state to trigger re-render
+  //     dummyAppointments.push(newAppointment); // For testing with dummy data
+  //     setDummyAppointments([...dummyAppointments]); // Update state to trigger re-render
   
-      enqueueSnackbar('Appointment added successfully', { variant: 'success' });
-      setIsAddModalOpen(false);
+  //     enqueueSnackbar('Appointment added successfully', { variant: 'success' });
+  //     setIsAddModalOpen(false);
       
-      // Uncomment this if you're using an API to fetch appointments
-      // getAppointment();
+  //     // Uncomment this if you're using an API to fetch appointments
+  //     // getAppointment();
   
-    } catch (error) {
-      console.log(error);
-      enqueueSnackbar('Something went wrong', { variant: 'error' });
-    }
-  };
+  //   } catch (error) {
+  //     console.log(error);
+  //     enqueueSnackbar('Something went wrong', { variant: 'error' });
+  //   }
+  // };
   
 
   const getInitials = (firstName: string, lastName: string) => {
@@ -430,7 +452,7 @@ useEffect(() => {
             <AddAppointment
               open={isAddModalOpen}
               onClose={() => setIsAddModalOpen(false)}
-              onSubmit={handleAddAppointment}
+              // onSubmit={handleAddAppointment}
             />
             <TextField
               type="text"
@@ -484,7 +506,7 @@ useEffect(() => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dummyAppointments.map((appointment) => (
+            {appointmentsData.map((appointment) => (
               <TableRow key={appointment.id}>
                 <TableCell>
                   <NavLink
@@ -509,17 +531,18 @@ useEffect(() => {
                     >
                       <Avatar sx={{ bgcolor: '#4FD1C5', marginRight: 2 }}>
                         {getInitials(
-                          appointment.firstName,
-                          appointment.lastName
+                          appointment.patient.user.firstName,
+                          appointment.patient.user.lastName
                         )}
                       </Avatar>
-                      {`${appointment.firstName} ${appointment.lastName}`}
+                      {`${appointment.patient.user.firstName} ${appointment.patient.user.lastName}`}
                     </Box>
                   </NavLink>
                 </TableCell>
 
-                <TableCell>{appointment.gender}</TableCell>
-                <TableCell>{appointment.date.toDateString()}</TableCell>
+                <TableCell>{appointment.patient.user.email}</TableCell>
+                <TableCell>{appointment.patient.user.phoneNumber}</TableCell>
+                {/* <TableCell>{appointment.date.toDateString()}</TableCell> */}
                 <TableCell>
                   {/* <Box
                     sx={{
@@ -531,7 +554,46 @@ useEffect(() => {
                       textAlign: 'center',
                     }}
                   > */}
-                  <Chip label="Info">{appointment.status}</Chip>
+                    {appointment.status.name==='INPROGRESS'
+                    ? (
+                      <StatusChip
+                        label="Primary"
+                        width="100px">
+                        InProgress
+                      </StatusChip>
+                    ) : (
+                      ''
+                    )}
+                    {appointment.status.name==='PENDING'
+                    ? (
+                      <StatusChip
+                        label="Warning"
+                        width="100px">
+                        Pending
+                      </StatusChip>
+                    ) : (
+                      ''
+                    )}
+                    {appointment.status.name==='CANCELLED'
+                    ? (
+                      <StatusChip
+                        label="Error"
+                        width="100px">
+                        Cancelled
+                      </StatusChip>
+                    ) : (
+                      ''
+                    )}
+                    {appointment.status.name==='CONFIRMED'
+                    ? (
+                      <StatusChip
+                        label="Success"
+                        width="100px">
+                        Confirmed
+                      </StatusChip>
+                    ) : (
+                      ''
+                    )}
 
                   {/* </Box> */}
                 </TableCell>

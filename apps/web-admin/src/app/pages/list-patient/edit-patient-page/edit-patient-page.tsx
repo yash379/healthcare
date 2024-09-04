@@ -14,6 +14,9 @@ import {
   Typography,
   FormHelperText,
   InputAdornment,
+  Grid,
+  Autocomplete,
+  Chip,
 } from '@mui/material';
 import { environment } from '../../../../environments/environment';
 import Breadcrumbs from '../../../Components/bread-crumbs/bread-crumbs';
@@ -25,21 +28,37 @@ import { CountriesStates } from '../../../core/consts/countries-states';
 
 import { useContext, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Gender, Patient } from '@prisma/client';
+import { AcuteDisease, ChronicDisease, Gender, Patient } from '@prisma/client';
 import { enqueueSnackbar } from 'notistack';
 import { HospitalContext } from '../../../contexts/user-contexts';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import { AddPatient, ViewPatient } from '@healthcare/data-transfer-types';
+
+// const AcuteDisease = [
+//   "FLU",
+//   "PNEUMONIA",
+//   "APPENDICITIS",
+//   "MIGRAINE"
+// ];
+// const ChronicDisease = [
+//   "DIABETES",
+//   "HYPERTENSION",
+//   "ASTHMA",
+//   "COPD"
+// ];
 
 export interface EditPatient {
+  id: number;
   firstName: string;
   lastName: string;
-  email?: string;
+  email: string;
   phoneNumber?: string;
   gender: Gender;
-  bloodgroup: string;
-  dob: Date;
+  age: number;
+  bloodGroup: string;
+  dob: Date | null;
   digitalHealthCode: string;
   addressLine1: string;
   addressLine2?: string;
@@ -47,26 +66,28 @@ export interface EditPatient {
   stateCode?: string;
   countryCode: string;
   postalCode: string;
-  isActive: boolean;
+  chronicDiseases?: ChronicDisease[]; // Array of ChronicDisease enums
+  acuteDiseases?: AcuteDisease[]; // Array of AcuteDisease enums
+  // isActive: boolean;
 }
 
-export interface ViewPatient {
-  firstName: string;
-  lastName: string;
-  email?: string;
-  phoneNumber?: string;
-  gender: Gender;
-  bloodgroup: string;
-  dob: Date;
-  digitalHealthCode: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  stateCode?: string;
-  countryCode: string;
-  postalCode: string;
-  isActive: boolean;
-}
+// export interface ViewPatient {
+//   firstName: string;
+//   lastName: string;
+//   email?: string;
+//   phoneNumber?: string;
+//   gender: Gender;
+//   bloodgroup: string;
+//   dob: Date;
+//   digitalHealthCode: string;
+//   addressLine1: string;
+//   addressLine2?: string;
+//   city: string;
+//   stateCode?: string;
+//   countryCode: string;
+//   postalCode: string;
+//   isActive: boolean;
+// }
 
 /* eslint-disable-next-line */
 export interface EditPatientPageProps {}
@@ -74,13 +95,16 @@ export interface EditPatientPageProps {}
 export function EditPatientPage(props: EditPatientPageProps) {
   const apiUrl = environment.apiUrl;
   const [patient, setPatient] = useState<ViewPatient | null>(null);
-  const { hospitalId, patientId } = useParams<{ hospitalId: string, patientId: string }>();
+  const { hospitalId, patientId } = useParams<{
+    hospitalId: string;
+    patientId: string;
+  }>();
   console.log('Hospital ID:', hospitalId);
-console.log('Patient ID:', patientId);
-// const patientContext = useContext(PatientContext);
-//get patientid as id from patientContext
-// const { patient: id } = patientContext;
-// console.log(patientContext,"patientcontext");
+  console.log('Patient ID:', patientId);
+  // const patientContext = useContext(PatientContext);
+  //get patientid as id from patientContext
+  // const { patient: id } = patientContext;
+  // console.log(patientContext,"patientcontext");
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const validationSchema = yup.object().shape({
@@ -95,16 +119,34 @@ console.log('Patient ID:', patientId);
       .required('Phone number is required'),
     gender: yup.string().required('Please Select One'),
     isActive: yup.boolean().required('Please Select One'),
-    bloodgroup: yup.string().required('Blood Group is required'),
+    bloodGroup: yup.string().required('Blood Group is required'),
     dob: yup.date().required('Date Of Birth is required'),
     digitalHealthCode: yup.string().required('Digital Health Code is required'),
-    addressLine1: yup.string().required('addressLine1 is required'),
+    addressLine1: yup.string().required('Address Line 1 is required'),
     addressLine2: yup.string().notRequired(),
     city: yup.string().required('City is required'),
-    stateCode: yup.string().required('State Code is required'),
+    // stateCode: yup.string().required('State Code is required'),
+    stateCode: yup.string().notRequired(),
     countryCode: yup.string().required('Country Code is required'),
     postalCode: yup.string().required('Postal Code is required'),
+    age: yup
+      .number()
+      .required('Age is required')
+      .min(0, 'Age cannot be less than 0')
+      .max(200, 'Age cannot be Greater then 200'),
+    chronicDiseases: yup
+      .array()
+      .of(yup.string().required('Each chronic disease must be a valid string'))
+      .min(1, 'At least one chronic disease is required')
+      .required('chronicDiseases is required'),
+
+    acuteDiseases: yup
+      .array()
+      .of(yup.string().required('Each acute disease must be a valid string'))
+      .min(1, 'At least one acute disease is required')
+      .required('acuteDiseases is required'),
   });
+
   const {
     handleSubmit,
     control,
@@ -112,7 +154,7 @@ console.log('Patient ID:', patientId);
     formState: { errors },
     watch,
     setValue,
-  } = useForm<ViewPatient>({
+  } = useForm<EditPatient>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       isActive: true,
@@ -124,15 +166,18 @@ console.log('Patient ID:', patientId);
     CountriesStates.find((c) => c.code === countryValue)?.states || [];
 
   const params = useParams();
-  console.log("params", params)
+  console.log('params', params);
   const hospitalContext = useContext(HospitalContext);
   console.log(hospitalContext, params);
+
+  const chronicDiseaseOptions = Object.values(ChronicDisease);
+  const acuteDiseaseOptions = Object.values(AcuteDisease);
 
   useEffect(() => {
     async function fetchPatientData() {
       try {
-        const response = await axios.get<ViewPatient>(
-          `${apiUrl}/hospitals/${hospitalContext?.id}/patients/${params.patientId}`,
+        const response = await axios.get(
+          `${apiUrl}/hospitals/${hospitalContext?.id}/doctors/${params.doctorId}/patient/${params.patientId}`,
           {
             withCredentials: true,
           }
@@ -142,20 +187,23 @@ console.log('Patient ID:', patientId);
         setPatient(patientData);
 
         // Set the form data using setValue
+        setValue('digitalHealthCode', patientData.digitalHealthCode);
+        setValue('email', patientData.email);
         setValue('firstName', patientData.firstName);
         setValue('lastName', patientData.lastName);
-        setValue('email', patientData.email);
         setValue('phoneNumber', patientData.phoneNumber);
         setValue('gender', patientData.gender);
-        setValue('bloodgroup', patientData.bloodgroup);
-        setValue('dob', new Date(patientData.dob));
-        setValue('digitalHealthCode', patientData.digitalHealthCode);
+        setValue('dob', patientData.dob);
+        setValue('bloodGroup', patientData.bloodGroup);
+        setValue('age', patientData.age);
         setValue('addressLine1', patientData.addressLine1);
         setValue('addressLine2', patientData.addressLine2);
         setValue('city', patientData.city);
         setValue('countryCode', patientData.countryCode);
         setValue('stateCode', patientData.stateCode);
         setValue('postalCode', patientData.postalCode);
+        setValue('chronicDiseases', patientData.chronicDisease);
+        setValue('acuteDiseases', patientData.acuteDisease);
       } catch (error) {
         console.error('Error fetching Patient data:', error);
       }
@@ -167,8 +215,8 @@ console.log('Patient ID:', patientId);
   const onSubmit = async (data: EditPatient) => {
     try {
       const response = await axios.put(
-        `${apiUrl}/hospitals/${hospitalContext?.id}/patients/${params.patientId}`,
-        data,
+        `${apiUrl}/hospitals/${hospitalContext?.id}/doctors/${params.doctorId}/patient/${params.patientId}`,
+        {...data, dob: data.dob ? data.dob.toISOString() : undefined},
         {
           withCredentials: true,
         }
@@ -176,7 +224,9 @@ console.log('Patient ID:', patientId);
       console.log('Patient updated:', response.data);
 
       enqueueSnackbar('Patient updated successfully!', { variant: 'success' });
-      navigate(`/hospitals/${hospitalContext?.id}/patients`);
+      navigate(
+        `/hospitals/${hospitalContext?.id}/doctors/${params.doctorId}/patients`
+      );
     } catch (error) {
       console.error('Error updating Patient:', error);
       enqueueSnackbar(
@@ -185,7 +235,6 @@ console.log('Patient ID:', patientId);
       );
     }
   };
-
 
   // const parseDate = (date?: any) => {
   //   if (date) {
@@ -196,7 +245,7 @@ console.log('Patient ID:', patientId);
   //   }
   //   return undefined;
   // };
-  
+
   const breadcrumbs = [
     {
       to: `/dashboard/${hospitalContext?.id}`,
@@ -215,8 +264,8 @@ console.log('Patient ID:', patientId);
           <Icon component={EditIcon} /> Edit Patient
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+        <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
               <Controller
                 name="digitalHealthCode"
                 control={control}
@@ -228,15 +277,36 @@ console.log('Patient ID:', patientId);
                     variant="outlined"
                     {...field}
                     fullWidth
-                    disabled
+                    // disabled
+                    inputProps={{ readOnly: true }}
                     error={!!errors.digitalHealthCode}
                     helperText={errors.digitalHealthCode?.message}
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
-              <Controller
+       </Grid>
+       <Grid item xs={12} sm={6}>
+       <Controller
+                name="email"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Email is required' }}
+                render={({ field }) => (
+                  <TextField
+                    type="email"
+                    className="form-control"
+                    placeholder="Enter Email"
+                    {...field}
+                    label="Email*"
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                    sx={{ width: '100%' }}
+                  />
+                )}
+              />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+            <Controller
                 name="firstName"
                 control={control}
                 defaultValue=""
@@ -254,10 +324,8 @@ console.log('Patient ID:', patientId);
                   />
                 )}
               />
-            </div>
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+              </Grid>
+              <Grid item xs={12} sm={6}>
               <Controller
                 name="lastName"
                 control={control}
@@ -276,30 +344,8 @@ console.log('Patient ID:', patientId);
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
-              <Controller
-                name="email"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Email is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="email"
-                    className="form-control"
-                    placeholder="Enter Email"
-                    {...field}
-                    label="Email*"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    sx={{ width: '100%' }}
-                  />
-                )}
-              />
-            </div>
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="phoneNumber"
                 control={control}
@@ -332,14 +378,14 @@ console.log('Patient ID:', patientId);
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
+              </Grid>
+              <Grid item xs={12} sm={6}>
               <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
                 <InputLabel htmlFor="type">Gender*</InputLabel>
                 <Controller
                   name="gender"
                   control={control}
-                  defaultValue=""
+                  defaultValue={patient?.gender}
                   rules={{ required: 'Gender is required' }}
                   render={({ field }) => (
                     <Select
@@ -347,13 +393,14 @@ console.log('Patient ID:', patientId);
                       variant="outlined"
                       {...field}
                       error={!!errors.gender}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 97,
-                          },
-                        },
-                      }}
+                      value={field.value || ''}
+                      // MenuProps={{
+                      //   PaperProps: {
+                      //     style: {
+                      //       maxHeight: 97,
+                      //     },
+                      //   },
+                      // }}
                     >
                       <MenuItem sx={{ justifyContent: 'start' }} value="MALE">
                         Male
@@ -367,30 +414,10 @@ console.log('Patient ID:', patientId);
                     </Select>
                   )}
                 />
-                {/* <FormHelperText>{errors.gender?.message}</FormHelperText> */}
+                <FormHelperText>{errors.gender?.message}</FormHelperText>
               </FormControl>
-            </div>
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
-              <Controller
-                name="bloodgroup"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Blood Group is required' }}
-                render={({ field }) => (
-                  <TextField
-                    label="Blood Group*"
-                    variant="outlined"
-                    {...field}
-                    fullWidth
-                    error={!!errors.bloodgroup}
-                    helperText={errors.bloodgroup?.message}
-                  />
-                )}
-              />
-            </div>
-            <div className={styles['form-item']}>
+              </Grid>
+              <Grid item xs={12} sm={6}>
               <Controller
                 name="dob"
                 control={control}
@@ -400,7 +427,7 @@ console.log('Patient ID:', patientId);
                     <DatePicker
                       {...field}
                       value={field.value ? dayjs(field.value) : undefined}
-                      label="DOB"
+                      label="DateOf Birth"
                       slotProps={{
                         textField: {
                           error: !!error,
@@ -412,10 +439,63 @@ console.log('Patient ID:', patientId);
                   </LocalizationProvider>
                 )}
               />
-            </div>
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+               </Grid>
+               <Grid item xs={12} sm={6}>
+              <Controller
+                name="bloodGroup"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Blood Group is required' }}
+                render={({ field }) => (
+                  <TextField
+                    label="Blood Group*"
+                    variant="outlined"
+                    {...field}
+                    fullWidth
+                    error={!!errors.bloodGroup}
+                    helperText={errors.bloodGroup?.message}
+                  />
+                )}
+              />
+             </Grid>
+             <Grid item xs={12} sm={6}>
+             <Controller
+                name="age"
+                control={control}
+                defaultValue={0}
+                rules={{
+                  required: 'Age is required',
+                  min: {
+                    value: 0,
+                    message: 'Age cannot be less than 0',
+                  },
+                  max: {
+                    value: 200,
+                    message: 'Age cannot be Greater than 200',
+                  },
+                }}
+                render={({ field }) => (
+                  <TextField
+                    type="number"
+                    className="form-control"
+                    placeholder="Enter Age"
+                    {...field}
+                    label="Age*"
+                    error={!!errors.age}
+                    helperText={errors.age?.message}
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                    }}
+                    inputProps={{
+                      min: 0, // Set minimum value for the input
+                    }}
+                  />
+                )}
+              />
+                 </Grid>
+
+<Grid item xs={12} sm={6}>
               <Controller
                 name="addressLine1"
                 control={control}
@@ -432,8 +512,8 @@ console.log('Patient ID:', patientId);
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
+               </Grid>
+               <Grid item xs={12} sm={6}>
               <Controller
                 name="addressLine2"
                 control={control}
@@ -450,11 +530,8 @@ console.log('Patient ID:', patientId);
                   />
                 )}
               />
-            </div>
-          </div>
-
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+          </Grid>
+          <Grid item xs={12} sm={6}>
               <Controller
                 name="city"
                 control={control}
@@ -471,8 +548,8 @@ console.log('Patient ID:', patientId);
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
+          </Grid>
+          <Grid item xs={12} sm={6}>
               <Controller
                 name="countryCode"
                 control={control}
@@ -498,10 +575,8 @@ console.log('Patient ID:', patientId);
               <FormHelperText sx={{ ml: '12px', color: '#d32f2f' }}>
                 {errors.countryCode?.message}
               </FormHelperText>
-            </div>
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+              </Grid>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="stateCode"
                 control={control}
@@ -519,8 +594,9 @@ console.log('Patient ID:', patientId);
                   </FormControl>
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
+            </Grid>
+
+<Grid item xs={12} sm={6}>
               <Controller
                 name="postalCode"
                 control={control}
@@ -537,8 +613,96 @@ console.log('Patient ID:', patientId);
                   />
                 )}
               />
-            </div>
-          </div>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+            <FormControl
+                sx={{ width: '100%', marginBottom: 2 }}
+                error={!!errors.chronicDiseases}
+              >
+           <Controller
+            name="chronicDiseases"
+            control={control}
+            rules={{ required: 'Chronic Diseases are required' }}
+            render={({ field }) => (
+              <Autocomplete
+                {...field}
+                multiple
+                options={chronicDiseaseOptions}
+                getOptionLabel={(option) => option}
+                renderTags={(value: string[], getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      variant="outlined"
+                      label={option}
+                      {...getTagProps({ index })} // getTagProps already includes 'key'
+                    />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Select Chronic Diseases"
+                    placeholder="Chronic Diseases"
+                    error={!!errors.chronicDiseases}
+                  />
+                )}
+                onChange={(_, value) =>
+                  field.onChange(value.map((v) => v.toUpperCase()))
+                }
+                value={field.value || []} // Ensure controlled value
+              />
+            )}
+          />
+                <FormHelperText>
+                  {errors.chronicDiseases?.message}
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl
+                sx={{ width: '100%', marginBottom: 2 }}
+                error={!!errors.acuteDiseases}
+              >
+            <Controller
+            name="acuteDiseases"
+            control={control}
+            rules={{ required: 'Acute Disease is required' }}
+            render={({ field }) => (
+              <Autocomplete
+                {...field}
+                multiple
+                options={acuteDiseaseOptions}
+                getOptionLabel={(option) => option}
+                renderTags={(value: string[], getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      variant="outlined"
+                      label={option}
+                      {...getTagProps({ index })} // getTagProps already includes 'key'
+                    />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Select Acute Diseases"
+                    placeholder="Acute Diseases"
+                    error={!!errors.acuteDiseases}
+                  />
+                )}
+                onChange={(_, value) =>
+                  field.onChange(value.map((v) => v.toUpperCase()))
+                }
+                value={field.value || []} // Ensure controlled value
+              />
+            )}
+          />
+                <FormHelperText>{errors.acuteDiseases?.message}</FormHelperText>
+              </FormControl>
+            </Grid>
+          </Grid>
           <div className={styles['form-row']}>
             <div className={styles['form-item']}>
               <Button variant="contained" color="primary" type="submit">

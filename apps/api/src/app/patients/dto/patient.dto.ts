@@ -45,7 +45,7 @@ export class PatientDto implements Patient {
 
   @ApiProperty()
   @IsNotEmpty()
-  dob: Date;
+  dob: string;
 
   @ApiProperty()
   @IsNotEmpty()

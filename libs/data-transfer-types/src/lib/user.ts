@@ -26,6 +26,13 @@ export interface ViewUser {
   hospitalRoles: ViewHospitalRoleDto[];
   superRole?: SuperRoleName;
 }
+export interface ViewAllUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+}
 
 export interface ViewHospitalRoleDto  {
   name: string;
@@ -45,6 +52,15 @@ ViewUser,
   | 'lastName'
   | 'hospitalRoles'
   | 'superRole'
+>;
+
+export type ListAllUser = Pick<
+ViewAllUser,
+  | 'id'
+  | 'email'
+  | 'phoneNumber'
+  | 'firstName'
+  | 'lastName'
 >;
 
 export type AddUser = Omit<User, 'id'>;

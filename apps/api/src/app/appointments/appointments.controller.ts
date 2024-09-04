@@ -58,6 +58,31 @@ export class AppointmentsController {
   }
 
   @UseGuards(AuthGuard, RolesGuard)
+  @Get('hospitals/:hospitalId/doctors/:doctorId/appointments')
+  @ApiOkResponse({ type: ListAppointmentPageDto })
+  @Roles(Role.POYV_ADMIN)
+  @HttpCode(HttpStatus.OK)
+  listDoctorAppointments(
+    @Param('hospitalId') hospitalId: number,
+    @Param('doctorId') doctorId: number,
+    @Query('pageSize') pageSize?: number,
+    @Query('pageOffset') pageOffset?: number,
+    @Query('appointmentDate') appointmentDate?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc'
+  ): Promise<ListAppointmentPageDto> {
+    return this.appointmentsService.listDoctorAppointments(
+      +hospitalId,
+      +doctorId,
+      +pageSize,
+      +pageOffset,
+      appointmentDate,
+      sortBy,
+      sortOrder
+    );
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
   @Get('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
   @ApiOkResponse({ type: AppointmentDto })
   @ApiNotFoundResponse({ description: 'Appointment not found' })

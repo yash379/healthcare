@@ -10,7 +10,7 @@ import { ListUserPageDto } from './dto/list-user-page.dto';
 import { AddManagerDto, AddUserDto } from './dto/add-user.dto';
 import { HospitalRoleName, PrismaClient, SuperRoleName } from '@prisma/client';
 import * as generatePassword from 'generate-password';
-import { ListUserDto } from './dto/list-user.dto';
+import { ListAllUserDto, ListUserDto } from './dto/list-user.dto';
 import { EditUserStatus, ViewUserDto } from './dto/view-user.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import {
@@ -1859,6 +1859,71 @@ export class UsersService {
             ? (user.superRoles[0].superRole.name as SuperRoleName)
             : undefined,
       }));
+    }
+  }
+
+  async getUserList(name, email, phoneNumber): Promise<ListAllUserDto[]> {
+    try {
+      const whereArray = [];
+
+      let whereQuery = {};
+
+      if (whereArray.length > 0) {
+        if (whereArray.length > 1) {
+          whereQuery = { AND: whereArray };
+        } else {
+          whereQuery = whereArray[0];
+        }
+      }
+
+      if (name !== undefined && name.trim() !== '') {
+        // Split name into first and last names based on space
+        const nameParts = name.trim().split(/\s+/);
+        const firstName = nameParts[0];
+        const lastName =
+          nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+        whereArray.push({
+          OR: [
+            {
+              AND: [
+                { firstName: { contains: firstName, mode: 'insensitive' } },
+                { lastName: { contains: lastName, mode: 'insensitive' } },
+              ],
+            },
+            { firstName: { contains: name, mode: 'insensitive' } },
+            { lastName: { contains: name, mode: 'insensitive' } },
+          ],
+        });
+      }
+      
+      if (phoneNumber) {
+        whereArray.push({
+          phoneNumber: { contains: phoneNumber, mode: 'insensitive' },
+        });
+      }
+
+      if (email) {
+        whereArray.push({ email: { contains: email, mode: 'insensitive' } });
+      }
+      const listusers = await this.prisma.user.findMany({
+        where: whereQuery,
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phoneNumber: true,
+          isActive: true,
+        },
+        orderBy: { firstName: 'asc' },
+      });
+
+      return listusers;
+    } catch (error) {
+      throw new BadRequestException({
+        message: error.response.message,
+      });
     }
   }
 

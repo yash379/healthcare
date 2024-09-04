@@ -13,7 +13,7 @@ export interface Patient {
   gender: Gender;
   age: number;
   bloodGroup: string;
-  dob: Date;
+  dob: string;
   digitalHealthCode: string;
   addressLine1: string;
   addressLine2?: string;
@@ -35,7 +35,7 @@ export interface ViewPatient {
   gender: Gender;
   age: number;
   bloodGroup: string;
-  dob: Date;
+  dob: string;
   digitalHealthCode: string;
   addressLine1: string;
   addressLine2?: string;

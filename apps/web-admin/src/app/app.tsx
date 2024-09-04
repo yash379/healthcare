@@ -130,7 +130,7 @@ export function App() {
                 element={<AddPatientPage />}
               />
               <Route
-                path="/hospitals/:hospitalId/patients/edit/:patientId"
+                path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/edit"
                 element={<EditPatientPage />}
               />
               <Route path="/profile" element={<Profile />} />
