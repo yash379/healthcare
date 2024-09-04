@@ -39,10 +39,10 @@ export enum GenderEnum {
 }
 
 export enum StatusEnum {
-  Scheduled = "Scheduled",
-  InProgress = "In Progress",
-  Cancelled = "Cancelled",
-  PendingConfirmation = "Pending Confirmation",
+  PENDING = "Pending",
+  INPROGRESS = "In Progress",
+  CANCELLED = "Cancelled",
+  CONFIRMED = "Confirmed",
 }
 
 export interface Form {
@@ -52,8 +52,9 @@ export interface Form {
   // email: string;
   // gender: Gender;
   // age: number;
-  date: Date;
-  status: StatusEnum;
+  user: ViewAllUser | null;
+  appointmentDate: Date;
+  statusId: number;
 }
 /* eslint-disable-next-line */
 export interface AddAppointmentProps {
@@ -69,8 +70,8 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
 }) => {
   const validationSchema = yup.object().shape({
     user: yup.object().nullable().required('User is required'),
-    date: yup.date().required('Date is required'),
-    status: yup.string().required('Status is required'),
+    appointmentDate: yup.date().required('Date is required'),
+    statusId: yup.number().required('Status is required'),
   });
 
   const {
@@ -86,10 +87,17 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
 
   const apiUrl = environment.apiUrl;
   const [users, setUsers] = useState<ViewAllUser[]>([]);
-  
+  const [patientSelected, setPatientSelected] = useState<number | null>(null);
+
   const handleFormSubmit = (data: Form) => {
     console.log('handleAddForm:', data);
+    // const formData = {
+    //   ...data,
+    //   // patientId: patientSelected,
+    // };
+    console.log('handleAddForm:', data);
     onSubmit(data);
+    // onSubmit(data);
   };
 
   useEffect(() => {
@@ -100,7 +108,7 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
 
   const fetchProjectMembersData = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/user/dropdown/list`, {
+      const response = await axios.get(`${apiUrl}/hospitals/1/patients`, {
         withCredentials: true,
       });
       console.log('filter user ', response.data);
@@ -139,47 +147,40 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
           </IconButton>
         </Typography>
         <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <Box
-            sx={{
-              display: 'grid',
-              columnGap: 2,
-              rowGap: 1,
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              '@media (max-width: 600px)': {
-                gridTemplateColumns: '1fr',
-              },
-            }}
-          >
-            <Box className={styles['modal_first_container']}>
-              {/* <Controller
-                // name="user"
-                // control={control}
-                render={({ field }) => ( */}
-                  <Autocomplete
-                    // {...field}
-                    options={users}
-                    getOptionLabel={(option) =>
-                      `${option.firstName} ${option.lastName}`
-                    }
-                    // onChange={(_, data) => field.onChange(data)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Search User"
-                        placeholder="Search User"
-                        // error={!!errors.user}
-                        // helperText={errors.user?.message}
-                        fullWidth
-                      />
-                    )}
-                  />
-                {/* )} */}
-              {/* /> */}
+            <Box className={styles['grid_top']}>
+            <Controller
+              name="user"
+              control={control}
+              render={({ field }) => (
+                <Autocomplete
+                  {...field}
+                  options={users}
+                  getOptionLabel={(option) =>
+                    `${option.firstName} ${option.lastName}`
+                  }
+                  onChange={(_, selectedUser) => {
+                    field.onChange(selectedUser);
+                    // Set the selected patient's ID in the state
+                    // setPatientSelected(selectedUser ? selectedUser.id : null);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Search User"
+                      placeholder="Search User"
+                      error={!!errors.user}
+                      helperText={errors.user?.message}
+                      fullWidth
+                    />
+                  )}
+                />
+              )}
+            />
             </Box>
 
             <Box className={styles['grid_top']}>
               <Controller
-                name="date"
+                name="appointmentDate"
                 control={control}
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -189,8 +190,8 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
                       onChange={field.onChange}
                       slotProps={{
                         textField: {
-                          error: !!errors.date,
-                          helperText: errors.date?.message,
+                          error: !!errors.appointmentDate,
+                          helperText: errors.appointmentDate?.message,
                           fullWidth: true,
                         },
                       }}
@@ -201,11 +202,11 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
               />
             </Box>
 
-            <Box>
+            <Box className={styles['grid_top']}>
               <FormControl sx={{ width: '100%' }}>
                 <InputLabel htmlFor="status">Status</InputLabel>
                 <Controller
-                  name="status"
+                  name="statusId"
                   control={control}
                   render={({ field }) => (
                     <Select
@@ -213,7 +214,7 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
                       label="Status*"
                       variant="outlined"
                       {...field}
-                      error={!!errors.status}
+                      error={!!errors.statusId}
                       MenuProps={{
                         PaperProps: {
                           style: {
@@ -222,28 +223,27 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
                         },
                       }}
                     >
-                      <MenuItem value={StatusEnum.Scheduled}>
-                        {StatusEnum.Scheduled}
+                      <MenuItem value={1}>
+                        {StatusEnum.PENDING}
                       </MenuItem>
-                      <MenuItem value={StatusEnum.InProgress}>
-                        {StatusEnum.InProgress}
+                      <MenuItem value={2}>
+                        {StatusEnum.INPROGRESS}
                       </MenuItem>
-                      <MenuItem value={StatusEnum.Cancelled}>
-                        {StatusEnum.Cancelled}
+                      <MenuItem value={3}>
+                        {StatusEnum.CANCELLED}
                       </MenuItem>
-                      <MenuItem value={StatusEnum.PendingConfirmation}>
-                        {StatusEnum.PendingConfirmation}
+                      <MenuItem value={4}>
+                        {StatusEnum.CONFIRMED}
                       </MenuItem>
                     </Select>
                   )}
                 />
                 <FormHelperText sx={{ color: '#d32f2f' }}>
-                  {errors.status?.message}
+                  {errors.statusId?.message}
                 </FormHelperText>
               </FormControl>
             </Box>
-          </Box>
-
+         
           <Box sx={{ mb: '5px', mt: '20px', textAlign: 'end' }}>
             <Button
               variant="contained"

@@ -1,59 +1,93 @@
 import styles from './edit-appointment.module.scss';
 import { GenderEnum } from '../add-appointment/add-appointment';
-import { Form } from '../add-appointment/add-appointment';
 import * as yup from 'yup';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, IconButton, InputLabel, MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
-import { ViewAppointment } from '@healthcare/data-transfer-types';
+import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, IconButton, InputLabel, MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
+import { ViewAllUser, ViewAppointment } from '@healthcare/data-transfer-types';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { environment } from '../../../../environments/environment';
+import dayjs from 'dayjs';
 
 /* eslint-disable-next-line */
 export interface EditAppointmentProps {
   open: boolean;
   onClose: () => void;
-  onUpdate: (data: ViewAppointment) => void;
+  onUpdate: (data: Form) => void;
   initialData: ViewAppointment | null;
 }
+
+export interface Form {
+  user: ViewAllUser | null;
+  appointmentDate: Date;
+  statusId: number;
+}
+
 export enum StatusEnum {
-  scheduled = "Scheduled",
-  inProgress = "In Progress",
-  cancelled = "Cancelled",
-  pendingConfirmation = "Pending Confirmation",
+  PENDING = "Pending",
+  INPROGRESS = "In Progress",
+  CANCELLED = "Cancelled",
+  CONFIRMED = "Confirmed",
 }
 
 
 
-const EditAppointment: React.FC<EditAppointmentProps> = ({ open, onClose, onUpdate }) => {
+const EditAppointment: React.FC<EditAppointmentProps> = ({ open, onClose, onUpdate, initialData }) => {
 
 
   const validationSchema = yup.object().shape({
-    firstName: yup.string().required('First Name is required'),
-    lastName: yup.string().required('Last Name is required'),
-    mobileNumber: yup.string().required('Mobile Number is required'),
-    email: yup.string().required('Email is required'),
-    gender: yup.string().required('Gender is required'),
-    age: yup.number().required('Age is required'),
-    date: yup.date().required('Date is Required'),
-    status: yup.string().required('Status is Required')
+    user: yup.object().nullable().required('User is required'),
+    appointmentDate: yup.date().required('Date is required'),
+    statusId: yup.number().required('Status is required'),
   });
 
-  const { handleSubmit, control, reset, formState: { errors }, watch, setValue } = useForm<ViewAppointment>({
+  const { handleSubmit, control, reset, formState: { errors },  setValue } = useForm<Form>({
     resolver: yupResolver(validationSchema),
 
   });
 
-  const handleUpdate = (data: ViewAppointment) => {
+  const apiUrl = environment.apiUrl;
+  const [users, setUsers] = useState<ViewAllUser[]>([]);
+
+  console.log('initialData', initialData)
+  useEffect(() => {
+    if (initialData) {
+      setValue('user', initialData.patient.user);
+      setValue('statusId', initialData.status.id);
+      setValue('appointmentDate',new Date(initialData.appointmentDate));
+    }
+  }, [initialData, setValue]);
+
+  const handleUpdate = (data: Form) => {
+    console.log('data', data)
     onUpdate(data);
     reset();
   };
 
+  const fetchProjectMembersData = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/hospitals/1/patients`, {
+        withCredentials: true,
+      });
+      console.log('filter user ', response.data);
+      const userMembers = response.data;
+      setUsers(userMembers);
+    } catch (error) {
+      console.error('Error', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjectMembersData();
+  }, [apiUrl]);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
     <Box p={'5px 24px 24px 24px'}>
      <Typography
        variant="h2"
@@ -76,285 +110,120 @@ const EditAppointment: React.FC<EditAppointmentProps> = ({ open, onClose, onUpda
        </IconButton>
        </Typography>
       <form onSubmit={handleSubmit(handleUpdate)}>
-      <Box
-          sx={{
-            display: 'grid',
-            columnGap: 2,
-            rowGap: 1,
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            '@media (max-width: 600px)': {
-              gridTemplateColumns: '1fr',
-            },
-          }}
-        >
-          <Box className={styles['modal_first_container']}>
-            <Box className={styles['grid_top']}>
-              <Controller
-                name="firstName"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'First Name is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    sx={{
-                      width: '100%',
-                    }}
-                    className="form-control"
-                    placeholder="Enter Doctor First Name"
-                    {...field}
-                    label="First Name"
-                    error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
-                  />
-                )}
-              />
-            </Box>
-            <Box className={styles['grid_top']}>
+      <Box className={styles['grid_top']}>
             <Controller
-              name="email"
+              name="user"
               control={control}
-              defaultValue=""
-              rules={{ required: 'email is required' }}
               render={({ field }) => (
-                <TextField
-                  type="text"
-                  sx={{
-                    width: '100%',
-                  }}
-                  className="form-control"
-                  placeholder="Enter Doctor email"
+                <Autocomplete
                   {...field}
-                  label="email"
-                  error={!!errors.email}
-                  helperText={errors.email?.message}
+                  options={users}
+                  getOptionLabel={(option) =>
+                    `${option.firstName} ${option.lastName}`
+                  }
+                  onChange={(_, selectedUser) => {
+                    field.onChange(selectedUser);
+                    // Set the selected patient's ID in the state
+                    // setPatientSelected(selectedUser ? selectedUser.id : null);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Search User"
+                      placeholder="Search User"
+                      error={!!errors.user}
+                      helperText={errors.user?.message}
+                      fullWidth
+                    />
+                  )}
                 />
               )}
             />
             </Box>
-            <Box className={styles['grid_top']}>
-            <Controller
-              name="age"
-              control={control}
-              rules={{ required: 'age is required' }}
-              render={({ field }) => (
-                <TextField
-                  type="text"
-                  sx={{
-                    width: '100%',
-                  }}
-                  className="form-control"
-                  placeholder="Enter Doctor age"
-                  {...field}
-                  label="age"
-                  error={!!errors.age}
-                  helperText={errors.age?.message}
-                />
-              )}
-            />
-            </Box>
-            <Box className={styles['grid_top']}>
-            <Controller
-              name="date"
-              control={control}
-              rules={{ required: 'Date of Appointment is required' }}
-              render={({ field }) => (
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Date of Appointment"
-                    value={field.value}
-                    onChange={field.onChange}
-                    slotProps={{
-                      textField: {
-                        error: !!errors.date,
-                        helperText: errors.date?.message,
-                        fullWidth: true,
-                      },
-                    }}
-                    sx={{
-                      width: '100%',
-                    }}
-                  />
-                </LocalizationProvider>
-              )}
-            />
-          </Box>
-          {/* </Box> */}
-          </Box>
-          <Box className={styles['modal_second_container']}>
-            <Box className={styles['grid_top']}>
-            <Controller
-                name="lastName"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'lastName Name is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    sx={{
-                      width: '100%',
-                    }}
-                    className="form-control"
-                    placeholder="Enter Doctor First Name"
-                    {...field}
-                    label="last Name"
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
-                  />
-                )}
-              />
-            
-          </Box>
-          <Box className={styles['grid_top']}>
-          <Controller
-                name="mobileNumber"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'mobileNumber is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    sx={{
-                      width: '100%',
-                    }}
-                    className="form-control"
-                    placeholder="Enter Doctor First Name"
-                    {...field}
-                    label="mobile Number"
-                    error={!!errors.mobileNumber}
-                    helperText={errors.mobileNumber?.message}
-                  />
-                )}
-              />
-           
-          </Box>
-          <Box className={styles['grid_top']}>
-            <FormControl sx={{ width: '100%' }}>
-              <InputLabel htmlFor="gender">Gender</InputLabel>
-              <Controller
-                name="gender"
-                control={control}
-                rules={{ required: 'Gender is required' }}
-                render={({ field }) => (
-                  <Select
-                    sx={{
-                      width: '100%',
-                    }}
-                    label="Gender*"
-                    variant="outlined"
-                    {...field}
-                    error={!!errors.gender}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 100,
-                        },
-                      },
-                    }}
-                  >
-                    <MenuItem
-                      sx={{ justifyContent: 'start' }}
-                      value={GenderEnum.male}
-                    >
-                      {GenderEnum.male}
-                    </MenuItem>
-                    <MenuItem
-                      sx={{ justifyContent: 'start' }}
-                      value={GenderEnum.female}
-                    >
-                      {GenderEnum.female}
-                    </MenuItem>
-                    <MenuItem
-                      sx={{ justifyContent: 'start' }}
-                      value={GenderEnum.other}
-                    >
-                      {GenderEnum.other}
-                    </MenuItem>
-                  </Select>
-                )}
-              />
-              <FormHelperText sx={{ color: '#d32f2f' }}>
-                {errors.gender?.message}
-              </FormHelperText>
-            </FormControl>
-          </Box>
-          
-          <Box className={styles['grid_top']}>
-            <FormControl sx={{ width: '100%' }}>
-              <InputLabel htmlFor="status">Status</InputLabel>
-              <Controller
-                name="status"
-                control={control}
-                rules={{ required: 'status is required' }}
-                render={({ field }) => (
-                  <Select
-                    sx={{
-                      width: '100%',
-                      marginBottom: 1,
-                    }}
-                    label="status*"
-                    variant="outlined"
-                    {...field}
-                    error={!!errors.status}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 100,
-                        },
-                      },
-                    }}
-                  >
-                    <MenuItem
-                      sx={{ justifyContent: 'start' }}
-                      value={StatusEnum.scheduled}
-                    >
-                      {StatusEnum.scheduled}
-                    </MenuItem>
-                    <MenuItem
-                      sx={{ justifyContent: 'start' }}
-                      value={StatusEnum.inProgress}
-                    >
-                      {StatusEnum.inProgress}
-                    </MenuItem>
-                    <MenuItem
-                      sx={{ justifyContent: 'start' }}
-                      value={StatusEnum.cancelled}
-                    >
-                      {StatusEnum.cancelled}
-                    </MenuItem>
-                    <MenuItem
-                      sx={{ justifyContent: 'start' }}
-                      value={StatusEnum.pendingConfirmation}
-                    >
-                      {StatusEnum.pendingConfirmation}
-                    </MenuItem>
-                  </Select>
-                )}
-              />
-              <FormHelperText sx={{ color: '#d32f2f' }}>
-                {errors.gender?.message}
-              </FormHelperText>
-            </FormControl>
-          </Box>
-        </Box>
-        </Box>
 
-        <Box sx={{ mb: '5px', mt: '20px', textAlign: 'end' }}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => {
-              onClose();
-              reset();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button sx={{ml:'10px'}} variant="contained" color="primary" type="submit">
-            Save
-          </Button>
-        </Box>
-      </form>
+            <Box className={styles['grid_top']}>
+              <Controller
+                name="appointmentDate"
+                control={control}
+                render={({ field }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Date of Appointment"
+                      {...field}
+                      value={field.value ? dayjs(field.value) : undefined}
+                      // onChange={field.onChange}
+                      slotProps={{
+                        textField: {
+                          error: !!errors.appointmentDate,
+                          helperText: errors.appointmentDate?.message,
+                          fullWidth: true,
+                        },
+                      }}
+                      sx={{ width: '100%' }}
+                    />
+                  </LocalizationProvider>
+                )}
+              />
+            </Box>
+
+            <Box className={styles['grid_top']}>
+              <FormControl sx={{ width: '100%' }}>
+                <InputLabel htmlFor="status">Status</InputLabel>
+                <Controller
+                  name="statusId"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      sx={{ width: '100%', marginBottom: 1 }}
+                      label="Status*"
+                      variant="outlined"
+                      {...field}
+                      error={!!errors.statusId}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 100,
+                          },
+                        },
+                      }}
+                    >
+                      <MenuItem value={1}>
+                        {StatusEnum.PENDING}
+                      </MenuItem>
+                      <MenuItem value={2}>
+                        {StatusEnum.INPROGRESS}
+                      </MenuItem>
+                      <MenuItem value={3}>
+                        {StatusEnum.CANCELLED}
+                      </MenuItem>
+                      <MenuItem value={4}>
+                        {StatusEnum.CONFIRMED}
+                      </MenuItem>
+                    </Select>
+                  )}
+                />
+                <FormHelperText sx={{ color: '#d32f2f' }}>
+                  {errors.statusId?.message}
+                </FormHelperText>
+              </FormControl>
+            </Box>
+         
+          <Box sx={{ mb: '5px', mt: '20px', textAlign: 'end' }}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                onClose();
+                reset();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button sx={{ ml: '10px' }} variant="contained" color="primary" type="submit">
+              Save
+            </Button>
+          </Box>
+        </form>
       </Box>
     </Dialog>
   );
