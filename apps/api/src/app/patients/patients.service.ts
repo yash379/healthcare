@@ -569,6 +569,82 @@ export class PatientsService {
     };
   }
 
+  async findPatientByHospital(
+    hospitalId: number
+  ) {
+    // Check if the hospital exists
+    const hospital = await this.prisma.hospital.findUnique({
+      where: { id: hospitalId },
+    });
+    if (!hospital) {
+      throw new HttpException('Hospital not found', HttpStatus.NOT_FOUND);
+    }
+
+    const hospitalDoctorRoleId = await this.prisma.hospitalRole.findFirst({
+      where: {
+        name: HospitalRoleName.PATIENT,
+      },
+    });
+
+    const whereArray = [];
+    let whereQuery = {};
+
+    whereArray.push({
+      hospitalRoles: {
+        some: {
+          hospitalId: hospitalId,
+          hospitalRoleId: hospitalDoctorRoleId.id,
+        },
+      },
+    });
+
+    if (whereArray.length > 0) {
+      if (whereArray.length > 1) {
+        whereQuery = { AND: whereArray };
+      } else {
+        whereQuery = whereArray[0];
+      }
+    }
+
+    const listPatients = await this.prisma.user.findMany({
+      where: whereQuery,
+      select: {
+        id: true,
+        email: true,
+        phoneNumber: true,
+        firstName: true,
+        isActive: true,
+        lastName: true,
+        patient: {
+          select: {
+            id: true,
+            gender: true,
+            digitalHealthCode: true,
+            age: true,
+            bloodGroup: true,
+            dob: true,
+            addressLine1: true,
+            addressLine2: true,
+            city: true,
+            postalCode: true,
+            chronicDiseases: true,
+            acuteDiseases: true,
+            countryCode: true,
+            stateCode: true,
+          },
+        },
+      },
+    });
+
+    if (!listPatients) {
+      throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+    }
+
+    const listPatientsDto = await this.getPatientList(listPatients);
+
+    return listPatientsDto;
+  }
+
   async updatePatientById(
     hospitalId: number,
     doctorId: number,

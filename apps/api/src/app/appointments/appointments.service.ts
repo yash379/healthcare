@@ -228,13 +228,6 @@ export class AppointmentsService {
       throw new NotFoundException('Doctor not found');
     }
 
-    // Validate patient existence
-    // const patient = await this.prisma.patient.findUnique({
-    //   where: { id: patientId },
-    // });
-    // if (!patient) {
-    //   throw new NotFoundException('Patient not found');
-    // }
 
     const whereArray = [];
     let whereQuery = {};
@@ -303,7 +296,7 @@ export class AppointmentsService {
         },
         patient: {
           user:{
-            id: appointment.patient.user.id,
+            id: appointment.patient.id,
             firstName: appointment.patient.user.firstName,
             lastName: appointment.patient.user.lastName,
             email: appointment.patient.user.email,

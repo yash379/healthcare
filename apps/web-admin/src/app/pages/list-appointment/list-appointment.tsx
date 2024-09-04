@@ -4,7 +4,6 @@ import AddDoctorComponent from '../list-doctor/add-doctor/add-doctor';
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
-
 import {
   Box,
   Button,
@@ -40,6 +39,8 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import * as React from 'react';
 import Chip from '../../Components/chip/chip';
 import StatusChip from '../../Components/chip/statusChip';
+import Loading from '../../Components/loading/loading';
+import { ViewAllUser } from '@healthcare/data-transfer-types';
 // import { ListAppointment } from '@healthcare/data-transfer-types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -81,14 +82,9 @@ interface UserDetailsDto {
 }
 
 interface Form {
-  firstName: string;
-  lastName: string;
-  mobileNumber: string;
-  email: string;
-  gender: Gender;
-  age: number;
-  date: Date;
-  status: StatusEnum;
+  user: ViewAllUser | null;
+  appointmentDate: Date;
+  statusId: number;
 }
 
 // interface ViewAppointment {
@@ -120,8 +116,10 @@ export function ListAppointment(props: ListAppointmentProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
   const params = useParams();
-  const [appointmentsData, setAppointmentsData] = useState<ViewAppointment[]>([]);
-
+  const [appointmentsData, setAppointmentsData] = useState<ViewAppointment[]>(
+    []
+  );
+  const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
   // const [dummyAppointments, setDummyAppointments]=useState< ViewAppointment[]> ( [
   //   {
   //     id: 1,
@@ -148,35 +146,35 @@ export function ListAppointment(props: ListAppointmentProps) {
   //   // More dummy data...
   // ]);
 
-  const getAllAppointments= useCallback(async () => {
+  const getAllAppointments = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${apiUrl}/hospitals/1/doctors/1/appointments`, {
-        withCredentials: true,
-        // params: {
-        //   pageSize: rowsPerPage,
-        //   pageOffset: page -1,
-        //   name: searchQueryName,
-        // },
-      });
+      const response = await axios.get(
+        `${apiUrl}/hospitals/1/doctors/1/appointments`,
+        {
+          withCredentials: true,
+          // params: {
+          //   pageSize: rowsPerPage,
+          //   pageOffset: page -1,
+          //   name: searchQueryName,
+          // },
+        }
+      );
       // console.log(response.data[0].user)
-      const {content, total} = response.data;
+      const { content, total } = response.data;
       setAppointmentsData(response.data.content);
-      setTotalItems(total)
-      console.log("Admin Data",response.data.content);
+      setTotalItems(total);
+      console.log('Admin Data', response.data.content);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching hospital data:', error);
       setLoading(false);
     }
   }, [apiUrl]);
-  
-useEffect(() => {
- 
-  getAllAppointments();
-}, [apiUrl, getAllAppointments]);
-  
 
+  useEffect(() => {
+    getAllAppointments();
+  }, [apiUrl, getAllAppointments]);
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);
@@ -184,9 +182,9 @@ useEffect(() => {
   };
 
   const handleEditClick = (appointmentId: number) => {
-    const selectedAppointment: ViewAppointment | undefined =
-      dummyAppointments.find((appointment) => appointment.id === appointmentId);
-
+    const selectedAppointment: ViewAppointment | undefined = appointmentsData.find(
+      (appointment) => appointment.id === appointmentId
+    );
     if (selectedAppointment) {
       setEditData(selectedAppointment);
       setSelectedAppointmentId(appointmentId);
@@ -277,35 +275,75 @@ useEffect(() => {
     getAppointment();
   };
 
-  // const handleAddAppointment = async (formData: Form) => {
-  //   try {
-  //     const newAppointment = {
-  //       id: dummyAppointments.length + 1, // This is just a dummy ID
-  //       firstName: formData.firstName,
-  //       lastName: formData.lastName,
-  //       gender: formData.gender,
-  //       email: formData.email,
-  //       mobileNumber: formData.mobileNumber,
-  //       age: formData.age,
-  //       date: new Date(formData.date),
-  //       status: formData.status, 
-  //     };
-  
-  //     dummyAppointments.push(newAppointment); // For testing with dummy data
-  //     setDummyAppointments([...dummyAppointments]); // Update state to trigger re-render
-  
-  //     enqueueSnackbar('Appointment added successfully', { variant: 'success' });
-  //     setIsAddModalOpen(false);
-      
-  //     // Uncomment this if you're using an API to fetch appointments
-  //     // getAppointment();
-  
-  //   } catch (error) {
-  //     console.log(error);
-  //     enqueueSnackbar('Something went wrong', { variant: 'error' });
-  //   }
-  // };
-  
+  // Add Appointment
+  const handleAddAppointment = async (formData: Form) => {
+    try {
+      await setIsAddModalOpen(false);
+      setIsLoadingModalOpen(true);
+
+      const { data: responseData } = await axios.post(
+        `${apiUrl}/hospitals/1/doctors/1/patients/${formData?.user?.id}/appointments`,
+        {
+          appointmentDate: formData.appointmentDate,
+          statusId: formData.statusId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if (responseData) {
+        setIsLoadingModalOpen(false);
+        enqueueSnackbar('Appointment added successfully', { variant: 'success' });
+        setIsAddModalOpen(false);
+        getAllAppointments();
+      } else {
+        console.log('Something went wrong');
+        setIsLoadingModalOpen(false);
+      }
+      console.log('Appointment added successfully', responseData);
+    } catch (error) {
+      console.log(error);
+      console.log('Something went wrong in input form');
+      enqueueSnackbar('Something went wrong', { variant: 'error' });
+      setIsLoadingModalOpen(false);
+    }
+  };
+
+
+  // Edit Appointment
+  const handleUpdate = async (formData: Form) => {
+    try {
+      await setIsAddModalOpen(false);
+      setIsLoadingModalOpen(true);
+
+      const { data: responseData } = await axios.put(
+        `${apiUrl}/hospitals/1/doctors/1/patients/${formData?.user?.id}/appointments/${selectedAppointmentId}`,
+        {
+          appointmentDate: formData.appointmentDate,
+          statusId: formData.statusId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if (responseData) {
+        setIsLoadingModalOpen(false);
+        enqueueSnackbar('Appointment updated successfully', { variant: 'success' });
+        setIsAddModalOpen(false);
+        getAllAppointments();
+      } else {
+        console.log('Something went wrong');
+        setIsLoadingModalOpen(false);
+      }
+      console.log('Appointment updated successfully', responseData);
+    } catch (error) {
+      console.log(error);
+      console.log('Something went wrong in input form');
+      enqueueSnackbar('Something went wrong', { variant: 'error' });
+      setIsLoadingModalOpen(false);
+    }
+  };
+
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName[0]}${lastName[0]}`.toUpperCase();
@@ -452,8 +490,13 @@ useEffect(() => {
             <AddAppointment
               open={isAddModalOpen}
               onClose={() => setIsAddModalOpen(false)}
-              // onSubmit={handleAddAppointment}
+              onSubmit={handleAddAppointment}
             />
+            <Loading
+              open={isLoadingModalOpen}
+              onClose={() => setIsLoadingModalOpen(false)}
+            />
+
             <TextField
               type="text"
               variant="outlined"
@@ -554,46 +597,34 @@ useEffect(() => {
                       textAlign: 'center',
                     }}
                   > */}
-                    {appointment.status.name==='INPROGRESS'
-                    ? (
-                      <StatusChip
-                        label="Primary"
-                        width="100px">
-                        InProgress
-                      </StatusChip>
-                    ) : (
-                      ''
-                    )}
-                    {appointment.status.name==='PENDING'
-                    ? (
-                      <StatusChip
-                        label="Warning"
-                        width="100px">
-                        Pending
-                      </StatusChip>
-                    ) : (
-                      ''
-                    )}
-                    {appointment.status.name==='CANCELLED'
-                    ? (
-                      <StatusChip
-                        label="Error"
-                        width="100px">
-                        Cancelled
-                      </StatusChip>
-                    ) : (
-                      ''
-                    )}
-                    {appointment.status.name==='CONFIRMED'
-                    ? (
-                      <StatusChip
-                        label="Success"
-                        width="100px">
-                        Confirmed
-                      </StatusChip>
-                    ) : (
-                      ''
-                    )}
+                  {appointment.status.name === 'INPROGRESS' ? (
+                    <StatusChip label="Primary" width="100px">
+                      InProgress
+                    </StatusChip>
+                  ) : (
+                    ''
+                  )}
+                  {appointment.status.name === 'PENDING' ? (
+                    <StatusChip label="Warning" width="100px">
+                      Pending
+                    </StatusChip>
+                  ) : (
+                    ''
+                  )}
+                  {appointment.status.name === 'CANCELLED' ? (
+                    <StatusChip label="Error" width="100px">
+                      Cancelled
+                    </StatusChip>
+                  ) : (
+                    ''
+                  )}
+                  {appointment.status.name === 'CONFIRMED' ? (
+                    <StatusChip label="Success" width="100px">
+                      Confirmed
+                    </StatusChip>
+                  ) : (
+                    ''
+                  )}
 
                   {/* </Box> */}
                 </TableCell>
@@ -619,6 +650,7 @@ useEffect(() => {
           open={isEditModalOpen}
           onClose={closeEditModal}
           onUpdate={(data) => {
+            handleUpdate(data);
             closeEditModal();
           }}
           initialData={editData}
