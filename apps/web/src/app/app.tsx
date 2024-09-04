@@ -21,6 +21,7 @@ import PatientLayout from './layouts/patient-layout/patient-layout';
 import ViewMedicalHistoryTimeline from './view-medical-history-timeline/view-medical-history-timeline';
 import PatientDetail from './patient-detail/patient-detail';
 import SettingPage from './setting-page/setting-page';
+import DoctorAppointmentCalender from './doctor-appointment-calender/doctor-appointment-calender';
 export function App() {
 
   const location = useLocation();
@@ -96,6 +97,7 @@ const setUser = (user: User | null) => {
               <Route path="/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline />} />
               <Route path="/patient-detail" element={<PatientDetail />} />
               <Route path="/settings" element={<SettingPage />} />
+              <Route path="/doctor-appointment-calender" element={<DoctorAppointmentCalender />} />
               </Route>
               <Route path="/profile" element={<Profile />} />
             {/* </Route> */}
