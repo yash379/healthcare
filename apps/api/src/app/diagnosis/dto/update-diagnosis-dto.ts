@@ -8,4 +8,5 @@ export class UpdateDiagnosisDto {
   temperature?: number;
   chiefComplaints?: string[];
   diagnosisDate?: string; // ISO string
+  medicalHistoryId?: number; // Optional
 }

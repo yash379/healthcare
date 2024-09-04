@@ -24,6 +24,9 @@ import { DiagnosisModule } from './diagnosis/diagnosis.module';
 import { PrescriptionController } from './prescription/prescription.controller';
 import { PrescriptionService } from './prescription/prescription.service';
 import { PrescriptionModule } from './prescription/prescription.module';
+import { MedicalHistoryController } from './medical-history/medical-history.controller';
+import { MedicalHistoryService } from './medical-history/medical-history.service';
+import { MedicalHistoryModule } from './medical-history/medical-history.module';
 
 @Module({
   imports: [
@@ -39,6 +42,7 @@ import { PrescriptionModule } from './prescription/prescription.module';
     ChatRequestModule,
     DiagnosisModule,
     PrescriptionModule,
+    MedicalHistoryModule,
     // DoctorsModule,
     // PatientsModule,
   ],

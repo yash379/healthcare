@@ -211,6 +211,7 @@ CREATE TABLE "diagnoses" (
     "diagnosis_date" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ,
+    "medicalHistoryId" INTEGER,
 
     CONSTRAINT "diagnoses_pkey" PRIMARY KEY ("id")
 );
@@ -218,7 +219,6 @@ CREATE TABLE "diagnoses" (
 -- CreateTable
 CREATE TABLE "medical_histories" (
     "id" SERIAL NOT NULL,
-    "details" TEXT NOT NULL,
     "patientId" INTEGER NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ,
@@ -240,12 +240,6 @@ CREATE TABLE "doctor_patients" (
     "patient_id" INTEGER NOT NULL,
 
     CONSTRAINT "doctor_patients_pkey" PRIMARY KEY ("doctor_id","patient_id")
-);
-
--- CreateTable
-CREATE TABLE "_Diagnoses" (
-    "A" INTEGER NOT NULL,
-    "B" INTEGER NOT NULL
 );
 
 -- CreateIndex
@@ -283,12 +277,6 @@ CREATE UNIQUE INDEX "appointment_statuses_code_name_key" ON "appointment_statuse
 
 -- CreateIndex
 CREATE UNIQUE INDEX "medical_histories_patientId_key" ON "medical_histories"("patientId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_Diagnoses_AB_unique" ON "_Diagnoses"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_Diagnoses_B_index" ON "_Diagnoses"("B");
 
 -- AddForeignKey
 ALTER TABLE "users_super_roles" ADD CONSTRAINT "users_super_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -354,6 +342,9 @@ ALTER TABLE "diagnoses" ADD CONSTRAINT "diagnoses_doctorId_fkey" FOREIGN KEY ("d
 ALTER TABLE "diagnoses" ADD CONSTRAINT "diagnoses_patientId_fkey" FOREIGN KEY ("patientId") REFERENCES "patients"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "diagnoses" ADD CONSTRAINT "diagnoses_medicalHistoryId_fkey" FOREIGN KEY ("medicalHistoryId") REFERENCES "medical_histories"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "medical_histories" ADD CONSTRAINT "medical_histories_patientId_fkey" FOREIGN KEY ("patientId") REFERENCES "patients"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -367,9 +358,3 @@ ALTER TABLE "doctor_patients" ADD CONSTRAINT "doctor_patients_doctor_id_fkey" FO
 
 -- AddForeignKey
 ALTER TABLE "doctor_patients" ADD CONSTRAINT "doctor_patients_patient_id_fkey" FOREIGN KEY ("patient_id") REFERENCES "patients"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_Diagnoses" ADD CONSTRAINT "_Diagnoses_A_fkey" FOREIGN KEY ("A") REFERENCES "diagnoses"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_Diagnoses" ADD CONSTRAINT "_Diagnoses_B_fkey" FOREIGN KEY ("B") REFERENCES "medical_histories"("id") ON DELETE CASCADE ON UPDATE CASCADE;
