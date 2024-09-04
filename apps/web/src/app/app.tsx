@@ -18,6 +18,8 @@ import ListPatients from './pages/list-patient/list-patient';
 import AddPatientPage from './pages/list-patient/add-patient-page/add-patient-page';
 import EditPatientPage from './pages/list-patient/edit-patient-page/edit-patient-page';
 import PatientLayout from './layouts/patient-layout/patient-layout';
+import ViewMedicalHistoryTimeline from './view-medical-history-timeline/view-medical-history-timeline';
+import PatientDetail from './patient-detail/patient-detail';
 export function App() {
 
   const location = useLocation();
@@ -90,6 +92,8 @@ const setUser = (user: User | null) => {
               <Route path="/hospital/:hospitalId/patients" element={<ListPatients />} />
               <Route path="/hospital/:hospitalId/patients/add" element={<AddPatientPage />} />
               <Route path="/hospital/:hospitalId/patients/edit/:patientId" element={<EditPatientPage />} />
+              <Route path="/ViewMedicalHistoryTimeline" element={<ViewMedicalHistoryTimeline />} />
+              <Route path="/PatientDetail" element={<PatientDetail />} />
               </Route>
               <Route path="/profile" element={<Profile />} />
             {/* </Route> */}

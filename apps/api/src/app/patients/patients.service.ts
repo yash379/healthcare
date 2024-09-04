@@ -755,4 +755,29 @@ export class PatientsService {
       where: { id: patient.userId },
     });
   }
+
+  //  omkar working api testing 
+
+  async patientdetails(
+    hospitalId: number,
+    doctorId: number,
+    patientId: number
+  ) {
+return [
+  {
+    id: 1,
+    patientid: '12345',
+    name: 'John Doe',
+    appointments: 5,
+    completed: 3,
+    weight: 70,
+    height: 182,
+    bloodpressure: '120/80',
+    disease: 'Diabetes',
+  },
+
+]
+  }
+
+
 }

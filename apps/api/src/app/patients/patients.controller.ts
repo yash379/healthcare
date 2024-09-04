@@ -116,4 +116,25 @@ export class PatientsController {
       +patientId
     );
   }
+
+
+  // omkar workingg testing 
+
+  @Get('/hospitals/:hospitalId/doctors/:doctorId/patient/:id/all')
+  @ApiNotFoundResponse({ description: 'Patient not found' })
+  async getpatientdetails(
+    @Param('hospitalId') hospitalId: number,
+    @Param('doctorId') doctorId: number,
+    @Param('id') patientId: number
+  ) {
+    const patient = await this.patientsService.patientdetails(
+      +hospitalId,
+      +doctorId,
+      +patientId
+    );
+    if (!patient) {
+      throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+    }
+    return patient;
+  }
 }
