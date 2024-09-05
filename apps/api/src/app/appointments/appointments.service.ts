@@ -502,6 +502,12 @@ export class AppointmentsService {
         name: status.name,
       },
       patient: {
+        // id: appointment.patientId,
+        // addressLine1: appointment.patient.addressLine1,
+        // addressLine2:appointment.patient.addressLine2,
+        // city: appointment.patient.city,
+        // stateCode: appointment.patient.stateCode,
+        // countryCode: appointment.patient.
         user:{
           id: appointment.patient.user.id,
           firstName: appointment.patient.user.firstName,

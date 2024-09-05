@@ -1,5 +1,5 @@
 // view-appointment-detail.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Paper,
@@ -15,72 +15,83 @@ import { Gender } from '@prisma/client';
 import { StatusEnum } from '../hospital-list-appointment';
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined';
+import { environment } from '../../../../environments/environment';
+import axios from 'axios';
+import { format } from 'date-fns';
 
-interface ViewAppointment {
+export interface ViewAppointment {
+  id: number;
+  appointmentDate: string;
+  status: { id: number; code: string; name: string };
+  patient: PatientDetailsDto;
+  doctor: DoctorDetailsDto;
+}
+
+interface PatientDetailsDto {
+  user: UserDetailsDto;
+}
+interface DoctorDetailsDto {
+  user: UserDetailsDto;
+}
+
+// DTO for detailed user information (part of PatientDetails)
+interface UserDetailsDto {
   id: number;
   firstName: string;
   lastName: string;
-  mobileNumber: string;
   email: string;
-  gender: string; // Adjust if using Gender enum
-  status: string; // Adjust if using StatusEnum
-  age: number;
-  date: Date;
+  phoneNumber: string;
 }
 
-const dummyAppointments: ViewAppointment[] = [
-  {
-    id: 1,
-    firstName: 'Omkar',
-    lastName: 'Patil',
-    mobileNumber: '1234567890',
-    email: 'omkar.patil@example.com',
-    gender: Gender.MALE,
-    status: StatusEnum.InProgress,
-    age: 32,
-    date: new Date(),
-  },
-  {
-    id: 2,
-    firstName: 'Jane',
-    lastName: 'Smith',
-    mobileNumber: '0987654321',
-    email: 'jane.smith@example.com',
-    gender: Gender.FEMALE,
-    status: StatusEnum.InProgress,
-    age: 25,
-    date: new Date(),
-  },
-  // More dummy data...
-];
 
 const ViewAppointmentDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const apiUrl = environment.apiUrl;
+  const params = useParams();
   const [appointment, setAppointment] = useState<ViewAppointment | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [searchQueryName, setSearchQueryName] = useState<string>('');
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [appointmentsData, setAppointmentsData] = useState<ViewAppointment>();
+ 
+
+  const getAllAppointments = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${params.doctorId}/patients/${params.patientId}/appointments/${params.appointmentId}`,
+        {
+          withCredentials: true,
+          params: {
+            pageSize: rowsPerPage,
+            pageOffset: page -1,
+            // appointmentDate: searchQueryName,
+          },
+        }
+      );
+      // console.log(response.data[0].user)
+      const { content, total } = response.data;
+      setAppointmentsData(response.data);
+      // setTotalItems(total);
+      console.log('Admin Data', response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching hospital data:', error);
+      setLoading(false);
+    }
+  }, [apiUrl, page, params.appointmentId, params.doctorId, params.hospitalId, params.patientId, rowsPerPage]);
 
   useEffect(() => {
-    const fetchAppointment = () => {
-      const appointmentData = dummyAppointments.find(
-        (app) => app.id === Number(id)
-      );
-      if (appointmentData) {
-        setAppointment(appointmentData);
-      } else {
-        console.error('Appointment not found');
-      }
-      setLoading(false);
-    };
+    getAllAppointments();
+  }, [apiUrl, page, params.hospitalId, rowsPerPage, getAllAppointments]);
 
-    fetchAppointment();
-  }, [id]);
 
-  if (loading) return <div>Loading...</div>;
+  // if (loading) return <div>Loading...</div>;
 
-  if (!appointment) {
-    return <div>Appointment not found</div>;
-  }
+  // if (!appointment) {
+  //   return <div>Appointment not found</div>;
+  // }
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName[0]}${lastName[0]}`.toUpperCase();
@@ -92,6 +103,17 @@ const ViewAppointmentDetail: React.FC = () => {
 
   const handleStartDiagnosisClick = () => {
     navigate('/diagnosis');
+  };
+
+   // Helper function to format date
+   const formatDate = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    try {
+      return format(new Date(dateString), 'MM/dd/yyyy');
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid date';
+    }
   };
 
   return (
@@ -106,7 +128,7 @@ const ViewAppointmentDetail: React.FC = () => {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <Avatar
+          {/* <Avatar
             sx={{
               bgcolor: '#4FD1C5',
               width: 60,
@@ -115,13 +137,13 @@ const ViewAppointmentDetail: React.FC = () => {
               mr: 2,
             }}
           >
-            {getInitials(appointment.firstName, appointment.lastName)}
-          </Avatar>
+            {getInitials(appointmentsData?.patient?.user?.firstName, appointmentsData.lastName)}
+          </Avatar> */}
           <Typography
             variant="h5"
             sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
           >
-            {`${appointment.firstName} ${appointment.lastName}`}
+            {`${appointmentsData?.patient?.user?.firstName} ${appointmentsData?.patient?.user?.lastName}`}
           </Typography>
         </Box>
 
@@ -134,7 +156,7 @@ const ViewAppointmentDetail: React.FC = () => {
           spacing={1}
           columns={2}
         >
-          <Grid
+          {/* <Grid
             item
             xs={1}
             md={1}
@@ -159,7 +181,7 @@ const ViewAppointmentDetail: React.FC = () => {
                 whiteSpace: 'break-spaces',
               }}
             >
-              {appointment.gender}
+              {appointmentsData?.patient?.user?.email}
             </Typography>
           </Grid>
           <Grid
@@ -187,9 +209,9 @@ const ViewAppointmentDetail: React.FC = () => {
                 whiteSpace: 'break-spaces',
               }}
             >
-              {appointment.age}
+              {appointmentsData?.patient?.user?.phoneNumber}
             </Typography>
-          </Grid>
+          </Grid> */}
 
           <Grid
             item
@@ -216,7 +238,7 @@ const ViewAppointmentDetail: React.FC = () => {
                 whiteSpace: 'break-spaces',
               }}
             >
-              {appointment.email}
+              {appointmentsData?.patient?.user?.email}
             </Typography>
           </Grid>
 
@@ -245,7 +267,7 @@ const ViewAppointmentDetail: React.FC = () => {
                 whiteSpace: 'break-spaces',
               }}
             >
-              {appointment.mobileNumber}
+              {appointmentsData?.patient?.user?.phoneNumber}
             </Typography>
           </Grid>
           <Grid
@@ -273,7 +295,7 @@ const ViewAppointmentDetail: React.FC = () => {
                 whiteSpace: 'break-spaces',
               }}
             >
-              {appointment.date.toDateString()}
+            {formatDate(appointmentsData?.appointmentDate)}
             </Typography>
           </Grid>
         </Grid>
@@ -309,7 +331,7 @@ const ViewAppointmentDetail: React.FC = () => {
                 whiteSpace: 'break-spaces',
               }}
             >
-              {appointment.status}
+              {appointmentsData?.status?.name}
             </Typography>
           </Grid>
         </Grid>

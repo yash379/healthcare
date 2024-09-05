@@ -251,6 +251,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
           }
         );
         getAllAppointments();
+        getCounts();
         enqueueSnackbar('Appointment deleted successfully', {
           variant: 'success',
         });
@@ -299,6 +300,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
         enqueueSnackbar('Appointment added successfully', { variant: 'success' });
         setIsAddModalOpen(false);
         getAllAppointments();
+        getCounts();
       } else {
         console.log('Something went wrong');
         setIsLoadingModalOpen(false);
@@ -334,6 +336,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
         enqueueSnackbar('Appointment updated successfully', { variant: 'success' });
         setIsAddModalOpen(false);
         getAllAppointments();
+        getCounts();
       } else {
         console.log('Something went wrong');
         setIsLoadingModalOpen(false);
@@ -604,7 +607,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
               <TableRow key={appointment.id}>
                 <TableCell>
                   <NavLink
-                    to={`/appointments/${appointment.id}`}
+                    to={`/hospitals/${params.hospitalId}/appointments/${appointment.id}/view-appointment`}
                     style={{
                       textDecoration: 'none',
                       color: 'inherit',
@@ -631,7 +634,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                       </Avatar> */}
 
                        <NavLink
-                    to={`/appointments/${appointment.id}`}
+                    to={`/hospitals/${params.hospitalId}/doctors/${appointment.doctor.user.id}/patients/${appointment.patient.user.id}/appointments/${appointment.id}/view-appointment`}
                     className={styles['socname']}
                   >
                       {`${appointment.patient.user.firstName} ${appointment.patient.user.lastName}`}

@@ -128,6 +128,8 @@ export function ListAppointment(props: ListAppointmentProps) {
     []
   );
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
+
+  
   const getAllAppointments = useCallback(async () => {
     try {
       setLoading(true);
