@@ -30,3 +30,5 @@ export interface OrganizationRoleDto {
 
 export const UserContext = React.createContext<User | null>(null);
 export const HospitalContext=React.createContext<Hospital | null>(null);
+
+export default UserContext;

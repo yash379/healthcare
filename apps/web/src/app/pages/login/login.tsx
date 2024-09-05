@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { TextField, Button, Box, Grid } from '@mui/material';
+import { TextField, Button, Box, Grid, Typography } from '@mui/material';
 import styles from './login.module.scss';
 import loginImg from '../../../assets/loginImg.jpg';
 // import logoImg from '../../../assets/Logo_Aqua level.svg';
@@ -11,6 +11,8 @@ import * as yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
 import { User, ViewUser } from '@healthcare/data-transfer-types';
+import digimedic from "../../../assets/digimedic.png";
+import loginImage from "../../../assets/loginImage.png";
 
 export interface LoginProps {
   onLogin: (user: User) => void;
@@ -83,35 +85,24 @@ export function Login({ onLogin }: LoginProps) {
 
   return (
     <Box className={styles['main_root']}>
-      <Box className={styles['main_container']}>
-        <Box className={styles['first_container']}>
-          <Grid className={styles['image']}>
-            <img
-              src={loginImg}
-              alt="Background"
-              // style={{
-              //   width: '50vh', // Ensure the image does not exceed the container width
-              //   height: '65vh', // Allow the height to adjust proportionally
-              //   objectFit: 'cover', // Maintain aspect ratio and cover the entire container
-              //   borderTopLeftRadius: '40px',
-              //   borderBottomLeftRadius: '40px',
-              // }}
-            />
-          </Grid>
-        </Box>
+      {/* <Box className={styles['main_container']}> */}
         <Box className={styles['second_container']}>
-          <Grid className={styles['logo_image']}>
+          {/* <Grid className={styles['logo_image']}> */}
             {/* <img
               // src={logoImg}
               alt="Background"
               style={{ marginTop: '30px', objectFit: 'cover' }}
             /> */}
-          </Grid>
-          <h2 style={{ fontFamily: 'Secular One' }}>SIGN IN</h2>
+          {/* </Grid> */}
+          {/* <div > */}
+          <img src={digimedic} alt="medi plus logo" width="300px" height="100px" className={styles['logo']}/>
+          {/* </div> */}
+          <h1 style={{ fontFamily: 'Secular One' }}>WELCOME!</h1>
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></div> */}
             {/* <div className={styles['login-header']}>Welcome Back <span className={styles['login-emoji']}>👋</span></div> */}
             <div className={styles['login-form']}>
+              <Typography>Username</Typography>
               <div className={styles['email']}>
                 <TextField
                   type="email"
@@ -129,6 +120,7 @@ export function Login({ onLogin }: LoginProps) {
                 />
               </div>
               <div className={styles['password']}>
+              <Typography>Password</Typography>
                 <TextField
                   type="password"
                   {...register('password')}
@@ -141,7 +133,7 @@ export function Login({ onLogin }: LoginProps) {
                 />
               </div>
               <div className={styles['forgot-password']}>
-                <Link to="/forgot-password" style={{ textDecoration: 'none' }}>
+                <Link to="/forgot-password" style={{ textDecoration: 'none', color:'#064B4FD1' }}>
                   Forgot Password?
                 </Link>
               </div>
@@ -150,16 +142,32 @@ export function Login({ onLogin }: LoginProps) {
             <div className={styles['submit_btn']}>
               <Button
                 type="submit"
-                variant="contained"
+                // variant="contained"
                 className="btn btn-primary"
-                sx={{width:"110px", height:"40px"}}
+                sx={{width:"100%", height:"40px", backgroundColor:"#064B4FD1", color:"white"}}
               >
                 Log In
               </Button>
             </div>
           </form>
         </Box>
-      </Box>
+        <Box className={styles['first_container']}>
+          {/* <Grid className={styles['image']}> */}
+            <img
+              src={loginImage}
+              alt="Background"
+              // style={{
+              //   width: '50vh', // Ensure the image does not exceed the container width
+              //   height: '65vh', // Allow the height to adjust proportionally
+              //   objectFit: 'cover', // Maintain aspect ratio and cover the entire container
+              //   borderTopLeftRadius: '40px',
+              //   borderBottomLeftRadius: '40px',
+              className={styles['loginImg']}
+              // }}
+            />
+          {/* </Grid> */}
+        </Box>
+      {/* </Box> */}
     </Box>
   );
 }
