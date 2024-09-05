@@ -18,7 +18,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import styles from './add-appointment.module.scss';
+import styles from './hospital-add-appointment.module.scss';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -31,6 +31,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { environment } from '../../../../environments/environment';
 import axios from 'axios';
 import { ViewAllUser } from '@healthcare/data-transfer-types';
+import { useParams } from 'react-router-dom';
 
 export enum GenderEnum {
   female = 'female',
@@ -53,23 +54,25 @@ export interface Form {
   // gender: Gender;
   // age: number;
   patient: ViewAllUser | null;
+  doctor: ViewAllUser | null;
   appointmentDate: Date;
   statusId: number;
 }
 /* eslint-disable-next-line */
-export interface AddAppointmentProps {
+export interface HospitalAddAppointmentProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: Form) => void;
 }
 
-const AddAppointment: React.FC<AddAppointmentProps> = ({
+const HospitalAddAppointment: React.FC<HospitalAddAppointmentProps> = ({
   open,
   onClose,
   onSubmit,
 }) => {
   const validationSchema = yup.object().shape({
     patient: yup.object().nullable().required('Please select patient'),
+    doctor: yup.object().nullable().required('Please select doctor'),
     appointmentDate: yup.date().required('Date is required'),
     statusId: yup.number().required('Status is required'),
   });
@@ -86,7 +89,9 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
   });
 
   const apiUrl = environment.apiUrl;
+  const params = useParams();
   const [patients, setPatients] = useState<ViewAllUser[]>([]);
+  const [doctors, setDoctors] = useState<ViewAllUser[]>([]);
   const [patientSelected, setPatientSelected] = useState<number | null>(null);
 
   const handleFormSubmit = (data: Form) => {
@@ -97,7 +102,6 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
     // };
     console.log('handleAddForm:', data);
     onSubmit(data);
-    // onSubmit(data);
   };
 
   useEffect(() => {
@@ -106,9 +110,9 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
     }
   }, [open, reset]);
 
-  const fetchProjectMembersData = async () => {
+  const fetchPatientsData = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/hospitals/1/patients`, {
+      const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/patients`, {
         withCredentials: true,
       });
       console.log('filter user ', response.data);
@@ -120,7 +124,24 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
   };
 
   useEffect(() => {
-    fetchProjectMembersData();
+    fetchPatientsData();
+  }, [apiUrl]);
+
+  const fetchDoctorsData = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/doctors`, {
+        withCredentials: true,
+      });
+      console.log('filter user ', response.data);
+      const userMembers = response.data.content;
+      setDoctors(userMembers);
+    } catch (error) {
+      console.error('Error', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDoctorsData();
   }, [apiUrl]);
 
   return (
@@ -147,6 +168,37 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
           </IconButton>
         </Typography>
         <form onSubmit={handleSubmit(handleFormSubmit)}>
+        <Box className={styles['grid_top']}>
+            <Controller
+              name="doctor"
+              control={control}
+              render={({ field }) => (
+                <Autocomplete
+                  {...field}
+                  options={doctors}
+                  getOptionLabel={(option) =>
+                    `${option.firstName} ${option.lastName}`
+                  }
+                  onChange={(_, selectedDoctor) => {
+                    field.onChange(selectedDoctor);
+                    // Set the selected patient's ID in the state
+                    // setPatientSelected(selectedUser ? selectedUser.id : null);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Search Doctor"
+                      placeholder="Search Doctor"
+                      error={!!errors.doctor}
+                      helperText={errors.doctor?.message}
+                      fullWidth
+                    />
+                  )}
+                />
+              )}
+            />
+            </Box>
+
             <Box className={styles['grid_top']}>
             <Controller
               name="patient"
@@ -265,4 +317,4 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
   );
 };
 
-export default AddAppointment;
+export default HospitalAddAppointment;

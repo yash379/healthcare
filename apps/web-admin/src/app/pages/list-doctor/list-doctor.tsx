@@ -54,7 +54,7 @@ export function ListDoctors(props: ListDoctorsProps) {
   const [activeDoctors, setActiveDoctors] = useState<ViewDoctor[]>([]);
   const [viewDoctorOpen, setViewDoctorOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<number | null>(null);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQueryName, setSearchQueryName] = useState<string>('');
   const [searchQueryEmail, setSearchQueryEmail] = useState<string>('');
@@ -88,7 +88,7 @@ export function ListDoctors(props: ListDoctorsProps) {
         withCredentials: true,
         params: {
           pageSize: rowsPerPage,
-          pageOffset: page,
+          pageOffset: page -1,
           name: searchQueryName,
           // lastName: searchQueryName,
           // email: searchQueryEmail,
@@ -119,7 +119,7 @@ export function ListDoctors(props: ListDoctorsProps) {
 
 
   const handleFilterChange = () => {
-    setPage(0);
+    setPage(1);
   };
 
   useEffect(() => {

@@ -11,6 +11,7 @@ import React from 'react';
 import HospitalView from '../list-hospitals/view-hospital-page/view-hospital-page';
 import ListDoctors from '../list-doctor/list-doctor';
 import ListPatients from '../list-patient/list-patient';
+import HospitalListAppointment from '../hospital-list-appointment/hospital-list-appointment';
 
 
 /* eslint-disable-next-line */
@@ -33,12 +34,14 @@ export function View(props: ViewProps) {
           <TabList onChange={handleChange} aria-label="lab API tabs example">
             <Tab label="Details" value="1"/>
             <Tab label="Doctors" value="2" />
+            <Tab label="Appointments" value="3" />
             {/* <Tab label="Patients" value="3" /> */}
             {/* <Tab label="Patients" value="3" /> */}
           </TabList>
         </Box>
         <TabPanel value="1"><HospitalView/></TabPanel>
         <TabPanel value="2"><ListDoctors /></TabPanel>
+        <TabPanel value="3"><HospitalListAppointment /></TabPanel>
         {/* <TabPanel value="3"><ListPatients /></TabPanel> */}
         {/* <TabPanel value="3"><PatientsList /></TabPanel> */}
       </TabContext>

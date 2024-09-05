@@ -43,6 +43,7 @@ import AllAppointmentLog from './pages/list-appointment/all-appointment-log/all-
 import ViewAppointmentDetail from './pages/list-appointment/view-appointment-detail/view-appointment-detail';
 import DiagnosisPage from './pages/diagnosis-page/diagnosis-page';
 import BrainTumor from './pages/brain-tumor/brain-tumor';
+import HospitalListAppointment from './pages/hospital-list-appointment/hospital-list-appointment';
 
 export function App() {
   const location = useLocation();
@@ -118,6 +119,10 @@ export function App() {
               <Route
                 path="/hospitals/:hospitalId/doctors"
                 element={<ListDoctors />}
+              />
+              <Route
+                path="/hospitals/:hospitalId/appointments"
+                element={<HospitalListAppointment />}
               />
               <Route
                 path="/hospitals/:hospitalId/doctors/:doctorId/patients"

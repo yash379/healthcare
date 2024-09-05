@@ -5,3 +5,16 @@
  * .container {
  * }
 */
+.socname {
+  text-decoration: none;
+  color: black;
+  margin: -5px;
+  padding: 5px 10px;
+}
+
+.socname:hover {
+  border-radius: 50px;
+  // border: 1px solid #acf3ee;
+  background: #acf3ee;
+  color: #139c94;
+}

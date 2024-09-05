@@ -12,3 +12,11 @@ export class AppointmentDto implements Appointment {
   @IsNumber()
   statusId: number;
 }
+
+export class AppointmentStatusCountsDto {
+  pending: number;
+  inProgress: number;
+  cancelled: number;
+  confirmed: number;
+}
+

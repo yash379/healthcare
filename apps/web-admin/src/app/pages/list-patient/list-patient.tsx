@@ -81,7 +81,7 @@ export function ListPatients(props: ListPatientsProps) {
   const [activePatients, setActivePatients] = useState<ViewPatient[]>([]);
   const [viewPatientOpen, setViewPatientOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<number | null>(null);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQueryName, setSearchQueryName] = useState<string>('');
   const [searchQueryEmail, setSearchQueryEmail] = useState<string>('');
@@ -121,7 +121,7 @@ export function ListPatients(props: ListPatientsProps) {
           withCredentials: true,
           params: {
             pageSize: rowsPerPage,
-            pageOffset: page,
+            pageOffset: page-1,
             firstName: searchQueryName,
             lastName: searchQueryName,
             email: searchQueryEmail,
@@ -151,7 +151,7 @@ export function ListPatients(props: ListPatientsProps) {
   }, [page, rowsPerPage, searchQueryName, searchQueryEmail, searchQueryPhone]);
 
   const handleFilterChange = () => {
-    setPage(0);
+    setPage(1);
   };
 
   useEffect(() => {
@@ -504,7 +504,7 @@ export function ListPatients(props: ListPatientsProps) {
               <TableRow></TableRow>
               {loading ? (
                 <TableCell align="center" colSpan={7}>
-                  <CircularProgress />
+                  <CircularProgress size='small' />
                 </TableCell>
               ) : Array.isArray(activePatients) && activePatients.length > 0 ? (
                 activePatients.map((patient: ViewPatient, index: number) => (

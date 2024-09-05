@@ -1,38 +1,23 @@
-import styles from './delete-admin.module.scss';
-
 import { Box, Button, Dialog, DialogTitle, Grid, IconButton, Typography } from '@mui/material';
-
+import styles from './hospital-delete-appointment.module.scss';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { Form } from '../hospital-add-appointment/hospital-add-appointment';
+import { Padding } from '@mui/icons-material';
+import { useEffect } from 'react';
+import { ViewAppointment } from '@healthcare/data-transfer-types';
+
 /* eslint-disable-next-line */
-export interface DeleteAdminProps {
+export interface HospitalDeleteAppointmentProps {
   open: boolean;
   onClose: () => void;
   onDelete: () => void;
-  adminData: Manager | null;
+  appointmentData: ViewAppointment | null;
 }
 
+const HospitalDeleteAppointment: React.FC<HospitalDeleteAppointmentProps> = ({ open, onClose, onDelete, appointmentData }) => {
 
-interface Manager {
-  id: number;
-  isPrimary: boolean;
-  hospitalRole: {
-    name: string;
-  },
-  user: {
-    id: number;
-    email: string;
-    phoneNumber: string;
-    firstName: string;
-    lastName: string;
-  }
-}
 
-export function DeleteAdmin({
-  open,
-  onClose,
-  onDelete,
-adminData
-}: DeleteAdminProps) {
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth='xs' fullWidth>
       <Box
@@ -64,7 +49,7 @@ adminData
                 padding: '12px',
               }}
               variant='h2'>
-              Delete Manager
+              Delete Appointment
             </Typography>
             <IconButton
               onClick={() => {
@@ -76,7 +61,7 @@ adminData
             </IconButton>
           </Box>
           <Typography p={'12px'} variant="body1">
-              {`Are you sure you want to delete ${adminData?.user.firstName} ${adminData?.user?.lastName}?`}
+              {`Are you sure you want to delete ${appointmentData?.patient.user.firstName} ${appointmentData?.patient?.user?.lastName}?`}
             
           </Typography>
         </Typography>
@@ -106,7 +91,8 @@ adminData
         </Typography>
       </Box>
     </Dialog>
+
   );
 }
 
-export default DeleteAdmin;
+export default HospitalDeleteAppointment;

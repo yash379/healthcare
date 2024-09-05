@@ -23,7 +23,7 @@ export interface EditAppointmentProps {
 }
 
 export interface Form {
-  user: ViewAllUser | null;
+  patient: ViewAllUser | null;
   appointmentDate: Date;
   statusId: number;
 }
@@ -41,7 +41,7 @@ const EditAppointment: React.FC<EditAppointmentProps> = ({ open, onClose, onUpda
 
 
   const validationSchema = yup.object().shape({
-    user: yup.object().nullable().required('User is required'),
+    patient: yup.object().nullable().required('User is required'),
     appointmentDate: yup.date().required('Date is required'),
     statusId: yup.number().required('Status is required'),
   });
@@ -52,12 +52,12 @@ const EditAppointment: React.FC<EditAppointmentProps> = ({ open, onClose, onUpda
   });
 
   const apiUrl = environment.apiUrl;
-  const [users, setUsers] = useState<ViewAllUser[]>([]);
+  const [patients, setPatients] = useState<ViewAllUser[]>([]);
 
   console.log('initialData', initialData)
   useEffect(() => {
     if (initialData) {
-      setValue('user', initialData.patient.user);
+      setValue('patient', initialData.patient.user);
       setValue('statusId', initialData.status.id);
       setValue('appointmentDate',new Date(initialData.appointmentDate));
     }
@@ -76,7 +76,7 @@ const EditAppointment: React.FC<EditAppointmentProps> = ({ open, onClose, onUpda
       });
       console.log('filter user ', response.data);
       const userMembers = response.data;
-      setUsers(userMembers);
+      setPatients(userMembers);
     } catch (error) {
       console.error('Error', error);
     }
@@ -112,27 +112,27 @@ const EditAppointment: React.FC<EditAppointmentProps> = ({ open, onClose, onUpda
       <form onSubmit={handleSubmit(handleUpdate)}>
       <Box className={styles['grid_top']}>
             <Controller
-              name="user"
+              name="patient"
               control={control}
               render={({ field }) => (
                 <Autocomplete
                   {...field}
-                  options={users}
+                  options={patients}
                   getOptionLabel={(option) =>
                     `${option.firstName} ${option.lastName}`
                   }
-                  onChange={(_, selectedUser) => {
-                    field.onChange(selectedUser);
+                  onChange={(_, selectedPatient) => {
+                    field.onChange(selectedPatient);
                     // Set the selected patient's ID in the state
-                    // setPatientSelected(selectedUser ? selectedUser.id : null);
+                    // setPatientSelected(selectedPatient ? selectedPatient.id : null);
                   }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label="Search User"
-                      placeholder="Search User"
-                      error={!!errors.user}
-                      helperText={errors.user?.message}
+                      label="Search Patient"
+                      placeholder="Search Patient"
+                      error={!!errors.patient}
+                      helperText={errors.patient?.message}
                       fullWidth
                     />
                   )}

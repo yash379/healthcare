@@ -7,7 +7,7 @@ import { ApiTags, ApiOkResponse, ApiNotFoundResponse, ApiOperation, ApiResponse 
 import { AppointmentsService } from './appointments.service';
 import { AddAppointmentDto } from './dto/add-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import { AppointmentDto } from './dto/appointment.dto';
+import { AppointmentDto, AppointmentStatusCountsDto } from './dto/appointment.dto';
 import { ListAppointmentPageDto } from './dto/list-appointment-page.dto';
 import { AppointmentStatus, ViewAppointmentDto } from './dto/view-appointment.dto';
 
@@ -83,6 +83,29 @@ export class AppointmentsController {
   }
 
   @UseGuards(AuthGuard, RolesGuard)
+  @Get('hospitals/:hospitalId/appointments')
+  @ApiOkResponse({ type: ListAppointmentPageDto })
+  @Roles(Role.POYV_ADMIN)
+  @HttpCode(HttpStatus.OK)
+  listHospitalAppointments(
+    @Param('hospitalId') hospitalId: number,
+    @Query('pageSize') pageSize?: number,
+    @Query('pageOffset') pageOffset?: number,
+    @Query('appointmentDate') appointmentDate?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc'
+  ): Promise<ListAppointmentPageDto> {
+    return this.appointmentsService.listHospitalAppointments(
+      +hospitalId,
+      +pageSize,
+      +pageOffset,
+      appointmentDate,
+      sortBy,
+      sortOrder
+    );
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
   @Get('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
   @ApiOkResponse({ type: AppointmentDto })
   @ApiNotFoundResponse({ description: 'Appointment not found' })
@@ -147,5 +170,17 @@ export class AppointmentsController {
   getProjectStatuses() {
     return this.appointmentsService.getAppointmentStatuses();
   }
+
+  @UseGuards(AuthGuard, RolesGuard)
+@Get('/hospitals/:hospitalId/appointment-count')
+@ApiOperation({ summary: 'Get counts of appointments based on their status' })
+@ApiOkResponse({ type: AppointmentStatusCountsDto })
+@HttpCode(HttpStatus.OK)
+@Roles(Role.POYV_ADMIN)  // Adjust the role as per your requirements
+async getAppointmentCounts(
+  @Param('hospitalId') hospitalId: number
+): Promise<AppointmentStatusCountsDto> {
+  return await this.appointmentsService.getAppointmentCounts(+hospitalId);
+}
 
 }
