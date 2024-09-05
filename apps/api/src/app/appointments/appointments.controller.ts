@@ -19,7 +19,7 @@ export class AppointmentsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Post('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments')
   @ApiOkResponse({ type: AppointmentDto })
-  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   @HttpCode(HttpStatus.CREATED)
   createAppointment(
     @Param('hospitalId') hospitalId: number,
@@ -33,7 +33,7 @@ export class AppointmentsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Get('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments')
   @ApiOkResponse({ type: ListAppointmentPageDto })
-  @Roles(Role.POYV_ADMIN)
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   @HttpCode(HttpStatus.OK)
   listAppointments(
     @Param('hospitalId') hospitalId: number,
@@ -60,7 +60,7 @@ export class AppointmentsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Get('hospitals/:hospitalId/doctors/:doctorId/appointments')
   @ApiOkResponse({ type: ListAppointmentPageDto })
-  @Roles(Role.POYV_ADMIN)
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   @HttpCode(HttpStatus.OK)
   listDoctorAppointments(
     @Param('hospitalId') hospitalId: number,
@@ -85,7 +85,7 @@ export class AppointmentsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Get('hospitals/:hospitalId/appointments')
   @ApiOkResponse({ type: ListAppointmentPageDto })
-  @Roles(Role.POYV_ADMIN)
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   @HttpCode(HttpStatus.OK)
   listHospitalAppointments(
     @Param('hospitalId') hospitalId: number,
@@ -108,6 +108,7 @@ export class AppointmentsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Get('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
   @ApiOkResponse({ type: AppointmentDto })
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   @ApiNotFoundResponse({ description: 'Appointment not found' })
   async findAppointmentById(
     @Param('hospitalId') hospitalId: number,
@@ -129,6 +130,7 @@ export class AppointmentsController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Put('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   @HttpCode(HttpStatus.OK)
   async updateAppointment(
     @Param('hospitalId') hospitalId: number,
@@ -148,6 +150,7 @@ export class AppointmentsController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Delete('hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:id')
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAppointment(
     @Param('hospitalId') hospitalId: number,
@@ -176,7 +179,7 @@ export class AppointmentsController {
 @ApiOperation({ summary: 'Get counts of appointments based on their status' })
 @ApiOkResponse({ type: AppointmentStatusCountsDto })
 @HttpCode(HttpStatus.OK)
-@Roles(Role.POYV_ADMIN)  // Adjust the role as per your requirements
+@Roles(Role.POYV_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
 async getAppointmentCounts(
   @Param('hospitalId') hospitalId: number
 ): Promise<AppointmentStatusCountsDto> {

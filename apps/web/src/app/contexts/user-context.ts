@@ -1,5 +1,5 @@
 import { Hospital } from "@healthcare/data-transfer-types";
-import { OrganizationRoleName, SuperRoleName } from "@prisma/client";
+import {  HospitalRoleName, SuperRoleName } from "@prisma/client";
 import React from "react";
 // import {  User  } from "@healthcare/data-transfer-types";
 
@@ -24,7 +24,7 @@ interface User {
 
 export interface OrganizationRoleDto {
     organizationId: number;
-    organizationRole: OrganizationRoleName;
+    organizationRole: HospitalRoleName;
 }
 
 

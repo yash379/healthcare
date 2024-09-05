@@ -31,7 +31,7 @@ export class DoctorsController {
     // @UseGuards(AuthGuard, RolesGuard)
   @Post('/hospitals/:hospitalId/doctor')
   @ApiOkResponse({ type: UserDto })
-  @Roles(Role.POYV_ADMIN,  Role.HOSPITAL_ADMIN)
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   @HttpCode(HttpStatus.CREATED)
   create(@Param('hospitalId') hospitalId: number,@Body() data: AddDoctorDto ): Promise<DoctorDto > {
     return this.doctorsService.addDoctor(+hospitalId,data);
@@ -41,7 +41,7 @@ export class DoctorsController {
   @Put('/hospitals/:hospitalId/doctor/:id')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: UserDto })
-  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   edit(@Body() data: AddDoctorDto, @Param('hospitalId') hospitalId: number, @Param('id') id: number): Promise<DoctorDto> {
     return this.doctorsService.updateDoctor(data, +hospitalId,+id);
   }
@@ -50,7 +50,7 @@ export class DoctorsController {
 @Get('/hospitals/:hospitalId/doctors/:doctorId')
 @HttpCode(HttpStatus.OK)
 @ApiOkResponse({ type: ViewDoctorDto }) // Replace with the correct DTO type for doctor details
-@Roles(Role.POYV_ADMIN)
+@Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
 getDoctorById(
   @Param('hospitalId') hospitalId: number,
   @Param('doctorId') doctorId: number
@@ -63,7 +63,7 @@ getDoctorById(
   @Get('/hospitals/:hospitalId/doctors')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: ListDoctorPageDto })
-  @Roles(Role.POYV_ADMIN)
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   listDoctors(
     @Param('hospitalId') hospitalId: number,
     @Query('pageSize') pageSize?: number,
