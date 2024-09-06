@@ -25,6 +25,8 @@ export interface ViewUser {
   phoneNumber: string;
   hospitalRoles: ViewHospitalRoleDto[];
   superRole?: SuperRoleName;
+  doctorId?:number;
+  patientId?:number;
 }
 export interface ViewAllUser {
   id: number;
