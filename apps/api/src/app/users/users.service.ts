@@ -1350,7 +1350,16 @@ export class UsersService {
         lastName: true,
         isActive: true,
         superRoles: { select: { superRole: { select: { name: true } } } },
-
+        doctor:{
+          select:{
+            id:true
+          }
+        },
+        patient:{
+          select:{
+            id:true
+          }
+        },
         hospitalRoles: {
           select: {
             hospital: { select: { id: true, name: true } },
@@ -1377,6 +1386,10 @@ export class UsersService {
       firstName: user.firstName,
       lastName: user.lastName,
       isActive: user.isActive,
+      doctorId:user.doctor ?
+      user.doctor.id : undefined,
+      patientId:user.patient ?
+      user.patient.id : undefined,
       superRole:
         user.superRoles.length > 0
           ? (user.superRoles[0].superRole.name as SuperRoleName)

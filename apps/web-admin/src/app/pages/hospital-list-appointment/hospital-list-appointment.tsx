@@ -245,7 +245,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
     try {
       if (selectedAppointmentId !== null) {
         await axios.delete(
-          `${apiUrl}/hospitals/${params.hospitalId}/doctors/1/appointments/${selectedAppointmentId}`,
+          `${apiUrl}/hospitals/${params.hospitalId}/doctors/${viewData?.doctor.user.id}/patients/${viewData?.patient.user.id}/appointments/${selectedAppointmentId}`,
           {
             withCredentials: true,
           }

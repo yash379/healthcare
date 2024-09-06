@@ -12,6 +12,8 @@ export class ViewUserDto implements ViewUser {
   @ApiProperty() phoneNumber: string;
   @ApiProperty() hospitalRoles: ViewHospitalRoleDto[];
   @ApiProperty() superRole?: SuperRoleName;
+  @ApiProperty() doctorId?: number;
+  @ApiProperty() patientId?: number;
 }
 
 export class ViewAllUserDto implements ViewAllUser {
