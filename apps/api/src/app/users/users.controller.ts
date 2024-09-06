@@ -23,6 +23,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AdminCountsDto, AssetCountDashboardDto, ManagerDto, UserDto } from './dto/user.dto';
 import { EditUserStatus, ViewUserDto } from './dto/view-user.dto';
 import { ForgotPasswordDto, LoginDto, UpdatePasswordDto, UpdatePasswordThroughProfileDto } from '../core/dto/user-login.dto';
+import { ListAllUserDto, ListUserDto } from './dto/list-user.dto';
 
 @ApiTags("Users")
 @Controller()
@@ -173,6 +174,13 @@ export class UsersController {
     return this.usersService.deleteUser(+hospitalId,+id);
   }
 
+  @UseGuards(AuthGuard)
+  @Get('user/dropdown/list')
+  @HttpCode(HttpStatus.OK)
+  async getUserList(@Query('name') name?: string, @Query('email') email?: string,  @Query('phoneNumber') phoneNumber?: string): Promise<ListAllUserDto[]> {
+    const listusers = await this.usersService.getUserList(name, email, phoneNumber);
+    return listusers;
+  }
 
   // @UseGuards(AuthGuard)
   // @Get('users')

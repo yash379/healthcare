@@ -488,6 +488,7 @@ export class DoctorsService {
             lastName: true,
             doctor: {
               select: {
+                id:true,
                 userId: true,
                 gender: true,
                 doctorCode: true,
@@ -508,7 +509,6 @@ export class DoctorsService {
         });
     
         const listUsersDto = await this.getDoctorList(listUsers);
-    
         return {
           size: size,
           number: offset,
@@ -528,7 +528,7 @@ export class DoctorsService {
           throw new BadRequestException();
         } else {
           return listdoctor.map((doctor) => ({
-            id: doctor.id,
+            id: doctor.doctor.id,
             email: doctor.email,
             phoneNumber: doctor.phoneNumber,
             firstName: doctor.firstName,

@@ -368,7 +368,7 @@ const breadcrumbs = [
                 </TableRow>
                 {loading ? (
                 <TableCell align='center' colSpan={6}>
-                  <CircularProgress />
+                  <CircularProgress size='small' />
                 </TableCell>
               ) : (Array.isArray(poyvUserData) && poyvUserData.length > 0 ? (
                   poyvUserData.map((poyvUser: POYVUser) => (

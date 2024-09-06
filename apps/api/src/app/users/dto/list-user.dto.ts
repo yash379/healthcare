@@ -1,4 +1,4 @@
-import { ListDoctor, ListUser } from '@healthcare/data-transfer-types';
+import { ListAllUser, ListDoctor, ListUser } from '@healthcare/data-transfer-types';
 import { PickType } from '@nestjs/swagger';
 import {  ViewManagerDto, ViewUserDto } from './view-user.dto';
 
@@ -13,6 +13,16 @@ export class ListUserDto
     'superRole'
   ])
   implements ListUser {}
+
+  export class ListAllUserDto
+  extends PickType(ViewUserDto, [
+    'id',
+    'email',
+    'phoneNumber',
+    'firstName',
+    'lastName',
+  ])
+  implements ListAllUser {}
 
 
   export class ListManagerDto

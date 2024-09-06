@@ -185,7 +185,7 @@ export function EditHospitalPage(props: EditHospitalPageProps) {
                     fullWidth
                     error={!!errors.code}
                     helperText={errors.code?.message}
-                    disabled
+                    inputProps={{ readOnly: true }}
                   />
                 )}
               />

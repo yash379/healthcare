@@ -14,7 +14,7 @@ import EditDoctorComponent from './edit-doctor/edit-doctor';
 import DeleteDoctorComponent from './delete-doctor/delete-doctor';
 // import ViewDoctorComponent from '../view-doctor/view-doctor';
 import { enqueueSnackbar } from 'notistack';
-import { useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { Doctor, Hospital, ViewDoctor } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/user-contexts';
@@ -54,7 +54,7 @@ export function ListDoctors(props: ListDoctorsProps) {
   const [activeDoctors, setActiveDoctors] = useState<ViewDoctor[]>([]);
   const [viewDoctorOpen, setViewDoctorOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<number | null>(null);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQueryName, setSearchQueryName] = useState<string>('');
   const [searchQueryEmail, setSearchQueryEmail] = useState<string>('');
@@ -88,7 +88,7 @@ export function ListDoctors(props: ListDoctorsProps) {
         withCredentials: true,
         params: {
           pageSize: rowsPerPage,
-          pageOffset: page,
+          pageOffset: page -1,
           name: searchQueryName,
           // lastName: searchQueryName,
           // email: searchQueryEmail,
@@ -119,7 +119,7 @@ export function ListDoctors(props: ListDoctorsProps) {
 
 
   const handleFilterChange = () => {
-    setPage(0);
+    setPage(1);
   };
 
   useEffect(() => {
@@ -435,8 +435,6 @@ export function ListDoctors(props: ListDoctorsProps) {
                   </TableCell>
                   <TableCell sx={{ border: "hidden" }}>Speciality
                   </TableCell>
-                  {/* <TableCell sx={{ border: "hidden" }}>Flat Number</TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Building Name</TableCell> */}
                   <TableCell sx={{ border: "hidden" }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -458,7 +456,13 @@ export function ListDoctors(props: ListDoctorsProps) {
                           e.stopPropagation();
                         }}
                       /></TableCell>
-                      <TableCell>{doctor.firstName} {doctor.lastName}
+                      <TableCell align='left'>
+                      <NavLink
+                      to={`/hospitals/${params.hospitalId}/doctors/${doctor.id}/patients`}
+                      className={styles['socname']}
+                    >
+                        {doctor.firstName} {doctor.lastName}
+                        </NavLink>
                       </TableCell>
                       <TableCell>{doctor.email}
                       </TableCell>
@@ -497,47 +501,6 @@ export function ListDoctors(props: ListDoctorsProps) {
                 )}
               </TableBody>
             </Table>
-            {/* <Box sx={{  display:'flex',
-            flexDirection:'row',
-            justifyContent:"flex-end",
-
-          }}>
-          <Stack sx={{marginBottom:"15px", marginRight:"20px", marginTop: "30px",}} spacing={2}>
-            <Pagination
-            sx={{  display:'flex',
-            flexDirection:'row',
-            justifyContent:"flex-end",
-
-          }}
-              count={pageCount > pageCountThreshold ? pageCount + 1 : pageCount}
-              page={page + 1}
-              onChange={(event, value) => handleChangePage(event, value - 1)}
-
-              renderItem={(item) => (
-                <PaginationItem
-                  component="div"
-                  sx={{
-
-                    marginLeft: "5px",
-
-                  }}
-
-                  {...item}
-                />
-              )}
-            />
-          </Stack> */}
-            {/* <TablePagination
-              sx={{ marginTop: "5px" }}
-              rowsPerPageOptions={[5, 10, 20]}
-              component="div"
-              count={totalItems}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            /> */}
-            {/* </Box> */}
           </TableContainer>
           <Stack spacing={2} className={styles['paginationContainer']}>
           <Pagination

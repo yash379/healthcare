@@ -27,6 +27,7 @@ import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import mediPlus from "../../../assets/Mediplus.png";
+import digimedic from "../../../assets/digimedic.png";
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 /* eslint-disable-next-line */
 export interface DrawerComponentProps { };
@@ -70,7 +71,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
       >
 
         {/* <Toolbar sx={{height:"59px"}}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></Toolbar> */}
-        <Toolbar sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}><img src={mediPlus} alt="medi plus logo" width="100px" height="38px" /></Toolbar>
+        <Toolbar sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}><img src={digimedic} alt="medi plus logo" width="165px" height="60px" /></Toolbar>
         {/* <Divider /> */}
         <List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
 
@@ -78,7 +79,9 @@ export function DrawerComponent(props: DrawerComponentProps) {
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
               }`}>
               <ListItemIcon>
+                <div className={styles['icon-bg']}>
                 <DashboardIcon className={styles['drawer-icons']} />
+                </div>
               </ListItemIcon>
               <ListItemText className={styles["drawertab"]} primary="Dashboard" />
             </ListItemButton>

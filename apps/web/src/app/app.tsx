@@ -22,6 +22,10 @@ import ViewMedicalHistoryTimeline from './view-medical-history-timeline/view-med
 import PatientDetail from './patient-detail/patient-detail';
 import SettingPage from './setting-page/setting-page';
 import DoctorAppointmentCalender from './doctor-appointment-calender/doctor-appointment-calender';
+import ListAppointments from "./pages/list-appointments/list-appointments";
+import ListAppointment from './pages/list-appointment/list-appointment';
+import DoctorContext from './contexts/doctor-context';
+import { PatientContext } from './contexts/patient-context';
 export function App() {
 
   const location = useLocation();
@@ -73,6 +77,10 @@ const setUser = (user: User | null) => {
     }
   }
 
+   // Check if the user has the 'DOCTOR' role
+   const isDoctor = user?.hospitalRoles?.some(role => role.hospitalRole === 'DOCTOR');
+   const isPatient = user?.hospitalRoles?.some(role => role.hospitalRole === 'PATIENT');
+
   // useEffect(() => {
   //   const userFromStorage = localStorage.getItem('user');
   //   if (userFromStorage !== null) {
@@ -82,6 +90,8 @@ const setUser = (user: User | null) => {
   // }, []);
   return (
     <UserContext.Provider value={user}>
+    <DoctorContext.Provider value={ isDoctor ? user : null}>
+    <PatientContext.Provider value={ isPatient ? user : null}>
       <SnackbarProvider maxSnack={3}>
         <Routes>
        
@@ -91,14 +101,18 @@ const setUser = (user: User | null) => {
 
               <Route path="/dashboard/:hospitalId" element={<Dashboard />} />
               {/* <Route element={<PatientLayout />}> */}
+              {/* <Route path="/appointments/:hospitalId" element={<ListAppointment />} /> */}
               <Route path="/hospital/:hospitalId/patients" element={<ListPatients />} />
+              <Route path="/hospital/:hospitalId/appointments" element={<ListAppointment/>} />
               <Route path="/hospital/:hospitalId/patients/add" element={<AddPatientPage />} />
               <Route path="/hospital/:hospitalId/patients/edit/:patientId" element={<EditPatientPage />} />
               <Route path="/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline />} />
               <Route path="/patient-detail" element={<PatientDetail />} />
               <Route path="/settings" element={<SettingPage />} />
               <Route path="/doctor-appointment-calender" element={<DoctorAppointmentCalender />} />
+              
               </Route>
+
               <Route path="/profile" element={<Profile />} />
             {/* </Route> */}
             
@@ -112,6 +126,8 @@ const setUser = (user: User | null) => {
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </SnackbarProvider>
+      </PatientContext.Provider>
+      </DoctorContext.Provider>
     </UserContext.Provider>
   );
 }

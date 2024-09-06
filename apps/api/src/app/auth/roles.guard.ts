@@ -66,6 +66,48 @@ export class RolesGuard implements CanActivate {
             condition = condition || hospitalcondition;
             break;
           }
+          case Role.HOSPITAL_DOCTOR: {
+            //console.log('hospital admin')
+            const hospitalRole = await this.prisma.hospitalRole.findFirst({
+              where: { name: HospitalRoleName.DOCTOR },
+            });
+            //console.log('hospital role id ',hosrole.id);
+            const hospitalcondition =
+              (await this.prisma.userHospitalRole.count({
+                where: { userId: user.id, hospitalRoleId: hospitalRole.id },
+              })) > 0;
+            //console.log('orcondition', orcondition)
+            condition = condition || hospitalcondition;
+            break;
+          }
+          case Role.HOSPITAL_PATIENT: {
+            //console.log('hospital admin')
+            const hospitalRole = await this.prisma.hospitalRole.findFirst({
+              where: { name: HospitalRoleName.PATIENT },
+            });
+            //console.log('hospital role id ',hosrole.id);
+            const hospitalcondition =
+              (await this.prisma.userHospitalRole.count({
+                where: { userId: user.id, hospitalRoleId: hospitalRole.id },
+              })) > 0;
+            //console.log('orcondition', orcondition)
+            condition = condition || hospitalcondition;
+            break;
+          }
+          case Role.HOSPITAL_RECEPTIONIST: {
+            //console.log('hospital admin')
+            const hospitalRole = await this.prisma.hospitalRole.findFirst({
+              where: { name: HospitalRoleName.ADMIN },
+            });
+            //console.log('hospital role id ',hosrole.id);
+            const hospitalcondition =
+              (await this.prisma.userHospitalRole.count({
+                where: { userId: user.id, hospitalRoleId: hospitalRole.id },
+              })) > 0;
+            //console.log('orcondition', orcondition)
+            condition = condition || hospitalcondition;
+            break;
+          }
         }
       }
     }

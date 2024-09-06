@@ -31,7 +31,7 @@ export class PatientsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Post('/hospitals/:hospitalId/doctors/:doctorId/patient')
   @ApiOkResponse({ type: PatientDto })
-  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   @HttpCode(HttpStatus.CREATED)
   create(
     @Param('hospitalId') hospitalId: number,
@@ -44,7 +44,7 @@ export class PatientsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Get('/hospitals/:hospitalId/doctors/:doctorId/patients')
   @ApiOkResponse({ type: ListPatientPageDto })
-  @Roles(Role.POYV_ADMIN)
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   @HttpCode(HttpStatus.OK)
   listPatientsByDoctor(
     @Param('hospitalId') hospitalId: number,
@@ -70,6 +70,7 @@ export class PatientsController {
 
   @Get('/hospitals/:hospitalId/doctors/:doctorId/patient/:id')
   @ApiOkResponse({ type: ViewPatientDto })
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   @ApiNotFoundResponse({ description: 'Patient not found' })
   async findById(
     @Param('hospitalId') hospitalId: number,
@@ -87,8 +88,26 @@ export class PatientsController {
     return patient;
   }
 
+  @Get('/hospitals/:hospitalId/patients')
+  @ApiOkResponse({ type: ViewPatientDto })
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
+  @ApiNotFoundResponse({ description: 'Patient not found' })
+  async findPatientByHospital(
+    @Param('hospitalId') hospitalId: number
+  ) {
+    const patient = await this.patientsService.findPatientByHospital(
+      +hospitalId
+    );
+    if (!patient) {
+      throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+    }
+    return patient;
+  }
+  
+
   @Put('/hospitals/:hospitalId/doctors/:doctorId/patient/:id')
   @HttpCode(HttpStatus.OK) // Optionally set the HTTP status code
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   async updatePatientById(
     @Param('hospitalId') hospitalId: number,
     @Param('doctorId') doctorId: number,
@@ -105,6 +124,7 @@ export class PatientsController {
 
   @Delete('/hospitals/:hospitalId/doctors/:doctorId/patient/:id')
   @HttpCode(HttpStatus.NO_CONTENT) // Setting the HTTP status to 204 No Content
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
   async deletePatientById(
     @Param('hospitalId') hospitalId: number,
     @Param('doctorId') doctorId: number,

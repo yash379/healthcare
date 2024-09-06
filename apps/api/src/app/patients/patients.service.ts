@@ -131,20 +131,21 @@ export class PatientsService {
             digitalHealthCode: addPatientDto.digitalHealthCode,
             bloodGroup: addPatientDto.bloodGroup,
             age: addPatientDto.age,
-            dob: addPatientDto.dob,
+            dob: new Date(addPatientDto.dob),
             addressLine1: addPatientDto.addressLine1,
             addressLine2: addPatientDto.addressLine2,
             city: addPatientDto.city,
             postalCode: addPatientDto.postalCode,
             countryCode: addPatientDto.countryCode,
             stateCode: addPatientDto.stateCode,
+            chronicDiseases: addPatientDto.chronicDiseases,
+            acuteDiseases: addPatientDto.acuteDiseases,
             // isActive:addPatientDto.isActive
           },
         });
       } catch (error) {
-        throw new HttpException(
-          'Failed to create patient.',
-          HttpStatus.INTERNAL_SERVER_ERROR
+        throw new BadRequestException(error.message
+          
         );
       }
     }
@@ -298,11 +299,13 @@ export class PatientsService {
       gender: patient.gender,
       age: patient.age,
       bloodGroup: patient.bloodGroup,
-      dob: patient.dob,
+      dob: patient.dob.toISOString(),
       addressLine1: patient.addressLine1,
       addressLine2: patient.addressLine2,
       city: patient.city,
       postalCode: patient.postalCode,
+      chronicDiseases: patient.chronicDiseases,
+      acuteDiseases: patient.acuteDiseases,
       countryCode: patient.countryCode,
       stateCode: patient.stateCode,
       isActive: user.isActive,
@@ -398,7 +401,7 @@ export class PatientsService {
         lastName: true,
         patient: {
           select: {
-            userId: true,
+            id: true,
             gender: true,
             digitalHealthCode: true,
             age: true,
@@ -408,6 +411,8 @@ export class PatientsService {
             addressLine2: true,
             city: true,
             postalCode: true,
+            chronicDiseases: true,
+            acuteDiseases: true,
             countryCode: true,
             stateCode: true,
           },
@@ -446,7 +451,7 @@ export class PatientsService {
       throw new BadRequestException();
     } else {
       return patients.map((patient) => ({
-        id: patient.id,
+        id: patient.patient.id,
         firstName: patient.firstName,
         lastName: patient.lastName,
         email: patient.email,
@@ -455,11 +460,13 @@ export class PatientsService {
         gender: patient.patient.gender,
         age: patient.patient.age,
         bloodGroup: patient.patient.bloodGroup,
-        dob: patient.patient.dob,
+        dob: patient.patient.dob.toISOString(),
         addressLine1: patient.patient.addressLine1,
         addressLine2: patient.patient.addressLine2,
         city: patient.patient.city,
         postalCode: patient.patient.postalCode,
+        chronicDiseases: patient.patient.chronicDiseases,
+        acuteDiseases: patient.patient.acuteDiseases,
         countryCode: patient.patient.countryCode,
         stateCode: patient.patient.stateCode,
         isActive: patient.isActive,
@@ -547,7 +554,7 @@ export class PatientsService {
       age: patient.age,
       bloodGroup: patient.bloodGroup,
       doctorCode: doctorCode, // Ensure it matches the expected type
-      dob: patient.dob,
+      dob: patient.dob.toISOString(),
       digitalHealthCode: patient.digitalHealthCode,
       addressLine1: patient.addressLine1,
       addressLine2: patient.addressLine2,
@@ -555,9 +562,87 @@ export class PatientsService {
       stateCode: patient.stateCode,
       countryCode: patient.countryCode,
       postalCode: patient.postalCode,
+      chronicDisease: patient.chronicDiseases,
+      acuteDisease: patient.acuteDiseases,
       hospitalRoles: [], // Populate this if you have roles
       isActive: patient.user.isActive,
     };
+  }
+
+  async findPatientByHospital(
+    hospitalId: number
+  ) {
+    // Check if the hospital exists
+    const hospital = await this.prisma.hospital.findUnique({
+      where: { id: hospitalId },
+    });
+    if (!hospital) {
+      throw new HttpException('Hospital not found', HttpStatus.NOT_FOUND);
+    }
+
+    const hospitalDoctorRoleId = await this.prisma.hospitalRole.findFirst({
+      where: {
+        name: HospitalRoleName.PATIENT,
+      },
+    });
+
+    const whereArray = [];
+    let whereQuery = {};
+
+    whereArray.push({
+      hospitalRoles: {
+        some: {
+          hospitalId: hospitalId,
+          hospitalRoleId: hospitalDoctorRoleId.id,
+        },
+      },
+    });
+
+    if (whereArray.length > 0) {
+      if (whereArray.length > 1) {
+        whereQuery = { AND: whereArray };
+      } else {
+        whereQuery = whereArray[0];
+      }
+    }
+
+    const listPatients = await this.prisma.user.findMany({
+      where: whereQuery,
+      select: {
+        id: true,
+        email: true,
+        phoneNumber: true,
+        firstName: true,
+        isActive: true,
+        lastName: true,
+        patient: {
+          select: {
+            id: true,
+            gender: true,
+            digitalHealthCode: true,
+            age: true,
+            bloodGroup: true,
+            dob: true,
+            addressLine1: true,
+            addressLine2: true,
+            city: true,
+            postalCode: true,
+            chronicDiseases: true,
+            acuteDiseases: true,
+            countryCode: true,
+            stateCode: true,
+          },
+        },
+      },
+    });
+
+    if (!listPatients) {
+      throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+    }
+
+    const listPatientsDto = await this.getPatientList(listPatients);
+
+    return listPatientsDto;
   }
 
   async updatePatientById(
@@ -621,7 +706,7 @@ export class PatientsService {
         gender: updatePatientDto.gender,
         age: updatePatientDto.age,
         bloodGroup: updatePatientDto.bloodGroup,
-        dob: updatePatientDto.dob,
+        dob: new Date(updatePatientDto.dob),
         digitalHealthCode: updatePatientDto.digitalHealthCode,
         addressLine1: updatePatientDto.addressLine1,
         addressLine2: updatePatientDto.addressLine2,
@@ -629,6 +714,8 @@ export class PatientsService {
         stateCode: updatePatientDto.stateCode,
         countryCode: updatePatientDto.countryCode,
         postalCode: updatePatientDto.postalCode,
+        chronicDiseases: updatePatientDto.chronicDiseases,
+        acuteDiseases: updatePatientDto.acuteDiseases,
         user: {
           update: {
             firstName: updatePatientDto.firstName,
@@ -669,7 +756,7 @@ export class PatientsService {
       age: updatedPatient.age,
       bloodGroup: updatedPatient.bloodGroup,
       doctorCode: doctorCode, // Ensure it matches the expected type
-      dob: updatedPatient.dob,
+      dob: updatedPatient.dob.toISOString(),
       digitalHealthCode: updatedPatient.digitalHealthCode,
       addressLine1: updatedPatient.addressLine1,
       addressLine2: updatedPatient.addressLine2,
@@ -677,6 +764,8 @@ export class PatientsService {
       stateCode: updatedPatient.stateCode,
       countryCode: updatedPatient.countryCode,
       postalCode: updatedPatient.postalCode,
+      chronicDisease: updatedPatient.chronicDiseases,
+      acuteDisease: updatedPatient.acuteDiseases,
       hospitalRoles: [], // Populate this if you have roles
       isActive: updatedPatient.user.isActive,
     };

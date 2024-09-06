@@ -40,8 +40,10 @@ import ListAppointment from './pages/list-appointment/list-appointment';
 import EditAppointment from './pages/list-appointment/edit-appointment/edit-appointment';
 import DeleteAppointment from './pages/list-appointment/delete-appointment/delete-appointment';
 import AllAppointmentLog from './pages/list-appointment/all-appointment-log/all-appointment-log';
-import ViewAppointmentDetail from './pages/list-appointment/view-appointment-detail/view-appointment-detail';
-import DiagnosisPage from './diagnosis-page/diagnosis-page';
+import ViewAppointmentDetail from './pages/hospital-list-appointment/view-appointment-detail/view-appointment-detail';
+import DiagnosisPage from './pages/diagnosis-page/diagnosis-page';
+import BrainTumor from './pages/brain-tumor/brain-tumor';
+import HospitalListAppointment from './pages/hospital-list-appointment/hospital-list-appointment';
 
 export function App() {
   const location = useLocation();
@@ -119,17 +121,25 @@ export function App() {
                 element={<ListDoctors />}
               />
               <Route
-                path="/hospitals/:hospitalId/patients"
+                path="/hospitals/:hospitalId/appointments"
+                element={<HospitalListAppointment />}
+              />
+              <Route
+                path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:appointmentId/view-appointment"
+                element={<ViewAppointmentDetail />}
+              />
+              <Route
+                path="/hospitals/:hospitalId/doctors/:doctorId/patients"
                 element={<ListPatients />}
               />
               <Route path="/medical-history" element={<MedicalHistory />} />
 
               <Route
-                path="/hospitals/:hospitalId/patients/add"
+                path="/hospitals/:hospitalId/doctors/:doctorId/patients/add"
                 element={<AddPatientPage />}
               />
               <Route
-                path="/hospitals/:hospitalId/patients/edit/:patientId"
+                path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/edit"
                 element={<EditPatientPage />}
               />
               <Route path="/profile" element={<Profile />} />
@@ -146,6 +156,8 @@ export function App() {
                 element={<ViewAppointmentDetail />}
               />
               <Route path="/diagnosis" element={<DiagnosisPage />} />
+              <Route path="/cancer-detection" element={<BrainTumor />} />
+
             </Route>
 
             <Route path="/hospitals" element={<ListHospitals />} />

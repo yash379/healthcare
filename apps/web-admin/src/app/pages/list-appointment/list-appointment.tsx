@@ -4,7 +4,6 @@ import AddDoctorComponent from '../list-doctor/add-doctor/add-doctor';
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
-
 import {
   Box,
   Button,
@@ -22,13 +21,17 @@ import {
   Typography,
   styled,
   Avatar,
+  CircularProgress,
+  Stack,
+  Pagination,
+  PaginationItem,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { enqueueSnackbar } from 'notistack';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { environment } from '../../../environments/environment';
 import { useParams } from 'react-router-dom';
@@ -36,10 +39,15 @@ import EditAppointment from './edit-appointment/edit-appointment';
 import AddAppointment from './add-appointment/add-appointment';
 import DeleteAppointment from './delete-appointment/delete-appointment';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-
+import { format } from 'date-fns';
 import * as React from 'react';
 import Chip from '../../Components/chip/chip';
+import StatusChip from '../../Components/chip/statusChip';
+import Loading from '../../Components/loading/loading';
+import { ViewAllUser } from '@healthcare/data-transfer-types';
+// import { ListAppointment } from '@healthcare/data-transfer-types';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ListAppointmentProps {}
 
 export enum StatusEnum {
@@ -57,34 +65,53 @@ const statusColorMap: Record<StatusEnum, string> = {
   [StatusEnum.PendingConfirmation]: '#fff3cd', // light orange
 };
 
-interface Form {
-  firstName: string;
-  lastName: string;
-  mobileNumber: string;
-  email: string;
-  gender: Gender;
-  age: number;
-  date: Date;
-  status: StatusEnum;
+interface ViewAppointment {
+  id: number;
+  appointmentDate: string;
+  status: { id: number; code: string; name: string };
+  patient: PatientDetailsDto;
+  doctor: DoctorDetailsDto;
 }
 
-interface ViewAppointment {
+interface PatientDetailsDto {
+  user: UserDetailsDto;
+}
+interface DoctorDetailsDto {
+  user: UserDetailsDto;
+}
+
+// DTO for detailed user information (part of PatientDetails)
+interface UserDetailsDto {
   id: number;
   firstName: string;
   lastName: string;
-  mobileNumber: string;
   email: string;
-  gender: Gender;
-  age: number;
-  date: Date;
-  status: StatusEnum;
+  phoneNumber: string;
 }
+
+interface Form {
+  patient: ViewAllUser | null;
+  appointmentDate: Date;
+  statusId: number;
+}
+
+// interface ViewAppointment {
+//   id: number;
+//   firstName: string;
+//   lastName: string;
+//   mobileNumber: string;
+//   email: string;
+//   gender: Gender;
+//   age: number;
+//   date: Date;
+//   status: StatusEnum;
+// }
 
 export function ListAppointment(props: ListAppointmentProps) {
   const apiUrl = environment.apiUrl;
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [searchQueryName, setSearchQueryName] = useState<string>('');
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<
     number | null
@@ -97,32 +124,41 @@ export function ListAppointment(props: ListAppointmentProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
   const params = useParams();
+  const [appointmentsData, setAppointmentsData] = useState<ViewAppointment[]>(
+    []
+  );
+  const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
 
-  const [dummyAppointments, setDummyAppointments]=useState< ViewAppointment[]> ( [
-    {
-      id: 1,
-      firstName: 'Omkar',
-      lastName: 'Patil',
-      mobileNumber: '1234567890',
-      email: 'omkar.patil@example.com',
-      gender: Gender.MALE,
-      status: StatusEnum.InProgress,
-      age: 30,
-      date: new Date(),
-    },
-    {
-      id: 2,
-      firstName: 'Jane',
-      lastName: 'Smith',
-      mobileNumber: '0987654321',
-      email: 'jane.smith@example.com',
-      gender: Gender.FEMALE,
-      status: StatusEnum.InProgress,
-      age: 25,
-      date: new Date(),
-    },
-    // More dummy data...
-  ]);
+  
+  const getAllAppointments = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `${apiUrl}/hospitals/1/doctors/1/appointments`,
+        {
+          withCredentials: true,
+          params: {
+            pageSize: rowsPerPage,
+            pageOffset: page - 1,
+            // appointmentDate: searchQueryName,
+          },
+        }
+      );
+      // console.log(response.data[0].user)
+      const { content, total } = response.data;
+      setAppointmentsData(response.data.content);
+      setTotalItems(total);
+      console.log('Admin Data', response.data.content);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching hospital data:', error);
+      setLoading(false);
+    }
+  }, [apiUrl, page, rowsPerPage]);
+
+  useEffect(() => {
+    getAllAppointments();
+  }, [apiUrl, page, rowsPerPage, getAllAppointments]);
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);
@@ -130,9 +166,9 @@ export function ListAppointment(props: ListAppointmentProps) {
   };
 
   const handleEditClick = (appointmentId: number) => {
-    const selectedAppointment: ViewAppointment | undefined =
-      dummyAppointments.find((appointment) => appointment.id === appointmentId);
-
+    const selectedAppointment: ViewAppointment | undefined = appointmentsData.find(
+      (appointment) => appointment.id === appointmentId
+    );
     if (selectedAppointment) {
       setEditData(selectedAppointment);
       setSelectedAppointmentId(appointmentId);
@@ -142,9 +178,9 @@ export function ListAppointment(props: ListAppointmentProps) {
 
   // Function to open the delete confirmation modal
   const handleDeleteClick = (appointmentId: number) => {
-    const selectedAppointment: ViewAppointment | undefined =
-      dummyAppointments.find((appointment) => appointment.id === appointmentId);
-
+    const selectedAppointment: ViewAppointment | undefined = appointmentsData.find(
+      (appointment) => appointment.id === appointmentId
+    );
     if (selectedAppointment) {
       setViewData(selectedAppointment);
       setSelectedAppointmentId(appointmentId);
@@ -158,28 +194,9 @@ export function ListAppointment(props: ListAppointmentProps) {
     setIsDeleteModalOpen(false);
   };
 
-  const deleteAppointment = async () => {
-    try {
-      if (selectedAppointmentId !== null) {
-        await axios.delete(
-          `${apiUrl}/hospitals/${params.hospitalId}/appointments/${selectedAppointmentId}`,
-          {
-            withCredentials: true,
-          }
-        );
-        enqueueSnackbar('Appointment deleted successfully', {
-          variant: 'success',
-        });
-        closeDeleteModal();
-        getAppointment();
-      }
-    } catch (error) {
-      console.log(error);
-      enqueueSnackbar('Something went wrong', { variant: 'error' });
-    }
-  };
 
-  const getAppointment = async () => {
+
+  const getAllDoctors = async () => {
     try {
       setLoading(true);
       const response = await axios.get(
@@ -205,11 +222,34 @@ export function ListAppointment(props: ListAppointmentProps) {
   };
 
   useEffect(() => {
-    getAppointment();
+    getAllDoctors();
   }, [page, rowsPerPage, searchQueryName]);
 
+
+  const deleteAppointment = async () => {
+    try {
+      if (selectedAppointmentId !== null) {
+        await axios.delete(
+          `${apiUrl}/hospitals/1/doctors/1/patients/1/appointments/${selectedAppointmentId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        getAllAppointments();
+        enqueueSnackbar('Appointment deleted successfully', {
+          variant: 'success',
+        });
+        closeDeleteModal();
+        
+      }
+    } catch (error) {
+      console.log(error);
+      enqueueSnackbar('Something went wrong', { variant: 'error' });
+    }
+  };
+
   const handleFilterChange = () => {
-    setPage(0);
+    setPage(1);
   };
 
   useEffect(() => {
@@ -220,42 +260,89 @@ export function ListAppointment(props: ListAppointmentProps) {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setSearchQueryName(event.target.value);
-    getAppointment();
+    getAllAppointments();
   };
 
+  // Add Appointment
   const handleAddAppointment = async (formData: Form) => {
     try {
-      const newAppointment = {
-        id: dummyAppointments.length + 1, // This is just a dummy ID
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        gender: formData.gender,
-        email: formData.email,
-        mobileNumber: formData.mobileNumber,
-        age: formData.age,
-        date: new Date(formData.date),
-        status: formData.status, 
-      };
-  
-      dummyAppointments.push(newAppointment); // For testing with dummy data
-      setDummyAppointments([...dummyAppointments]); // Update state to trigger re-render
-  
-      enqueueSnackbar('Appointment added successfully', { variant: 'success' });
-      setIsAddModalOpen(false);
-      
-      // Uncomment this if you're using an API to fetch appointments
-      // getAppointment();
-  
+      await setIsAddModalOpen(false);
+      setIsLoadingModalOpen(true);
+
+      const { data: responseData } = await axios.post(
+        `${apiUrl}/hospitals/1/doctors/1/patients/${formData?.patient?.id}/appointments`,
+        {
+          appointmentDate: formData.appointmentDate,
+          statusId: formData.statusId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if (responseData) {
+        setIsLoadingModalOpen(false);
+        enqueueSnackbar('Appointment added successfully', { variant: 'success' });
+        setIsAddModalOpen(false);
+        getAllAppointments();
+      } else {
+        console.log('Something went wrong');
+        setIsLoadingModalOpen(false);
+      }
+      console.log('Appointment added successfully', responseData);
     } catch (error) {
       console.log(error);
+      console.log('Something went wrong in input form');
       enqueueSnackbar('Something went wrong', { variant: 'error' });
+      setIsLoadingModalOpen(false);
     }
   };
-  
+
+
+  // Edit Appointment
+  const handleUpdate = async (formData: Form) => {
+    try {
+      await setIsAddModalOpen(false);
+      setIsLoadingModalOpen(true);
+
+      const { data: responseData } = await axios.put(
+        `${apiUrl}/hospitals/1/doctors/1/patients/${formData?.patient?.id}/appointments/${selectedAppointmentId}`,
+        {
+          appointmentDate: formData.appointmentDate,
+          statusId: formData.statusId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if (responseData) {
+        setIsLoadingModalOpen(false);
+        enqueueSnackbar('Appointment updated successfully', { variant: 'success' });
+        setIsAddModalOpen(false);
+        getAllAppointments();
+      } else {
+        console.log('Something went wrong');
+        setIsLoadingModalOpen(false);
+      }
+      console.log('Appointment updated successfully', responseData);
+    } catch (error) {
+      console.log(error);
+      console.log('Something went wrong in input form');
+      enqueueSnackbar('Something went wrong', { variant: 'error' });
+      setIsLoadingModalOpen(false);
+    }
+  };
+
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName[0]}${lastName[0]}`.toUpperCase();
   };
+
+  const handleChangePage = (event: any, newPage: number) => {
+    console.log('Page changed to:', newPage);
+    setPage(newPage);
+  };
+
+  const pageCount = Math.ceil(totalItems / rowsPerPage);
 
   return (
     <Box className={styles['btn_container']}>
@@ -400,6 +487,11 @@ export function ListAppointment(props: ListAppointmentProps) {
               onClose={() => setIsAddModalOpen(false)}
               onSubmit={handleAddAppointment}
             />
+            <Loading
+              open={isLoadingModalOpen}
+              onClose={() => setIsLoadingModalOpen(false)}
+            />
+
             <TextField
               type="text"
               variant="outlined"
@@ -444,62 +536,87 @@ export function ListAppointment(props: ListAppointmentProps) {
         <Table sx={{ minWidth: 650 }} aria-label="appointment table">
           <TableHead>
             <TableRow>
-              <TableCell>Patient Name</TableCell>
-              <TableCell>Gender</TableCell>
-              <TableCell>Date</TableCell>
+            <TableCell>Patient Name</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Phone Number</TableCell>
+              <TableCell>Doctor</TableCell>
+              <TableCell>Appointment Date</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {dummyAppointments.map((appointment) => (
+          {loading ? (
+                <TableCell align="center" colSpan={7} >
+                  <CircularProgress size='small' />
+                </TableCell>
+              ) : Array.isArray(appointmentsData) && appointmentsData.length > 0 ? (
+            appointmentsData.map((appointment) => (
               <TableRow key={appointment.id}>
                 <TableCell>
-                  <NavLink
-                    to={`/appointments/${appointment.id}`}
-                    style={{
-                      textDecoration: 'none',
-                      color: 'inherit',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
+                
                     <Box
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        '&:hover': {
-                          backgroundColor: '#f0f0f0', // Change this to your desired hover color
-                          borderRadius: '8px', // Optional: adds rounded corners
-                          padding: '4px', // Optional: adds padding inside the hover area
-                        },
+                        // '&:hover': {
+                        //   backgroundColor: '#f0f0f0', // Change this to your desired hover color
+                        //   borderRadius: '8px', // Optional: adds rounded corners
+                        //   padding: '4px', // Optional: adds padding inside the hover area
+                        // },
                       }}
                     >
-                      <Avatar sx={{ bgcolor: '#4FD1C5', marginRight: 2 }}>
+                       
+                      {/* <Avatar sx={{ bgcolor: '#4FD1C5', marginRight: 2 }}>
+                        
                         {getInitials(
-                          appointment.firstName,
-                          appointment.lastName
+                          appointment.patient.user.firstName,
+                          appointment.patient.user.lastName
                         )}
-                      </Avatar>
-                      {`${appointment.firstName} ${appointment.lastName}`}
+                      </Avatar> */}
+                      <NavLink
+                    to={`/appointments/${appointment.id}`}
+                    className={styles['socname']}
+                  >
+                      {`${appointment.patient.user.firstName} ${appointment.patient.user.lastName}`}
+                      </NavLink>
                     </Box>
-                  </NavLink>
+                  
                 </TableCell>
 
-                <TableCell>{appointment.gender}</TableCell>
-                <TableCell>{appointment.date.toDateString()}</TableCell>
+                <TableCell>{appointment.patient.user.email}</TableCell>
+                <TableCell>{appointment.patient.user.phoneNumber}</TableCell>
+                <TableCell>{appointment.doctor.user.firstName} {appointment.doctor.user.lastName}</TableCell>
+                <TableCell>{format(new Date(appointment.appointmentDate), 'MM/dd/yyyy')}</TableCell>
                 <TableCell>
-                  {/* <Box
-                    sx={{
-                      display: 'inline-block',
-                      padding: '2px 6px',
-                      borderRadius: '12px',
-                      backgroundColor: statusColorMap[appointment.status],
-                      color: '#000',
-                      textAlign: 'center',
-                    }}
-                  > */}
-                  <Chip label="Info">{appointment.status}</Chip>
+                  {appointment.status.name === 'INPROGRESS' ? (
+                    <StatusChip label="Primary" width="100px">
+                      InProgress
+                    </StatusChip>
+                  ) : (
+                    ''
+                  )}
+                  {appointment.status.name === 'PENDING' ? (
+                    <StatusChip label="Warning" width="100px">
+                      Pending
+                    </StatusChip>
+                  ) : (
+                    ''
+                  )}
+                  {appointment.status.name === 'CANCELLED' ? (
+                    <StatusChip label="Error" width="100px">
+                      Cancelled
+                    </StatusChip>
+                  ) : (
+                    ''
+                  )}
+                  {appointment.status.name === 'CONFIRMED' ? (
+                    <StatusChip label="Success" width="100px">
+                      Confirmed
+                    </StatusChip>
+                  ) : (
+                    ''
+                  )}
 
                   {/* </Box> */}
                 </TableCell>
@@ -515,16 +632,43 @@ export function ListAppointment(props: ListAppointmentProps) {
                   </IconButton>
                 </TableCell>
               </TableRow>
-            ))}
+             ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  sx={{
+                    textAlign: 'center',
+                  }}
+                  colSpan={5}
+                >
+                  No Appointment found
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
-
+      <Stack spacing={2} className={styles['paginationContainer']}>
+        <Pagination
+          count={pageCount}
+          page={page}
+          onChange={handleChangePage}
+          color="primary"
+          renderItem={(item) => (
+            <PaginationItem {...item} className={styles['paginationItem']} />
+          )}
+          siblingCount={1}
+          boundaryCount={1}
+          showFirstButton
+          showLastButton
+        />
+      </Stack>
       {isEditModalOpen && editData && (
         <EditAppointment
           open={isEditModalOpen}
           onClose={closeEditModal}
           onUpdate={(data) => {
+            handleUpdate(data);
             closeEditModal();
           }}
           initialData={editData}

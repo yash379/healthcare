@@ -1,8 +1,7 @@
-
 import styles from './add-patient-page.module.scss';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import {
   TextField,
@@ -15,7 +14,9 @@ import {
   Typography,
   FormHelperText,
   InputAdornment,
-  Grid,  // Import Grid component
+  Grid,
+  Autocomplete,
+  Chip, // Import Grid component
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -33,17 +34,31 @@ import { HospitalContext } from '../../../contexts/user-contexts';
 import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+// import { AddPatient } from '@healthcare/data-transfer-types';
+
+// const AcuteDisease = [
+//   "FLU",
+//   "PNEUMONIA",
+//   "APPENDICITIS",
+//   "MIGRAINE"
+// ];
+// const ChronicDisease = [
+//   "DIABETES",
+//   "HYPERTENSION",
+//   "ASTHMA",
+//   "COPD"
+// ];
 
 export interface AddPatient {
+  id: number;
   firstName: string;
   lastName: string;
-  email?: string;
+  email: string;
   phoneNumber?: string;
   gender: Gender;
-  chronicDisease?: ChronicDisease;
-  acuteDisease?: AcuteDisease;
-  bloodgroup: string;
-  dob: Date;
+  age: number;
+  bloodGroup: string;
+  dob: Date | null;
   digitalHealthCode: string;
   addressLine1: string;
   addressLine2?: string;
@@ -51,16 +66,17 @@ export interface AddPatient {
   stateCode?: string;
   countryCode: string;
   postalCode: string;
+  chronicDisease?: ChronicDisease[]; // Array of ChronicDisease enums
+  acuteDisease?: AcuteDisease[]; // Array of AcuteDisease enums
   isActive: boolean;
-  age: number;
 }
 
 /* eslint-disable-next-line */
-export interface AddPatientPageProps { }
+export interface AddPatientPageProps {}
 
 export function AddPatientPage(props: AddPatientPageProps) {
   const [country, setCountry] = useState<string>('');
-
+  const params = useParams();
   const apiUrl = environment.apiUrl;
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
   const navigate = useNavigate();
@@ -72,21 +88,40 @@ export function AddPatientPage(props: AddPatientPageProps) {
     firstName: yup.string().required('First Name is required'),
     lastName: yup.string().required('Last Name is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
-    phoneNumber: yup.string().matches(/[6789][0-9]{9}/, 'Invalid phone number').min(10).max(10).required('Phone number is required'),
+    phoneNumber: yup
+      .string()
+      .matches(/[6789][0-9]{9}/, 'Invalid phone number')
+      .min(10)
+      .max(10)
+      .required('Phone number is required'),
     gender: yup.string().required('Please Select One'),
     isActive: yup.boolean().required('Please Select One'),
-    bloodgroup: yup.string().required('Blood Group is required'),
+    bloodGroup: yup.string().required('Blood Group is required'),
     dob: yup.date().required('Date Of Birth is required'),
     digitalHealthCode: yup.string().required('Digital Health Code is required'),
     addressLine1: yup.string().required('Address Line 1 is required'),
     addressLine2: yup.string().notRequired(),
     city: yup.string().required('City is required'),
-    stateCode: yup.string().required('State Code is required'),
+    // stateCode: yup.string().required('State Code is required'),
+    stateCode: yup.string().notRequired(),
     countryCode: yup.string().required('Country Code is required'),
     postalCode: yup.string().required('Postal Code is required'),
-    age: yup.number().required('Age is required').min(0,'Age cannot be less than 0').max(200,'Age cannot be Greater then 200'),
-    chronicDisease: yup.number().required('chronicDisease is required'),
-    acuteDisease: yup.number().required('acuteDisease is required'),
+    age: yup
+      .number()
+      .required('Age is required')
+      .min(0, 'Age cannot be less than 0')
+      .max(200, 'Age cannot be Greater then 200'),
+    chronicDisease: yup
+      .array()
+      .of(yup.string().required('Each chronic disease must be a valid string'))
+      .min(1, 'At least one chronic disease is required')
+      .required('chronicDiseases is required'),
+
+    acuteDisease: yup
+      .array()
+      .of(yup.string().required('Each acute disease must be a valid string'))
+      .min(1, 'At least one acute disease is required')
+      .required('acuteDiseases is required'),
   });
   const {
     handleSubmit,
@@ -103,22 +138,24 @@ export function AddPatientPage(props: AddPatientPageProps) {
   });
 
   const countryValue = watch('countryCode');
-
-  console.log("hospitalcontext : ", hospitalContext)
+  const chronicDiseaseOptions = Object.values(ChronicDisease);
+  const acuteDiseaseOptions = Object.values(AcuteDisease);
+  console.log('hospitalcontext : ', hospitalContext);
 
   // Add Patient
   const handleAddPatient = async (formData: AddPatient) => {
     try {
       const { data: responseData } = await axios.post(
-        `${apiUrl}/hospitals/${hospitalContext?.id}/patients`,
+        `${apiUrl}/hospitals/${hospitalContext?.id}/doctors/${params.doctorId}/patient`,
         {
           firstName: formData.firstName,
           lastName: formData.lastName,
           gender: formData.gender,
           email: formData.email,
           phoneNumber: formData.phoneNumber,
-          bloodgroup: formData.bloodgroup,
-          dob: formData.dob,
+          bloodGroup: formData.bloodGroup,
+          dob: formData.dob ? formData.dob.toISOString() : undefined,
+          // dob:'2024-09-03T17:54:34.885Z',
           digitalHealthCode: formData.digitalHealthCode,
           addressLine1: formData.addressLine1,
           addressLine2: formData.addressLine2,
@@ -128,23 +165,23 @@ export function AddPatientPage(props: AddPatientPageProps) {
           postalCode: formData.postalCode,
           isActive: formData.isActive,
           age: formData.age,
-          chronicDisease: formData.chronicDisease,
-          acuteDisease: formData.acuteDisease
+          chronicDiseases: formData.chronicDisease,
+          acuteDiseases: formData.acuteDisease,
         },
         {
           withCredentials: true,
-        },
+        }
       );
       if (responseData) {
         reset();
-        enqueueSnackbar("Patient added successfully!", { variant: 'success' });
+        enqueueSnackbar('Patient added successfully!', { variant: 'success' });
         navigate(`/hospitals/${hospitalContext?.id}`);
       } else {
-        console.log("Something went wrong");
+        console.log('Something went wrong');
       }
     } catch (error) {
       console.log(error);
-      console.log("Something went wrong in input form");
+      console.log('Something went wrong in input form');
       enqueueSnackbar('Something went wrong', { variant: 'error' });
     }
   };
@@ -183,17 +220,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                     variant="outlined"
                     {...field}
@@ -222,17 +248,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                   />
                 )}
@@ -254,17 +269,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                     error={!!errors.firstName}
                     helperText={errors.firstName?.message}
@@ -290,17 +294,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                   />
                 )}
@@ -322,7 +315,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     placeholder="Enter Phone Number"
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment sx={{ mt: "1px" }} position="start">
+                        <InputAdornment sx={{ mt: '1px' }} position="start">
                           +91
                         </InputAdornment>
                       ),
@@ -334,17 +327,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                   />
                 )}
@@ -356,21 +338,13 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 control={control}
                 rules={{ required: 'Gender is required' }}
                 render={({ field }) => (
-                  <FormControl sx={{
-                    width: '100%',
-                    marginBottom: 1,
-                    '& .MuiInputBase-root': {
-                      height: 50, // Adjust height here
-                    },
-                    '& .MuiInputBase-input': {
-                      padding: '10px 14px', // Adjust padding to fit height
-                      fontSize: '0.955rem', // Adjust font size if needed
-                    },
-                    '& .MuiInputLabel-root': {
-                      fontSize: '1rem', // Adjust label font size if needed
-                      top: -6, // Adjust label position if needed
-                    },
-                  }} error={!!errors.gender}>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                    }}
+                    error={!!errors.gender}
+                  >
                     <InputLabel>Gender</InputLabel>
                     <Select {...field} label="Gender*">
                       {Object.keys(Gender).map((gender, i) => (
@@ -385,7 +359,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Controller
+              {/* <Controller
                 name="dob"
                 control={control}
                 rules={{ required: 'Date of Birth is required' }}
@@ -405,16 +379,24 @@ export function AddPatientPage(props: AddPatientPageProps) {
                       sx={{
                         width: '100%',
                         marginBottom: 1,
-                        '& .MuiInputBase-root': {
-                          height: 50, // Adjust height here
-                        },
-                        '& .MuiInputBase-input': {
-                          padding: '10px 14px', // Adjust padding to fit height
-                          fontSize: '0.955rem', // Adjust font size if needed
-                        },
-                        '& .MuiInputLabel-root': {
-                          fontSize: '1rem', // Adjust label font size if needed
-                          top: -6, // Adjust label position if needed
+                      }}
+                    />
+                  </LocalizationProvider>
+                )}
+              /> */}
+              <Controller
+                name="dob"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      {...field}
+                      label="Date of Birth"
+                      slotProps={{
+                        textField: {
+                          error: !!error,
+                          helperText: error?.message,
+                          fullWidth: true,
                         },
                       }}
                     />
@@ -424,7 +406,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
             </Grid>
             <Grid item xs={12} sm={6}>
               <Controller
-                name="bloodgroup"
+                name="bloodGroup"
                 control={control}
                 defaultValue=""
                 rules={{ required: 'Blood Group is required' }}
@@ -435,22 +417,11 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     placeholder="Enter Blood Group"
                     {...field}
                     label="Blood Group*"
-                    error={!!errors.bloodgroup}
-                    helperText={errors.bloodgroup?.message}
+                    error={!!errors.bloodGroup}
+                    helperText={errors.bloodGroup?.message}
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                   />
                 )}
@@ -484,17 +455,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                     inputProps={{
                       min: 0, // Set minimum value for the input
@@ -522,17 +482,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                   />
                 )}
@@ -553,17 +502,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                   />
                 )}
@@ -587,17 +525,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                   />
                 )}
@@ -610,21 +537,13 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 defaultValue=""
                 rules={{ required: 'Country is required' }}
                 render={({ field }) => (
-                  <FormControl sx={{
-                    width: '100%',
-                    marginBottom: 1,
-                    '& .MuiInputBase-root': {
-                      height: 50, // Adjust height here
-                    },
-                    '& .MuiInputBase-input': {
-                      padding: '10px 14px', // Adjust padding to fit height
-                      fontSize: '0.955rem', // Adjust font size if needed
-                    },
-                    '& .MuiInputLabel-root': {
-                      fontSize: '1rem', // Adjust label font size if needed
-                      top: -6, // Adjust label position if needed
-                    },
-                  }} error={!!errors.countryCode}>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                    }}
+                    error={!!errors.countryCode}
+                  >
                     <InputLabel>Country*</InputLabel>
                     <Select {...field} label="Country*">
                       {CountriesStates.map((country, i) => (
@@ -633,7 +552,9 @@ export function AddPatientPage(props: AddPatientPageProps) {
                         </MenuItem>
                       ))}
                     </Select>
-                    <FormHelperText>{errors.countryCode?.message}</FormHelperText>
+                    <FormHelperText>
+                      {errors.countryCode?.message}
+                    </FormHelperText>
                   </FormControl>
                 )}
               />
@@ -645,21 +566,13 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 defaultValue=""
                 rules={{ required: 'State is required' }}
                 render={({ field }) => (
-                  <FormControl sx={{
-                    width: '100%',
-                    marginBottom: 1,
-                    '& .MuiInputBase-root': {
-                      height: 50, // Adjust height here
-                    },
-                    '& .MuiInputBase-input': {
-                      padding: '10px 14px', // Adjust padding to fit height
-                      fontSize: '0.955rem', // Adjust font size if needed
-                    },
-                    '& .MuiInputLabel-root': {
-                      fontSize: '1rem', // Adjust label font size if needed
-                      top: -6, // Adjust label position if needed
-                    },
-                  }} error={!!errors.stateCode}>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                    }}
+                    error={!!errors.stateCode}
+                  >
                     <InputLabel>State*</InputLabel>
                     <Select {...field} label="State*">
                       {stateOptions.map((s) => (
@@ -692,43 +605,24 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     sx={{
                       width: '100%',
                       marginBottom: 1,
-                      '& .MuiInputBase-root': {
-                        height: 50, // Adjust height here
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '10px 14px', // Adjust padding to fit height
-                        fontSize: '0.955rem', // Adjust font size if needed
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontSize: '1rem', // Adjust label font size if needed
-                        top: -6, // Adjust label position if needed
-                      },
                     }}
                   />
                 )}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Controller
+              {/* <Controller
                 name="chronicDisease"
                 control={control}
                 rules={{ required: 'chronicDisease is required' }}
                 render={({ field }) => (
-                  <FormControl sx={{
-                    width: '100%',
-                    marginBottom: 1,
-                    '& .MuiInputBase-root': {
-                      height: 50, // Adjust height here
-                    },
-                    '& .MuiInputBase-input': {
-                      padding: '10px 14px', // Adjust padding to fit height
-                      fontSize: '0.955rem', // Adjust font size if needed
-                    },
-                    '& .MuiInputLabel-root': {
-                      fontSize: '1rem', // Adjust label font size if needed
-                      top: -6, // Adjust label position if needed
-                    },
-                  }} error={!!errors.chronicDisease}>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                    }}
+                    error={!!errors.chronicDisease}
+                  >
                     <InputLabel>ChronicDisease</InputLabel>
                     <Select {...field} label="chronicDisease*">
                       {Object.keys(ChronicDisease).map((chronicDisease, i) => (
@@ -737,44 +631,94 @@ export function AddPatientPage(props: AddPatientPageProps) {
                         </MenuItem>
                       ))}
                     </Select>
-                    <FormHelperText>{errors.chronicDisease?.message}</FormHelperText>
+                    <FormHelperText>
+                      {errors.chronicDisease?.message}
+                    </FormHelperText>
                   </FormControl>
                 )}
-              />
+              /> */}
+              <FormControl
+                sx={{ width: '100%', marginBottom: 2 }}
+                error={!!errors.chronicDisease}
+              >
+                <Controller
+                  name="chronicDisease"
+                  control={control}
+                  rules={{ required: 'ChronicDiseases is required' }}
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      multiple
+                      options={chronicDiseaseOptions}
+                      renderTags={(value: string[], getTagProps) =>
+                        value.map((option, index) => (
+                          <Chip
+                            variant="outlined"
+                            label={option}
+                            {...getTagProps({ index })}
+                          />
+                        ))
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          label="Select Chronic Diseases"
+                          placeholder="Chronic Diseases"
+                          error={!!errors.chronicDisease}
+                        />
+                      )}
+                      onChange={(_, value) =>
+                        field.onChange(value.map((v) => v.toUpperCase()))
+                      } // Important: Update field value
+                    />
+                  )}
+                />
+                <FormHelperText>
+                  {errors.chronicDisease?.message}
+                </FormHelperText>
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Controller
-                name="acuteDisease"
-                control={control}
-                rules={{ required: 'acuteDisease is required' }}
-                render={({ field }) => (
-                  <FormControl sx={{
-                    width: '100%',
-                    marginBottom: 1,
-                    '& .MuiInputBase-root': {
-                      height: 50, // Adjust height here
-                    },
-                    '& .MuiInputBase-input': {
-                      padding: '10px 14px', // Adjust padding to fit height
-                      fontSize: '0.955rem', // Adjust font size if needed
-                    },
-                    '& .MuiInputLabel-root': {
-                      fontSize: '1rem', // Adjust label font size if needed
-                      top: -6, // Adjust label position if needed
-                    },
-                  }} error={!!errors.acuteDisease}>
-                    <InputLabel>AcuteDisease</InputLabel>
-                    <Select {...field} label="acuteDisease*">
-                      {Object.keys(AcuteDisease).map((acuteDisease, i) => (
-                        <MenuItem key={i} value={acuteDisease}>
-                          {acuteDisease}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    <FormHelperText>{errors.acuteDisease?.message}</FormHelperText>
-                  </FormControl>
-                )}
-              />
+              <FormControl
+                sx={{ width: '100%', marginBottom: 2 }}
+                error={!!errors.acuteDisease}
+              >
+                <Controller
+                  name="acuteDisease"
+                  control={control}
+                  rules={{ required: 'Acute Disease is required' }}
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      multiple
+                      options={acuteDiseaseOptions}
+                      renderTags={(value: string[], getTagProps) =>
+                        value.map((option, index) => (
+                          <Chip
+                            variant="outlined"
+                            label={option}
+                            {...getTagProps({ index })}
+                          />
+                        ))
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          label="Select Acute Diseases"
+                          placeholder="Acute Diseases"
+                          error={!!errors.acuteDisease}
+                        />
+                      )}
+                      onChange={(_, value) =>
+                        field.onChange(value.map((v) => v.toUpperCase()))
+                      }
+                    />
+                  )}
+                />
+                <FormHelperText>{errors.acuteDisease?.message}</FormHelperText>
+              </FormControl>
             </Grid>
           </Grid>
           <Button

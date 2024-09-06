@@ -45,7 +45,7 @@ export class HospitalsController {
   }
 
   @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT, Role.HOSPITAL_ADMIN)  
   @ApiOperation({summary: "get hospitals by id"})
   @Get('hospitals/:id')
   @HttpCode(HttpStatus.OK)
@@ -109,7 +109,7 @@ export class HospitalsController {
   // }
 
   @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.ORGANIZATION_ADMIN,Role.HOSPITAL_ADMIN)  
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_DOCTOR,Role.HOSPITAL_ADMIN)  
   @ApiOperation({summary: "Delete hospital"})
   @Delete('hospitals/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -136,7 +136,7 @@ export class HospitalsController {
   }
 
   @UseGuards(AuthGuard,RolesGuard)
-  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN)  
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR)  
   @ApiOperation({summary: "get filtered hospitals"})
   @ApiQuery({ name: 'pageSize', type: 'number', required: false })
   @ApiQuery({ name: 'pageOffset', type: 'number', required: false })

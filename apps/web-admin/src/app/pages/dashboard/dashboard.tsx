@@ -402,7 +402,8 @@ export function Dashboard(props: DashboardProps) {
       <CircularProgress />
     ) : (
       <>
-        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+      
+        <Card style={{ flex: '1 1 350px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <CardContent>
             <Typography variant="h6" color="text.secondary" gutterBottom>
               Total Users
@@ -412,7 +413,7 @@ export function Dashboard(props: DashboardProps) {
             </Typography>
           </CardContent>
         </Card>
-        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+        <Card style={{ flex: '1 1 350px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <CardContent>
             <Typography variant="h6" color="text.secondary" gutterBottom>
               Active Users
@@ -422,7 +423,7 @@ export function Dashboard(props: DashboardProps) {
             </Typography>
           </CardContent>
         </Card>
-        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+        <Card style={{ flex: '1 1 350px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <CardContent>
             <Typography variant="h6" color="text.secondary" gutterBottom>
               Inactive Users
@@ -432,7 +433,7 @@ export function Dashboard(props: DashboardProps) {
             </Typography>
           </CardContent>
         </Card>
-        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+        <Card style={{ flex: '1 1 350px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <CardContent>
             <Typography variant="h6" color="text.secondary" gutterBottom>
               Total Hospitals
@@ -442,7 +443,7 @@ export function Dashboard(props: DashboardProps) {
             </Typography>
           </CardContent>
         </Card>
-        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+        <Card style={{ flex: '1 1 350px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <CardContent>
             <Typography variant="h6" color="text.secondary" gutterBottom>
               Active Hospitals
@@ -452,7 +453,7 @@ export function Dashboard(props: DashboardProps) {
             </Typography>
           </CardContent>
         </Card>
-        <Card style={{ flex: '1 1 300px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+        <Card style={{ flex: '1 1 350px', padding: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <CardContent>
             <Typography variant="h6" color="text.secondary" gutterBottom>
               Inactive Hospitals

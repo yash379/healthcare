@@ -1,0 +1,63 @@
+/*
+ * Replace this with your own classes
+ *
+ * e.g.
+ * .container {
+ * }
+*/
+// .container {
+  h1 {
+    display: flex;
+    align-items: center;
+    margin-top: auto;
+    font-size: 24px;
+    color: black;    }
+
+  form {
+    margin-top: 20px;
+  }
+
+  .form-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .form-item {
+    width: 48%; /* Adjust as needed to control the width of form items */
+  }
+  .form-item-full {
+    width: 100%; /* Adjust as needed to control the width of form items */
+  }
+
+  .MuiFormControl-root {
+    width: 100%;
+  }
+
+  .MuiButton-root {
+    margin-top: 20px;
+  }
+// }
+
+.container {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background-color: white;
+padding: 20px;
+width: 100%;
+max-width: 1057px;
+border-radius: 33px;
+box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+max-height: 90vh; /* Set maximum height */
+overflow-y: auto;
+}
+
+.closeButton{
+display: flex;
+flex-direction: row;
+justify-content: flex-end;
+margin-bottom: -40px;
+}

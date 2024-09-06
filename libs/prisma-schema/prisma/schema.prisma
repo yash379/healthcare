@@ -454,8 +454,8 @@ model Prescription {
   prescriptionDate DateTime        @default(now()) @map("prescription_date") @db.Timestamptz() // Date of prescription
   createdAt        DateTime        @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt        DateTime?       @updatedAt @map("updated_at") @db.Timestamptz()
-  MedicalHistory   MedicalHistory? @relation(fields: [medicalHistoryId], references: [id])
   medicalHistoryId Int?
+  medicalHistory   MedicalHistory? @relation(fields: [medicalHistoryId], references: [id])
 
   @@map("prescriptions")
 }
@@ -463,13 +463,12 @@ model Prescription {
 model Diagnosis {
   id              Int       @id @default(autoincrement())
   details         String
-  height          Float?
-  weight          Float?
+  height          Int?
+  weight          Int?
   pulse           Int?
-  spo2            Float? // Blood oxygen saturation
-  bmi             Float?
-  temperature     Float?
-  chiefComplaints String
+  spo2            Int?
+  temperature     Int?
+  chiefComplaints String[]
   doctorId        Int
   doctor          Doctor    @relation(fields: [doctorId], references: [id])
   patientId       Int
@@ -478,21 +477,21 @@ model Diagnosis {
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt       DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
 
-  medicalHistoryDiagnoses MedicalHistory[] @relation("Diagnoses")
+  medicalHistoryId Int?
+  medicalHistory   MedicalHistory? @relation(fields: [medicalHistoryId], references: [id])
 
   @@map("diagnoses")
 }
 
 model MedicalHistory {
   id        Int       @id @default(autoincrement())
-  details   String
   patientId Int       @unique
   patient   Patient   @relation(fields: [patientId], references: [id])
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
 
-  diagnoses     Diagnosis[]    @relation("Diagnoses")
   prescriptions Prescription[]
+  diagnoses     Diagnosis[]
 
   @@map("medical_histories")
 }

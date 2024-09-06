@@ -1,8 +1,8 @@
 import styles from './delete-admin.module.scss';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 
+import { Box, Button, Dialog, DialogTitle, Grid, IconButton, Typography } from '@mui/material';
+
+import CancelIcon from '@mui/icons-material/Cancel';
 /* eslint-disable-next-line */
 export interface DeleteAdminProps {
   open: boolean;
@@ -34,34 +34,78 @@ export function DeleteAdmin({
 adminData
 }: DeleteAdminProps) {
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box className={styles['delete_modal_container']}>
-        <h2 className={styles['h2_tag']}>Delete Manager</h2>
-        <p>Are you sure you want to delete <b>{adminData?.user?.firstName} {adminData?.user?.lastName}</b>?</p>
-        <Box>
+    <Dialog open={open} onClose={onClose} maxWidth='xs' fullWidth>
+      <Box
+        sx={{
+          // position: 'fixed',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          // top: '50%',
+          // left: '50%',
+          // transform: 'translate(-50%, -50%)',
+          backgroundColor: '#ffffff',
+          boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+          height: '100%',
+          maxHeight: '148px',
+          padding: '12px 12px 12px 12px',
+          // width: '100%',
+          // maxWidth: '420px',
+          borderRadius: '12px',
+        }}>
+<Typography>
+          <Box display={'flex'} justifyContent={'space-between'}>
+            <Typography
+        
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                padding: '12px',
+              }}
+              variant='h2'>
+              Delete Manager
+            </Typography>
+            <IconButton
+              onClick={() => {
+                onClose();
+              }}
+              aria-label="Close"
+              sx={{ p: '12px' }}>
+              <CancelIcon />
+            </IconButton>
+          </Box>
+          <Typography p={'12px'} variant="body1">
+              {`Are you sure you want to delete ${adminData?.user.firstName} ${adminData?.user?.lastName}?`}
+            
+          </Typography>
+        </Typography>
+        <Typography
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            padding: '10px',
+          }}>
 
           <Button
+            className={styles.ButtonColorClose}
+            onClick={onClose}
             variant="contained"
             color="secondary"
-            onClick={onClose}
-          >
+            sx={{marginRight: '12px', borderRadius: '12px' }}
+            >
             Cancel
           </Button>
           <Button
-            className={styles['delete_btn']}
-            sx={{ ml: "10px" }}
+            onClick={onDelete}
             variant="contained"
-            color="primary"
-            onClick={() => {
-              onDelete();
-              onClose();
-            }}
-          >
-            Confirm
+            color='error'
+            sx={{  borderRadius: '12px' }}>
+              Delete
           </Button>
-        </Box>
+        </Typography>
       </Box>
-    </Modal>
+    </Dialog>
   );
 }
 
