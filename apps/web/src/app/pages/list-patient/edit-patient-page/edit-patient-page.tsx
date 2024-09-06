@@ -27,7 +27,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Gender, Patient } from '@prisma/client';
 import { enqueueSnackbar } from 'notistack';
-import { HospitalContext } from '../../../contexts/user-context';
+import { HospitalContext } from '../../../contexts/hospital-context';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -137,7 +137,7 @@ console.log(patientContext,"patientcontext");
     async function fetchPatientData() {
       try {
         const response = await axios.get<ViewPatient>(
-          `${apiUrl}/hospitals/${hospitalContext?.id}/patients/${params.patientId}`,
+          `${apiUrl}/hospitals/${hsopitalContext?.hospital?.id}/patients/${params.patientId}`,
           {
             withCredentials: true,
           }
@@ -167,12 +167,12 @@ console.log(patientContext,"patientcontext");
     }
 
     fetchPatientData();
-  }, [apiUrl, id, setValue, hospitalContext?.id, params.patientId]);
+  }, [apiUrl, id, setValue, hsopitalContext?.hospital?.id, params.patientId]);
 
   const onSubmit = async (data: EditPatient) => {
     try {
       const response = await axios.put(
-        `${apiUrl}/hospitals/${hospitalContext?.id}/patients/${params.patientId}`,
+        `${apiUrl}/hospitals/${hsopitalContext?.hospital?.id}/patients/${params.patientId}`,
         data,
         {
           withCredentials: true,
@@ -181,7 +181,7 @@ console.log(patientContext,"patientcontext");
       console.log('Patient updated:', response.data);
 
       enqueueSnackbar('Patient updated successfully!', { variant: 'success' });
-      navigate(`/hospital/${hospitalContext?.id}/patients`);
+      navigate(`/hospital/${hsopitalContext?.hospital?.id}/patients`);
     } catch (error) {
       console.error('Error updating Patient:', error);
       enqueueSnackbar(
@@ -204,10 +204,10 @@ console.log(patientContext,"patientcontext");
   
   const breadcrumbs = [
     {
-      to: `/dashboard/${hospitalContext?.id}`,
+      to: `/dashboard/${hsopitalContext?.hospital?.id}`,
       label: 'Dashboard',
     },
-    { to: `/hospital/${hospitalContext?.id}/patients`, label: 'Patients' },
+    { to: `/hospital/${hsopitalContext?.hospital?.id}/patients`, label: 'Patients' },
     {
       label: 'Edit',
     },

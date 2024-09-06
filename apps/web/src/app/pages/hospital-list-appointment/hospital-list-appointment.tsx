@@ -1,5 +1,5 @@
 import { Gender } from '@prisma/client';
-import styles from './list-appointment.module.scss';
+import styles from './hospital-list-appointment.module.scss';
 import AddDoctorComponent from '../list-doctor/add-doctor/add-doctor';
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
@@ -31,26 +31,24 @@ import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { enqueueSnackbar } from 'notistack';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { environment } from '../../../environments/environment';
 import { useParams } from 'react-router-dom';
-import EditAppointment from './edit-appointment/edit-appointment';
-import AddAppointment from './add-appointment/add-appointment';
-import DeleteAppointment from './delete-appointment/delete-appointment';
+import EditAppointment from './hospital-edit-appointment/hospital-edit-appointment';
+import AddAppointment from './hospital-add-appointment/hospital-add-appointment';
+import DeleteAppointment from './hospital-delete-appointment/hospital-delete-appointment';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import { format } from 'date-fns';
 import * as React from 'react';
 import Chip from '../../Components/chip/chip';
+import StatusChip from '../../Components/chip/statusChip';
 import Loading from '../../Components/loading/loading';
 import { ViewAllUser } from '@healthcare/data-transfer-types';
-import StatusChip from '../../Components/chip/statusChip';
-import DoctorContext from '../../contexts/doctor-context';
-import { HospitalContext } from '../../contexts/hospital-context';
 // import { ListAppointment } from '@healthcare/data-transfer-types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ListAppointmentProps {}
+export interface HospitalListAppointmentProps {}
 
 export enum StatusEnum {
   Scheduled = 'Scheduled',
@@ -67,7 +65,7 @@ const statusColorMap: Record<StatusEnum, string> = {
   [StatusEnum.PendingConfirmation]: '#fff3cd', // light orange
 };
 
-interface ViewAppointment {
+export interface ViewAppointment {
   id: number;
   appointmentDate: string;
   status: { id: number; code: string; name: string };
@@ -92,6 +90,7 @@ interface UserDetailsDto {
 }
 
 interface Form {
+  doctor: ViewAllUser | null;
   patient: ViewAllUser | null;
   appointmentDate: Date;
   statusId: number;
@@ -109,7 +108,7 @@ interface Form {
 //   status: StatusEnum;
 // }
 
-export function ListAppointment(props: ListAppointmentProps) {
+export function HospitalListAppointment(props: HospitalListAppointmentProps) {
   const apiUrl = environment.apiUrl;
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [searchQueryName, setSearchQueryName] = useState<string>('');
@@ -129,20 +128,32 @@ export function ListAppointment(props: ListAppointmentProps) {
   const [appointmentsData, setAppointmentsData] = useState<ViewAppointment[]>(
     []
   );
-  const doctorContext = useContext(DoctorContext);
-  const hospitalContext = useContext(HospitalContext);
-  console.log("doctor context", doctorContext)
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
+  const [appointmentStatus, setAppointmentStatus] = useState({ total:0,pending: 0, inProgress: 0, cancelled: 0, confirmed: 0 });
+  useEffect(() => {
+    getCounts();
+  }, []);
+
+  const getCounts = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/appointment-count`, { withCredentials: true });
+
+      setAppointmentStatus(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
   const getAllAppointments = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/appointments`,
+        `${apiUrl}/hospitals/${params.hospitalId}/appointments`,
         {
           withCredentials: true,
           params: {
             pageSize: rowsPerPage,
-            pageOffset: page - 1,
+            pageOffset: page -1,
             // appointmentDate: searchQueryName,
           },
         }
@@ -157,11 +168,11 @@ export function ListAppointment(props: ListAppointmentProps) {
       console.error('Error fetching hospital data:', error);
       setLoading(false);
     }
-  }, [apiUrl, doctorContext?.doctor?.id, hospitalContext?.hospital?.id, page, rowsPerPage]);
+  }, [apiUrl, page, params.hospitalId, rowsPerPage]);
 
   useEffect(() => {
     getAllAppointments();
-  }, [apiUrl, page, rowsPerPage, getAllAppointments]);
+  }, [apiUrl, page, params.hospitalId, rowsPerPage, getAllAppointments]);
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);
@@ -187,6 +198,7 @@ export function ListAppointment(props: ListAppointmentProps) {
     if (selectedAppointment) {
       setViewData(selectedAppointment);
       setSelectedAppointmentId(appointmentId);
+      
       setIsDeleteModalOpen(true);
     }
   };
@@ -233,7 +245,7 @@ export function ListAppointment(props: ListAppointmentProps) {
     try {
       if (selectedAppointmentId !== null) {
         await axios.delete(
-          `${apiUrl}/hospitals/1/doctors/1/patients/1/appointments/${selectedAppointmentId}`,
+          `${apiUrl}/hospitals/${params.hospitalId}/doctors/1/appointments/${selectedAppointmentId}`,
           {
             withCredentials: true,
           }
@@ -273,7 +285,7 @@ export function ListAppointment(props: ListAppointmentProps) {
       setIsLoadingModalOpen(true);
 
       const { data: responseData } = await axios.post(
-        `${apiUrl}/hospitals/1/doctors/1/patients/${formData?.patient?.id}/appointments`,
+        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${formData?.doctor?.id}/patients/${formData?.patient?.id}/appointments`,
         {
           appointmentDate: formData.appointmentDate,
           statusId: formData.statusId,
@@ -308,7 +320,7 @@ export function ListAppointment(props: ListAppointmentProps) {
       setIsLoadingModalOpen(true);
 
       const { data: responseData } = await axios.put(
-        `${apiUrl}/hospitals/1/doctors/1/patients/${formData?.patient?.id}/appointments/${selectedAppointmentId}`,
+        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${formData?.doctor?.id}/patients/${formData?.patient?.id}/appointments/${selectedAppointmentId}`,
         {
           appointmentDate: formData.appointmentDate,
           statusId: formData.statusId,
@@ -335,11 +347,6 @@ export function ListAppointment(props: ListAppointmentProps) {
     }
   };
 
-
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName[0]}${lastName[0]}`.toUpperCase();
-  };
-
   const handleChangePage = (event: any, newPage: number) => {
     console.log('Page changed to:', newPage);
     setPage(newPage);
@@ -347,23 +354,27 @@ export function ListAppointment(props: ListAppointmentProps) {
 
   const pageCount = Math.ceil(totalItems / rowsPerPage);
 
+  const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName[0]}${lastName[0]}`.toUpperCase();
+  };
+
   return (
     <Box className={styles['btn_container']}>
       <Box>
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'row',
+            display: 'flex', flexWrap: 'wrap',
             justifyContent: 'space-between',
             alignItems: 'center',
             m: 2,
+            gap:3
           }}
         >
           {/* Total Appointments Card */}
           <Card
             sx={{
-              minWidth: 400,
-              p: 2,
+              flex: '1 1 100px',
+              p: 3,
               borderRadius: 5,
               display: 'flex',
               justifyContent: 'center',
@@ -375,7 +386,7 @@ export function ListAppointment(props: ListAppointmentProps) {
                   backgroundColor: '#5CA1D1',
                   borderRadius: '50%',
                   color: '#ffffff',
-                  width: 30,
+                 width: 30,
                   height: 30,
                   padding: 1,
                 }}
@@ -389,7 +400,42 @@ export function ListAppointment(props: ListAppointmentProps) {
                   Total Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
-                  150
+                  {appointmentStatus.total}
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+
+          <Card
+            sx={{
+              flex: '1 1 100px',
+              p: 3,
+              borderRadius: 5,
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <CardContent sx={{ display: 'flex' }}>
+              <DescriptionOutlinedIcon
+                sx={{
+                  backgroundColor: '#4FB1C1',
+                  borderRadius: '50%',
+                  color: '#ffffff',
+                 width: 30,
+                  height: 30,
+                  padding: 1,
+                }}
+              />
+              <Box sx={{ paddingLeft: 2 }}>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{ color: '#4FB1C1' }}
+                >
+                  Inprogress Appointments
+                </Typography>
+                <Typography variant="h4" sx={{ color: '#000000' }}>
+                  {appointmentStatus.inProgress}
                 </Typography>
               </Box>
             </CardContent>
@@ -398,8 +444,8 @@ export function ListAppointment(props: ListAppointmentProps) {
           {/* Completed Appointments Card */}
           <Card
             sx={{
-              minWidth: 400,
-              p: 2,
+              flex: '1 1 100px',
+              p: 3,
               borderRadius: 5,
               display: 'flex',
               justifyContent: 'center',
@@ -425,7 +471,7 @@ export function ListAppointment(props: ListAppointmentProps) {
                   Completed Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
-                  100
+                  {appointmentStatus.confirmed}
                 </Typography>
               </Box>
             </CardContent>
@@ -434,8 +480,8 @@ export function ListAppointment(props: ListAppointmentProps) {
           {/* Pending Appointments Card */}
           <Card
             sx={{
-              minWidth: 400,
-              p: 2,
+              flex: '1 1 100px',
+              p: 3,
               borderRadius: 5,
               display: 'flex',
               justifyContent: 'center',
@@ -461,7 +507,7 @@ export function ListAppointment(props: ListAppointmentProps) {
                   Pending Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
-                  50
+                {appointmentStatus.pending}
                 </Typography>
               </Box>
             </CardContent>
@@ -539,7 +585,7 @@ export function ListAppointment(props: ListAppointmentProps) {
         <Table sx={{ minWidth: 650 }} aria-label="appointment table">
           <TableHead>
             <TableRow>
-            <TableCell>Patient Name</TableCell>
+              <TableCell>Patient Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Phone Number</TableCell>
               <TableCell>Doctor</TableCell>
@@ -557,7 +603,15 @@ export function ListAppointment(props: ListAppointmentProps) {
             appointmentsData.map((appointment) => (
               <TableRow key={appointment.id}>
                 <TableCell>
-                
+                  <NavLink
+                    to={`/appointments/${appointment.id}`}
+                    style={{
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
                     <Box
                       sx={{
                         display: 'flex',
@@ -569,22 +623,21 @@ export function ListAppointment(props: ListAppointmentProps) {
                         // },
                       }}
                     >
-                       
                       {/* <Avatar sx={{ bgcolor: '#4FD1C5', marginRight: 2 }}>
-                        
                         {getInitials(
                           appointment.patient.user.firstName,
                           appointment.patient.user.lastName
                         )}
                       </Avatar> */}
-                      <NavLink
+
+                       <NavLink
                     to={`/appointments/${appointment.id}`}
                     className={styles['socname']}
                   >
                       {`${appointment.patient.user.firstName} ${appointment.patient.user.lastName}`}
                       </NavLink>
                     </Box>
-                  
+                  </NavLink>
                 </TableCell>
 
                 <TableCell>{appointment.patient.user.email}</TableCell>
@@ -666,6 +719,7 @@ export function ListAppointment(props: ListAppointmentProps) {
           showLastButton
         />
       </Stack>
+
       {isEditModalOpen && editData && (
         <EditAppointment
           open={isEditModalOpen}
@@ -690,4 +744,4 @@ export function ListAppointment(props: ListAppointmentProps) {
   );
 }
 
-export default ListAppointment;
+export default HospitalListAppointment;

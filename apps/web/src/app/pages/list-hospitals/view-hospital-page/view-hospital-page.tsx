@@ -28,7 +28,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditAdmin from './edit-admin/edit-admin';
 import DeleteAdmin from './delete-admin/delete-admin';
-import { HospitalContext } from '../../../contexts/user-contexts';
+import { HospitalContext } from '../../../contexts/hospital-context';
 import Loading from '../../../Components/loading/loading';
 import { CountriesStates } from '../../../core/consts/countries-states';
 import Chip from '../../../Components/chip/chip';

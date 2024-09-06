@@ -78,7 +78,7 @@ export function ListDoctors(props: ListDoctorsProps) {
   const params = useParams();
   const hospitalContext = useContext(HospitalContext);
   console.log("Hospital Context:", hospitalContext);
-  console.log("hospital context hospital id:", hospitalContext?.id);
+  console.log("hospital context hospital id:", hsopitalContext?.hospital?.id);
 
   const getDoctors = async () => {
     try {
@@ -287,7 +287,7 @@ export function ListDoctors(props: ListDoctorsProps) {
 
   const handleDelete = async (Id: any) => {
     try {
-      const { data } = await axios.post(`${apiUrl}/hospitals/${hospitalContext?.id}/doctors/${Id}`, {
+      const { data } = await axios.post(`${apiUrl}/hospitals/${hsopitalContext?.hospital?.id}/doctors/${Id}`, {
         withCredentials: true,
       });
       console.log(data);
@@ -342,7 +342,7 @@ export function ListDoctors(props: ListDoctorsProps) {
       label: 'Hospitals',
     },
     {
-      to: `/hospitals/${hospitalContext?.id}`,
+      to: `/hospitals/${hsopitalContext?.hospital?.id}`,
       label: `${hospitalContext?.name}`
     },
     {

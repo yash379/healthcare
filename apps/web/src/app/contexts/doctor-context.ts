@@ -1,6 +1,6 @@
 import React, { createContext } from "react";
-import { User, ViewDoctor, ViewUser } from "@healthcare/data-transfer-types";
+import { Doctor, User, ViewDoctor, ViewUser } from "@healthcare/data-transfer-types";
 
-export const DoctorContext = createContext<{doctor:ViewUser | null, setDoctor: React.Dispatch<React.SetStateAction<ViewUser | null>>} | null>(null);
+export const DoctorContext = createContext<{doctor:Doctor | null, setDoctor: React.Dispatch<React.SetStateAction<Doctor | null>>} | null>(null);
 
 export default DoctorContext;

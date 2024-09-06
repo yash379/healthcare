@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import styles from './edit-profile.module.scss';
-import { HospitalContext, UserContext } from "../../contexts/user-context";
+import { HospitalContext} from "../../contexts/hospital-context";
 import { Box, Button, Card, CardContent, Checkbox, CircularProgress, Grid, InputAdornment, TextField, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
@@ -95,13 +95,13 @@ export function EditProfile({ editUser, userEdit }: EditProfileProps) {
       setValue('user.phoneNumber', data?.phoneNumber as string);
       // setValue('isPrimary',initialData.isPrimary);
     }
-  }, [editUser, setValue, hospitalcontext?.id]);
+  }, [editUser, setValue, hsopitalContext?.hospital?.id]);
 
   //Update a Manager
 
   const handleUpdate = async (formData: Manager) => {
     try {
-      const res = await axios.put(`${apiUrl}/hospitals/${hospitalcontext?.id}/managers/${user?.id}`,
+      const res = await axios.put(`${apiUrl}/hospitals/${hsopitalContext?.hospital?.id}/managers/${user?.id}`,
         { firstName: formData.user.firstName, lastName: formData.user.lastName, email: formData.user.email, phoneNumber: formData.user.phoneNumber },
         { withCredentials: true }
       );

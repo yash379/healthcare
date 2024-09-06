@@ -27,7 +27,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Hospital } from '@prisma/client';
 import { enqueueSnackbar } from 'notistack';
-import { HospitalContext } from '../../../contexts/user-contexts';
+import { HospitalContext } from '../../../contexts/hospital-context';
 
 
 export interface AddHospital {
