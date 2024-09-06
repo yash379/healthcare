@@ -27,12 +27,13 @@ import { CountriesStates } from '../../../core/consts/countries-states';
 import { useContext, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { enqueueSnackbar } from 'notistack';
-import { HospitalContext } from '../../../contexts/user-context';
+
 import { Gender } from '@prisma/client';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import HospitalContext from '../../../contexts/hospital-context';
 
 export interface AddPatient {
   firstName: string;
@@ -61,7 +62,6 @@ export function AddPatientPage(props: AddPatientPageProps) {
   const apiUrl = environment.apiUrl;
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
   const navigate = useNavigate();
-  const hospitalContext = useContext(HospitalContext);
   const [errorMessage, setErrorMessage] = useState('');
   const [isSuccessSnackbarOpen, setIsSuccessSnackbarOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -98,13 +98,14 @@ export function AddPatientPage(props: AddPatientPageProps) {
 
   const countryValue = watch('countryCode');
 
+  const hospitalContext=useContext(HospitalContext)
   console.log("hospitalcontext : ", hospitalContext)
 
   // Add Patient
   const handleAddPatient = async (formData: AddPatient) => {
 
     try {
-      const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${hospitalContext?.id}/patients`,
+      const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/patients`,
         { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender, email: formData.email, phoneNumber: formData.phoneNumber, bloodgroup: formData.bloodgroup, dob: formData.dob, digitalHealthCode: formData.digitalHealthCode, addressLine1: formData.addressLine1, addressLine2: formData.addressLine2, city: formData.city, stateCode: formData.stateCode, countryCode: formData.countryCode, postalCode: formData.postalCode, isActive: formData.isActive },
         {
           withCredentials: true,
@@ -113,7 +114,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
       if (responseData) {
         reset();
         enqueueSnackbar("Patient added successfully!", { variant: 'success' });
-        navigate(`/dashboard/${hospitalContext?.id}`);
+        navigate(`/dashboard/${hospitalContext?.hospital?.id}`);
         // setIsAddModalOpen(false);
         // getPatients();
 
@@ -132,10 +133,10 @@ export function AddPatientPage(props: AddPatientPageProps) {
     CountriesStates.find((c) => c.code === countryValue)?.states || [];
   const breadcrumbs = [
     {
-      to: `/dashboard/${hospitalContext?.id}`,
+      to: `/dashboard/${hospitalContext?.hospital?.id}`,
       label: 'Dashboard',
     },
-    { to: `/hospital/${hospitalContext?.id}/patients`, label: 'Patients' },
+    { to: `/hospital/${hospitalContext?.hospital?.id}/patients`, label: 'Patients' },
     {
       label: 'Add',
     },

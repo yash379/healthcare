@@ -10,6 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Radio from '@mui/material/Radio';
 import Checkbox from '@mui/material/Checkbox';
 import { Box } from '@mui/material';
+import { HospitalContext } from '../../contexts/hospital-context';
 
 /* eslint-disable-next-line */
 export interface SelectHospitalProps {}
@@ -17,16 +18,20 @@ export interface SelectHospitalProps {}
 export function SelectHospital(props: SelectHospitalProps) {
   const [selected, setSelected] = useState<number | null>(null);
   const [checked, setChecked] = useState([0]);
-  const user=useContext(UserContext);
+  const usercontext=useContext(UserContext);
   const navigate=useNavigate();
 
+  const hospitalcontext=useContext(HospitalContext);
+  console.log("user context:", usercontext);
+
   useEffect(()=>{
-    if(user?.hospitalRoles?.length > 1){
+    if(usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles.length > 1){
       return;
     }else{
-      navigate(`/dashboard/${user?.hospitalRoles[0].hospitalId}`);
+      navigate(`/dashboard/${usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles[0].hospitalId}`);
+      // navigate('/dashboard');
     }
-  },[user?.hospitalRoles?.length, navigate, user?.hospitalRoles]);
+  },[usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles.length, navigate, usercontext?.user && usercontext?.user?.hospitalRoles]);
 
 
   
@@ -47,17 +52,20 @@ export function SelectHospital(props: SelectHospitalProps) {
     // Navigate to hospital dashboard when the checkbox is checked
     if (currentIndex === -1) {
       navigate(`/dashboard/${value}`); // Adjust the route as needed
+      // navigate('/dashboard')
     }
   };
 
   const handleRadioChange = (value: number) => () => {
     setSelected(value);
+  
     navigate(`/dashboard/${value}`);
+    // navigate('/dashboard')
   };
 
-  console.log("user context:",user);
-  console.log("user context scoietty:",user?.hospitalRoles);
-  console.log("user context scoietty length:",user?.hospitalRoles.length);
+  console.log("user context:",usercontext);
+  console.log("user context scoietty:",usercontext?.user?.hospitalRoles);
+  // console.log("user context scoietty length:",usercontext?.user?.hospitalRoles length);
 
 
   return (
@@ -70,7 +78,7 @@ export function SelectHospital(props: SelectHospitalProps) {
           </Box>
           <div className={styles['hospital-list']}>
             <List sx={{ bgcolor: 'background.paper' }}>
-                {user?.hospitalRoles.map((value) => {
+                {usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles.map((value) => {
                     const labelId = `checkbox-list-label-${value.hospitalId}`;
 
                     return (
@@ -84,7 +92,7 @@ export function SelectHospital(props: SelectHospitalProps) {
                             inputProps={{ 'aria-labelledby': labelId }}
                           />
                           </ListItemIcon>
-                          <ListItemText id={labelId} primary={` ${value.hospitalName}`} />
+                          <ListItemText id={labelId} primary={` ${value.hospitalId} ${value.hospitalRole}`} />
                         </ListItemButton>
                       </ListItem>
                     );

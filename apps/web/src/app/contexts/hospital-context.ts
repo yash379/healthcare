@@ -1,5 +1,7 @@
 import { Hospital } from "@healthcare/data-transfer-types";
-import React from "react";
+import React, { createContext } from "react";
 
 
-export const HospitalContext=React.createContext<Hospital | null>(null);
+export const HospitalContext=createContext<{hospital:Hospital | null, setHospital: React.Dispatch<React.SetStateAction<Hospital | null>>} | null>(null);
+
+export default HospitalContext;
