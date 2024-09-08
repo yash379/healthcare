@@ -18,7 +18,7 @@ import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 //   import { UserDto } from './dto/user.dto';
 import { AddPatientDto } from './dto/add-patient.dto';
 import { PatientDto } from './dto/patient.dto';
-import { ListPatientPageDto } from './dto/list-patient-page.dto';
+import { ListPatientAllDetailsPageDto, ListPatientPageDto } from './dto/list-patient-page.dto';
 import { ViewPatientDto } from './dto/view-patient.dto';
 import { PatientsService } from './patients.service';
 import { UpdatePatientDto } from './dto/update-patient.dto';
@@ -97,6 +97,24 @@ export class PatientsController {
   ) {
     const patient = await this.patientsService.findPatientByHospital(
       +hospitalId
+    );
+    if (!patient) {
+      throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+    }
+    return patient;
+  }
+  
+  @Get('/hospitals/:hospitalId/patients/:patientId')
+  @ApiOkResponse({ type: ViewPatientDto })
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
+  @ApiNotFoundResponse({ description: 'Patient not found' })
+  async findPatientByHospitalId(
+    @Param('hospitalId') hospitalId: number,
+    @Param('patientId') patientId: number
+  ) {
+    const patient = await this.patientsService.findPatientByHospitalId(
+      +hospitalId,
+      +patientId
     );
     if (!patient) {
       throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);

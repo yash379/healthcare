@@ -4,7 +4,10 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { AppointmentDto } from './dto/appointment.dto';
 import { ListAppointmentPageDto } from './dto/list-appointment-page.dto';
 import { PrismaClient } from '@prisma/client';
-import { ViewAppointmentDto } from './dto/view-appointment.dto';
+import {
+  GetAppointmentDto,
+  ViewAppointmentDto,
+} from './dto/view-appointment.dto';
 
 @Injectable()
 export class AppointmentsService {
@@ -16,7 +19,6 @@ export class AppointmentsService {
     patientId: number,
     data: AddAppointmentDto
   ): Promise<ViewAppointmentDto> {
-   
     const hospital = await this.prisma.hospital.findUnique({
       where: { id: hospitalId },
     });
@@ -24,7 +26,7 @@ export class AppointmentsService {
       throw new NotFoundException('Hospital not found');
     }
 
- // Check if doctor exists
+    // Check if doctor exists
     const doctor = await this.prisma.doctor.findUnique({
       where: { id: doctorId },
     });
@@ -40,13 +42,13 @@ export class AppointmentsService {
       throw new NotFoundException('Patient not found');
     }
 
-     // Check if statusId exists
-  const status = await this.prisma.appointmentStatus.findUnique({
-    where: { id: data.statusId },
-  });
-  if (!status) {
-    throw new NotFoundException('Status not found');
-  }
+    // Check if statusId exists
+    const status = await this.prisma.appointmentStatus.findUnique({
+      where: { id: data.statusId },
+    });
+    if (!status) {
+      throw new NotFoundException('Status not found');
+    }
 
     // Create the appointment
     const appointment = await this.prisma.appointment.create({
@@ -54,15 +56,13 @@ export class AppointmentsService {
         doctorId,
         patientId,
         statusId: data.statusId,
-        date: data.appointmentDate
-        ? new Date(data.appointmentDate) 
-        : null,
+        date: data.appointmentDate ? new Date(data.appointmentDate) : null,
       },
       include: {
         status: true,
         patient: {
           include: {
-            user: true
+            user: true,
           },
         },
       },
@@ -78,14 +78,14 @@ export class AppointmentsService {
         name: status.name,
       },
       patient: {
-        user:{
+        user: {
           id: appointment.patient.user.id,
           firstName: appointment.patient.user.firstName,
           lastName: appointment.patient.user.lastName,
           email: appointment.patient.user.email,
-          phoneNumber: appointment.patient.user.phoneNumber
-        }
-      }
+          phoneNumber: appointment.patient.user.phoneNumber,
+        },
+      },
     };
   }
 
@@ -95,11 +95,10 @@ export class AppointmentsService {
     patientId: number,
     pageSize: number,
     pageOffset: number,
-    appointmentDate:string,
+    appointmentDate: string,
     sortBy: string,
     sortOrder: 'asc' | 'desc'
   ): Promise<ListAppointmentPageDto> {
-
     const hospital = await this.prisma.hospital.findUnique({
       where: { id: hospitalId },
     });
@@ -127,7 +126,9 @@ export class AppointmentsService {
     let whereQuery = {};
 
     if (appointmentDate !== undefined) {
-      whereArray.push({ appointmentDate: { contains: appointmentDate, mode: 'insensitive' } });
+      whereArray.push({
+        appointmentDate: { contains: appointmentDate, mode: 'insensitive' },
+      });
     }
 
     if (whereArray.length > 0) {
@@ -164,7 +165,7 @@ export class AppointmentsService {
         status: true,
         patient: {
           include: {
-            user: true
+            user: true,
           },
         },
       },
@@ -189,18 +190,17 @@ export class AppointmentsService {
           name: appointment.status.name,
         },
         patient: {
-          user:{
+          user: {
             id: appointment.patient.user.id,
             firstName: appointment.patient.user.firstName,
             lastName: appointment.patient.user.lastName,
             email: appointment.patient.user.email,
-            phoneNumber: appointment.patient.user.phoneNumber
-          }
-        }
+            phoneNumber: appointment.patient.user.phoneNumber,
+          },
+        },
       })),
     };
   }
-
 
   async listDoctorAppointments(
     hospitalId: number,
@@ -208,11 +208,10 @@ export class AppointmentsService {
     // patientId: number,
     pageSize: number,
     pageOffset: number,
-    appointmentDate:string,
+    appointmentDate: string,
     sortBy: string,
     sortOrder: 'asc' | 'desc'
   ): Promise<ListAppointmentPageDto> {
-
     const hospital = await this.prisma.hospital.findUnique({
       where: { id: hospitalId },
     });
@@ -228,12 +227,13 @@ export class AppointmentsService {
       throw new NotFoundException('Doctor not found');
     }
 
-
     const whereArray = [];
     let whereQuery = {};
 
     if (appointmentDate !== undefined) {
-      whereArray.push({ appointmentDate: { contains: appointmentDate, mode: 'insensitive' } });
+      whereArray.push({
+        appointmentDate: { contains: appointmentDate, mode: 'insensitive' },
+      });
     }
 
     if (whereArray.length > 0) {
@@ -270,12 +270,12 @@ export class AppointmentsService {
         status: true,
         patient: {
           include: {
-            user: true
+            user: true,
           },
         },
         doctor: {
           include: {
-            user: true
+            user: true,
           },
         },
       },
@@ -300,37 +300,35 @@ export class AppointmentsService {
           name: appointment.status.name,
         },
         patient: {
-          user:{
+          user: {
             id: appointment.patient.id,
             firstName: appointment.patient.user.firstName,
             lastName: appointment.patient.user.lastName,
             email: appointment.patient.user.email,
-            phoneNumber: appointment.patient.user.phoneNumber
-          }
+            phoneNumber: appointment.patient.user.phoneNumber,
+          },
         },
         doctor: {
-          user:{
+          user: {
             id: appointment.doctor.id,
             firstName: appointment.doctor.user.firstName,
             lastName: appointment.doctor.user.lastName,
             email: appointment.doctor.user.email,
-            phoneNumber: appointment.doctor.user.phoneNumber
-          }
-        }
+            phoneNumber: appointment.doctor.user.phoneNumber,
+          },
+        },
       })),
     };
   }
-
 
   async listHospitalAppointments(
     hospitalId: number,
     pageSize: number,
     pageOffset: number,
-    appointmentDate:string,
+    appointmentDate: string,
     sortBy: string,
     sortOrder: 'asc' | 'desc'
   ): Promise<ListAppointmentPageDto> {
-
     const hospital = await this.prisma.hospital.findUnique({
       where: { id: hospitalId },
     });
@@ -338,12 +336,13 @@ export class AppointmentsService {
       throw new NotFoundException('Hospital not found');
     }
 
-
     const whereArray = [];
     let whereQuery = {};
 
     if (appointmentDate !== undefined) {
-      whereArray.push({ appointmentDate: { contains: appointmentDate, mode: 'insensitive' } });
+      whereArray.push({
+        appointmentDate: { contains: appointmentDate, mode: 'insensitive' },
+      });
     }
 
     if (whereArray.length > 0) {
@@ -378,12 +377,12 @@ export class AppointmentsService {
         status: true,
         patient: {
           include: {
-            user: true
+            user: true,
           },
         },
         doctor: {
           include: {
-            user: true
+            user: true,
           },
         },
       },
@@ -408,23 +407,23 @@ export class AppointmentsService {
           name: appointment.status.name,
         },
         patient: {
-          user:{
+          user: {
             id: appointment.patient.id,
             firstName: appointment.patient.user.firstName,
             lastName: appointment.patient.user.lastName,
             email: appointment.patient.user.email,
-            phoneNumber: appointment.patient.user.phoneNumber
-          }
+            phoneNumber: appointment.patient.user.phoneNumber,
+          },
         },
         doctor: {
-          user:{
+          user: {
             id: appointment.doctor.id,
             firstName: appointment.doctor.user.firstName,
             lastName: appointment.doctor.user.lastName,
             email: appointment.doctor.user.email,
-            phoneNumber: appointment.doctor.user.phoneNumber
-          }
-        }
+            phoneNumber: appointment.doctor.user.phoneNumber,
+          },
+        },
       })),
     };
   }
@@ -434,8 +433,7 @@ export class AppointmentsService {
     doctorId: number,
     patientId: number,
     appointmentId: number
-  ): Promise<ViewAppointmentDto> {
-    
+  ): Promise<GetAppointmentDto> {
     const hospital = await this.prisma.hospital.findUnique({
       where: { id: hospitalId },
     });
@@ -475,7 +473,7 @@ export class AppointmentsService {
         status: true,
         patient: {
           include: {
-            user: true
+            user: true,
           },
         },
       },
@@ -501,21 +499,25 @@ export class AppointmentsService {
         code: status.code,
         name: status.name,
       },
-      patient: {
-        // id: appointment.patientId,
-        // addressLine1: appointment.patient.addressLine1,
-        // addressLine2:appointment.patient.addressLine2,
-        // city: appointment.patient.city,
-        // stateCode: appointment.patient.stateCode,
-        // countryCode: appointment.patient.
-        user:{
-          id: appointment.patient.user.id,
-          firstName: appointment.patient.user.firstName,
-          lastName: appointment.patient.user.lastName,
-          email: appointment.patient.user.email,
-          phoneNumber: appointment.patient.user.phoneNumber
-        }
-      }
+      patientId: appointment.patient.id,
+      digitalHealthCode: appointment.patient.digitalHealthCode,
+      gender: appointment.patient.gender,
+      age: appointment.patient.age,
+      bloodGroup: appointment.patient.bloodGroup,
+      dob: appointment.patient.dob.toISOString(),
+      addressLine1: appointment.patient.addressLine1,
+      addressLine2: appointment.patient.addressLine2,
+      city: appointment.patient.city,
+      stateCode: appointment.patient.stateCode,
+      countryCode: appointment.patient.countryCode,
+      postalCode: appointment.patient.postalCode,
+      chronicDiseases: appointment.patient.chronicDiseases,
+      acuteDiseases: appointment.patient.acuteDiseases,
+      isActive: appointment.patient.user.isActive,
+      firstName: appointment.patient.user.firstName,
+      lastName: appointment.patient.user.lastName,
+      email: appointment.patient.user.email,
+      phoneNumber: appointment.patient.user.phoneNumber,
     };
   }
 
@@ -526,8 +528,6 @@ export class AppointmentsService {
     appointmentId: number,
     updateAppointmentDto: UpdateAppointmentDto
   ): Promise<ViewAppointmentDto> {
-
-      
     const hospital = await this.prisma.hospital.findUnique({
       where: { id: hospitalId },
     });
@@ -558,7 +558,7 @@ export class AppointmentsService {
       },
       data: {
         date: updateAppointmentDto.appointmentDate
-          ? new Date(updateAppointmentDto.appointmentDate) 
+          ? new Date(updateAppointmentDto.appointmentDate)
           : null,
         statusId: updateAppointmentDto.statusId,
       },
@@ -566,7 +566,7 @@ export class AppointmentsService {
         status: true,
         patient: {
           include: {
-            user: true
+            user: true,
           },
         },
       },
@@ -581,21 +581,21 @@ export class AppointmentsService {
 
     return {
       id: appointment.id,
-      appointmentDate: appointment.date.toISOString(), 
+      appointmentDate: appointment.date.toISOString(),
       status: {
         id: status.id,
         code: status.code,
         name: status.name,
       },
       patient: {
-        user:{
+        user: {
           id: appointment.patient.user.id,
           firstName: appointment.patient.user.firstName,
           lastName: appointment.patient.user.lastName,
           email: appointment.patient.user.email,
-          phoneNumber: appointment.patient.user.phoneNumber
-        }
-      }
+          phoneNumber: appointment.patient.user.phoneNumber,
+        },
+      },
     };
   }
 
@@ -641,7 +641,7 @@ export class AppointmentsService {
   }
 
   async getAppointmentCounts(hospitalId: number): Promise<{
-    total:number;
+    total: number;
     pending: number;
     inProgress: number;
     cancelled: number;
@@ -649,11 +649,11 @@ export class AppointmentsService {
   }> {
     const total = await this.prisma.appointment.count({
       where: {
-        doctor:{
+        doctor: {
           hospitals: {
             some: { hospitalId },
           },
-        }
+        },
       },
     });
 
@@ -664,7 +664,7 @@ export class AppointmentsService {
         },
       },
     });
-  
+
     const inProgress = await this.prisma.appointment.count({
       where: {
         status: {
@@ -672,7 +672,7 @@ export class AppointmentsService {
         },
       },
     });
-  
+
     const cancelled = await this.prisma.appointment.count({
       where: {
         status: {
@@ -680,7 +680,7 @@ export class AppointmentsService {
         },
       },
     });
-  
+
     const confirmed = await this.prisma.appointment.count({
       where: {
         status: {
@@ -688,7 +688,7 @@ export class AppointmentsService {
         },
       },
     });
-  
+
     return {
       total,
       pending,
@@ -697,5 +697,4 @@ export class AppointmentsService {
       confirmed,
     };
   }
-  
 }
