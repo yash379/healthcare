@@ -34,6 +34,7 @@ import dayjs from 'dayjs';
 import { PatientContext } from '../../../contexts/patient-context';
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import DoctorContext from '../../../contexts/doctor-context';
 
 export interface EditPatient {
   firstName: string;
@@ -59,7 +60,7 @@ export interface ViewPatient {
   email?: string;
   phoneNumber?: string;
   gender: Gender;
-  bloodgroup: string;
+  bloodGroup: string;
   dob: Date;
   digitalHealthCode: string;
   addressLine1: string;
@@ -69,6 +70,7 @@ export interface ViewPatient {
   countryCode: string;
   postalCode: string;
   isActive: boolean;
+  age:number;
 }
 
 /* eslint-disable-next-line */
@@ -105,6 +107,7 @@ console.log(patientContext,"patientcontext");
     stateCode: yup.string().required('State Code is required'),
     countryCode: yup.string().required('Country Code is required'),
     postalCode: yup.string().required('Postal Code is required'),
+    age:yup.number().required('Age is required')
   });
   const {
     handleSubmit,
@@ -132,12 +135,13 @@ console.log(patientContext,"patientcontext");
   console.log("params", params)
   const hospitalContext = useContext(HospitalContext);
   console.log(hospitalContext, params);
+  const doctorcontext=useContext(DoctorContext);
 
   useEffect(() => {
     async function fetchPatientData() {
       try {
         const response = await axios.get<ViewPatient>(
-          `${apiUrl}/hospitals/${hsopitalContext?.hospital?.id}/patients/${params.patientId}`,
+          `${apiUrl}/hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${params.patientId}`,
           {
             withCredentials: true,
           }
@@ -152,7 +156,7 @@ console.log(patientContext,"patientcontext");
         setValue('email', patientData.email);
         setValue('phoneNumber', patientData.phoneNumber);
         setValue('gender', patientData.gender);
-        setValue('bloodgroup', patientData.bloodgroup);
+        setValue('bloodGroup', patientData.bloodGroup);
         setValue('dob', new Date(patientData.dob));
         setValue('digitalHealthCode', patientData.digitalHealthCode);
         setValue('addressLine1', patientData.addressLine1);
@@ -161,18 +165,19 @@ console.log(patientContext,"patientcontext");
         setValue('countryCode', patientData.countryCode);
         setValue('stateCode', patientData.stateCode);
         setValue('postalCode', patientData.postalCode);
+        setValue('age',patientData.age)
       } catch (error) {
         console.error('Error fetching Patient data:', error);
       }
     }
 
     fetchPatientData();
-  }, [apiUrl, id, setValue, hsopitalContext?.hospital?.id, params.patientId]);
+  }, [apiUrl, id, setValue, hospitalContext?.hospital?.id, params.patientId]);
 
   const onSubmit = async (data: EditPatient) => {
     try {
       const response = await axios.put(
-        `${apiUrl}/hospitals/${hsopitalContext?.hospital?.id}/patients/${params.patientId}`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/patients/${params.patientId}`,
         data,
         {
           withCredentials: true,
@@ -181,7 +186,7 @@ console.log(patientContext,"patientcontext");
       console.log('Patient updated:', response.data);
 
       enqueueSnackbar('Patient updated successfully!', { variant: 'success' });
-      navigate(`/hospital/${hsopitalContext?.hospital?.id}/patients`);
+      navigate(`/hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients`);
     } catch (error) {
       console.error('Error updating Patient:', error);
       enqueueSnackbar(
@@ -204,10 +209,10 @@ console.log(patientContext,"patientcontext");
   
   const breadcrumbs = [
     {
-      to: `/dashboard/${hsopitalContext?.hospital?.id}`,
+      to: `/dashboard/${hospitalContext?.hospital?.id}`,
       label: 'Dashboard',
     },
-    { to: `/hospital/${hsopitalContext?.hospital?.id}/patients`, label: 'Patients' },
+    { to: `/hospital/${hospitalContext?.hospital?.id}/patients`, label: 'Patients' },
     {
       label: 'Edit',
     },
@@ -397,7 +402,7 @@ console.log(patientContext,"patientcontext");
           <div className={styles['form-row']}>
             <div className={styles['form-item']}>
               <Controller
-                name="bloodgroup"
+                name="bloodGroup"
                 control={control}
                 defaultValue=""
                 rules={{ required: 'Blood Group is required' }}
@@ -407,8 +412,8 @@ console.log(patientContext,"patientcontext");
                     variant="outlined"
                     {...field}
                     fullWidth
-                    error={!!errors.bloodgroup}
-                    helperText={errors.bloodgroup?.message}
+                    error={!!errors.bloodGroup}
+                    helperText={errors.bloodGroup?.message}
                   />
                 )}
               />
@@ -557,6 +562,24 @@ console.log(patientContext,"patientcontext");
                     fullWidth
                     error={!!errors.postalCode}
                     helperText={errors.postalCode?.message}
+                  />
+                )}
+              />
+            </div>
+            <div className={styles['form-item']}>
+              <Controller
+                name="age"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Age is required' }}
+                render={({ field }) => (
+                  <TextField
+                    label="Age*"
+                    variant="outlined"
+                    {...field}
+                    fullWidth
+                    error={!!errors.age}
+                    helperText={errors.age?.message}
                   />
                 )}
               />

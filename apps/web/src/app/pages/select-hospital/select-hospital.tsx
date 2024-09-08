@@ -11,6 +11,8 @@ import Radio from '@mui/material/Radio';
 import Checkbox from '@mui/material/Checkbox';
 import { Box } from '@mui/material';
 import { HospitalContext } from '../../contexts/hospital-context';
+import axios from 'axios';
+import { environment } from '../../../environments/environment';
 
 /* eslint-disable-next-line */
 export interface SelectHospitalProps {}
@@ -19,21 +21,33 @@ export function SelectHospital(props: SelectHospitalProps) {
   const [selected, setSelected] = useState<number | null>(null);
   const [checked, setChecked] = useState([0]);
   const usercontext=useContext(UserContext);
+  const [patientdoctorId, setPatientDoctorId]=useState(0);
   const navigate=useNavigate();
+  const apiUrl = environment.apiUrl;
 
   const hospitalcontext=useContext(HospitalContext);
   console.log("user context:", usercontext);
 
-  useEffect(()=>{
-    if(usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles.length > 1){
-      return;
-    }else{
-      navigate(`/dashboard/${usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles[0].hospitalId}`);
-      // navigate('/dashboard');
-    }
-  },[usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles.length, navigate, usercontext?.user && usercontext?.user?.hospitalRoles]);
+  // useEffect(()=>{
+  //   if(usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles.length > 1){
+  //     return;
+  //   }else{
+  //     navigate(`/dashboard/${usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles[0].hospitalId}`);
+  //     // navigate('/dashboard');
+  //   }
+  // },[usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles.length, navigate, usercontext?.user && usercontext?.user?.hospitalRoles]);
 
 
+  // const getHospital=async()=>{
+  //    const response=await axios.get(
+  //     `${apiUrl}/hospitals/${hospitalId}`,
+  //     {
+  //       withCredentials: true,
+  //     }
+  //   );
+
+  //   console.log("response hospitalId:", response.data);
+  // }
   
   
   const handleToggle = (value: number) => () => {
@@ -56,16 +70,71 @@ export function SelectHospital(props: SelectHospitalProps) {
     }
   };
 
-  const handleRadioChange = (value: number) => () => {
-    setSelected(value);
-  
-    navigate(`/dashboard/${value}`);
+  // useEffect(()=>{
+  //   const getPatient=
+  // },[usercontext?.user?.patientId])
+
+  const handleRadioChange = (Id: any, value:any) => () => {
+    // setSelected(value);
+    // hospitalcontext?.setHospital(value);
+    // navigate(`/dashboard/${value}`);
     // navigate('/dashboard')
+    console.log("id selected:", Id)
+    // const getHospital=async()=>{
+    //   try{
+    //     const response=await axios.get(`${apiUrl}/hospitals/${Id}`,
+    //       {
+    //         withCredentials: true,
+    //       }
+    //     );
+    //     console.log("Hospital:",response.data);
+    //     hospitalcontext?.setHospital(response.data);
+    //   }catch(error){
+    //     console.error("Error in fecthing hospital:", error);
+    //   }
+    // }
+
+    // getHospital();
+
+    const getPatient=async()=>{
+      const response=await axios.get(`${apiUrl}/hospitals/${Id}/patients/${usercontext?.user?.patientId}`,
+        {
+          withCredentials: true,
+         }
+      );
+      const doctorid=response.data.map((item: { doctors: { doctorId: any; }[]; })=>{item.doctors.map((seconditem: { doctorId: any; })=> {setPatientDoctorId(seconditem.doctorId)})});
+      setPatientDoctorId(doctorid);
+      console.log("patient detail:", response.data, "doctorid:",doctorid,patientdoctorId);
+      response.data.map((item: any)=>{console.log(item)})
+      
+    }
+    getPatient();
+    
+
+    if(value==='ADMIN'){
+      navigate(`/`);
+    }
+    if(value==='DOCTOR'){
+      navigate(`/hospitals/${Id}/doctors/${usercontext?.user?.doctorId}`);
+    }
+    if(value==='PATIENT'){
+      navigate(`/hospital/${Id}/doctors/${patientdoctorId}/patients/${usercontext?.user?.patientId}`)
+    }
   };
 
   console.log("user context:",usercontext);
   console.log("user context scoietty:",usercontext?.user?.hospitalRoles);
   // console.log("user context scoietty length:",usercontext?.user?.hospitalRoles length);
+
+  const hospitalContext=useContext(HospitalContext);
+
+  useEffect(()=>{
+    const id=usercontext?.user?.hospitalRoles?.map((item)=>{
+      return item.hospitalId;
+    })
+    
+      
+   },[usercontext?.user]);
 
 
   return (
@@ -83,7 +152,7 @@ export function SelectHospital(props: SelectHospitalProps) {
 
                     return (
                       <ListItem key={value.hospitalId} disablePadding className={styles['hospital-list-item']}>
-                        <ListItemButton role={undefined} onClick={handleRadioChange(value.hospitalId)} dense>
+                        <ListItemButton role={undefined} onClick={handleRadioChange(value.hospitalId,value.hospitalRole)} dense>
                           <ListItemIcon>
                           <Radio
                             checked={selected === value.hospitalId}

@@ -171,6 +171,9 @@ export function Dashboard(props: DashboardProps) {
   console.log("patients context:", patientcontext);
   console.log("doctor context:", doctorContext);
 
+  
+  
+
   const getAllAdmin = async () => {
     try {
       setLoadingAllAdmin(true);

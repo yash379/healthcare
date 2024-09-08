@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import AddAppointment from './add-appointment';
+import PatientNav from './patient-nav';
 
-describe('AddAppointment', () => {
+describe('PatientNav', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<AddAppointment />);
+    const { baseElement } = render(<PatientNav />);
     expect(baseElement).toBeTruthy();
   });
 });

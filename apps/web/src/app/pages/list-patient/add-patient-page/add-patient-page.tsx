@@ -34,6 +34,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import HospitalContext from '../../../contexts/hospital-context';
+import DoctorContext from '../../../contexts/doctor-context';
 
 export interface AddPatient {
   firstName: string;
@@ -41,7 +42,7 @@ export interface AddPatient {
   email?: string;
   phoneNumber?: string;
   gender: Gender;
-  bloodgroup: string;
+  bloodGroup: string;
   dob: Date;
   digitalHealthCode: string;
   addressLine1: string;
@@ -51,10 +52,35 @@ export interface AddPatient {
   countryCode: string;
   postalCode: string;
   isActive: boolean;
+  age:number;
 }
 
+interface Form {
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phoneNumber?: string;
+  gender: Gender;
+  bloodGroup: string;
+  dob: Date;
+  digitalHealthCode: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  stateCode?: string;
+  countryCode: string;
+  postalCode: string;
+  isActive: boolean;
+  age:number;
+}
+
+
 /* eslint-disable-next-line */
-export interface AddPatientPageProps { }
+export interface AddPatientPageProps {
+  // open: boolean;
+  // onClose: () => void;
+  // onSubmit: (data: Form) => void;
+ }
 
 export function AddPatientPage(props: AddPatientPageProps) {
   const [country, setCountry] = useState<string>('');
@@ -72,7 +98,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
     phoneNumber: yup.string().matches(/[6789][0-9]{9}/, 'Invalid phone number').required('Phone number is required'),
     gender: yup.string().required('Please Select One'),
     isActive: yup.boolean().required('Please Select One'),
-    bloodgroup: yup.string().required('Blood Group is required'),
+    bloodGroup: yup.string().required('Blood Group is required'),
     dob: yup.date().required('Date Of Birth is required'),
     digitalHealthCode: yup.string().required('Digital Health Code is required'),
     addressLine1: yup.string().required('addressLine1 is required'),
@@ -81,6 +107,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
     stateCode: yup.string().required('State Code is required'),
     countryCode: yup.string().required('Country Code is required'),
     postalCode: yup.string().required('Postal Code is required'),
+    age:yup.number().required('Age is required')
   });
   const {
     handleSubmit,
@@ -99,14 +126,20 @@ export function AddPatientPage(props: AddPatientPageProps) {
   const countryValue = watch('countryCode');
 
   const hospitalContext=useContext(HospitalContext)
-  console.log("hospitalcontext : ", hospitalContext)
+  console.log("hospitalcontext : ", hospitalContext);
+
+  const doctorcontext=useContext(DoctorContext);
 
   // Add Patient
   const handleAddPatient = async (formData: AddPatient) => {
 
     try {
-      const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/patients`,
-        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender, email: formData.email, phoneNumber: formData.phoneNumber, bloodgroup: formData.bloodgroup, dob: formData.dob, digitalHealthCode: formData.digitalHealthCode, addressLine1: formData.addressLine1, addressLine2: formData.addressLine2, city: formData.city, stateCode: formData.stateCode, countryCode: formData.countryCode, postalCode: formData.postalCode, isActive: formData.isActive },
+      const { data: responseData } = await axios.post(`${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patient`,
+        { firstName: formData.firstName, lastName: formData.lastName, gender: formData.gender, email: formData.email, phoneNumber: formData.phoneNumber,
+          bloodGroup: formData.bloodGroup, dob: formData.dob, digitalHealthCode: formData.digitalHealthCode, addressLine1: formData.addressLine1, addressLine2: formData.addressLine2, 
+          city: formData.city, stateCode: formData.stateCode, countryCode: formData.countryCode, postalCode: formData.postalCode, isActive: formData.isActive,
+          age:formData.age
+         },
         {
           withCredentials: true,
 
@@ -301,7 +334,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
           <div className={styles['form-row']}>
             <div className={styles['form-item']}>
               <Controller
-                name="bloodgroup"
+                name="bloodGroup"
                 control={control}
                 defaultValue=""
                 rules={{ required: 'Blood Group is required' }}
@@ -311,8 +344,8 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     variant="outlined"
                     {...field}
                     fullWidth
-                    error={!!errors.bloodgroup}
-                    helperText={errors.bloodgroup?.message}
+                    error={!!errors.bloodGroup}
+                    helperText={errors.bloodGroup?.message}
                   />
                 )}
               />
@@ -461,6 +494,24 @@ export function AddPatientPage(props: AddPatientPageProps) {
                     fullWidth
                     error={!!errors.postalCode}
                     helperText={errors.postalCode?.message}
+                  />
+                )}
+              />
+            </div>
+            <div className={styles['form-item']}>
+              <Controller
+                name="age"
+                control={control}
+                // defaultValue={0}
+                rules={{ required: 'Age is required' }}
+                render={({ field }) => (
+                  <TextField
+                    label="Age*"
+                    variant="outlined"
+                    {...field}
+                    fullWidth
+                    error={!!errors.age}
+                    helperText={errors.age?.message}
                   />
                 )}
               />
