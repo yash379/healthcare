@@ -9,6 +9,7 @@ import { environment } from '../../../environments/environment';
 import axios from 'axios';
 import { HospitalContext } from '../../contexts/hospital-context';
 import DoctorContext from '../../contexts/doctor-context';
+import UserContext from '../../contexts/user-context';
 
 /* eslint-disable-next-line */
 export interface LayoutProps {
@@ -21,6 +22,7 @@ export function Layout({ user }: LayoutProps) {
   const navigate = useNavigate();
 
   const doctorContext=useContext(DoctorContext);
+  const usercontext=useContext(UserContext);
 
   useEffect(() => {
     if (user == null) {
@@ -46,6 +48,11 @@ export function Layout({ user }: LayoutProps) {
 
     fetchData();
   }, [apiUrl, navigate, ]);
+  
+
+  useEffect(()=>{
+    usercontext?.setUser(user);
+  },[apiUrl]);
 
   return (
     <div className={styles['container']}>

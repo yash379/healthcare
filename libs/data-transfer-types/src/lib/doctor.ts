@@ -55,7 +55,7 @@ ViewDoctor,
 >;
 
 
-// export type ListDoctor = Pick<ViewDoctor, 'id' | 'isActive'>;
+//  export type ListDoctor = Pick<ViewDoctor, 'id' | 'isActive'>;
 
 export type AddDoctor = Omit<Doctor, 'id'>;
 

@@ -11,9 +11,12 @@ export interface User {
   // HospitalRole?: HospitalRoleName;
   hospitalRoles?: HospitalRoleDto[];
   superRole?: SuperRoleName;
+  doctorId?:number;
+  patientId?:number;
 }
 export interface HospitalRoleDto  {
   hospitalId: number;
+  hospitalName?:string;
   hospitalRole: HospitalRoleName;
 }
 

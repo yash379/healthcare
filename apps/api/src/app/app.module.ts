@@ -46,7 +46,7 @@ import { MedicalHistoryModule } from './medical-history/medical-history.module';
     // DoctorsModule,
     // PatientsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, DiagnosisController],
+  providers: [AppService, DiagnosisService],
 })
 export class AppModule {}

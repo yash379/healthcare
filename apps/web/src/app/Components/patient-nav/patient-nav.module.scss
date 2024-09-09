@@ -1,0 +1,82 @@
+.Nav{
+    display:flex;
+    flex-direction:column;
+    color: white;
+ }
+
+ .button-tabs{
+  color:#B6C2FF !important;
+  font-size: 1rem;
+  font-family: "Poppins"
+}
+
+.button-tabs:hover{
+  border-radius: 5px;
+  border: 1px solid;
+  background-color: #6B7587 !important;
+
+  .drawertab{
+    color:#A0AEC0;
+  }
+
+  .drawer-icons{
+    color: white;
+  }
+}
+
+.active-tab{
+  border-radius: 5px !important;
+  border: 1px solid !important;
+  background-color: #6B7587 !important;
+  color: black !important;
+  // .drawertab{
+  //   color:white;
+  // }
+
+//   .drawer-icons{
+//     color:white;
+//   }
+}
+
+ .side-drawer{
+   margin-top:60px;
+   position:absolute;
+ }
+
+ .drawertab{
+   color:black !important;
+ }
+
+ .drawer-icons{
+   color: black;
+ }
+
+ .active-tab {
+
+  background:  #EBFAF9  !important;
+  border-top: var(--none, 0px) solid #054B7D !important;
+  border-right: var(--none, 0px) solid #054B7D !important;
+  border-bottom: var(--none, 0px) solid #054B7D !important;
+  border-left: var(--none, 0px) solid #054B7D !important;
+  // border-left: 7px solid #054B7D !important;
+
+
+  .drawertab{
+    color:black !important;
+  }
+ 
+  .drawer-icons{
+    color: white;
+    align-items: center;
+  }
+
+  .icon-bg{
+    background-color: #4FD1C5;
+    background-size: 100px;
+    border-radius: 50%;
+    background-size: 100px;
+  }
+
+  
+}
+

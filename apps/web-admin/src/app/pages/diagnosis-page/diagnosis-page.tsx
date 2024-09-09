@@ -470,4 +470,4 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
   );
 }
 
-export default DiagnosisPage;
+export default DiagnosisPage;

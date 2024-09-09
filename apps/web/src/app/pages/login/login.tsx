@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { TextField, Button, Box, Grid, Typography } from '@mui/material';
 import styles from './login.module.scss';
@@ -36,6 +36,8 @@ export function Login({ onLogin }: LoginProps) {
   const apiUrl = environment.apiUrl;
   const navigate = useNavigate();
 
+  const [user, setUser]=useState<User |  null>(null);
+
   const usercontext=useContext(UserContext);
 
   const onSubmit = async (formData: { email: string; password: string }) => {
@@ -45,6 +47,7 @@ export function Login({ onLogin }: LoginProps) {
       });
       const user = res.data;
       console.log(user);
+      setUser(user);
       usercontext?.setUser(user);
       // enqueueSnackbar('Login successfully', { variant: 'success' });
       // console
@@ -66,6 +69,8 @@ export function Login({ onLogin }: LoginProps) {
     }
   };
 
+  console.log("usercontext in user:", usercontext?.user)
+
   // const onSubmit = async (formData: { email: string; password: string }) => {
   //   try {
   //     const { email, password } = formData;
@@ -86,6 +91,8 @@ export function Login({ onLogin }: LoginProps) {
   //     console.log('Something went wrong');
   //   }
   // };
+
+  
 
   return (
     <Box className={styles['main_root']}>

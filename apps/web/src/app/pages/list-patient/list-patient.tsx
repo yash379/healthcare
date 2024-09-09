@@ -25,7 +25,7 @@ import { Box } from '@mui/material';
 import Breadcrumbs from '../../Components/bread-crumbs/bread-crumbs';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddPatientComponent from './add-patient/add-patient';
+import AddPatientComponent from './add-patient-page/add-patient-page';
 import EditPatientComponent from './edit-patient/edit-patient';
 import DeletePatientComponent from './delete-patient/delete-patient';
 // import ViewPatientComponent from '../view-patient/view-patient';
@@ -36,6 +36,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/hospital-context';
 import { Gender } from '@prisma/client';
 import { PatientContext } from '../../contexts/patient-context';
+import DoctorContext from '../../contexts/doctor-context';
 
 /* eslint-disable-next-line */
 export interface ListPatientsProps {}
@@ -46,7 +47,7 @@ interface Form {
   email?: string;
   phoneNumber?: string;
   gender: Gender;
-  bloodgroup: string;
+  bloodGroup: string;
   dob: Date;
   digitalHealthCode: string;
   addressLine1: string;
@@ -56,6 +57,7 @@ interface Form {
   countryCode: string;
   postalCode: string;
   isActive: boolean;
+  age:number;
 }
 
 interface ViewPatient {
@@ -126,18 +128,21 @@ export function ListPatients(props: ListPatientsProps) {
   console.log('hospital id:', id);
   const params = useParams();
   const hospitalContext = useContext(HospitalContext);
+  const doctorcontext=useContext(DoctorContext);
   console.log('Hospital Context:', hospitalContext);
   console.log('hospital context hospital id:', hospitalContext?.hospital?.id);
 
   const [deleteData, setDeleteData] = useState<ViewPatient | null>(null);
   const [patientContext, setPatientContext]=useState<ViewPatient | null>(null);
+
+  
  
   const getPatients = async () => {
     try {
       setLoading(true);
       //  await new Promise((resolve) => setTimeout(resolve, 2000));
       const response = await axios.get(
-        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/patients`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients`,
         {
           withCredentials: true,
           params: {
@@ -296,14 +301,14 @@ export function ListPatients(props: ListPatientsProps) {
   const handleAddPatient = async (formData: Form) => {
     try {
       const { data: responseData } = await axios.post(
-        `${apiUrl}/hospitals/${params.hospitalId}/patients`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients`,
         {
           firstName: formData.firstName,
           lastName: formData.lastName,
           gender: formData.gender,
           email: formData.email,
           phoneNumber: formData.phoneNumber,
-          bloodgroup: formData.bloodgroup,
+          bloodGroup: formData.bloodGroup,
           dob: formData.dob,
           digitalHealthCode: formData.digitalHealthCode,
           addressLine1: formData.addressLine1,
@@ -336,7 +341,7 @@ export function ListPatients(props: ListPatientsProps) {
   const handleUpdate = async (updateData: EditForm) => {
     try {
       const response = await axios.put(
-        `${apiUrl}/hospitals/${params.hospitalId}/patients/${selectedPatientId}`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${selectedPatientId}`,
         {
           firstName: updateData.firstName,
           lastName: updateData.lastName,
@@ -385,7 +390,7 @@ export function ListPatients(props: ListPatientsProps) {
 
   const handleDelete = async (Id: any) => {
     try {
-      const { data } = await axios.delete(`${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/patients/${Id}`,  {
+      const { data } = await axios.delete(`${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${Id}`,  {
         withCredentials: true,
       });
       console.log(data);
@@ -455,13 +460,6 @@ export function ListPatients(props: ListPatientsProps) {
           <Box className={styles['btn_container']}>
             <h1>Patients</h1>
             <Box>
-              <AddPatientComponent
-                open={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
-                onSubmit={handleAddPatient}
-              />
-            </Box>
-            <Box>
               {/* <ViewPatientComponent
                 open={viewPatientOpen}
                 onClose={() => setViewPatientOpen(false)}
@@ -486,11 +484,13 @@ export function ListPatients(props: ListPatientsProps) {
                 // onClick={() => {
                 //   setIsAddModalOpen(true)
                 // }}
-                onClick={() => navigate(`/hospital/${hospitalContext?.hospital?.id}/patients/add`)}
+                onClick={() => navigate(`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/add`)}
               >
                 {' '}
                 <AddIcon fontSize="small" /> Add
               </Button>
+              <Box>
+            </Box>
             </Box>
           </Box>
 
@@ -512,7 +512,7 @@ export function ListPatients(props: ListPatientsProps) {
                   </TableCell>
                   <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}>Patient Name</TableCell>
                   <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}>Gender</TableCell>
-                  <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}></TableCell>
+                  {/* <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}></TableCell> */}
                   <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}>Phone Number</TableCell>
                   
                   <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}>Blood Group</TableCell>
@@ -586,7 +586,7 @@ export function ListPatients(props: ListPatientsProps) {
                       {/* <TableCell>{patient.email}</TableCell> */}
                       <TableCell>{patient.gender}</TableCell>
                       <TableCell>{patient.phoneNumber}</TableCell>
-                      <TableCell>{patient.bloodgroup}</TableCell>
+                      <TableCell>{patient.bloodGroup}</TableCell>
                       <TableCell>{patient.digitalHealthCode}</TableCell>
                       <TableCell>
                         {patient.addressLine1} {patient.addressLine2} ,
@@ -598,7 +598,7 @@ export function ListPatients(props: ListPatientsProps) {
                           onClick={(e) => {
                             e.stopPropagation();
                             handleEditClick(patient.id);
-                            navigate(`/hospital/${hospitalContext?.hospital?.id}/patients/edit/${patient.id}`);
+                            navigate(`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${patient.id}/edit`);
                           }}
                           sx={{ color: 'black' }}
                         >
