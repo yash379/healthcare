@@ -174,7 +174,7 @@ export function DoctorNav(props: DoctorNavProps) {
               <ListItemText className={styles["drawertab"]} primary="Patient" />
             </ListItemButton>
           </Link>
-          <Link style={{ textDecoration: "none" }} to="/reports" onClick={() => handleComponentChange('reports')}>
+          {/* <Link style={{ textDecoration: "none" }} to="/reports" onClick={() => handleComponentChange('reports')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'reports' && styles['active-tab']
               }`}>
               <ListItemIcon >
@@ -182,8 +182,8 @@ export function DoctorNav(props: DoctorNavProps) {
               </ListItemIcon>
               <ListItemText className={styles["drawertab"]} primary="Report" />
             </ListItemButton>
-          </Link>
-          <Link style={{ textDecoration: "none" }} to="/settings" onClick={() => handleComponentChange('settings')}>
+          </Link> */}
+          <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext.doctor.id}/settings`} onClick={() => handleComponentChange('settings')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'settings' && styles['active-tab']
               }`}>
               <ListItemIcon >
@@ -192,7 +192,7 @@ export function DoctorNav(props: DoctorNavProps) {
               <ListItemText className={styles["drawertab"]} primary="Setting" />
             </ListItemButton>
           </Link>
-          <Link style={{ textDecoration: "none" }} to="/logout" onClick={() => handleComponentChange('logout')}>
+          {/* <Link style={{ textDecoration: "none" }} to="/logout" onClick={() => handleComponentChange('logout')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'logout' && styles['active-tab']
               }`}>
               <ListItemIcon >
@@ -200,7 +200,7 @@ export function DoctorNav(props: DoctorNavProps) {
               </ListItemIcon>
               <ListItemText className={styles["drawertab"]} primary="Logout" />
             </ListItemButton>
-          </Link>
+          </Link> */}
 
         </List>)
 

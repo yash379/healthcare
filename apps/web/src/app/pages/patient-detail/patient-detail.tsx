@@ -1,27 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Box, Card, Typography, Avatar, Button, Divider } from '@mui/material';
 import styles from './patient-detail.module.scss';
-import ViewMedicalHistoryTimeline from '../view-medical-history-timeline/view-medical-history-timeline';
+import ViewMedicalHistoryTimeline from '../../view-medical-history-timeline/view-medical-history-timeline';
 import axios from 'axios';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
+import HospitalContext from '../../contexts/hospital-context';
+import DoctorContext from '../../contexts/doctor-context';
+import { useParams } from 'react-router-dom';
+import { Patient } from '@healthcare/data-transfer-types';
 /* eslint-disable-next-line */
 export interface PatientDetailProps { }
 
-interface Patient {
-  id: number;
-  patientid: string;
-  name: string;
-  appointments: number;
-  completed: number;
-  weight: number;
-  height: number;
-  bloodpressure: string;
-  disease: string;
-}
+// interface Patient {
+//   id: number;
+//   patientid: string;
+//   name: string;
+//   appointments: number;
+//   completed: number;
+//   weight: number;
+//   height: number;
+//   bloodpressure: string;
+//   disease: string;
+// }
 
 export function PatientDetail(props: PatientDetailProps) {
   const apiUrl = environment.apiUrl;
-  const [patients, setData] = useState<Patient[] | null>(null);
+  const [patient, setPatient] = useState<Patient | null>(null);
   const [loadingUserInfo, setLoadingUserInfo] = useState(true);
   // const patients: Patient[] = [
   //   {
@@ -37,6 +41,11 @@ export function PatientDetail(props: PatientDetailProps) {
   //   },
 
   // ];
+  const params=useParams();
+  console.log("params:",params);
+
+  const hospitalcontext=useContext(HospitalContext);
+  const doctorcontext=useContext(DoctorContext);
 
 
   const getpatientinfo = async () => {
@@ -44,12 +53,12 @@ export function PatientDetail(props: PatientDetailProps) {
     try {
       setLoadingUserInfo(true);
       // await new Promise((resolve) => setTimeout(resolve, 2000));
-      const response = await axios.get(`${apiUrl}/hospitals/1/doctors/1/patient/1/all`, {
+      const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patient/${params.patientId}`, {
         withCredentials: true,
       });
-      setData(response.data);
-      console.log("Device Detail:", response.data);
-      console.log("Device Detail:", response.data.isPrimary);
+      setPatient(response.data);
+      console.log("PAtient Detail:", response.data);
+      console.log("PAtient Detail:", response.data.isPrimary);
       setLoadingUserInfo(false);
     } catch (error) {
       console.log("Error in fetching device details", error);
@@ -60,12 +69,12 @@ export function PatientDetail(props: PatientDetailProps) {
 
   useEffect(() => {
     getpatientinfo();
-  }, [patients]);
+  }, [patient]);
   return (
     <div className={styles['container']}>
-      {patients && patients.map((patient) => (
+      {/* {patients && patients.map((patient) => ( */}
         <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
-          <Box key={patient.id} sx={{ marginBottom: 2, marginTop: 5, marginLeft: 5 }}>
+          <Box key={patient?.id} sx={{ marginBottom: 2, marginTop: 5, marginLeft: 5 }}>
             <Card
               sx={{
                 padding: 2,
@@ -88,11 +97,11 @@ export function PatientDetail(props: PatientDetailProps) {
                   marginTop: '10px',
                 }}
               >
-                {patient.name.split(' ').map((name) => name[0]).join('')}
+                {patient?.firstName.split(' ').map((name) => name[0]).join('')}
               </Avatar>
               {/* Patient ID */}
               <Typography variant="h3" sx={{ marginTop: 3 }}>
-                Patient Id : #{patient.patientid}
+                Patient Id : #{patient?.digitalHealthCode}
               </Typography>
               {/* Appointment and Completed status */}
               <Box
@@ -106,7 +115,7 @@ export function PatientDetail(props: PatientDetailProps) {
               >
                 <Box>
                   <Typography variant="h1" sx={{ marginLeft: 5, marginBottom: 2 }}>
-                    {patient.appointments}
+                    {patient?.acuteDisease}
                   </Typography>
                   <Typography variant="h4" color="textPrimary" sx={{ color: '#000000' }}>
                     Appointments
@@ -124,7 +133,7 @@ export function PatientDetail(props: PatientDetailProps) {
                 />
                 <Box>
                   <Typography variant="h1" sx={{ marginLeft: 4, marginBottom: 2 }}>
-                    {patient.completed}
+                    {patient?.isActive}
                   </Typography>
                   <Typography variant="h4" color="textPrimary" sx={{ color: '#000000' }}>
                     Completed
@@ -175,11 +184,11 @@ export function PatientDetail(props: PatientDetailProps) {
                 }}
               >
                 {[
-                  { label: 'Weight', value: `${patient.weight} kg` },
-                  { label: 'Height', value: `${patient.height} cm` },
-                  { label: 'Blood Group', value: 'O+' },
-                  { label: 'Blood Pressure', value: patient.bloodpressure },
-                  { label: 'Disease', value: patient.disease },
+                  { label: 'Weight', value: `${patient?.age} kg` },
+                  // { label: 'Height', value: `${patient.height} cm` },
+                  { label: 'Blood Group', value: `${patient?.bloodGroup}` },
+                  // { label: 'Blood Pressure', value: patient.bloodpressure },
+                  { label: 'Disease', value: patient?.acuteDisease},
                 ].map((item) => (
                   <Box
                     key={item.label}
@@ -207,7 +216,7 @@ export function PatientDetail(props: PatientDetailProps) {
 
         </Box>
 
-      ))}
+      {/* ))} */}
 
     </div>
   );

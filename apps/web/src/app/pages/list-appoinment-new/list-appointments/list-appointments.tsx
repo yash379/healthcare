@@ -131,9 +131,14 @@ export function ListAppointments(props: ListAppointmentsProps) {
   );
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
   const [appointmentStatus, setAppointmentStatus] = useState({ total:0,pending: 0, inProgress: 0, cancelled: 0, confirmed: 0 });
+  const [viewAppointment, setViewAppointment]=useState(false);
+
+  const navigate=useNavigate()
+
   useEffect(() => {
     getCounts();
   }, []);
+
 
   const getCounts = async () => {
     try {
@@ -379,18 +384,24 @@ export function ListAppointments(props: ListAppointmentsProps) {
     fetchAppointments();
   }, []);
 
-  const handleAccept = (id: number) => {
+  const handleAccept = (id: number, value:boolean) => {
     console.log(`Appointment ${id} accepted.`);
+    setViewAppointment(value);
   };
+
+  const handleView=(id: number, value:boolean)=>{
+    navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/appointments/${id}`);
+    setViewAppointment(value);
+  }
 
   const handleDecline = (id: number) => {
     console.log(`Appointment ${id} declined.`);
   };
 
   return (
-    <Box sx={{ height: '100vh', p: 5, m: 6 }}>
+    <Box sx={{ height: '100vh'}}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={5}>
-        <Typography variant="h5" component="div">
+        <Typography variant="h1">
           Appointment
         </Typography>
         <Box display="flex" gap={2} alignItems="center">
@@ -456,7 +467,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
 
       <Grid container spacing={4}>
         {appointmentsData.map((appointment, index) => (
-          <Grid item xs={12} sm={6} md={6} key={index}>
+          <Grid item xs={12} sm={6} md={6} key={index} flexWrap="wrap">
             <Card
               sx={{
                 width: '400px',
@@ -491,11 +502,12 @@ export function ListAppointments(props: ListAppointmentsProps) {
               <CardActions
                 sx={{
                   justifyContent: 'space-between',
-                  paddingRight: '36px',
-                  paddingLeft: '70px',
+                  // paddingRight: '36px',
+                  // paddingLeft: '70px',
                   position: 'relative',
                   bottom: '18px',
-                  paddingTop: '0px'
+                  paddingTop: '0px',
+                  paddingInline:'10px'
                 }}
               >
                 <Button
@@ -505,7 +517,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
                 >
                   Decline Appointment
                 </Button>
-                <Button
+                {viewAppointment ? <Button
                   variant="contained"
                   sx={{
                     backgroundColor: '#064B4F',
@@ -514,10 +526,24 @@ export function ListAppointments(props: ListAppointmentsProps) {
                     float: 'right',
                     borderRadius: '12px',
                   }}
-                  onClick={() => handleAccept(index)}
+                  onClick={() => handleView(appointment.id,false)}
+                >
+                  View Appointment
+                </Button> 
+                : <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: '#064B4F',
+                    color: 'white',
+                    position: 'relative',
+                    float: 'right',
+                    borderRadius: '12px',
+                    // width:'-webkit-fill-available'
+                  }}
+                  onClick={() => handleAccept(appointment.id,true)}
                 >
                   Accept Appointment
-                </Button>
+                </Button>}
               </CardActions>
             </Card>
           </Grid>
