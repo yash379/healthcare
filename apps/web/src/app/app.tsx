@@ -232,10 +232,10 @@ export function App() {
             </Route>
 
              {/* Patient Portal */}
-            <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId" element={<PatientLayout/>}>
+            <Route path="/hospitals/:hospitalId/patients/:patientId" element={<PatientLayout/>}>
               {/* <Route path="/hospital/:hospitalId/doctors/:doctorId/patients/:patientId" element={<ListPatients />} /> */}
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/dashboard" element={<Dashboard />} />
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments" element={<ListAppointments/>} />
+              <Route path="/hospitals/:hospitalId/patients/:patientId/dashboard" element={<Dashboard />} />
+              <Route path="/hospitals/:hospitalId/patients/:patientId/appointments" element={<ListAppointments/>} />
             </Route>
 
               
