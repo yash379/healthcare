@@ -22,11 +22,11 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Autocomplete from '@mui/material/Autocomplete';
-import styles from './diagnosis-page.module.scss';
 import { Controller, useForm } from 'react-hook-form';
 import { environment } from '../../../environments/environment';
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
+import styles from './diagnosis-page.module.scss';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DiagnosisPageProps {}
@@ -69,18 +69,25 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     weight: yup.number().required('Weight is required'),
     pulse: yup.number().required('Pulse is required'),
     spo2: yup.number().required('SpO2 is required'),
-    bmi: yup.string().required('BMI is required'),
     temperature: yup.number().required('Temperature is required'),
+    // chiefComplaints: yup
+    //   .array()
+    //   .of(yup.string().required('Each complaint must be valid'))
+    //   .min(1, 'At least one chief complaint is required'),
     chiefComplaints: yup
-      .array()
-      .of(yup.string().required('Each complaint must be valid'))
-      .min(1, 'At least one chief complaint is required'),
-    medicineName: yup.string().required('Medicine name is required'),
-    instructions: yup.string().required('Instructions are required'),
-    dose: yup.string().required('Dose is required'),
-    when: yup.string().required('When to take is required'),
-    frequency: yup.string().required('Frequency is required'),
-    duration: yup.string().required('Duration is required'),
+    .array()
+    .of(yup.string().required('Each complaint must be valid'))
+    .min(1, 'At least one chief complaint is required'),
+  diagnosis: yup
+    .array()
+    .of(yup.string().required('Each diagnosis must be valid'))
+    .min(1, 'At least one diagnosis is required'),
+    // medicineName: yup.string().required('Medicine name is required'),
+    // instructions: yup.string().required('Instructions are required'),
+    // dose: yup.string().required('Dose is required'),
+    // when: yup.string().required('When to take is required'),
+    // frequency: yup.string().required('Frequency is required'),
+    // duration: yup.string().required('Duration is required'),
   });
 
   const {
@@ -93,10 +100,11 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
   });
 
   const handleAddDiagnosis = async (formData: any) => {
-    console.log('form data ', formData)
+    console.log('form data ', formData);
+    
     try {
       const { data: responseData } = await axios.post(
-        `${apiUrl}/diagnosis`,
+        `${apiUrl}/diagnoses`,
         {
           id: formData.id,
           details: formData.details,
@@ -109,7 +117,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
           bmi: formData.bmi,
           temperature: formData.temperature,
           chiefComplaints: formData.chiefComplaints,
-          diagnosisDate: formData.diagnosisDate,
+          diagnosis: formData.diagnosis,
         },
         {
           withCredentials: true,
@@ -162,6 +170,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
           boxShadow: 3,
         }}
       >
+        {/* <form onSubmit={handleSubmit(handleAddDiagnosis)}> */}
         <form onSubmit={handleSubmit(handleAddDiagnosis)}>
           <Box sx={{ display: 'flex', marginBottom: '20px' }}>
             <Avatar sx={{ bgcolor: '#4FD1C5' }}>OP</Avatar>
@@ -183,103 +192,103 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
               Vitals
             </Typography>
             <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-        <Grid item xs={6}>
-          <Controller
-            name="height"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Height (cm)"
-                variant="outlined"
-                fullWidth
-                error={!!errors.height}
-                helperText={errors.height?.message}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <Controller
-            name="weight"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Weight (kg)"
-                variant="outlined"
-                fullWidth
-                error={!!errors.weight}
-                helperText={errors.weight?.message}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <Controller
-            name="pulse"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Pulse (bpm)"
-                variant="outlined"
-                fullWidth
-                error={!!errors.pulse}
-                helperText={errors.pulse?.message}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <Controller
-            name="spo2"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="SpO2 (%)"
-                variant="outlined"
-                fullWidth
-                error={!!errors.spo2}
-                helperText={errors.spo2?.message}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <Controller
-            name="bmi"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="BMI"
-                variant="outlined"
-                fullWidth
-                error={!!errors.bmi}
-                helperText={errors.bmi?.message}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <Controller
-            name="temperature"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Temperature (°C)"
-                variant="outlined"
-                fullWidth
-                error={!!errors.temperature}
-                helperText={errors.temperature?.message}
-              />
-            )}
-          />
-        </Grid>
-      </Grid>
+              <Grid item xs={6}>
+                <Controller
+                  name="height"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Height (cm)"
+                      variant="outlined"
+                      fullWidth
+                      error={!!errors.height}
+                      helperText={errors.height?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <Controller
+                  name="weight"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Weight (kg)"
+                      variant="outlined"
+                      fullWidth
+                      error={!!errors.weight}
+                      helperText={errors.weight?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <Controller
+                  name="pulse"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Pulse (bpm)"
+                      variant="outlined"
+                      fullWidth
+                      error={!!errors.pulse}
+                      helperText={errors.pulse?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <Controller
+                  name="spo2"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="SpO2 (%)"
+                      variant="outlined"
+                      fullWidth
+                      error={!!errors.spo2}
+                      helperText={errors.spo2?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <Controller
+                  name="details"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Details"
+                      variant="outlined"
+                      fullWidth
+                      error={!!errors.details}
+                      helperText={errors.details?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <Controller
+                  name="temperature"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Temperature (°C)"
+                      variant="outlined"
+                      fullWidth
+                      error={!!errors.temperature}
+                      helperText={errors.temperature?.message}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
           </Box>
 
           <Divider sx={{ marginBottom: '20px' }} />
@@ -288,47 +297,65 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
           <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
             Chief Complaints
           </Typography>
-          <Autocomplete
-            multiple
-            options={chiefComplaintOptions}
-            value={selectedComplaints}
-            onChange={(event, newValue) => setSelectedComplaints(newValue)}
-            renderTags={(value: string[], getTagProps) =>
-              value.map((option, index) => (
-                <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-              ))
-            }
-            renderInput={(params) => (
-              <TextField {...params} variant="outlined" label="Select Chief Complaints" />
+          <Controller
+            name="chiefComplaints"
+            control={control}
+            defaultValue={[]}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Autocomplete
+                multiple
+                options={chiefComplaintOptions}
+                value={value}
+                onChange={(event, newValue) => onChange(newValue)}
+                renderTags={(value: string[], getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField {...params} label="Chief Complaints" variant="outlined" />
+                )}
+              />
             )}
-            sx={{ marginTop: '10px' }}
           />
+          {errors.chiefComplaints && (
+            <Typography color="error">{errors.chiefComplaints.message}</Typography>
+          )}
 
           <Divider sx={{ marginBottom: '20px', marginTop: '20px' }} />
 
+          {/* Diagnosis Section */}
           <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
             Diagnosis
           </Typography>
-          <Autocomplete
-            multiple
-            options={diagnosisOptions}
-            value={selectedDiagnosis}
-            onChange={(event, newValue) => setSelectedDiagnosis(newValue)}
-            renderTags={(value: string[], getTagProps) =>
-              value.map((option, index) => (
-                <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-              ))
-            }
-            renderInput={(params) => (
-              <TextField {...params} variant="outlined" label="Select Diagnosis" />
+          <Controller
+            name="diagnosis"
+            control={control}
+            defaultValue={[]}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Autocomplete
+                multiple
+                options={diagnosisOptions}
+                value={value}
+                onChange={(event, newValue) => onChange(newValue)}
+                renderTags={(value: string[], getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField {...params} label="Diagnosis" variant="outlined" />
+                )}
+              />
             )}
-            sx={{ marginTop: '10px' }}
           />
-
+          {errors.diagnosis && (
+            <Typography color="error">{errors.diagnosis.message}</Typography>
+          )}
           <Divider sx={{ marginBottom: '20px', marginTop: '20px' }} />
 
-          {/* Prescription Section */}
-          {/* <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
+             {/* Prescription Section */}
+          <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
             Prescription
           </Typography>
           <Grid container spacing={2} sx={{ marginBottom: '10px', marginTop: '5px' }}>
@@ -426,9 +453,9 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
             </Table>
           </TableContainer>
 
-          <Divider sx={{ marginTop: '20px' }} /> */}
+          <Divider sx={{ marginTop: '20px' }} />
 
-          <Button
+<Button
             type="submit"
             variant="contained"
             color="primary"
