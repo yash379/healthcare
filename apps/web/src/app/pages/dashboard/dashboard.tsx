@@ -20,7 +20,7 @@ import { environment } from '../../../environments/environment';
 import { Hospital } from '@healthcare/data-transfer-types';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
-import { HospitalContext, UserContext } from '../../contexts/user-context';
+import { HospitalContext } from '../../contexts/hospital-context';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -45,9 +45,13 @@ import CurrencyRupeeOutlinedIcon from '@mui/icons-material/CurrencyRupeeOutlined
 import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import DoctorContext from '../../contexts/doctor-context';
+import PatientContext from '../../contexts/patient-context';
+import UserContext from '../../contexts/user-context';
 
 /* eslint-disable-next-line */
 export interface DashboardProps {}
+
 
 interface HospitalDetails {
   id: string;
@@ -159,14 +163,23 @@ export function Dashboard(props: DashboardProps) {
 
   const hospitalcontext = useContext(HospitalContext);
   console.log('hospital context:', hospitalcontext);
-  console.log('hospital id:', hospitalcontext?.id);
+  console.log('hospital id:', hospitalcontext?.hospital?.id);
+
+  const doctorContext=useContext(DoctorContext);
+  const patientcontext=useContext(PatientContext);
+
+  console.log("patients context:", patientcontext);
+  console.log("doctor context:", doctorContext);
+
+  
+  
 
   const getAllAdmin = async () => {
     try {
       setLoadingAllAdmin(true);
       // await new Promise((resolve) => setTimeout(resolve, 2000));
       const response = await axios.get(
-        `${apiUrl}/hospitals/${hospitalcontext?.id}/managers`,
+        `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/managers`,
         {
           withCredentials: true,
         }
@@ -193,7 +206,7 @@ export function Dashboard(props: DashboardProps) {
 
   useEffect(() => {
     getAllAdmin();
-  }, [hospitalcontext?.id]);
+  }, [hospitalcontext?.hospital?.id]);
 
   console.log('user details', user);
   const dashboardCards = [
@@ -231,7 +244,7 @@ export function Dashboard(props: DashboardProps) {
     try {
       setLoadingCount(true);
       const response = await axios.get(
-        `${apiUrl}/hospitals/${hospitalcontext?.id}/asset-count`,
+        `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/asset-count`,
         {
           withCredentials: true,
         }
@@ -256,7 +269,7 @@ export function Dashboard(props: DashboardProps) {
       setLoadingDetails(true);
       // await new Promise((resolve) => setTimeout(resolve, 2000));
       const response = await axios.get(
-        `${apiUrl}/hospitals/${hospitalcontext?.id}`,
+        `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}`,
         {
           withCredentials: true,
         }
@@ -295,7 +308,7 @@ export function Dashboard(props: DashboardProps) {
       await setIsAddModalOpen(false);
       setIsLoadingModalOpen(true);
       const { data } = await axios.post(
-        `${apiUrl}/hospitals/${hospitalcontext?.id}/manager`,
+        `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/manager`,
         formData,
         {
           withCredentials: true,
@@ -324,7 +337,7 @@ export function Dashboard(props: DashboardProps) {
     console.log('in handleupadte');
     try {
       const res = await axios.put(
-        `${apiUrl}/hospitals/${hospitalcontext?.id}/managers/${selectedAdminId}`,
+        `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/managers/${selectedAdminId}`,
         {
           firstName: formData.user.firstName,
           lastName: formData.user.lastName,
@@ -359,7 +372,7 @@ export function Dashboard(props: DashboardProps) {
     try {
       setIsLoadingModalOpen(true);
       const { data } = await axios.delete(
-        `${apiUrl}/hospitals/${hospitalcontext?.id}/managers/${Admin?.id}`,
+        `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/managers/${Admin?.id}`,
         {
           withCredentials: true,
         }
@@ -433,10 +446,10 @@ export function Dashboard(props: DashboardProps) {
       let apiUrls;
       switch (exportType) {
         case 'residents':
-          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/residents/export`;
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/residents/export`;
           break;
         case 'vehicles':
-          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/vehicles/export`;
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/vehicles/export`;
           break;
         default:
           console.error('Invalid import type');
@@ -482,13 +495,13 @@ export function Dashboard(props: DashboardProps) {
       let apiUrls;
       switch (exportType) {
         case 'flats':
-          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/flats`;
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/flats`;
           break;
         case 'residents':
-          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/residents/export`;
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/residents/export`;
           break;
         case 'vehicles':
-          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/vehicles/export`;
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/vehicles/export`;
           break;
         default:
           console.error('Invalid import type');
@@ -499,7 +512,7 @@ export function Dashboard(props: DashboardProps) {
       });
       if (response) {
         try {
-          // const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.id}/flats`, {
+          // const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/flats`, {
           //   withCredentials: true
           // });
           const hospitalsData = response.data.content;
@@ -700,13 +713,13 @@ export function Dashboard(props: DashboardProps) {
       // Set the API URL based on the import type
       switch (importType) {
         case 'flats':
-          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/flats/bulkupload`;
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/flats/bulkupload`;
           break;
         case 'residents':
-          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.id}/residents/bulkupload`;
+          apiUrls = `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/residents/bulkupload`;
           break;
         case 'vehicles':
-          apiUrls = `${apiUrl}/hospital/${hospitalcontext?.id}/vehicles/bulkupload`;
+          apiUrls = `${apiUrl}/hospital/${hospitalcontext?.hospital?.id}/vehicles/bulkupload`;
           break;
         default:
           console.error('Invalid import type');
@@ -935,7 +948,7 @@ export function Dashboard(props: DashboardProps) {
               {/* <div className={styles['dashboard-cards']}>
                 {countArray.map(([item, value]) => (
                   <Card className={styles['cards']}>
-                    <Link style={{ textDecoration: "none", cursor: item === "Residents" || item === "Vehicles" ? "default" : "pointer", }} to={`/hospital/${hospitalcontext?.id}/${item === "Floors" ? "Buildings" : item.toLowerCase()}`} onClick={(e) => {
+                    <Link style={{ textDecoration: "none", cursor: item === "Residents" || item === "Vehicles" ? "default" : "pointer", }} to={`/hospital/${hospitalcontext?.hospital?.id}/${item === "Floors" ? "Buildings" : item.toLowerCase()}`} onClick={(e) => {
                       if (item === "Residents" || item === "Vehicles") {
                         e.preventDefault();
 

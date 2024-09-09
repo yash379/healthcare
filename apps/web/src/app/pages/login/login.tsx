@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { TextField, Button, Box, Grid, Typography } from '@mui/material';
 import styles from './login.module.scss';
@@ -13,6 +13,7 @@ import { enqueueSnackbar } from 'notistack';
 import { User, ViewUser } from '@healthcare/data-transfer-types';
 import digimedic from "../../../assets/digimedic.png";
 import loginImage from "../../../assets/loginImage.png";
+import UserContext from '../../contexts/user-context';
 
 export interface LoginProps {
   onLogin: (user: User) => void;
@@ -35,6 +36,10 @@ export function Login({ onLogin }: LoginProps) {
   const apiUrl = environment.apiUrl;
   const navigate = useNavigate();
 
+  const [user, setUser]=useState<User |  null>(null);
+
+  const usercontext=useContext(UserContext);
+
   const onSubmit = async (formData: { email: string; password: string }) => {
     try {
       const res = await axios.post<any>(`${apiUrl}/login`, formData, {
@@ -42,10 +47,12 @@ export function Login({ onLogin }: LoginProps) {
       });
       const user = res.data;
       console.log(user);
+      setUser(user);
+      usercontext?.setUser(user);
       // enqueueSnackbar('Login successfully', { variant: 'success' });
       // console
       // if (user || null) {
-      //   navigate("/dashboard")
+        // navigate("/dashboard")
       // }
       console.log(res)
       if (user.hospitalRoles.length > 0) {
@@ -61,6 +68,8 @@ export function Login({ onLogin }: LoginProps) {
       enqueueSnackbar('Invalid Username or Password', { variant: 'error' });
     }
   };
+
+  console.log("usercontext in user:", usercontext?.user)
 
   // const onSubmit = async (formData: { email: string; password: string }) => {
   //   try {
@@ -82,6 +91,8 @@ export function Login({ onLogin }: LoginProps) {
   //     console.log('Something went wrong');
   //   }
   // };
+
+  
 
   return (
     <Box className={styles['main_root']}>

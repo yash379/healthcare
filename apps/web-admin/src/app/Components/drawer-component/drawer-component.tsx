@@ -22,6 +22,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import { IconHome } from '@tabler/icons-react';
 import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 /* eslint-disable-next-line */
 export interface DrawerComponentProps {}
 
@@ -170,6 +171,30 @@ export function DrawerComponent(props: DrawerComponentProps) {
                 </ListItemIcon>
                 <ListItemText
                   primary="Appointments"
+                  className={styles['drawertab']}
+                ></ListItemText>
+              </ListItemButton>
+            </ListItem>
+          </Link>
+          <Link
+            style={{ textDecoration: 'none' }}
+            to={`/cancer-detection`}
+            onClick={() => handleComponentChange('reports')}
+          >
+            <ListItem>
+              <ListItemButton
+                sx={{ padding: '10px 20px' }}
+                className={`${styles['button-tabs']} ${
+                  selectedComponent === 'reports' && styles['active-tab']
+                }`}
+              >
+                <ListItemIcon sx={{ minWidth: '100px' }}>
+                  <ArticleOutlinedIcon
+                    className={styles['drawer-icons']}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Reports"
                   className={styles['drawertab']}
                 ></ListItemText>
               </ListItemButton>

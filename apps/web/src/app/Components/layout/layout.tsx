@@ -7,7 +7,9 @@ import { Box, CircularProgress } from '@mui/material';
 import { User, ViewUser } from '@healthcare/data-transfer-types';
 import { environment } from '../../../environments/environment';
 import axios from 'axios';
-import { HospitalContext, UserContext } from '../../contexts/user-context';
+import { HospitalContext } from '../../contexts/hospital-context';
+import DoctorContext from '../../contexts/doctor-context';
+import UserContext from '../../contexts/user-context';
 
 /* eslint-disable-next-line */
 export interface LayoutProps {
@@ -18,6 +20,9 @@ export function Layout({ user }: LayoutProps) {
   const apiUrl = environment.apiUrl;
   const hospitalContext = useContext(HospitalContext);
   const navigate = useNavigate();
+
+  const doctorContext=useContext(DoctorContext);
+  const usercontext=useContext(UserContext);
 
   useEffect(() => {
     if (user == null) {
@@ -33,7 +38,7 @@ export function Layout({ user }: LayoutProps) {
           withCredentials: true,
         });
         console.log('Login user', loginResponse.data);
-        // navigate(`/dashboard/${hospitalContext?.id}`);
+        // navigate(`/dashboard/${hsopitalContext?.hospital?.id}`);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 403) {
           navigate('/login');
@@ -42,7 +47,12 @@ export function Layout({ user }: LayoutProps) {
     };
 
     fetchData();
-  }, [apiUrl, navigate]);
+  }, [apiUrl, navigate, ]);
+  
+
+  useEffect(()=>{
+    usercontext?.setUser(user);
+  },[apiUrl]);
 
   return (
     <div className={styles['container']}>

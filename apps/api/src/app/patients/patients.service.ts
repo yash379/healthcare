@@ -144,9 +144,7 @@ export class PatientsService {
           },
         });
       } catch (error) {
-        throw new BadRequestException(error.message
-          
-        );
+        throw new BadRequestException(error.message);
       }
     }
 
@@ -474,6 +472,44 @@ export class PatientsService {
     }
   }
 
+  private getPatientAllDetails(patients) {
+    if (!patients) {
+      throw new BadRequestException();
+    } else {
+      return patients.map((patient) => ({
+        id: patient.patient.id,
+        firstName: patient.firstName,
+        lastName: patient.lastName,
+        email: patient.email,
+        phoneNumber: patient.phoneNumber,
+        digitalHealthCode: patient.patient.digitalHealthCode,
+        gender: patient.patient.gender,
+        age: patient.patient.age,
+        bloodGroup: patient.patient.bloodGroup,
+        dob: patient.patient.dob.toISOString(),
+        addressLine1: patient.patient.addressLine1,
+        addressLine2: patient.patient.addressLine2,
+        city: patient.patient.city,
+        postalCode: patient.patient.postalCode,
+        chronicDiseases: patient.patient.chronicDiseases,
+        acuteDiseases: patient.patient.acuteDiseases,
+        countryCode: patient.patient.countryCode,
+        stateCode: patient.patient.stateCode,
+        doctors: patient.patient.doctors.map(doctor => ({
+          doctorId: doctor.doctor?.id || null,
+          doctorGender: doctor.doctor?.gender || '',
+          doctorDoctorCode: doctor.doctor?.doctorCode || '',
+          doctorSpeciality: doctor.doctor?.speciality || '',
+          doctorFirstName: doctor.doctor?.user?.firstName || '',
+          doctorLastName: doctor.doctor?.user?.lastName || '',
+          doctorEmail: doctor.doctor?.user?.email || '',
+          doctorPhoneNumber: doctor.doctor?.user?.phoneNumber || '',
+        })),
+        isActive: patient.isActive,
+      }));
+    }
+  }
+
   async findPatientById(
     hospitalId: number,
     doctorId: number,
@@ -569,9 +605,7 @@ export class PatientsService {
     };
   }
 
-  async findPatientByHospital(
-    hospitalId: number
-  ) {
+  async findPatientByHospital(hospitalId: number) {
     // Check if the hospital exists
     const hospital = await this.prisma.hospital.findUnique({
       where: { id: hospitalId },
@@ -641,6 +675,111 @@ export class PatientsService {
     }
 
     const listPatientsDto = await this.getPatientList(listPatients);
+
+    return listPatientsDto;
+  }
+
+  async findPatientByHospitalId(hospitalId: number, patientId: number) {
+    // Check if the hospital exists
+    const hospital = await this.prisma.hospital.findUnique({
+      where: { id: hospitalId },
+    });
+    if (!hospital) {
+      throw new HttpException('Hospital not found', HttpStatus.NOT_FOUND);
+    }
+    // Check if the hospital exists
+    const patient = await this.prisma.patient.findUnique({
+      where: { id: patientId },
+    });
+    if (!patient) {
+      throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+    }
+
+    const hospitalDoctorRoleId = await this.prisma.hospitalRole.findFirst({
+      where: {
+        name: HospitalRoleName.PATIENT,
+      },
+    });
+
+    const whereArray = [];
+    let whereQuery = {};
+
+    whereArray.push({
+      hospitalRoles: {
+        some: {
+          hospitalId: hospitalId,
+          hospitalRoleId: hospitalDoctorRoleId.id,
+        },
+      },
+      patient: {
+        id: patientId,
+      },
+    });
+
+    if (whereArray.length > 0) {
+      if (whereArray.length > 1) {
+        whereQuery = { AND: whereArray };
+      } else {
+        whereQuery = whereArray[0];
+      }
+    }
+
+    const listPatients = await this.prisma.user.findMany({
+      where: whereQuery,
+      select: {
+        id: true,
+        email: true,
+        phoneNumber: true,
+        firstName: true,
+        isActive: true,
+        lastName: true,
+        patient: {
+          select: {
+            id: true,
+            gender: true,
+            digitalHealthCode: true,
+            age: true,
+            bloodGroup: true,
+            dob: true,
+            addressLine1: true,
+            addressLine2: true,
+            city: true,
+            postalCode: true,
+            chronicDiseases: true,
+            acuteDiseases: true,
+            countryCode: true,
+            stateCode: true,
+            doctors: {
+              select: {
+                doctor: {
+                  select: {
+                    id: true,
+                    gender: true,
+                    doctorCode: true,
+                    speciality: true,
+                    user: {
+                      select: {
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        phoneNumber: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!listPatients) {
+      throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+    }
+
+    console.log('patient data', listPatients)
+    const listPatientsDto = await this.getPatientAllDetails(listPatients);
 
     return listPatientsDto;
   }

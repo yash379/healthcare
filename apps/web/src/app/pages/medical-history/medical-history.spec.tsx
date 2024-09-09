@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import AddAppointment from './add-appointment';
+import MedicalHistory from './medical-history';
 
-describe('AddAppointment', () => {
+describe('MedicalHistory', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<AddAppointment />);
+    const { baseElement } = render(<MedicalHistory />);
     expect(baseElement).toBeTruthy();
   });
 });

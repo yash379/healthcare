@@ -25,7 +25,7 @@ import { Box } from '@mui/material';
 import Breadcrumbs from '../../Components/bread-crumbs/bread-crumbs';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddPatientComponent from './add-patient/add-patient';
+import AddPatientComponent from './add-patient-page/add-patient-page';
 import EditPatientComponent from './edit-patient/edit-patient';
 import DeletePatientComponent from './delete-patient/delete-patient';
 // import ViewPatientComponent from '../view-patient/view-patient';
@@ -33,9 +33,10 @@ import { enqueueSnackbar } from 'notistack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Hospital } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
-import { HospitalContext } from '../../contexts/user-context';
+import { HospitalContext } from '../../contexts/hospital-context';
 import { Gender } from '@prisma/client';
 import { PatientContext } from '../../contexts/patient-context';
+import DoctorContext from '../../contexts/doctor-context';
 
 /* eslint-disable-next-line */
 export interface ListPatientsProps {}
@@ -46,7 +47,7 @@ interface Form {
   email?: string;
   phoneNumber?: string;
   gender: Gender;
-  bloodgroup: string;
+  bloodGroup: string;
   dob: Date;
   digitalHealthCode: string;
   addressLine1: string;
@@ -56,6 +57,7 @@ interface Form {
   countryCode: string;
   postalCode: string;
   isActive: boolean;
+  age:number;
 }
 
 interface ViewPatient {
@@ -126,18 +128,21 @@ export function ListPatients(props: ListPatientsProps) {
   console.log('hospital id:', id);
   const params = useParams();
   const hospitalContext = useContext(HospitalContext);
+  const doctorcontext=useContext(DoctorContext);
   console.log('Hospital Context:', hospitalContext);
-  console.log('hospital context hospital id:', hospitalContext?.id);
+  console.log('hospital context hospital id:', hospitalContext?.hospital?.id);
 
   const [deleteData, setDeleteData] = useState<ViewPatient | null>(null);
   const [patientContext, setPatientContext]=useState<ViewPatient | null>(null);
+
+  
  
   const getPatients = async () => {
     try {
       setLoading(true);
       //  await new Promise((resolve) => setTimeout(resolve, 2000));
       const response = await axios.get(
-        `${apiUrl}/hospitals/${hospitalContext?.id}/patients`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients`,
         {
           withCredentials: true,
           params: {
@@ -296,14 +301,14 @@ export function ListPatients(props: ListPatientsProps) {
   const handleAddPatient = async (formData: Form) => {
     try {
       const { data: responseData } = await axios.post(
-        `${apiUrl}/hospitals/${params.hospitalId}/patients`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients`,
         {
           firstName: formData.firstName,
           lastName: formData.lastName,
           gender: formData.gender,
           email: formData.email,
           phoneNumber: formData.phoneNumber,
-          bloodgroup: formData.bloodgroup,
+          bloodGroup: formData.bloodGroup,
           dob: formData.dob,
           digitalHealthCode: formData.digitalHealthCode,
           addressLine1: formData.addressLine1,
@@ -336,7 +341,7 @@ export function ListPatients(props: ListPatientsProps) {
   const handleUpdate = async (updateData: EditForm) => {
     try {
       const response = await axios.put(
-        `${apiUrl}/hospitals/${params.hospitalId}/patients/${selectedPatientId}`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${selectedPatientId}`,
         {
           firstName: updateData.firstName,
           lastName: updateData.lastName,
@@ -385,7 +390,7 @@ export function ListPatients(props: ListPatientsProps) {
 
   const handleDelete = async (Id: any) => {
     try {
-      const { data } = await axios.delete(`${apiUrl}/hospitals/${hospitalContext?.id}/patients/${Id}`,  {
+      const { data } = await axios.delete(`${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${Id}`,  {
         withCredentials: true,
       });
       console.log(data);
@@ -438,7 +443,7 @@ export function ListPatients(props: ListPatientsProps) {
     //   label: 'Hospitals',
     // },
     {
-      to: `/dashboard/${hospitalContext?.id}`,
+      to: `/dashboard/${hospitalContext?.hospital?.id}`,
       label: `Dashboard`,
     },
     {
@@ -454,13 +459,6 @@ export function ListPatients(props: ListPatientsProps) {
         <Box className={styles['building_container']}>
           <Box className={styles['btn_container']}>
             <h1>Patients</h1>
-            <Box>
-              <AddPatientComponent
-                open={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
-                onSubmit={handleAddPatient}
-              />
-            </Box>
             <Box>
               {/* <ViewPatientComponent
                 open={viewPatientOpen}
@@ -486,11 +484,13 @@ export function ListPatients(props: ListPatientsProps) {
                 // onClick={() => {
                 //   setIsAddModalOpen(true)
                 // }}
-                onClick={() => navigate(`/hospital/${hospitalContext?.id}/patients/add`)}
+                onClick={() => navigate(`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/add`)}
               >
                 {' '}
                 <AddIcon fontSize="small" /> Add
               </Button>
+              <Box>
+            </Box>
             </Box>
           </Box>
 
@@ -499,7 +499,7 @@ export function ListPatients(props: ListPatientsProps) {
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <Checkbox
+                    {/* <Checkbox
                       {...label}
                       checked={
                         activePatients.length > 0 &&
@@ -508,17 +508,18 @@ export function ListPatients(props: ListPatientsProps) {
                         )
                       }
                       onChange={handleHeaderCheckboxChange}
-                    />
+                    /> */}
                   </TableCell>
-                  <TableCell sx={{ border: 'hidden' }}>Name</TableCell>
-                  <TableCell sx={{ border: 'hidden' }}>Email</TableCell>
-                  <TableCell sx={{ border: 'hidden' }}>Phone Number</TableCell>
-                  <TableCell sx={{ border: 'hidden' }}>Gender</TableCell>
-                  <TableCell sx={{ border: 'hidden' }}>Blood Group</TableCell>
-                  <TableCell sx={{ border: 'hidden' }}>
+                  <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}>Patient Name</TableCell>
+                  <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}>Gender</TableCell>
+                  {/* <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}></TableCell> */}
+                  <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}>Phone Number</TableCell>
+                  
+                  <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}>Blood Group</TableCell>
+                  <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}>
                     Digital Health Code
                   </TableCell>
-                  <TableCell sx={{ border: 'hidden' }}>Address</TableCell>
+                  <TableCell sx={{ border: 'hidden', color: '#A0AEC0' }}>Address</TableCell>
                   <TableCell sx={{ border: 'hidden' }}></TableCell>
                 </TableRow>
               </TableHead>
@@ -540,22 +541,52 @@ export function ListPatients(props: ListPatientsProps) {
                       key={index}
                     >
                       <TableCell>
-                        <Checkbox
+                        {/* <Checkbox
                           checked={selectedItems.includes(patient.id)}
                           onChange={() => handleCheckboxChange(patient.id)}
                           {...label}
                           onClick={(e) => {
                             e.stopPropagation();
                           }}
-                        />
+                        /> */}
                       </TableCell>
                       <TableCell>
-                        {patient.firstName} {patient.lastName}
+                      <div style={{ display: 'flex', alignItems: 'center', color: '#2D3748', fontFamily: 'Roboto', fontSize: '14px', fontWeight: '700' }}>
+                                        <div
+                                            style={{
+                                                backgroundColor: '#4FD1C5',
+                                                width: '40px',
+                                                height: '40px',
+                                                borderRadius: '8px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                marginRight: '8px',
+                                            }}
+                                        />
+                                        <div>
+                                            <span>{patient.firstName}{patient.lastName}</span>
+                                            <span
+                                                className="email"
+                                                style={{
+                                                    display: 'block',
+                                                    color: '#718096',
+                                                    fontFamily: 'Roboto',
+                                                    fontSize: '14px',
+                                                    fontWeight: '400',
+                                                    lineHeight: '19.6px',
+                                                    textAlign: 'left',
+                                                }}
+                                            >
+                                                {patient.email}
+                                            </span>
+                                        </div>
+                                    </div>
                       </TableCell>
-                      <TableCell>{patient.email}</TableCell>
-                      <TableCell>{patient.phoneNumber}</TableCell>
+                      {/* <TableCell>{patient.email}</TableCell> */}
                       <TableCell>{patient.gender}</TableCell>
-                      <TableCell>{patient.bloodgroup}</TableCell>
+                      <TableCell>{patient.phoneNumber}</TableCell>
+                      <TableCell>{patient.bloodGroup}</TableCell>
                       <TableCell>{patient.digitalHealthCode}</TableCell>
                       <TableCell>
                         {patient.addressLine1} {patient.addressLine2} ,
@@ -567,7 +598,7 @@ export function ListPatients(props: ListPatientsProps) {
                           onClick={(e) => {
                             e.stopPropagation();
                             handleEditClick(patient.id);
-                            navigate(`/hospital/${hospitalContext?.id}/patients/edit/${patient.id}`);
+                            navigate(`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${patient.id}/edit`);
                           }}
                           sx={{ color: 'black' }}
                         >

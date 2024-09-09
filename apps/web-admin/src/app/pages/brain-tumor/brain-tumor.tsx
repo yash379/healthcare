@@ -7,6 +7,7 @@ import {
   Box,
   CircularProgress,
   IconButton,
+  Card,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from 'axios';
@@ -65,8 +66,8 @@ export function BrainTumor() {
   };
 
   return (
-    <Container maxWidth="md" style={{ marginTop: '50px' }}>
-      <Grid container spacing={4}>
+    <Container style={{ marginTop: '50px', maxWidth: '96%' }}>
+      <Grid container spacing={4} sx={{ flexWrap: 'nowrap' }}>
         {/* Left Side: Upload Section */}
         <Grid
           item
@@ -77,69 +78,94 @@ export function BrainTumor() {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            position: 'relative',
+            marginLeft: '10px',
+            // border: '2px solid grey',s
+            paddingLeft: '0px',
           }}
         >
           {/* Predict Button at Top Left */}
-          <Box position="absolute" top="10px" left="10px">
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleUpload}
-              style={{ padding: '10px 20px' }}
-              disabled={!selectedFile || loading}
+          <Card
+            sx={{
+              height: '100%',
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow:
+                '0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 1.12)',
+            }}
+          >
+            <Box
+              top="10px"
+              left="10px"
+              display={'flex'}
+              justifyContent={'space-between'}
+              width={'50%'}
+              flexDirection={'row'}
+              padding={'20px'}
+              alignSelf={'center'}
             >
-              Predict
-            </Button>
-          </Box>
-
-          {/* Centered Upload Section */}
-          <Box textAlign="center" style={{ width: '100%', paddingTop: '50px' }}>
-            <input
-              accept="image/*"
-              style={{ display: 'none' }}
-              id="raised-button-file"
-              type="file"
-              onChange={handleFileChange}
-            />
-            <label htmlFor="raised-button-file">
               <Button
                 variant="contained"
-                color="primary"
-                component="span"
-                startIcon={<CloudUploadIcon />}
-                style={{ padding: '10px 20px', marginBottom: '10px' }}
+                color="secondary"
+                onClick={handleUpload}
+                style={{ padding: '10px 20px' }}
+                disabled={!selectedFile || loading}
               >
-                Upload Image
+                Predict
               </Button>
-            </label>
-            {imagePreview && (
-              <Box
-                position="relative"
-                style={{ width: '100%', maxWidth: '300px', marginTop: '20px' }}
-              >
-                <img
-                  src={imagePreview as string}
-                  alt="Preview"
-                  style={{
-                    width: '100%',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-                  }}
-                />
-                <IconButton
-                  onClick={() => {
-                    setImagePreview(null);
-                    setSelectedFile(null);
-                    setPrediction(null);
-                  }}
-                  style={{ position: 'absolute', top: '8px', right: '8px' }}
+              <input
+                accept="image/*"
+                style={{ display: 'none' }}
+                id="raised-button-file"
+                type="file"
+                onChange={handleFileChange}
+              />
+              <label htmlFor="raised-button-file">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  component="span"
+                  startIcon={<CloudUploadIcon />}
+                  style={{ padding: '10px 20px', marginBottom: '10px' }}
                 >
-                  <ClearIcon color="error" />
-                </IconButton>
-              </Box>
-            )}
-          </Box>
+                  Upload Image
+                </Button>
+              </label>
+            </Box>
+
+            {/* Centered Upload Section */}
+            <Box
+              textAlign="center"
+              style={{ width: '100%', paddingTop: '50px', margin: '10px' }}
+            >
+              {imagePreview && (
+                <Box
+                  position="relative"
+                  style={{ width: '96%', marginTop: '-52px' }}
+                >
+                  <img
+                    src={imagePreview as string}
+                    alt="Preview"
+                    style={{
+                      width: '100%',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                    }}
+                  />
+                  <IconButton
+                    onClick={() => {
+                      setImagePreview(null);
+                      setSelectedFile(null);
+                      setPrediction(null);
+                    }}
+                    style={{ position: 'absolute', top: '8px', right: '8px' }}
+                  >
+                    <ClearIcon color="error" />
+                  </IconButton>
+                </Box>
+              )}
+            </Box>
+          </Card>
         </Grid>
 
         {/* Right Side: Prediction Section */}
@@ -153,22 +179,34 @@ export function BrainTumor() {
             justifyContent: 'center',
           }}
         >
-          <Box textAlign="center">
-            {loading ? (
-              <CircularProgress />
-            ) : (
-              <>
-                <Typography variant="h5" style={{ marginBottom: '20px' }}>
-                  Prediction Result
-                </Typography>
-                <Typography variant="h6">
-                  {prediction
-                    ? prediction
-                    : 'Upload an image to get a prediction.'}
-                </Typography>
-              </>
-            )}
-          </Box>
+          <Card
+            sx={{
+              height: '98%',
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow:
+                '0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 1.12)',
+              justifyContent: 'center',
+            }}
+          >
+            <Box textAlign="center">
+              {loading ? (
+                <CircularProgress />
+              ) : (
+                <>
+                  <Typography variant="h5" style={{ marginBottom: '20px' }}>
+                    Prediction Result
+                  </Typography>
+                  <Typography variant="h6">
+                    {prediction
+                      ? prediction
+                      : 'Upload an image to get a prediction.'}
+                  </Typography>
+                </>
+              )}
+            </Box>
+          </Card>
         </Grid>
       </Grid>
     </Container>

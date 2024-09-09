@@ -31,6 +31,9 @@ export class UserDto implements User {
 
   @ApiProperty()
   superRole?: SuperRoleName;
+
+  @ApiProperty() doctorId?: number;
+  @ApiProperty() patientId?: number;
 }
 
 

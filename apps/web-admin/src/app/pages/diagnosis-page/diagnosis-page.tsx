@@ -23,7 +23,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Autocomplete from '@mui/material/Autocomplete';
 import styles from './diagnosis-page.module.scss';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { environment } from '../../../environments/environment';
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
@@ -69,6 +69,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     weight: yup.number().required('Weight is required'),
     pulse: yup.number().required('Pulse is required'),
     spo2: yup.number().required('SpO2 is required'),
+    bmi: yup.string().required('BMI is required'),
     temperature: yup.number().required('Temperature is required'),
     chiefComplaints: yup
       .array()
@@ -86,6 +87,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     handleSubmit,
     reset,
     formState: { errors },
+    control
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
@@ -181,25 +183,103 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
               Vitals
             </Typography>
             <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-              <Grid item xs={6}>
-                <TextField label="Height (cm)" variant="outlined" fullWidth />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField label="Weight (kg)" variant="outlined" fullWidth />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField label="Pulse (bpm)" variant="outlined" fullWidth />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField label="SpO2 (%)" variant="outlined" fullWidth />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField label="BMI" variant="outlined" fullWidth />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField label="Temperature (°C)" variant="outlined" fullWidth />
-              </Grid>
-            </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="height"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Height (cm)"
+                variant="outlined"
+                fullWidth
+                error={!!errors.height}
+                helperText={errors.height?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="weight"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Weight (kg)"
+                variant="outlined"
+                fullWidth
+                error={!!errors.weight}
+                helperText={errors.weight?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="pulse"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Pulse (bpm)"
+                variant="outlined"
+                fullWidth
+                error={!!errors.pulse}
+                helperText={errors.pulse?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="spo2"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="SpO2 (%)"
+                variant="outlined"
+                fullWidth
+                error={!!errors.spo2}
+                helperText={errors.spo2?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="bmi"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="BMI"
+                variant="outlined"
+                fullWidth
+                error={!!errors.bmi}
+                helperText={errors.bmi?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="temperature"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Temperature (°C)"
+                variant="outlined"
+                fullWidth
+                error={!!errors.temperature}
+                helperText={errors.temperature?.message}
+              />
+            )}
+          />
+        </Grid>
+      </Grid>
           </Box>
 
           <Divider sx={{ marginBottom: '20px' }} />
@@ -226,7 +306,6 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
 
           <Divider sx={{ marginBottom: '20px', marginTop: '20px' }} />
 
-          {/* Diagnosis Section */}
           <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
             Diagnosis
           </Typography>
@@ -249,7 +328,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
           <Divider sx={{ marginBottom: '20px', marginTop: '20px' }} />
 
           {/* Prescription Section */}
-          <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
+          {/* <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
             Prescription
           </Typography>
           <Grid container spacing={2} sx={{ marginBottom: '10px', marginTop: '5px' }}>
@@ -316,7 +395,6 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
             Add Prescription
           </Button>
 
-          {/* Prescriptions Table */}
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -348,7 +426,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
             </Table>
           </TableContainer>
 
-          <Divider sx={{ marginTop: '20px' }} />
+          <Divider sx={{ marginTop: '20px' }} /> */}
 
           <Button
             type="submit"

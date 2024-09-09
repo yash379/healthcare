@@ -1,6 +1,6 @@
-import { Hospital, ViewUser } from "@healthcare/data-transfer-types";
+import { Hospital, User, ViewUser } from "@healthcare/data-transfer-types";
 import {  HospitalRoleName, SuperRoleName } from "@prisma/client";
-import React from "react";
+import React, { createContext } from "react";
 // import {  User  } from "@healthcare/data-transfer-types";
 
 
@@ -24,13 +24,13 @@ import React from "react";
 
 
 
-// export interface OrganizationRoleDto {
-//     organizationId: number;
-//     organizationRole: HospitalRoleName;
-// }
+export interface OrganizationRoleDto {
+    organizationId: number;
+    organizationRole: HospitalRoleName;
+}
 
 
-export const UserContext = React.createContext<ViewUser | null>(null);
-export const HospitalContext=React.createContext<Hospital | null>(null);
+export const UserContext = createContext<{user:User | null, setUser: React.Dispatch<React.SetStateAction<User | null>>} | null>(null);;
+// export const HospitalContext=React.createContext<Hospital | null>(null);
 
 export default UserContext;

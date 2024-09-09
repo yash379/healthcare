@@ -137,7 +137,7 @@ export function ListAppointment(props: ListAppointmentProps) {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${apiUrl}/hospitals/${hospitalContext?.id}/doctors/${doctorContext?.doctor?.id}/appointments`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/appointments`,
         {
           withCredentials: true,
           params: {
@@ -157,7 +157,7 @@ export function ListAppointment(props: ListAppointmentProps) {
       console.error('Error fetching hospital data:', error);
       setLoading(false);
     }
-  }, [apiUrl, doctorContext?.doctor?.id, hospitalContext?.id, page, rowsPerPage]);
+  }, [apiUrl, doctorContext?.doctor?.id, hospitalContext?.hospital?.id, page, rowsPerPage]);
 
   useEffect(() => {
     getAllAppointments();

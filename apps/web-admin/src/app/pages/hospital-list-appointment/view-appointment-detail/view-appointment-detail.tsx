@@ -11,7 +11,7 @@ import {
   Grid,
 } from '@mui/material';
 import styles from './view-appointment-detail.module.scss';
-import { Gender } from '@prisma/client';
+import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
 import { StatusEnum } from '../hospital-list-appointment';
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined';
@@ -23,16 +23,33 @@ export interface ViewAppointment {
   id: number;
   appointmentDate: string;
   status: { id: number; code: string; name: string };
-  patient: PatientDetailsDto;
-  doctor: DoctorDetailsDto;
+  patientId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
+  gender: Gender;
+  age: number;
+  bloodGroup: string;
+  dob: string;
+  digitalHealthCode: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  stateCode?: string;
+  countryCode: string;
+  postalCode: string;
+  chronicDiseases?: ChronicDisease[];
+  acuteDiseases?: AcuteDisease[];
+  isActive: boolean;
 }
 
-interface PatientDetailsDto {
-  user: UserDetailsDto;
-}
-interface DoctorDetailsDto {
-  user: UserDetailsDto;
-}
+// interface PatientDetailsDto {
+//   user: UserDetailsDto;
+// }
+// interface DoctorDetailsDto {
+//   user: UserDetailsDto;
+// }
 
 // DTO for detailed user information (part of PatientDetails)
 interface UserDetailsDto {
@@ -43,7 +60,6 @@ interface UserDetailsDto {
   phoneNumber: string;
 }
 
-
 const ViewAppointmentDetail: React.FC = () => {
   const apiUrl = environment.apiUrl;
   const params = useParams();
@@ -53,8 +69,8 @@ const ViewAppointmentDetail: React.FC = () => {
   const [searchQueryName, setSearchQueryName] = useState<string>('');
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [appointmentsData, setAppointmentsData] = useState<ViewAppointment>();
- 
+  const [appointmentsData, setAppointmentsData] =
+    useState<ViewAppointment | null>(null);
 
   const getAllAppointments = useCallback(async () => {
     try {
@@ -65,7 +81,7 @@ const ViewAppointmentDetail: React.FC = () => {
           withCredentials: true,
           params: {
             pageSize: rowsPerPage,
-            pageOffset: page -1,
+            pageOffset: page - 1,
             // appointmentDate: searchQueryName,
           },
         }
@@ -80,12 +96,19 @@ const ViewAppointmentDetail: React.FC = () => {
       console.error('Error fetching hospital data:', error);
       setLoading(false);
     }
-  }, [apiUrl, page, params.appointmentId, params.doctorId, params.hospitalId, params.patientId, rowsPerPage]);
+  }, [
+    apiUrl,
+    page,
+    params.appointmentId,
+    params.doctorId,
+    params.hospitalId,
+    params.patientId,
+    rowsPerPage,
+  ]);
 
   useEffect(() => {
     getAllAppointments();
   }, [apiUrl, page, params.hospitalId, rowsPerPage, getAllAppointments]);
-
 
   // if (loading) return <div>Loading...</div>;
 
@@ -105,8 +128,8 @@ const ViewAppointmentDetail: React.FC = () => {
     navigate('/diagnosis');
   };
 
-   // Helper function to format date
-   const formatDate = (dateString?: string) => {
+  // Helper function to format date
+  const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
     try {
       return format(new Date(dateString), 'MM/dd/yyyy');
@@ -143,7 +166,7 @@ const ViewAppointmentDetail: React.FC = () => {
             variant="h5"
             sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
           >
-            {`${appointmentsData?.patient?.user?.firstName} ${appointmentsData?.patient?.user?.lastName}`}
+            {`${appointmentsData?.firstName} ${appointmentsData?.lastName}`}
           </Typography>
         </Box>
 
@@ -238,7 +261,7 @@ const ViewAppointmentDetail: React.FC = () => {
                 whiteSpace: 'break-spaces',
               }}
             >
-              {appointmentsData?.patient?.user?.email}
+              {appointmentsData?.email}
             </Typography>
           </Grid>
 
@@ -267,7 +290,7 @@ const ViewAppointmentDetail: React.FC = () => {
                 whiteSpace: 'break-spaces',
               }}
             >
-              {appointmentsData?.patient?.user?.phoneNumber}
+              {appointmentsData?.phoneNumber}
             </Typography>
           </Grid>
           <Grid
@@ -277,7 +300,7 @@ const ViewAppointmentDetail: React.FC = () => {
             sx={{ display: 'flex', alignItems: 'center' }}
           >
             <Typography variant="subtitle1" sx={{ mr: '20px' }}>
-              Date:
+              Appointment Date:
             </Typography>
           </Grid>
 
@@ -295,7 +318,7 @@ const ViewAppointmentDetail: React.FC = () => {
                 whiteSpace: 'break-spaces',
               }}
             >
-            {formatDate(appointmentsData?.appointmentDate)}
+              {formatDate(appointmentsData?.appointmentDate)}
             </Typography>
           </Grid>
         </Grid>
@@ -331,7 +354,445 @@ const ViewAppointmentDetail: React.FC = () => {
                 whiteSpace: 'break-spaces',
               }}
             >
-              {appointmentsData?.status?.name}
+               {appointmentsData?.status?.name
+    ? appointmentsData.status.name.charAt(0).toUpperCase() + appointmentsData.status.name.slice(1).toLowerCase()
+    : ''}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            Gender:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {appointmentsData?.gender
+    ? appointmentsData.gender.charAt(0).toUpperCase() + appointmentsData.gender.slice(1).toLowerCase()
+    : ''}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            Age:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {appointmentsData?.age}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            Blood Group:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {appointmentsData?.bloodGroup}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            Date of birth:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {formatDate(appointmentsData?.dob)}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            DigitalHealthCode:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {appointmentsData?.digitalHealthCode}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            Address Line:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {appointmentsData?.addressLine1} {appointmentsData?.addressLine2}, {appointmentsData?.city}, {appointmentsData?.postalCode}
+            </Typography>
+          </Grid>
+        </Grid>
+        {/* <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            City:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {appointmentsData?.city}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            State Code:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {appointmentsData?.stateCode}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            Country Code:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {appointmentsData?.countryCode}
+            </Typography>
+          </Grid>
+        </Grid> */}
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            Postal Code:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {appointmentsData?.postalCode}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            Chronic Diseases:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {appointmentsData?.chronicDiseases?.map(disease => disease.charAt(0).toUpperCase() + disease.slice(1).toLowerCase())
+    .join(', ')}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          sx={{ mb: '10px' }}
+          container
+          rowSpacing={2}
+          spacing={1}
+          columns={2}
+        >
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography variant="subtitle1" sx={{ mr: '20px' }}>
+            Acute Diseases:
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={1}
+            md={1}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textWrap: 'wrap',
+                lineBreak: 'anywhere',
+                whiteSpace: 'break-spaces',
+              }}
+            >
+              {appointmentsData?.acuteDiseases?.map(disease => disease.charAt(0).toUpperCase() + disease.slice(1).toLowerCase())
+    .join(', ')}
             </Typography>
           </Grid>
         </Grid>
@@ -349,7 +810,6 @@ const ViewAppointmentDetail: React.FC = () => {
                 borderRadius: '20px',
                 boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                 cursor: 'pointer', // Optional: changes cursor to pointer on hover
-              
               }}
             >
               <Avatar sx={{ background: '#F4F7FE', width: 56, height: 56 }}>
