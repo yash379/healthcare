@@ -16,6 +16,7 @@ export interface User {
 }
 export interface HospitalRoleDto  {
   hospitalId: number;
+  hospitalName?:string;
   hospitalRole: HospitalRoleName;
 }
 

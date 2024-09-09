@@ -88,7 +88,7 @@ export function PatientNav(props: PatientNavProps) {
 
        (<List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
 
-         <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients/${params.patientId}/dashboard`} onClick={() => handleComponentChange('dashboard')}>
+         <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/patients/${patientcontext?.patient?.id}/dashboard`} onClick={() => handleComponentChange('dashboard')}>
            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
              }`}>
              <ListItemIcon>
@@ -99,7 +99,7 @@ export function PatientNav(props: PatientNavProps) {
              <ListItemText className={styles["drawertab"]} primary="Dashboard" />
            </ListItemButton>
          </Link>
-         <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients/${params.patientId}/appointments`} onClick={() => handleComponentChange('appointments')}>
+         <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/patients/${patientcontext?.patient?.id}/appointments`} onClick={() => handleComponentChange('appointments')}>
            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'appointments' && styles['active-tab']
              }`}>
              <ListItemIcon>

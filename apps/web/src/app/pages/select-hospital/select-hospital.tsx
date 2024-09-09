@@ -13,15 +13,50 @@ import { Box } from '@mui/material';
 import { HospitalContext } from '../../contexts/hospital-context';
 import axios from 'axios';
 import { environment } from '../../../environments/environment';
+import { Gender } from '@prisma/client';
 
 /* eslint-disable-next-line */
 export interface SelectHospitalProps {}
 
+interface PatientResponse {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  digitalHealthCode: string;
+  gender: Gender;
+  age: number;
+  bloodGroup: string;
+  dob: string; // ISO 8601 date string
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  postalCode: string;
+  countryCode: string;
+  stateCode: string;
+  chronicDiseases: [];
+  acuteDiseases: [];
+  doctors: Doctor[];
+  isActive: boolean;
+}
+
+interface Doctor {
+  doctorId: number;
+  doctorGender: Gender;
+  doctorDoctorCode: string;
+  doctorSpeciality: string;
+  doctorFirstName: string;
+  doctorLastName: string;
+  doctorEmail: string;
+  doctorPhoneNumber: string;
+}
 export function SelectHospital(props: SelectHospitalProps) {
   const [selected, setSelected] = useState<number | null>(null);
   const [checked, setChecked] = useState([0]);
   const usercontext=useContext(UserContext);
   const [patientdoctorId, setPatientDoctorId]=useState(0);
+  const [patient, setPatient]=useState<PatientResponse | null>(null);
   const navigate=useNavigate();
   const apiUrl = environment.apiUrl;
 
@@ -71,6 +106,12 @@ export function SelectHospital(props: SelectHospitalProps) {
   };
 
   // useEffect(()=>{
+  //   console.log("patient doctor id:",patient?.doctors?.flatMap((item)=>{return item.doctorId}))
+  //   console.log("patient doctor id:",patient?.doctors[0]?.doctorId);
+  //   setPatientDoctorId(Number(patient?.doctors[0]?.doctorId));
+  // },[patient]);
+
+  // useEffect(()=>{
   //   const getPatient=
   // },[usercontext?.user?.patientId])
 
@@ -103,13 +144,14 @@ export function SelectHospital(props: SelectHospitalProps) {
          }
       );
       const doctorid=response.data.map((item: { doctors: { doctorId: any; }[]; })=>{item.doctors.map((seconditem: { doctorId: any; })=> {setPatientDoctorId(seconditem.doctorId)})});
-      setPatientDoctorId(doctorid);
-      console.log("patient detail:", response.data, "doctorid:",doctorid,patientdoctorId);
-      response.data.map((item: any)=>{console.log(item)})
+      // console.log("patient detail:", response.data, "doctorid:",doctorid,patientdoctorId);
+      // response.data.map((item: any)=>{console.log(item)})
+      setPatient(response.data)
       
     }
     getPatient();
     
+    console.log("patient doctor id:",patient?.doctors?.flatMap((item)=>{console.log(item.doctorId)}))
 
     if(value==='ADMIN'){
       navigate(`/`);
@@ -118,23 +160,22 @@ export function SelectHospital(props: SelectHospitalProps) {
       navigate(`/hospitals/${Id}/doctors/${usercontext?.user?.doctorId}`);
     }
     if(value==='PATIENT'){
-      navigate(`/hospital/${Id}/doctors/${patientdoctorId}/patients/${usercontext?.user?.patientId}`)
+      navigate(`/hospitals/${Id}/patients/${usercontext?.user?.patientId}`)
     }
   };
 
   console.log("user context:",usercontext);
   console.log("user context scoietty:",usercontext?.user?.hospitalRoles);
+  console.log("patiendoctotId:", patientdoctorId);
   // console.log("user context scoietty length:",usercontext?.user?.hospitalRoles length);
 
   const hospitalContext=useContext(HospitalContext);
 
-  useEffect(()=>{
-    const id=usercontext?.user?.hospitalRoles?.map((item)=>{
-      return item.hospitalId;
-    })
-    
-      
-   },[usercontext?.user]);
+  // useEffect(()=>{
+  //   const id=usercontext?.user?.hospitalRoles?.map((item)=>{
+  //     return item.hospitalId;
+  //   })
+  //  },[usercontext?.user]);
 
 
   return (
@@ -161,7 +202,7 @@ export function SelectHospital(props: SelectHospitalProps) {
                             inputProps={{ 'aria-labelledby': labelId }}
                           />
                           </ListItemIcon>
-                          <ListItemText id={labelId} primary={` ${value.hospitalId} ${value.hospitalRole}`} />
+                          <ListItemText id={labelId} primary={` ${value.hospitalId} ${value.hospitalName} ${value.hospitalRole}`} />
                         </ListItemButton>
                       </ListItem>
                     );
