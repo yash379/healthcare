@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import {
   Avatar,
   Box,
@@ -15,17 +17,44 @@ import {
   TableHead,
   TableRow,
   IconButton,
+  Button,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Autocomplete from '@mui/material/Autocomplete';
 import styles from './diagnosis-page.module.scss';
+import { useForm } from 'react-hook-form';
+import { environment } from '../../../environments/environment';
+import axios from 'axios';
+import { enqueueSnackbar } from 'notistack';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DiagnosisPageProps {}
 
+interface Diagnosis {
+  id: number;
+  doctorId: number;
+  patientId: number;
+  details: string;
+  height: number;
+  weight: number;
+  pulse: number;
+  spo2: number;
+  temperature: number;
+  chiefComplaints: string[];
+  medicineName: string;
+  instructions: string;
+  dose: string;
+  when: string;
+  frequency: string;
+  duration: string;
+  diagnosisDate: string;
+  bmi: string;
+}
+
 export function DiagnosisPage(props: DiagnosisPageProps) {
   const [diagnosis, setDiagnosis] = useState<string[]>([]);
+  const apiUrl = environment.apiUrl;
   const [newPrescription, setNewPrescription] = useState({
     medicineName: '',
     dose: '',
@@ -33,29 +62,78 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     frequency: '',
     duration: '',
   });
+
+  const validationSchema = yup.object().shape({
+    details: yup.string().required('Details are required'),
+    height: yup.number().required('Height is required'),
+    weight: yup.number().required('Weight is required'),
+    pulse: yup.number().required('Pulse is required'),
+    spo2: yup.number().required('SpO2 is required'),
+    temperature: yup.number().required('Temperature is required'),
+    chiefComplaints: yup
+      .array()
+      .of(yup.string().required('Each complaint must be valid'))
+      .min(1, 'At least one chief complaint is required'),
+    medicineName: yup.string().required('Medicine name is required'),
+    instructions: yup.string().required('Instructions are required'),
+    dose: yup.string().required('Dose is required'),
+    when: yup.string().required('When to take is required'),
+    frequency: yup.string().required('Frequency is required'),
+    duration: yup.string().required('Duration is required'),
+  });
+
+  const {
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+  const handleAddDiagnosis = async (formData: any) => {
+    console.log('form data ', formData)
+    try {
+      const { data: responseData } = await axios.post(
+        `${apiUrl}/diagnosis`,
+        {
+          id: formData.id,
+          details: formData.details,
+          doctorId: formData.doctorId,
+          patientId: formData.patientId,
+          height: formData.height,
+          weight: formData.weight,
+          pulse: formData.pulse,
+          spo2: formData.spo2,
+          bmi: formData.bmi,
+          temperature: formData.temperature,
+          chiefComplaints: formData.chiefComplaints,
+          diagnosisDate: formData.diagnosisDate,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (responseData) {
+        reset();
+        enqueueSnackbar('Diagnosis added successfully!', { variant: 'success' });
+      } else {
+        console.log('Something went wrong');
+      }
+    } catch (error) {
+      console.log('Something went wrong in the input form', error);
+      enqueueSnackbar('Something went wrong', { variant: 'error' });
+    }
+  };
+
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
 
-  // Dummy data for Diagnosis and Chief Complaints
-  const diagnosisOptions = [
-    'Flu',
-    'Common Cold',
-    'Gastritis',
-    'Migraine',
-    'Diabetes',
-  ];
-  const chiefComplaintOptions = [
-    'Headache',
-    'Fever',
-    'Cough',
-    'Abdominal Pain',
-  ];
+  // Dummy data for diagnosis and chief complaints
+  const diagnosisOptions = ['Flu', 'Common Cold', 'Gastritis', 'Migraine', 'Diabetes'];
+  const chiefComplaintOptions = ['Headache', 'Fever', 'Cough', 'Abdominal Pain'];
 
   const [selectedDiagnosis, setSelectedDiagnosis] = useState<string[]>([]);
   const [selectedComplaints, setSelectedComplaints] = useState<string[]>([]);
-
-  const handleDiagnosisChange = (event: any, value: string[]) => {
-    setDiagnosis(value);
-  };
 
   const handleAddPrescription = () => {
     setPrescriptions([...prescriptions, newPrescription]);
@@ -82,206 +160,107 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
           boxShadow: 3,
         }}
       >
-        {/* Patient Information */}
-        <Box sx={{ display: 'flex', marginBottom: '20px' }}>
-          <Avatar sx={{ bgcolor: '#4FD1C5' }}>OP</Avatar>
-          <Box sx={{ marginLeft: '10px' }}>
-            <Typography
-              sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
-            >
-              Mr. Omkar Patil
-            </Typography>
-            <Box sx={{ display: 'flex' }}>
-              <Typography>32y |</Typography>
-              <Typography
-                sx={{
-                  marginLeft: '3px',
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontWeight: 'light',
-                }}
-              >
-                Male |
-              </Typography>
-              <Typography
-                sx={{
-                  marginLeft: '3px',
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontWeight: 'light',
-                }}
-              >
-                899991111
-              </Typography>
+        <form onSubmit={handleSubmit(handleAddDiagnosis)}>
+          <Box sx={{ display: 'flex', marginBottom: '20px' }}>
+            <Avatar sx={{ bgcolor: '#4FD1C5' }}>OP</Avatar>
+            <Box sx={{ marginLeft: '10px' }}>
+              <Typography sx={{ fontWeight: 'bold' }}>Mr. Omkar Patil</Typography>
+              <Box sx={{ display: 'flex' }}>
+                <Typography>32y |</Typography>
+                <Typography sx={{ marginLeft: '3px' }}>Male |</Typography>
+                <Typography sx={{ marginLeft: '3px' }}>899991111</Typography>
+              </Box>
             </Box>
           </Box>
-        </Box>
 
-        <Divider
-          sx={{ color: '#EBFAF9', height: '2px', marginBottom: '20px' }}
-        />
+          <Divider sx={{ marginBottom: '20px' }} />
 
-        {/* Vitals Section */}
-        <Box sx={{ marginBottom: '20px' }}>
-          <Typography
-            sx={{
-              fontFamily: 'DM Sans, sans-serif',
-              fontWeight: 'bold',
-              fontSize: '25px',
-              color: '#2B3674',
-            }}
-          >
-            Vitals
+          {/* Vitals Section */}
+          <Box sx={{ marginBottom: '20px' }}>
+            <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
+              Vitals
+            </Typography>
+            <Grid container spacing={2} sx={{ marginTop: '10px' }}>
+              <Grid item xs={6}>
+                <TextField label="Height (cm)" variant="outlined" fullWidth />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField label="Weight (kg)" variant="outlined" fullWidth />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField label="Pulse (bpm)" variant="outlined" fullWidth />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField label="SpO2 (%)" variant="outlined" fullWidth />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField label="BMI" variant="outlined" fullWidth />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField label="Temperature (°C)" variant="outlined" fullWidth />
+              </Grid>
+            </Grid>
+          </Box>
+
+          <Divider sx={{ marginBottom: '20px' }} />
+
+          {/* Chief Complaints Section */}
+          <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
+            Chief Complaints
           </Typography>
-          <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-            <Grid item xs={6}>
-              <TextField label="Height (cm)" variant="outlined" fullWidth />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField label="Weight (kg)" variant="outlined" fullWidth />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField label="Pulse (bpm)" variant="outlined" fullWidth />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField label="SpO2 (%)" variant="outlined" fullWidth />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField label="BMI" variant="outlined" fullWidth />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Temperature (°C)"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-          </Grid>
-        </Box>
+          <Autocomplete
+            multiple
+            options={chiefComplaintOptions}
+            value={selectedComplaints}
+            onChange={(event, newValue) => setSelectedComplaints(newValue)}
+            renderTags={(value: string[], getTagProps) =>
+              value.map((option, index) => (
+                <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+              ))
+            }
+            renderInput={(params) => (
+              <TextField {...params} variant="outlined" label="Select Chief Complaints" />
+            )}
+            sx={{ marginTop: '10px' }}
+          />
 
-        <Divider
-          sx={{ color: '#EBFAF9', height: '2px', marginBottom: '20px' }}
-        />
+          <Divider sx={{ marginBottom: '20px', marginTop: '20px' }} />
 
-        {/* Chief Complaints Section */}
-        <Box
-          sx={{
-            marginTop: '2px',
-            marginBottom: '20px',
-            fontFamily: 'DM Sans, sans-serif',
-            fontWeight: 'Bold',
-            fontSize: '25px',
-            color: '#2B3674',
-          }}
-        >
-          Chief Complaints
-        </Box>
-        <Autocomplete
-          multiple
-          options={chiefComplaintOptions}
-          value={selectedComplaints}
-          onChange={(event, newValue) => setSelectedComplaints(newValue)}
-          renderTags={(value: string[], getTagProps) =>
-            value.map((option, index) => (
-              <Chip
-                variant="outlined"
-                label={option}
-                {...getTagProps({ index })}
-              />
-            ))
-          }
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="outlined"
-              label="Select Chief Complaints"
-              placeholder="Complaints"
-            />
-          )}
-          sx={{ marginTop: '10px' }}
-        />
+          {/* Diagnosis Section */}
+          <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
+            Diagnosis
+          </Typography>
+          <Autocomplete
+            multiple
+            options={diagnosisOptions}
+            value={selectedDiagnosis}
+            onChange={(event, newValue) => setSelectedDiagnosis(newValue)}
+            renderTags={(value: string[], getTagProps) =>
+              value.map((option, index) => (
+                <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+              ))
+            }
+            renderInput={(params) => (
+              <TextField {...params} variant="outlined" label="Select Diagnosis" />
+            )}
+            sx={{ marginTop: '10px' }}
+          />
 
-        <Divider
-          sx={{
-            color: '#EBFAF9',
-            height: '2px',
-            marginBottom: '20px',
-            marginTop: '20px',
-          }}
-        />
+          <Divider sx={{ marginBottom: '20px', marginTop: '20px' }} />
 
-        {/* Diagnosis Section */}
-        <Box
-          sx={{
-            marginTop: '20px',
-            marginBottom: '20px',
-            fontFamily: 'DM Sans, sans-serif',
-            fontWeight: 'Bold',
-            fontSize: '25px',
-            color: '#2B3674',
-          }}
-        >
-          Diagnosis
-        </Box>
-        <Autocomplete
-          multiple
-          options={diagnosisOptions}
-          value={selectedDiagnosis}
-          onChange={(event, newValue) => setSelectedDiagnosis(newValue)}
-          renderTags={(value: string[], getTagProps) =>
-            value.map((option, index) => (
-              <Chip
-                variant="outlined"
-                label={option}
-                {...getTagProps({ index })}
-              />
-            ))
-          }
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="outlined"
-              label="Select Diagnosis"
-              placeholder="Diagnosis"
-            />
-          )}
-          sx={{ marginTop: '10px' }}
-        />
-
-        <Divider
-          sx={{
-            color: '#EBFAF9',
-            height: '2px',
-            marginBottom: '20px',
-            marginTop: '20px',
-          }}
-        />
-
-        {/* Prescription Section */}
-        <Box sx={{ marginBottom: '20px' }}>
-          <Typography
-            sx={{
-              fontFamily: 'DM Sans, sans-serif',
-              fontWeight: 'bold',
-              fontSize: '25px',
-              color: '#2B3674',
-            }}
-          >
+          {/* Prescription Section */}
+          <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
             Prescription
           </Typography>
-          <Grid
-            container
-            spacing={2}
-            sx={{ marginBottom: '10px', marginTop: '5px' }}
-          >
+          <Grid container spacing={2} sx={{ marginBottom: '10px', marginTop: '5px' }}>
             <Grid item xs={6}>
               <TextField
                 label="Medicine Name"
                 value={newPrescription.medicineName}
                 onChange={(e) =>
-                  setNewPrescription({
-                    ...newPrescription,
-                    medicineName: e.target.value,
-                  })
+                  setNewPrescription({ ...newPrescription, medicineName: e.target.value })
                 }
+                variant="outlined"
                 fullWidth
               />
             </Grid>
@@ -289,12 +268,8 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
               <TextField
                 label="Dose"
                 value={newPrescription.dose}
-                onChange={(e) =>
-                  setNewPrescription({
-                    ...newPrescription,
-                    dose: e.target.value,
-                  })
-                }
+                onChange={(e) => setNewPrescription({ ...newPrescription, dose: e.target.value })}
+                variant="outlined"
                 fullWidth
               />
             </Grid>
@@ -303,11 +278,9 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
                 label="Instructions"
                 value={newPrescription.instructions}
                 onChange={(e) =>
-                  setNewPrescription({
-                    ...newPrescription,
-                    instructions: e.target.value,
-                  })
+                  setNewPrescription({ ...newPrescription, instructions: e.target.value })
                 }
+                variant="outlined"
                 fullWidth
               />
             </Grid>
@@ -316,11 +289,9 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
                 label="Frequency"
                 value={newPrescription.frequency}
                 onChange={(e) =>
-                  setNewPrescription({
-                    ...newPrescription,
-                    frequency: e.target.value,
-                  })
+                  setNewPrescription({ ...newPrescription, frequency: e.target.value })
                 }
+                variant="outlined"
                 fullWidth
               />
             </Grid>
@@ -329,22 +300,23 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
                 label="Duration"
                 value={newPrescription.duration}
                 onChange={(e) =>
-                  setNewPrescription({
-                    ...newPrescription,
-                    duration: e.target.value,
-                  })
+                  setNewPrescription({ ...newPrescription, duration: e.target.value })
                 }
+                variant="outlined"
                 fullWidth
               />
             </Grid>
-            <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton onClick={handleAddPrescription} color="primary">
-                <AddIcon />
-              </IconButton>
-            </Grid>
           </Grid>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleAddPrescription}
+            sx={{ marginBottom: '20px' }}
+          >
+            Add Prescription
+          </Button>
 
-          {/* Prescription Table */}
+          {/* Prescriptions Table */}
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -366,10 +338,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
                     <TableCell>{prescription.frequency}</TableCell>
                     <TableCell>{prescription.duration}</TableCell>
                     <TableCell>
-                      <IconButton
-                        onClick={() => handleDeletePrescription(index)}
-                        color="secondary"
-                      >
+                      <IconButton onClick={() => handleDeletePrescription(index)}>
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>
@@ -378,10 +347,22 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
               </TableBody>
             </Table>
           </TableContainer>
-        </Box>
+
+          <Divider sx={{ marginTop: '20px' }} />
+
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ marginTop: '20px' }}
+          >
+            Submit Diagnosis
+          </Button>
+        </form>
       </Paper>
     </Box>
   );
 }
 
-export default DiagnosisPage;
+export default DiagnosisPage;
