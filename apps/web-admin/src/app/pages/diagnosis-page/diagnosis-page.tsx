@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {
@@ -26,7 +26,9 @@ import { Controller, useForm } from 'react-hook-form';
 import { environment } from '../../../environments/environment';
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
-import styles from './diagnosis-page.module.scss';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useParams } from 'react-router-dom';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DiagnosisPageProps {}
@@ -54,6 +56,14 @@ interface Diagnosis {
 
 export function DiagnosisPage(props: DiagnosisPageProps) {
   const [diagnosis, setDiagnosis] = useState<string[]>([]);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [loading, setLoading] = useState(true);
+  const [totalItems, setTotalItems] = useState(0);
+  const [prescriptionData, setPrescriptionData] = useState<any[]>(
+    []
+  );
+  const params = useParams();
   const apiUrl = environment.apiUrl;
   const [newPrescription, setNewPrescription] = useState({
     medicineName: '',
@@ -69,25 +79,23 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     weight: yup.number().required('Weight is required'),
     pulse: yup.number().required('Pulse is required'),
     spo2: yup.number().required('SpO2 is required'),
+    // bmi: yup.string().required('BMI is required'),
     temperature: yup.number().required('Temperature is required'),
     // chiefComplaints: yup
     //   .array()
     //   .of(yup.string().required('Each complaint must be valid'))
     //   .min(1, 'At least one chief complaint is required'),
     chiefComplaints: yup
-    .array()
-    .of(yup.string().required('Each complaint must be valid'))
-    .min(1, 'At least one chief complaint is required'),
-  diagnosis: yup
-    .array()
-    .of(yup.string().required('Each diagnosis must be valid'))
-    .min(1, 'At least one diagnosis is required'),
-    // medicineName: yup.string().required('Medicine name is required'),
-    // instructions: yup.string().required('Instructions are required'),
-    // dose: yup.string().required('Dose is required'),
-    // when: yup.string().required('When to take is required'),
-    // frequency: yup.string().required('Frequency is required'),
-    // duration: yup.string().required('Duration is required'),
+      .array()
+      .of(yup.string().required('Each complaint must be valid'))
+      .min(1, 'At least one chief complaint is required'),
+      diagnosisDate:  yup.date().required('Date is required'),
+    medicineName: yup.string().required('Medicine name is required'),
+    instructions: yup.string().required('Instructions are required'),
+    dose: yup.string().required('Dose is required'),
+    when: yup.string().required('When to take is required'),
+    frequency: yup.string().required('Frequency is required'),
+    duration: yup.string().required('Duration is required'),
   });
 
   const {
@@ -103,33 +111,69 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     console.log('form data ', formData);
     
     try {
-      const { data: responseData } = await axios.post(
+      // const { data: responseData } = await axios.post(
+      //   `${apiUrl}/diagnoses`,
+      //   {
+      //     details: formData.details,
+      //     doctorId: Number(params.doctorId),
+      //     patientId: Number(params.patientId),
+      //     height: formData.height,
+      //     weight: formData.weight,
+      //     pulse: formData.pulse,
+      //     spo2: formData.spo2,
+      //     temperature: formData.temperature,
+      //     chiefComplaints: formData.chiefComplaints,
+      //     diagnosisDate: formData.diagnosisDate,
+      //   },
+      //   {
+      //     withCredentials: true,
+      //   }
+      // );
+      // Call both APIs simultaneously using Promise.all
+    const [diagnosisResponse, prescriptionResponse] = await Promise.all([
+      axios.post(
         `${apiUrl}/diagnoses`,
         {
-          id: formData.id,
           details: formData.details,
-          doctorId: formData.doctorId,
-          patientId: formData.patientId,
+          doctorId: Number(params.doctorId),
+          patientId: Number(params.patientId),
           height: formData.height,
           weight: formData.weight,
           pulse: formData.pulse,
           spo2: formData.spo2,
-          bmi: formData.bmi,
           temperature: formData.temperature,
           chiefComplaints: formData.chiefComplaints,
-          diagnosis: formData.diagnosis,
+          diagnosisDate: formData.diagnosisDate,
         },
         {
           withCredentials: true,
         }
-      );
+      ),
+      axios.post(
+        `${apiUrl}/prescriptions`,
+        {
+          medicineName: formData.medicineName,
+          instructions: formData.instructions,
+          dose: formData.dose,
+          frequency: formData.frequency,
+          duration: formData.duration,
+          doctorId: Number(params.doctorId),
+          patientId: Number(params.patientId),
+          when:formData.when,
+          prescriptionDate: formData.diagnosisDate
+        },
+        {
+          withCredentials: true,
+        }
+      ),
+    ]);
 
-      if (responseData) {
-        reset();
-        enqueueSnackbar('Diagnosis added successfully!', { variant: 'success' });
-      } else {
-        console.log('Something went wrong');
-      }
+    if (diagnosisResponse.data && prescriptionResponse.data) {
+      reset();
+      enqueueSnackbar('Diagnosis and Prescription added successfully!', { variant: 'success' });
+    } else {
+      console.log('Something went wrong');
+    }
     } catch (error) {
       console.log('Something went wrong in the input form', error);
       enqueueSnackbar('Something went wrong', { variant: 'error' });
@@ -139,7 +183,6 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
 
   // Dummy data for diagnosis and chief complaints
-  const diagnosisOptions = ['Flu', 'Common Cold', 'Gastritis', 'Migraine', 'Diabetes'];
   const chiefComplaintOptions = ['Headache', 'Fever', 'Cough', 'Abdominal Pain'];
 
   const [selectedDiagnosis, setSelectedDiagnosis] = useState<string[]>([]);
@@ -160,6 +203,37 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     const newPrescriptions = prescriptions.filter((_, i) => i !== index);
     setPrescriptions(newPrescriptions);
   };
+
+  const getAllAppointments = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `${apiUrl}/prescriptions`,
+        {
+          withCredentials: true,
+          params: {
+            pageSize: rowsPerPage,
+            pageOffset: page -1,
+            // appointmentDate: searchQueryName,
+          },
+        }
+      );
+      // console.log(response.data[0].user)
+      const { content, total } = response.data;
+      setPrescriptionData(response.data);
+      setTotalItems(total);
+      console.log('Admin Data', response.data.content);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching hospital data:', error);
+      setLoading(false);
+    }
+  }, [apiUrl, page, params.hospitalId, rowsPerPage]);
+
+  useEffect(() => {
+    getAllAppointments();
+  }, [apiUrl, page, params.hospitalId, rowsPerPage, getAllAppointments]);
+
 
   return (
     <Box className={styles['container']}>
@@ -192,129 +266,128 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
               Vitals
             </Typography>
             <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-              <Grid item xs={6}>
-                <Controller
-                  name="height"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Height (cm)"
-                      variant="outlined"
-                      fullWidth
-                      error={!!errors.height}
-                      helperText={errors.height?.message}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Controller
-                  name="weight"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Weight (kg)"
-                      variant="outlined"
-                      fullWidth
-                      error={!!errors.weight}
-                      helperText={errors.weight?.message}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Controller
-                  name="pulse"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Pulse (bpm)"
-                      variant="outlined"
-                      fullWidth
-                      error={!!errors.pulse}
-                      helperText={errors.pulse?.message}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Controller
-                  name="spo2"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="SpO2 (%)"
-                      variant="outlined"
-                      fullWidth
-                      error={!!errors.spo2}
-                      helperText={errors.spo2?.message}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Controller
-                  name="details"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Details"
-                      variant="outlined"
-                      fullWidth
-                      error={!!errors.details}
-                      helperText={errors.details?.message}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Controller
-                  name="temperature"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Temperature (°C)"
-                      variant="outlined"
-                      fullWidth
-                      error={!!errors.temperature}
-                      helperText={errors.temperature?.message}
-                    />
-                  )}
-                />
-              </Grid>
-            </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="height"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Height (cm)"
+                variant="outlined"
+                fullWidth
+                error={!!errors.height}
+                helperText={errors.height?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="weight"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Weight (kg)"
+                variant="outlined"
+                fullWidth
+                error={!!errors.weight}
+                helperText={errors.weight?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="pulse"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Pulse (bpm)"
+                variant="outlined"
+                fullWidth
+                error={!!errors.pulse}
+                helperText={errors.pulse?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="spo2"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="SpO2 (%)"
+                variant="outlined"
+                fullWidth
+                error={!!errors.spo2}
+                helperText={errors.spo2?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="details"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="BMI"
+                variant="outlined"
+                fullWidth
+                error={!!errors.details}
+                helperText={errors.details?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Controller
+            name="temperature"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Temperature (°C)"
+                variant="outlined"
+                fullWidth
+                error={!!errors.temperature}
+                helperText={errors.temperature?.message}
+              />
+            )}
+          />
+        </Grid>
+      </Grid>
           </Box>
 
           <Divider sx={{ marginBottom: '20px' }} />
 
-          {/* Chief Complaints Section */}
           <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
             Chief Complaints
           </Typography>
           <Controller
             name="chiefComplaints"
             control={control}
-            defaultValue={[]}
-            render={({ field: { onChange, onBlur, value } }) => (
+            render={({ field }) => (
               <Autocomplete
                 multiple
                 options={chiefComplaintOptions}
-                value={value}
-                onChange={(event, newValue) => onChange(newValue)}
+                value={field.value}
+                onChange={(event, newValue) => field.onChange(newValue)}
                 renderTags={(value: string[], getTagProps) =>
                   value.map((option, index) => (
                     <Chip variant="outlined" label={option} {...getTagProps({ index })} />
                   ))
                 }
                 renderInput={(params) => (
-                  <TextField {...params} label="Chief Complaints" variant="outlined" />
+                  <TextField {...params} variant="outlined" label="Select Chief Complaints" />
                 )}
+                sx={{ marginTop: '10px' }}
               />
             )}
           />
@@ -324,38 +397,57 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
 
           <Divider sx={{ marginBottom: '20px', marginTop: '20px' }} />
 
-          {/* Diagnosis Section */}
-          <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
+          {/* <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
             Diagnosis
           </Typography>
           <Controller
             name="diagnosis"
             control={control}
-            defaultValue={[]}
-            render={({ field: { onChange, onBlur, value } }) => (
+            render={({ field }) => (
               <Autocomplete
                 multiple
                 options={diagnosisOptions}
-                value={value}
-                onChange={(event, newValue) => onChange(newValue)}
+                value={field.value}
+                onChange={(event, newValue) => field.onChange(newValue)}
                 renderTags={(value: string[], getTagProps) =>
                   value.map((option, index) => (
                     <Chip variant="outlined" label={option} {...getTagProps({ index })} />
                   ))
                 }
                 renderInput={(params) => (
-                  <TextField {...params} label="Diagnosis" variant="outlined" />
+                  <TextField {...params} variant="outlined" label="Select Diagnosis" />
                 )}
+                sx={{ marginTop: '10px' }}
               />
             )}
-          />
-          {errors.diagnosis && (
-            <Typography color="error">{errors.diagnosis.message}</Typography>
-          )}
-          <Divider sx={{ marginBottom: '20px', marginTop: '20px' }} />
+          /> */}
+
+<Controller
+                name="diagnosisDate"
+                control={control}
+                render={({ field }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Date of Diagnosis"
+                      value={field.value}
+                      onChange={field.onChange}
+                      slotProps={{
+                        textField: {
+                          error: !!errors.diagnosisDate,
+                          helperText: errors.diagnosisDate?.message,
+                          fullWidth: true,
+                        },
+                      }}
+                      sx={{ width: '100%' }}
+                    />
+                  </LocalizationProvider>
+                )}
+              />
+
+          <Divider sx={{ marginTop: '20px' }} />
 
              {/* Prescription Section */}
-          <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
+             <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
             Prescription
           </Typography>
           <Grid container spacing={2} sx={{ marginBottom: '10px', marginTop: '5px' }}>
@@ -435,16 +527,16 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {prescriptions.map((prescription, index) => (
-                  <TableRow key={index}>
+                {prescriptions?.map((prescription) => (
+                  <TableRow key={prescription.id}>
                     <TableCell>{prescription.medicineName}</TableCell>
                     <TableCell>{prescription.dose}</TableCell>
                     <TableCell>{prescription.instructions}</TableCell>
                     <TableCell>{prescription.frequency}</TableCell>
                     <TableCell>{prescription.duration}</TableCell>
                     <TableCell>
-                      <IconButton onClick={() => handleDeletePrescription(index)}>
-                        <DeleteIcon />
+                      <IconButton onClick={() => handleDeletePrescription(prescription.id)}>
+                        <DeleteIcon color='error' />
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -453,7 +545,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
             </Table>
           </TableContainer>
 
-          <Divider sx={{ marginTop: '20px' }} />
+          <Divider sx={{ marginTop: '20px' }} /> 
 
 <Button
             type="submit"
@@ -470,4 +562,4 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
   );
 }
 
-export default DiagnosisPage;
+export default DiagnosisPage;

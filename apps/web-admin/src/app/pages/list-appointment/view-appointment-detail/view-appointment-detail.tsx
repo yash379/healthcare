@@ -1,5 +1,5 @@
 // view-appointment-detail.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Paper,
@@ -15,6 +15,7 @@ import { Gender } from '@prisma/client';
 import { StatusEnum } from '../list-appointment';
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined';
+import { HospitalContext } from '../../../contexts/user-contexts';
 
 interface ViewAppointment {
   id: number;
@@ -35,7 +36,7 @@ const dummyAppointments: ViewAppointment[] = [
     lastName: 'Patil',
     mobileNumber: '1234567890',
     email: 'omkar.patil@example.com',
-    gender: "MALE",
+    gender: 'MALE',
     status: StatusEnum.InProgress,
     age: 32,
     date: new Date(),
@@ -46,7 +47,7 @@ const dummyAppointments: ViewAppointment[] = [
     lastName: 'Smith',
     mobileNumber: '0987654321',
     email: 'jane.smith@example.com',
-    gender: "FEMALE",
+    gender: 'FEMALE',
     status: StatusEnum.InProgress,
     age: 25,
     date: new Date(),
@@ -55,26 +56,26 @@ const dummyAppointments: ViewAppointment[] = [
 ];
 
 const ViewAppointmentDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams();
   const [appointment, setAppointment] = useState<ViewAppointment | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const hospitalContext = useContext(HospitalContext);
+  // useEffect(() => {
+  //   const fetchAppointment = () => {
+  //     const appointmentData = dummyAppointments.find(
+  //       (app) => app.id === Number(id)
+  //     );
+  //     if (appointmentData) {
+  //       setAppointment(appointmentData);
+  //     } else {
+  //       console.error('Appointment not found');
+  //     }
+  //     setLoading(false);
+  //   };
 
-  useEffect(() => {
-    const fetchAppointment = () => {
-      const appointmentData = dummyAppointments.find(
-        (app) => app.id === Number(id)
-      );
-      if (appointmentData) {
-        setAppointment(appointmentData);
-      } else {
-        console.error('Appointment not found');
-      }
-      setLoading(false);
-    };
-
-    fetchAppointment();
-  }, [id]);
+  //   fetchAppointment();
+  // }, [id]);
 
   if (loading) return <div>Loading...</div>;
 
@@ -91,7 +92,7 @@ const ViewAppointmentDetail: React.FC = () => {
   };
 
   const handleStartDiagnosisClick = () => {
-    navigate('/diagnosis');
+    navigate(`/hospitals/${hospitalContext?.id}/doctors/${params.doctorId}/patients/${params.patientId}/appointments/${params.appointmentId}/diagnosis`);
   };
 
   return (
@@ -327,7 +328,6 @@ const ViewAppointmentDetail: React.FC = () => {
                 borderRadius: '20px',
                 boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                 cursor: 'pointer', // Optional: changes cursor to pointer on hover
-              
               }}
             >
               <Avatar sx={{ background: '#F4F7FE', width: 56, height: 56 }}>

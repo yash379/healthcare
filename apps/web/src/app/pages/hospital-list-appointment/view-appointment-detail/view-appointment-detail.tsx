@@ -1,5 +1,5 @@
 // view-appointment-detail.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Paper,
@@ -15,6 +15,8 @@ import { Gender } from '@prisma/client';
 import { StatusEnum } from '../hospital-list-appointment';
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined';
+import HospitalContext from '../../../contexts/hospital-context';
+import DoctorContext from '../../../contexts/doctor-context';
 
 interface ViewAppointment {
   id: number;
@@ -86,12 +88,15 @@ const ViewAppointmentDetail: React.FC = () => {
     return `${firstName[0]}${lastName[0]}`.toUpperCase();
   };
 
+  const hospitalcontext=useContext(HospitalContext);
+  const doctorcontext=useContext(DoctorContext);
+
   const handleClick = () => {
-    navigate('/medical-history');
+    navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/medical-history`);
   };
 
   const handleStartDiagnosisClick = () => {
-    navigate('/diagnosis');
+    navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/diagnosis`);
   };
 
   return (
