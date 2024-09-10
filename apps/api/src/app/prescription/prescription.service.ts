@@ -15,8 +15,8 @@ export class PrescriptionService {
     const doctorPatient = await this.prisma.doctorPatient.findUnique({
       where: {
         doctorId_patientId: {
-          doctorId: dto.doctorId,
           patientId: dto.patientId,
+          doctorId: dto.doctorId
         },
       },
     });

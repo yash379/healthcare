@@ -29,7 +29,8 @@ import { enqueueSnackbar } from 'notistack';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useParams } from 'react-router-dom';
-
+import styles from './diagnosis-page.module.scss';
+import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DiagnosisPageProps {}
 
@@ -54,6 +55,31 @@ interface Diagnosis {
   bmi: string;
 }
 
+export interface ViewAppointment {
+  id: number;
+  appointmentDate: string;
+  status: { id: number; code: string; name: string };
+  patientId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
+  gender: Gender;
+  age: number;
+  bloodGroup: string;
+  dob: string;
+  digitalHealthCode: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  stateCode?: string;
+  countryCode: string;
+  postalCode: string;
+  chronicDiseases?: ChronicDisease[];
+  acuteDiseases?: AcuteDisease[];
+  isActive: boolean;
+}
+
 export function DiagnosisPage(props: DiagnosisPageProps) {
   const [diagnosis, setDiagnosis] = useState<string[]>([]);
   const [page, setPage] = useState(1);
@@ -68,10 +94,13 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
   const [newPrescription, setNewPrescription] = useState({
     medicineName: '',
     dose: '',
+    when: '',
     instructions: '',
     frequency: '',
     duration: '',
   });
+  const [appointmentsData, setAppointmentsData] =
+  useState<ViewAppointment | null>(null);
 
   const validationSchema = yup.object().shape({
     details: yup.string().required('Details are required'),
@@ -90,12 +119,12 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
       .of(yup.string().required('Each complaint must be valid'))
       .min(1, 'At least one chief complaint is required'),
       diagnosisDate:  yup.date().required('Date is required'),
-    medicineName: yup.string().required('Medicine name is required'),
-    instructions: yup.string().required('Instructions are required'),
-    dose: yup.string().required('Dose is required'),
-    when: yup.string().required('When to take is required'),
-    frequency: yup.string().required('Frequency is required'),
-    duration: yup.string().required('Duration is required'),
+    // medicineName: yup.string().required('Medicine name is required'),
+    // instructions: yup.string().required('Instructions are required'),
+    // dose: yup.string().required('Dose is required'),
+    // when: yup.string().required('When to take is required'),
+    // frequency: yup.string().required('Frequency is required'),
+    // duration: yup.string().required('Duration is required'),
   });
 
   const {
@@ -107,80 +136,9 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     resolver: yupResolver(validationSchema),
   });
 
-  const handleAddDiagnosis = async (formData: any) => {
-    console.log('form data ', formData);
-    
-    try {
-      // const { data: responseData } = await axios.post(
-      //   `${apiUrl}/diagnoses`,
-      //   {
-      //     details: formData.details,
-      //     doctorId: Number(params.doctorId),
-      //     patientId: Number(params.patientId),
-      //     height: formData.height,
-      //     weight: formData.weight,
-      //     pulse: formData.pulse,
-      //     spo2: formData.spo2,
-      //     temperature: formData.temperature,
-      //     chiefComplaints: formData.chiefComplaints,
-      //     diagnosisDate: formData.diagnosisDate,
-      //   },
-      //   {
-      //     withCredentials: true,
-      //   }
-      // );
-      // Call both APIs simultaneously using Promise.all
-    const [diagnosisResponse, prescriptionResponse] = await Promise.all([
-      axios.post(
-        `${apiUrl}/diagnoses`,
-        {
-          details: formData.details,
-          doctorId: Number(params.doctorId),
-          patientId: Number(params.patientId),
-          height: formData.height,
-          weight: formData.weight,
-          pulse: formData.pulse,
-          spo2: formData.spo2,
-          temperature: formData.temperature,
-          chiefComplaints: formData.chiefComplaints,
-          diagnosisDate: formData.diagnosisDate,
-        },
-        {
-          withCredentials: true,
-        }
-      ),
-      axios.post(
-        `${apiUrl}/prescriptions`,
-        {
-          medicineName: formData.medicineName,
-          instructions: formData.instructions,
-          dose: formData.dose,
-          frequency: formData.frequency,
-          duration: formData.duration,
-          doctorId: Number(params.doctorId),
-          patientId: Number(params.patientId),
-          when:formData.when,
-          prescriptionDate: formData.diagnosisDate
-        },
-        {
-          withCredentials: true,
-        }
-      ),
-    ]);
-
-    if (diagnosisResponse.data && prescriptionResponse.data) {
-      reset();
-      enqueueSnackbar('Diagnosis and Prescription added successfully!', { variant: 'success' });
-    } else {
-      console.log('Something went wrong');
-    }
-    } catch (error) {
-      console.log('Something went wrong in the input form', error);
-      enqueueSnackbar('Something went wrong', { variant: 'error' });
-    }
-  };
 
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
+  console.log('prescriptiion', prescriptions)
 
   // Dummy data for diagnosis and chief complaints
   const chiefComplaintOptions = ['Headache', 'Fever', 'Cough', 'Abdominal Pain'];
@@ -193,6 +151,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     setNewPrescription({
       medicineName: '',
       dose: '',
+      when: '',
       instructions: '',
       frequency: '',
       duration: '',
@@ -204,36 +163,185 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     setPrescriptions(newPrescriptions);
   };
 
+  // const getAllAppointments = useCallback(async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get(
+  //       `${apiUrl}/prescriptions`,
+  //       {
+  //         withCredentials: true,
+  //         params: {
+  //           pageSize: rowsPerPage,
+  //           pageOffset: page -1,
+  //           // appointmentDate: searchQueryName,
+  //         },
+  //       }
+  //     );
+  //     // console.log(response.data[0].user)
+  //     const { content, total } = response.data;
+  //     setPrescriptionData(response.data);
+  //     setTotalItems(total);
+  //     console.log('Admin Data', response.data.content);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error('Error fetching hospital data:', error);
+  //     setLoading(false);
+  //   }
+  // }, [apiUrl, page, params.hospitalId, rowsPerPage]);
+
+  // useEffect(() => {
+  //   getAllAppointments();
+  // }, [apiUrl, page, params.hospitalId, rowsPerPage, getAllAppointments]);
+
+
+  // const handleAddDiagnosis = async (formData: any) => {
+  //   try {
+  //     const diagnosisPayload = {
+  //       details: formData.details,
+  //       doctorId: Number(params.doctorId),
+  //       patientId: Number(params.patientId),
+  //       height: formData.height,
+  //       weight: formData.weight,
+  //       pulse: formData.pulse,
+  //       spo2: formData.spo2,
+  //       temperature: formData.temperature,
+  //       chiefComplaints: formData.chiefComplaints,
+  //       diagnosisDate: formData.diagnosisDate,
+  //     };
+  
+  //     const prescriptionPayload = prescriptions.map((prescription) => ({
+  //         medicineName: prescription.medicineName,
+  //         instructions: prescription.instructions,
+  //         dose: prescription.dose,
+  //         when: prescription.when,
+  //         frequency: prescription.frequency,
+  //         duration: prescription.duration,
+  //         doctorId: Number(params.doctorId),
+  //         patientId: Number(params.patientId),
+  //         prescriptionDate: formData.diagnosisDate,
+  //       }));
+
+  
+  //     // Send both payloads in parallel
+  //     const [diagnosisResponse, prescriptionResponse] = await Promise.all([
+  //       axios.post(`${apiUrl}/diagnoses`, diagnosisPayload, {
+  //         withCredentials: true,
+  //       }),
+  //       axios.post(`${apiUrl}/prescriptions`, prescriptionPayload, {
+  //         withCredentials: true,
+  //       }),
+  //     ]);
+  
+  //     if (diagnosisResponse.data && prescriptionResponse.data) {
+  //       reset();
+  //       enqueueSnackbar('Diagnosis and Prescription added successfully!', {
+  //         variant: 'success',
+  //       });
+  //     } else {
+  //       console.log('Something went wrong');
+  //     }
+  //   } catch (error) {
+  //     console.error('Something went wrong in the input form', error);
+  //     enqueueSnackbar('Something went wrong', { variant: 'error' });
+  //   }
+  // };
+  
+
+  const handleAddDiagnosis = async (formData: any) => {
+    try {
+      const diagnosisPayload = {
+        details: formData.details,
+        doctorId: Number(params.doctorId),
+        patientId: Number(params.patientId),
+        height: formData.height,
+        weight: formData.weight,
+        pulse: formData.pulse,
+        spo2: formData.spo2,
+        temperature: formData.temperature,
+        chiefComplaints: formData.chiefComplaints,
+        diagnosisDate: formData.diagnosisDate,
+      };
+  
+      // Send the diagnosis payload first
+      const diagnosisResponse = await axios.post(`${apiUrl}/diagnoses`, diagnosisPayload, {
+        withCredentials: true,
+      });
+  
+      if (!diagnosisResponse.data) {
+        throw new Error('Failed to add diagnosis');
+      }
+  
+      // Send prescriptions one by one
+      for (const prescription of prescriptions) {
+        const prescriptionPayload = {
+          medicineName: prescription.medicineName,
+          instructions: prescription.instructions,
+          dose: prescription.dose,
+          when: prescription.when,
+          frequency: prescription.frequency,
+          duration: prescription.duration,
+          doctorId: Number(params.doctorId),
+          patientId: Number(params.patientId),
+          prescriptionDate: formData.diagnosisDate,
+        };
+  
+        const prescriptionResponse = await axios.post(`${apiUrl}/prescriptions`, prescriptionPayload, {
+          withCredentials: true,
+        });
+  
+        if (!prescriptionResponse.data) {
+          throw new Error('Failed to add prescription');
+        }
+      }
+  
+      reset();
+      enqueueSnackbar('Diagnosis and Prescriptions added successfully!', {
+        variant: 'success',
+      });
+    } catch (error) {
+      console.error('Something went wrong in the input form', error);
+      enqueueSnackbar('Something went wrong', { variant: 'error' });
+    }
+  };
+
+
   const getAllAppointments = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${apiUrl}/prescriptions`,
+        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${params.doctorId}/patients/${params.patientId}/appointments/${params.appointmentId}`,
         {
           withCredentials: true,
           params: {
             pageSize: rowsPerPage,
-            pageOffset: page -1,
+            pageOffset: page - 1,
             // appointmentDate: searchQueryName,
           },
         }
       );
       // console.log(response.data[0].user)
       const { content, total } = response.data;
-      setPrescriptionData(response.data);
-      setTotalItems(total);
-      console.log('Admin Data', response.data.content);
+      setAppointmentsData(response.data);
+      // setTotalItems(total);
+      console.log('Admin Data', response.data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching hospital data:', error);
       setLoading(false);
     }
-  }, [apiUrl, page, params.hospitalId, rowsPerPage]);
-
+  }, [
+    apiUrl,
+    page,
+    params.appointmentId,
+    params.doctorId,
+    params.hospitalId,
+    params.patientId,
+    rowsPerPage,
+  ]);
+  
   useEffect(() => {
     getAllAppointments();
   }, [apiUrl, page, params.hospitalId, rowsPerPage, getAllAppointments]);
-
 
   return (
     <Box className={styles['container']}>
@@ -249,11 +357,11 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
           <Box sx={{ display: 'flex', marginBottom: '20px' }}>
             <Avatar sx={{ bgcolor: '#4FD1C5' }}>OP</Avatar>
             <Box sx={{ marginLeft: '10px' }}>
-              <Typography sx={{ fontWeight: 'bold' }}>Mr. Omkar Patil</Typography>
+              <Typography sx={{ fontWeight: 'bold' }}>{appointmentsData?.firstName} {appointmentsData?.lastName}</Typography>
               <Box sx={{ display: 'flex' }}>
-                <Typography>32y |</Typography>
-                <Typography sx={{ marginLeft: '3px' }}>Male |</Typography>
-                <Typography sx={{ marginLeft: '3px' }}>899991111</Typography>
+                <Typography>{appointmentsData?.age} |</Typography>
+                <Typography sx={{ marginLeft: '3px' }}>{appointmentsData?.gender} |</Typography>
+                <Typography sx={{ marginLeft: '3px' }}>{appointmentsData?.phoneNumber}</Typography>
               </Box>
             </Box>
           </Box>
@@ -473,6 +581,15 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
             </Grid>
             <Grid item xs={6}>
               <TextField
+                label="When"
+                value={newPrescription.when}
+                onChange={(e) => setNewPrescription({ ...newPrescription, when: e.target.value })}
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
                 label="Instructions"
                 value={newPrescription.instructions}
                 onChange={(e) =>
@@ -551,7 +668,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
             type="submit"
             variant="contained"
             color="primary"
-            fullWidth
+            
             sx={{ marginTop: '20px' }}
           >
             Submit Diagnosis
