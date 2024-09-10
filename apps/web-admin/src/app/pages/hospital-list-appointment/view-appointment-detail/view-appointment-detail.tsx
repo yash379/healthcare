@@ -1,5 +1,5 @@
 // view-appointment-detail.tsx
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Paper,
@@ -18,6 +18,7 @@ import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformati
 import { environment } from '../../../../environments/environment';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { HospitalContext } from '../../../contexts/user-contexts';
 
 export interface ViewAppointment {
   id: number;
@@ -63,6 +64,7 @@ interface UserDetailsDto {
 const ViewAppointmentDetail: React.FC = () => {
   const apiUrl = environment.apiUrl;
   const params = useParams();
+  const hospitalContext = useContext(HospitalContext);
   const [appointment, setAppointment] = useState<ViewAppointment | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -125,8 +127,9 @@ const ViewAppointmentDetail: React.FC = () => {
   };
 
   const handleStartDiagnosisClick = () => {
-    navigate('/diagnosis');
+    navigate(`/hospitals/${hospitalContext?.id}/doctors/${params.doctorId}/patients/${params.patientId}/appointments/${params.appointmentId}/diagnosis`);
   };
+
 
   // Helper function to format date
   const formatDate = (dateString?: string) => {
