@@ -8,7 +8,7 @@ import {
   Body,
 } from '@nestjs/common';
 import { PrescriptionService } from './prescription.service';
-import { CreatePrescriptionDto } from './dto/create-prescription-dto';
+import { CreatePrescriptionDto, CreatePrescriptionsWrapperDto } from './dto/create-prescription-dto';
 import { UpdatePrescriptionDto } from './dto/update-prescription-dto';
 
 @Controller('prescriptions')
@@ -16,8 +16,8 @@ export class PrescriptionController {
   constructor(private readonly prescriptionService: PrescriptionService) {}
 
   @Post()
-  async create(@Body() createPrescriptionDto: CreatePrescriptionDto) {
-    return this.prescriptionService.create(createPrescriptionDto);
+  async create(@Body() createPrescriptionsWrapperDto: CreatePrescriptionsWrapperDto) {
+    return this.prescriptionService.create(createPrescriptionsWrapperDto);
   }
 
   @Put(':id')

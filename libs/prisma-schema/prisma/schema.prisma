@@ -439,14 +439,65 @@ model AppointmentStatus {
   @@map("appointment_statuses")
 }
 
+// model Prescription {
+//   id               Int             @id @default(autoincrement())
+//   medicineName     String
+//   instructions     String
+//   dose             String // e.g., "0-0-1"
+//   when             String
+//   frequency        String
+//   duration         String
+//   doctorId         Int
+//   doctor           Doctor          @relation(fields: [doctorId], references: [id])
+//   patientId        Int
+//   patient          Patient         @relation(fields: [patientId], references: [id])
+//   prescriptionDate DateTime        @default(now()) @map("prescription_date") @db.Timestamptz() // Date of prescription
+//   createdAt        DateTime        @default(now()) @map("created_at") @db.Timestamptz()
+//   updatedAt        DateTime?       @updatedAt @map("updated_at") @db.Timestamptz()
+//   medicalHistoryId Int?
+//   medicalHistory   MedicalHistory? @relation(fields: [medicalHistoryId], references: [id])
+
+//   @@map("prescriptions")
+// }
+
+// model Diagnosis {
+//   id              Int       @id @default(autoincrement())
+//   details         String
+//   height          Int?
+//   weight          Int?
+//   pulse           Int?
+//   spo2            Int?
+//   temperature     Int?
+//   chiefComplaints String[]
+//   doctorId        Int
+//   doctor          Doctor    @relation(fields: [doctorId], references: [id])
+//   patientId       Int
+//   patient         Patient   @relation(fields: [patientId], references: [id])
+//   diagnosisDate   DateTime  @default(now()) @map("diagnosis_date") @db.Timestamptz() // Date of diagnosis
+//   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+//   updatedAt       DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
+
+//   medicalHistoryId Int?
+//   medicalHistory   MedicalHistory? @relation(fields: [medicalHistoryId], references: [id])
+
+//   @@map("diagnoses")
+// }
+
+// model MedicalHistory {
+//   id        Int       @id @default(autoincrement())
+//   patientId Int       @unique
+//   patient   Patient   @relation(fields: [patientId], references: [id])
+//   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+//   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
+
+//   prescriptions Prescription[]
+//   diagnoses     Diagnosis[]
+
+//   @@map("medical_histories")
+// }
+
 model Prescription {
   id               Int             @id @default(autoincrement())
-  medicineName     String
-  instructions     String
-  dose             String // e.g., "0-0-1"
-  when             String
-  frequency        String
-  duration         String
   doctorId         Int
   doctor           Doctor          @relation(fields: [doctorId], references: [id])
   patientId        Int
@@ -457,8 +508,26 @@ model Prescription {
   medicalHistoryId Int?
   medicalHistory   MedicalHistory? @relation(fields: [medicalHistoryId], references: [id])
 
+  medicines        Medicine[]      @relation("PrescriptionMedicines") // One-to-many relationship
+
   @@map("prescriptions")
 }
+
+model Medicine {
+  id             Int          @id @default(autoincrement())
+  medicineName   String
+  instructions   String
+  dose           String // e.g., "0-0-1"
+  when           String
+  frequency      String
+  duration       String
+
+  prescriptionId Int
+  prescription   Prescription @relation("PrescriptionMedicines", fields: [prescriptionId], references: [id], onDelete: Cascade) // Many-to-one relationship
+
+  @@map("medicines")
+}
+
 
 model Diagnosis {
   id              Int       @id @default(autoincrement())
