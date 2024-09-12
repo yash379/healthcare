@@ -20,6 +20,7 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.3.3",
     "@nestjs/swagger": "^7.3.0",
+    "@nrwl/jest": "^19.7.2",
     "@nx/nest": "18.0.6",
     "@prisma/client": "^5.10.2",
     "@rollup/rollup-darwin-arm64": "^4.21.2",
@@ -56,7 +57,7 @@
   },
   "devDependencies": {
     "@nestjs/schematics": "^10.0.1",
-    "@nestjs/testing": "^10.0.2",
+    "@nestjs/testing": "^10.4.1",
     "@nx/cypress": "18.0.6",
     "@nx/eslint": "18.0.6",
     "@nx/eslint-plugin": "18.0.6",

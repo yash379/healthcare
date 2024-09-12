@@ -3,7 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { CreatePrescriptionDto, CreatePrescriptionsWrapperDto } from './dto/create-prescription-dto';
+import {  CreatePrescriptionsWrapperDto } from './dto/create-prescription-dto';
 import { UpdatePrescriptionDto } from './dto/update-prescription-dto';
 import { PrismaClient } from '@prisma/client';
 import { ListPrescriptionPageDto } from './dto/list-prescription-page.dto';
@@ -42,8 +42,7 @@ export class PrescriptionService {
       if (!prescription.doctorId || !prescription.patientId) {
         throw new BadRequestException('Doctor ID and Patient ID must be provided.');
       }
-  
-      // Log the IDs to ensure they are being passed correctly
+
       console.log(`Processing prescription for Doctor ID: ${prescription.doctorId}, Patient ID: ${prescription.patientId}`);
   
       const doctorPatient = await this.prisma.doctorPatient.findUnique({
@@ -131,7 +130,7 @@ export class PrescriptionService {
     const prescription = await this.prisma.prescription.findUnique({
       where: { id },
       include: {
-        medicines: true, // Include associated medicines if needed
+        medicines: true,
       },
     });
   
