@@ -403,11 +403,7 @@ export function ListPatients(props: ListPatientsProps) {
   // BreadCrumbs
   const breadcrumbs = [
     {
-      to: '/hospitals',
-      label: 'Hospitals',
-    },
-    {
-      to: `/hospitals/${hospitalContext?.hospital?.id}`,
+      to: `/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/dashboard`,
       label: `${hospitalContext?.hospital?.name}`,
     },
     {
