@@ -12,10 +12,12 @@
 //   prescriptionDate: string;
 // }
 
-// Single prescription DTO
-import { IsNumber, IsString, IsDateString } from 'class-validator';
+// Ensure that all imports are at the top of the file
+import { IsNumber, IsString, IsDateString, IsOptional, ValidateNested, IsArray } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class CreatePrescriptionDto {
+// DTO for a single medicine
+export class CreateMedicineDto {
   @IsString()
   medicineName: string;
 
@@ -33,21 +35,31 @@ export class CreatePrescriptionDto {
 
   @IsString()
   duration: string;
+}
 
+// DTO for a single prescription with medicines
+export class CreatePrescriptionDto {
   @IsNumber()
   doctorId: number;
 
   @IsNumber()
   patientId: number;
 
+  @IsOptional() // medicalHistoryId is optional based on your schema
+  @IsNumber()
+  medicalHistoryId?: number;
+
   @IsDateString()
   prescriptionDate: string; // ISO 8601 format
+
+  // Array of medicines associated with this prescription
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateMedicineDto)
+  medicines: CreateMedicineDto[];
 }
 
 // Wrapper DTO for multiple prescriptions
-import { Type } from 'class-transformer';
-import { ValidateNested, IsArray } from 'class-validator';
-
 export class CreatePrescriptionsWrapperDto {
   @IsArray()
   @ValidateNested({ each: true })

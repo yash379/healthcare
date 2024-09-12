@@ -249,6 +249,15 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
 
   const handleAddDiagnosis = async (formData: any) => {
     try {
+        // Ensure prescriptions is defined and is an array
+        if (!Array.isArray(prescriptions)) {
+          console.error('Prescriptions is not defined or is not an array:', prescriptions);
+          throw new Error('Prescriptions is not defined or is not an array.');
+        }
+    
+        // Log prescriptions for debugging
+        console.log('Processing prescriptions:', prescriptions);  
+
       const diagnosisPayload = {
         details: formData.details,
         doctorId: Number(params.doctorId),
@@ -262,6 +271,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
         diagnosisDate: formData.diagnosisDate,
       };
 
+        console.log('call api dai')
       // Send the diagnosis payload first
       const diagnosisResponse = await axios.post(
         `${apiUrl}/diagnoses`,
@@ -271,29 +281,44 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
         }
       );
 
+        console.log('call api after fai')
       if (!diagnosisResponse.data) {
         throw new Error('Failed to add diagnosis');
       }
+  console.log('call api presc')
+   // Verify and process each prescription
+    // Process each prescription and its associated medicines
+    console.log('Processing prescriptions:', prescriptions);
+ // Process and group medicines by a common identifier (e.g., prescriptionId)
+ const groupedPrescriptions = prescriptions.reduce((acc: any, medicine: any) => {
+  // Here, assuming each medicine has a `prescriptionId`
+  const { prescriptionId, ...medicineData } = medicine;
+  if (!acc[prescriptionId]) {
+    acc[prescriptionId] = {
+      doctorId: Number(params.doctorId),
+      patientId: Number(params.patientId),
+      prescriptionDate: formData.diagnosisDate,
+      medicines: [],
+    };
+  }
+  acc[prescriptionId].medicines.push(medicineData);
+  return acc;
+}, {});
 
-      // Prepare the prescriptions payload
-      const prescriptionsPayload = {
-        prescriptions: prescriptions.map((prescription) => ({
-          medicineName: prescription.medicineName,
-          instructions: prescription.instructions,
-          dose: prescription.dose,
-          when: prescription.when,
-          frequency: prescription.frequency,
-          duration: prescription.duration,
-          doctorId: Number(params.doctorId),
-          patientId: Number(params.patientId),
-          prescriptionDate: formData.diagnosisDate,
-        })),
-      };
-  
+// Convert grouped prescriptions to array format
+const prescriptionsPayload = Object.values(groupedPrescriptions);
+
+console.log('Sending prescriptions payload:', { prescriptions: prescriptionsPayload });
+
+
+console.log('Sending prescriptions payload:', { prescriptions: prescriptionsPayload });
+
+
+    
       // Send all prescriptions in one request
       const prescriptionsResponse = await axios.post(
         `${apiUrl}/prescriptions`,
-        prescriptionsPayload,
+        { prescriptions: prescriptionsPayload },
         {
           withCredentials: true,
         }
@@ -302,7 +327,6 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
       if (!prescriptionsResponse.data) {
         throw new Error('Failed to add prescriptions');
       }
-  
 
       reset({
         height: 0,

@@ -29,7 +29,7 @@ export interface ViewDiagnosis {
     bmi?: number;
     temperature?: number;
     chiefComplaints: string[];
-    diagnosisDate: String;    // Read-only, present in the view
+    diagnosisDate: string;    // Read-only, present in the view
       // Optional as it's updated automatically
 }
 
