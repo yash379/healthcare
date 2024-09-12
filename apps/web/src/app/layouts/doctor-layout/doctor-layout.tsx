@@ -88,9 +88,9 @@ export function DoctorLayout(props: DoctorLayoutProps) {
       <TopBar/>
      <DoctorNav/>
      <div className={styles['outlet']}>
-        <Box className={styles['Box']}>
+        {/* <Box className={styles['Box']}> */}
           <Outlet />
-        </Box>
+        {/* </Box> */}
      </div>
     </div>
    </DoctorContext.Provider>

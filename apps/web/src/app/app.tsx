@@ -41,6 +41,7 @@ import AddPatientComponent from './pages/list-patient/add-patient-page/add-patie
 import ViewAppointmentDetail from './pages/hospital-list-appointment/view-appointment-detail/view-appointment-detail';
 import DiagnosisPage from './pages/diagnosis-page/diagnosis-page';
 import BrainTumor from './pages/brain-tumor/brain-tumor';
+import Summarizer from './pages/ai-summarizer/ai-summarizer';
 export function App() {
 
   const location = useLocation();
@@ -236,8 +237,9 @@ export function App() {
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments/:id" element={<ViewAppointmentDetail />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/diagnosis" element={<DiagnosisPage />} />
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/medical-history" element={<MedicalHistory />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/medical-history" element={<MedicalHistory />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/cancer-detection" element={<BrainTumor />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/ai-summarizer" element={<Summarizer />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/settings" element={<SettingPage />} />
             </Route>
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styles from './medical-history.module.scss';
 import {
   Card,
@@ -20,6 +20,12 @@ import {
 import PrintIcon from '@mui/icons-material/Print';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import Summarizer from '../ai-summarizer/ai-summarizer';
+import axios from 'axios';
+import { useNavigate, useParams } from 'react-router-dom';
+import { environment } from '../../../environments/environment';
+import { Patient } from '@healthcare/data-transfer-types';
+import HospitalContext from '../../contexts/hospital-context';
+import DoctorContext from '../../contexts/doctor-context';
 
 /* eslint-disable-next-line */
 export interface MedicalHistoryProps {}
@@ -79,25 +85,108 @@ const dummyMedicalHistory = {
   ],
 };
 
+
+interface Diagnosis {
+  id: number;
+  details: string;
+  height: number;
+  weight: number;
+  pulse: number;
+  spo2: number;
+  temperature: null | number;
+  chiefComplaints: string[];
+  doctorId: number;
+  patientId: number;
+  diagnosisDate: string;
+  createdAt: string;
+  updatedAt: string | null;
+  medicalHistoryId: number;
+}
+
+interface Prescription {
+  id: number;
+  medicineName: string;
+  instructions: string;
+  dose: string;
+  when: string;
+  frequency: string;
+  duration: string;
+  doctorId: number;
+  patientId: number;
+  prescriptionDate: string;
+  createdAt: string;
+  updatedAt: string | null;
+  medicalHistoryId: number;
+}
+
+interface MedicalHistoryResponse {
+  id: number;
+  patientId: number;
+  createdAt: string;
+  updatedAt: string | null;
+  diagnoses: Diagnosis[];
+  prescriptions: Prescription[];
+}
+
+
+
+
 export function MedicalHistory(props: MedicalHistoryProps) {
   const [showSummary, setShowSummary] = useState(false);
+  const [medicalHistory, setMedicalHistory]=useState<MedicalHistoryResponse | null>(null);
+  const [patient, setPatient]=useState<Patient | null>(null);
+  const params=useParams();
+  const apiUrl = environment.apiUrl;
+  const navigate=useNavigate();
 
   if (showSummary) {
     return <Summarizer />;
   }
+
+  const hospitalcontext=useContext(HospitalContext);
+  const doctorcontext=useContext(DoctorContext);
+
+  const getHistory=async()=>{
+    const response = await axios.get(`${apiUrl}/medical-history/${params.patientId}`,
+      {
+        withCredentials:true
+      }
+    );
+
+    setMedicalHistory(response.data);
+
+    console.log("Medical history:", response.data);
+  }
+
+  const getPatient=async()=>{
+    const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/doctors/${params.doctorId}/patient/${params.patientId}`,
+      {
+        withCredentials:true
+      }
+    );
+
+    setPatient(response.data);
+
+    console.log("Patient history:", response.data);
+  }
+
+  useEffect(()=>{
+    getHistory();
+    getPatient();
+  },[params.patientId,params.hospitalId, params.doctorId]);
 
   return (
     <div className={styles['container']}>
       <Grid container alignItems="center" justifyContent="space-between">
         <Grid item>
           <Typography variant="h4" gutterBottom>
-            {dummyMedicalHistory.patientName}'s Medical History
+            {patient?.firstName}{patient?.lastName}'s Medical History
           </Typography>
         </Grid>
         <Grid item>
           <Tooltip title="Generate Summary">
             <IconButton
-              onClick={() => setShowSummary(true)}
+              onClick={() => navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/ai-summarizer`)}
               aria-label="ai-summarizer"
             >
               <AutoAwesomeOutlinedIcon sx={{ marginRight: 6 }} />
@@ -106,8 +195,8 @@ export function MedicalHistory(props: MedicalHistoryProps) {
         </Grid>
       </Grid>
 
-      {dummyMedicalHistory.history.map((entry, index) => (
-        <Card key={index} sx={{ marginBottom: 4 }}>
+      
+        <Card  sx={{ marginBottom: 4 }}>
           <CardContent>
             <Box
               sx={{ backgroundColor: '#e0f2f1', padding: 2, borderRadius: 1 }}
@@ -117,7 +206,7 @@ export function MedicalHistory(props: MedicalHistoryProps) {
                 justifyContent="space-between"
                 alignItems="center"
               >
-                <Typography variant="h6">Date: {entry.date}</Typography>
+                <Typography variant="h6">Date: {medicalHistory?.createdAt}</Typography>
                 <div>
                   <IconButton
                     sx={{ marginRight: 2 }}
@@ -132,12 +221,17 @@ export function MedicalHistory(props: MedicalHistoryProps) {
             <Divider sx={{ marginBottom: 2 }} />
 
             <Typography variant="subtitle1">Vitals:</Typography>
-            <Typography variant="body1" sx={{ marginBottom: 2 }}>
-              Height: {entry.vitals.height} cm, Weight: {entry.vitals.weight}{' '}
-              kg, Pulse: {entry.vitals.pulse} bpm, SPO2: {entry.vitals.spo2} %,
-              BMI: {entry.vitals.bmi}, Temperature: {entry.vitals.temperature}{' '}
-              °C
-            </Typography>
+            {medicalHistory?.diagnoses.map((item)=>(
+               <Typography variant="body1" sx={{ marginBottom: 2 }}>
+               Height: {item.height} cm, Weight: {item.weight}{' '}
+               kg, Pulse: {item.pulse} bpm, SPO2: {item.spo2} %,
+               BMI: {}, Temperature: {item.temperature}{' '}
+               °C
+             </Typography>
+            ))
+
+            }
+            
 
             <Divider sx={{ marginY: 2 }} />
 
@@ -152,12 +246,13 @@ export function MedicalHistory(props: MedicalHistoryProps) {
             >
               Diagnosis:
             </Typography>
-            <Typography
+            {medicalHistory?.diagnoses.map((item)=>
+            (<Typography
               variant="body1"
               sx={{ display: 'inline', marginLeft: '4px' }}
             >
-              {entry.diagnosis}
-            </Typography>
+              {item.details}
+            </Typography>))}
 
             <Divider sx={{ marginY: 2 }} />
 
@@ -174,7 +269,7 @@ export function MedicalHistory(props: MedicalHistoryProps) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {entry.prescriptions.map((prescription, idx) => (
+                  {medicalHistory?.prescriptions.map((prescription, idx) => (
                     <TableRow key={idx}>
                       <TableCell>{prescription.medicineName}</TableCell>
                       <TableCell>{prescription.dose}</TableCell>
@@ -188,7 +283,6 @@ export function MedicalHistory(props: MedicalHistoryProps) {
             </TableContainer>
           </CardContent>
         </Card>
-      ))}
     </div>
   );
 }
