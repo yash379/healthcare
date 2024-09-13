@@ -525,8 +525,9 @@ export function ListAppointments(props: ListAppointmentsProps) {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
+              onClick={()=>navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/scheduler`)}
             >
-              <CalendarToday sx={{ color: 'black' }} />
+              <CalendarToday sx={{ color: 'black' }}/>
             </Box>
             {/* Tune Icon on the right side */}
             <Box

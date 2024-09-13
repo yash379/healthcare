@@ -42,6 +42,11 @@ import ViewAppointmentDetail from './pages/hospital-list-appointment/view-appoin
 import DiagnosisPage from './pages/diagnosis-page/diagnosis-page';
 import BrainTumor from './pages/brain-tumor/brain-tumor';
 import Summarizer from './pages/ai-summarizer/ai-summarizer';
+import AppointmentScheduler from './pages/appointment-scheduler/appointment-scheduler';
+import PatientDashboard from './pages/patient-dashboard/patient-pages/Dashboard';
+import AppointmentPage from './pages/patient-dashboard/patient-pages/AppointmentPage';
+import MedicalReport from './pages/patient-dashboard/patient-pages/MedicalReport';
+
 export function App() {
 
   const location = useLocation();
@@ -235,20 +240,25 @@ export function App() {
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail" element={<PatientDetail />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments" element={<ListAppointments/>} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments/:id" element={<ViewAppointmentDetail />} />
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline patient={null} />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/diagnosis" element={<DiagnosisPage />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/medical-history" element={<MedicalHistory />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/cancer-detection" element={<BrainTumor />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/ai-summarizer" element={<Summarizer />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/settings" element={<SettingPage />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/scheduler" element={<AppointmentScheduler/>}/>
             </Route>
 
              {/* Patient Portal */}
             <Route path="/hospitals/:hospitalId/patients/:patientId" element={<PatientLayout/>}>
               {/* <Route path="/hospital/:hospitalId/doctors/:doctorId/patients/:patientId" element={<ListPatients />} /> */}
-              <Route path="/hospitals/:hospitalId/patients/:patientId/dashboard" element={<Dashboard />} />
+              {/* <Route path="/hospitals/:hospitalId/patients/:patientId/dashboard" element={<Dashboard />} /> */}
               <Route path="/hospitals/:hospitalId/patients/:patientId/patient-detail" element={<PatientDetail />} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointments" element={<ListAppointments/>} />
+              <Route path="/hospitals/:hospitalId/patients/:patientId/dashboard" element={<PatientDashboard/>} />
+              <Route path="/hospitals/:hospitalId/patients/:patientId/appointmentsview" element={<AppointmentPage/>} />
+              <Route path="/hospitals/:hospitalId/patients/:patientId/medical-report" element={<MedicalReport/>} />
+              <Route path="/hospitals/:hospitalId/patients/:patientId/settings" element={<SettingPage />} />
             </Route>
 
               

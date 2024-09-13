@@ -108,7 +108,7 @@ export function PatientNav(props: PatientNavProps) {
              <ListItemText className={styles["drawertab"]} primary="Appointment" />
            </ListItemButton>
          </Link>
-         <Link style={{ textDecoration: "none" }} to="/reports" onClick={() => handleComponentChange('reports')}>
+         <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/patients/${patientcontext?.patient?.id}/medical-report`}onClick={() => handleComponentChange('reports')}>
            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'reports' && styles['active-tab']
              }`}>
              <ListItemIcon >
@@ -117,7 +117,7 @@ export function PatientNav(props: PatientNavProps) {
              <ListItemText className={styles["drawertab"]} primary="Report" />
            </ListItemButton>
          </Link>
-         <Link style={{ textDecoration: "none" }} to="/settings" onClick={() => handleComponentChange('settings')}>
+         <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/patients/${patientcontext?.patient?.id}/settings`} onClick={() => handleComponentChange('settings')}>
            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'settings' && styles['active-tab']
              }`}>
              <ListItemIcon >
@@ -126,7 +126,7 @@ export function PatientNav(props: PatientNavProps) {
              <ListItemText className={styles["drawertab"]} primary="Setting" />
            </ListItemButton>
          </Link>
-         <Link style={{ textDecoration: "none" }} to="/logout" onClick={() => handleComponentChange('logout')}>
+         {/* <Link style={{ textDecoration: "none" }} to="/logout" onClick={() => handleComponentChange('logout')}>
            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'logout' && styles['active-tab']
              }`}>
              <ListItemIcon >
@@ -134,7 +134,7 @@ export function PatientNav(props: PatientNavProps) {
              </ListItemIcon>
              <ListItemText className={styles["drawertab"]} primary="Logout" />
            </ListItemButton>
-         </Link>
+         </Link> */}
 
        </List>
        )
