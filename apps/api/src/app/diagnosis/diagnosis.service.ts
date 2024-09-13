@@ -25,10 +25,23 @@ export class DiagnosisService {
       throw new BadRequestException('Doctor and Patient are not associated.');
     }
 
+     // Check for existing MedicalHistory
+     let medicalHistory = await this.prisma.medicalHistory.findUnique({
+      where: { patientId: dto.patientId },
+  });
+
+  if (!medicalHistory) {
+      // Create new MedicalHistory if it doesn't exist
+      medicalHistory = await this.prisma.medicalHistory.create({
+          data: { patientId: dto.patientId },
+      });
+  }
+
     return this.prisma.diagnosis.create({
       data: {
         ...dto,
         diagnosisDate: new Date(dto.diagnosisDate), // Convert to Date
+        medicalHistoryId: medicalHistory.id,
       },
     });
   }

@@ -50,20 +50,20 @@ import { ViewAllUser } from '@healthcare/data-transfer-types';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface HospitalListAppointmentProps {}
 
-export enum StatusEnum {
-  Scheduled = 'Scheduled',
-  InProgress = 'In Progress',
-  Cancelled = 'Cancelled',
-  PendingConfirmation = 'Pending Confirmation',
-}
+// export enum StatusEnum {
+//   Scheduled = 'Scheduled',
+//   InProgress = 'In Progress',
+//   Cancelled = 'Cancelled',
+//   PendingConfirmation = 'Pending Confirmation',
+// }
 
-// Define a mapping of status to background color
-const statusColorMap: Record<StatusEnum, string> = {
-  [StatusEnum.Scheduled]: '#d1e7dd', // light green
-  [StatusEnum.InProgress]: '#ffebcc', // light yellow
-  [StatusEnum.Cancelled]: '#f8d7da', // light red
-  [StatusEnum.PendingConfirmation]: '#fff3cd', // light orange
-};
+// // Define a mapping of status to background color
+// const statusColorMap: Record<StatusEnum, string> = {
+//   [StatusEnum.Scheduled]: '#d1e7dd', // light green
+//   [StatusEnum.InProgress]: '#ffebcc', // light yellow
+//   [StatusEnum.Cancelled]: '#f8d7da', // light red
+//   [StatusEnum.PendingConfirmation]: '#fff3cd', // light orange
+// };
 
 export interface ViewAppointment {
   id: number;
@@ -129,7 +129,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
     []
   );
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
-  const [appointmentStatus, setAppointmentStatus] = useState({ total:0,pending: 0, inProgress: 0, cancelled: 0, confirmed: 0 });
+  const [appointmentStatus, setAppointmentStatus] = useState({ total:0,pending: 0, inProgress: 0, declined: 0, confirmed: 0, completed:0 });
   useEffect(() => {
     getCounts();
   }, []);
@@ -139,6 +139,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
       const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/appointment-count`, { withCredentials: true });
 
       setAppointmentStatus(response.data);
+      console.log("resonse status",response.data)
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -409,7 +410,8 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             </CardContent>
           </Card>
 
-          <Card
+           {/* Pending Appointments Card */}
+           <Card
             sx={{
               flex: '1 1 100px',
               p: 3,
@@ -421,10 +423,10 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             <CardContent sx={{ display: 'flex' }}>
               <DescriptionOutlinedIcon
                 sx={{
-                  backgroundColor: '#4FB1C1',
+                  backgroundColor: '#FF9800', // Different color for pending appointments
                   borderRadius: '50%',
                   color: '#ffffff',
-                 width: 30,
+                  width: 30,
                   height: 30,
                   padding: 1,
                 }}
@@ -433,12 +435,12 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                 <Typography
                   variant="h6"
                   component="div"
-                  sx={{ color: '#4FB1C1' }}
+                  sx={{ color: '#F57C00' }}
                 >
-                  Inprogress Appointments
+                  Pending Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
-                  {appointmentStatus.inProgress}
+                {appointmentStatus.pending}
                 </Typography>
               </Box>
             </CardContent>
@@ -480,7 +482,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             </CardContent>
           </Card>
 
-          {/* Pending Appointments Card */}
+         
           <Card
             sx={{
               flex: '1 1 100px',
@@ -493,10 +495,10 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             <CardContent sx={{ display: 'flex' }}>
               <DescriptionOutlinedIcon
                 sx={{
-                  backgroundColor: '#FF9800', // Different color for pending appointments
+                  backgroundColor: '#FF6F6F',
                   borderRadius: '50%',
                   color: '#ffffff',
-                  width: 30,
+                 width: 30,
                   height: 30,
                   padding: 1,
                 }}
@@ -505,12 +507,12 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                 <Typography
                   variant="h6"
                   component="div"
-                  sx={{ color: '#F57C00' }}
+                  sx={{ color: '#FF6F6F' }}
                 >
-                  Pending Appointments
+                  Declined Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
-                {appointmentStatus.pending}
+                  {appointmentStatus.declined}
                 </Typography>
               </Box>
             </CardContent>
@@ -648,6 +650,20 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                 <TableCell>{appointment.doctor.user.firstName} {appointment.doctor.user.lastName}</TableCell>
                 <TableCell>{format(new Date(appointment.appointmentDate), 'MM/dd/yyyy')}</TableCell>
                 <TableCell>
+                {appointment.status.name === 'PENDING' ? (
+                    <StatusChip label="Warning" width="100px">
+                      Pending
+                    </StatusChip>
+                  ) : (
+                    ''
+                  )}
+                   {appointment.status.name === 'CONFIRMED' ? (
+                    <StatusChip label="Success" width="100px">
+                      Confirmed
+                    </StatusChip>
+                  ) : (
+                    ''
+                  )}
                   {appointment.status.name === 'INPROGRESS' ? (
                     <StatusChip label="Primary" width="100px">
                       InProgress
@@ -655,27 +671,22 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                   ) : (
                     ''
                   )}
-                  {appointment.status.name === 'PENDING' ? (
-                    <StatusChip label="Warning" width="100px">
-                      Pending
+                  {appointment.status.name === 'COMPLETED' ? (
+                    <StatusChip label="Primary" width="100px">
+                      Completed
                     </StatusChip>
                   ) : (
                     ''
                   )}
-                  {appointment.status.name === 'CANCELLED' ? (
+                 
+                  {appointment.status.name === 'DECLINED' ? (
                     <StatusChip label="Error" width="100px">
-                      Cancelled
+                      Declined
                     </StatusChip>
                   ) : (
                     ''
                   )}
-                  {appointment.status.name === 'CONFIRMED' ? (
-                    <StatusChip label="Success" width="100px">
-                      Confirmed
-                    </StatusChip>
-                  ) : (
-                    ''
-                  )}
+                 
 
                   {/* </Box> */}
                 </TableCell>

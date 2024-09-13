@@ -57,6 +57,18 @@ export class PrescriptionService {
       if (!doctorPatient) {
         throw new BadRequestException('Doctor and Patient are not associated.');
       }
+
+        // Check for existing MedicalHistory
+        let medicalHistory = await this.prisma.medicalHistory.findUnique({
+          where: { patientId: prescription.patientId },
+      });
+
+      if (!medicalHistory) {
+          // Create new MedicalHistory if it doesn't exist
+          medicalHistory = await this.prisma.medicalHistory.create({
+              data: { patientId: prescription.patientId },
+          });
+      }
   
       const prescriptionDate = new Date(prescription.prescriptionDate);
   
@@ -66,7 +78,7 @@ export class PrescriptionService {
           doctorId: prescription.doctorId,
           patientId: prescription.patientId,
           prescriptionDate: prescriptionDate,
-          medicalHistoryId: prescription.medicalHistoryId || null,
+          medicalHistoryId: medicalHistory.id,
         },
       });
   

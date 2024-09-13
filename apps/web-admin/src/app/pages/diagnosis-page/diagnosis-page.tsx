@@ -82,12 +82,10 @@ export interface ViewAppointment {
 }
 
 export function DiagnosisPage(props: DiagnosisPageProps) {
-  const [diagnosis, setDiagnosis] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
-  const [prescriptionData, setPrescriptionData] = useState<any[]>([]);
   const params = useParams();
   const apiUrl = environment.apiUrl;
   const [newPrescription, setNewPrescription] = useState({
@@ -103,27 +101,41 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
 
   const validationSchema = yup.object().shape({
     details: yup.string().required('Details are required'),
-    height: yup.number().required('Height is required'),
-    weight: yup.number().required('Weight is required'),
-    pulse: yup.number().required('Pulse is required'),
-    spo2: yup.number().required('SpO2 is required'),
-    // bmi: yup.string().required('BMI is required'),
-    temperature: yup.number().required('Temperature is required'),
-    // chiefComplaints: yup
-    //   .array()
-    //   .of(yup.string().required('Each complaint must be valid'))
-    //   .min(1, 'At least one chief complaint is required'),
+    height: yup
+      .number()
+      .required('Height is required')
+      .typeError('Height must be a number')
+      .positive('Height must be a positive number')
+      .integer('Height must be an integer'),
+    weight: yup
+      .number()
+      .required('Weight is required')
+      .typeError('Height must be a number')
+      .positive('Height must be a positive number')
+      .integer('Height must be an integer'),
+    pulse: yup
+      .number()
+      .required('Pulse is required')
+      .typeError('Height must be a number')
+      .positive('Height must be a positive number')
+      .integer('Height must be an integer'),
+    spo2: yup
+      .number()
+      .required('SpO2 is required')
+      .typeError('Height must be a number')
+      .positive('Height must be a positive number')
+      .integer('Height must be an integer'),
+    temperature: yup
+      .number()
+      .required('Temperature is required')
+      .typeError('Height must be a number')
+      .positive('Height must be a positive number')
+      .integer('Height must be an integer'),
     chiefComplaints: yup
       .array()
       .of(yup.string().required('Each complaint must be valid'))
       .min(1, 'At least one chief complaint is required'),
     diagnosisDate: yup.date().required('Date is required'),
-    // medicineName: yup.string().required('Medicine name is required'),
-    // instructions: yup.string().required('Instructions are required'),
-    // dose: yup.string().required('Dose is required'),
-    // when: yup.string().required('When to take is required'),
-    // frequency: yup.string().required('Frequency is required'),
-    // duration: yup.string().required('Duration is required'),
   });
 
   const {
@@ -136,18 +148,13 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
   });
 
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
-  console.log('prescriptiion', prescriptions);
 
-  // Dummy data for diagnosis and chief complaints
   const chiefComplaintOptions = [
     'Headache',
     'Fever',
     'Cough',
     'Abdominal Pain',
   ];
-
-  const [selectedDiagnosis, setSelectedDiagnosis] = useState<string[]>([]);
-  const [selectedComplaints, setSelectedComplaints] = useState<string[]>([]);
 
   const handleAddPrescription = () => {
     setPrescriptions([...prescriptions, newPrescription]);
@@ -166,98 +173,8 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     setPrescriptions(newPrescriptions);
   };
 
-  // const getAllAppointments = useCallback(async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await axios.get(
-  //       `${apiUrl}/prescriptions`,
-  //       {
-  //         withCredentials: true,
-  //         params: {
-  //           pageSize: rowsPerPage,
-  //           pageOffset: page -1,
-  //           // appointmentDate: searchQueryName,
-  //         },
-  //       }
-  //     );
-  //     // console.log(response.data[0].user)
-  //     const { content, total } = response.data;
-  //     setPrescriptionData(response.data);
-  //     setTotalItems(total);
-  //     console.log('Admin Data', response.data.content);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.error('Error fetching hospital data:', error);
-  //     setLoading(false);
-  //   }
-  // }, [apiUrl, page, params.hospitalId, rowsPerPage]);
-
-  // useEffect(() => {
-  //   getAllAppointments();
-  // }, [apiUrl, page, params.hospitalId, rowsPerPage, getAllAppointments]);
-
-  // const handleAddDiagnosis = async (formData: any) => {
-  //   try {
-  //     const diagnosisPayload = {
-  //       details: formData.details,
-  //       doctorId: Number(params.doctorId),
-  //       patientId: Number(params.patientId),
-  //       height: formData.height,
-  //       weight: formData.weight,
-  //       pulse: formData.pulse,
-  //       spo2: formData.spo2,
-  //       temperature: formData.temperature,
-  //       chiefComplaints: formData.chiefComplaints,
-  //       diagnosisDate: formData.diagnosisDate,
-  //     };
-
-  //     const prescriptionPayload = prescriptions.map((prescription) => ({
-  //         medicineName: prescription.medicineName,
-  //         instructions: prescription.instructions,
-  //         dose: prescription.dose,
-  //         when: prescription.when,
-  //         frequency: prescription.frequency,
-  //         duration: prescription.duration,
-  //         doctorId: Number(params.doctorId),
-  //         patientId: Number(params.patientId),
-  //         prescriptionDate: formData.diagnosisDate,
-  //       }));
-
-  //     // Send both payloads in parallel
-  //     const [diagnosisResponse, prescriptionResponse] = await Promise.all([
-  //       axios.post(`${apiUrl}/diagnoses`, diagnosisPayload, {
-  //         withCredentials: true,
-  //       }),
-  //       axios.post(`${apiUrl}/prescriptions`, prescriptionPayload, {
-  //         withCredentials: true,
-  //       }),
-  //     ]);
-
-  //     if (diagnosisResponse.data && prescriptionResponse.data) {
-  //       reset();
-  //       enqueueSnackbar('Diagnosis and Prescription added successfully!', {
-  //         variant: 'success',
-  //       });
-  //     } else {
-  //       console.log('Something went wrong');
-  //     }
-  //   } catch (error) {
-  //     console.error('Something went wrong in the input form', error);
-  //     enqueueSnackbar('Something went wrong', { variant: 'error' });
-  //   }
-  // };
-
   const handleAddDiagnosis = async (formData: any) => {
     try {
-        // Ensure prescriptions is defined and is an array
-        if (!Array.isArray(prescriptions)) {
-          console.error('Prescriptions is not defined or is not an array:', prescriptions);
-          throw new Error('Prescriptions is not defined or is not an array.');
-        }
-    
-        // Log prescriptions for debugging
-        console.log('Processing prescriptions:', prescriptions);  
-
       const diagnosisPayload = {
         details: formData.details,
         doctorId: Number(params.doctorId),
@@ -271,7 +188,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
         diagnosisDate: formData.diagnosisDate,
       };
 
-        console.log('call api dai')
+      console.log('call api dai');
       // Send the diagnosis payload first
       const diagnosisResponse = await axios.post(
         `${apiUrl}/diagnoses`,
@@ -281,41 +198,30 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
         }
       );
 
-        console.log('call api after fai')
+      console.log('call api after fai');
       if (!diagnosisResponse.data) {
         throw new Error('Failed to add diagnosis');
       }
-  console.log('call api presc')
-   // Verify and process each prescription
-    // Process each prescription and its associated medicines
-    console.log('Processing prescriptions:', prescriptions);
- // Process and group medicines by a common identifier (e.g., prescriptionId)
- const groupedPrescriptions = prescriptions.reduce((acc: any, medicine: any) => {
-  // Here, assuming each medicine has a `prescriptionId`
-  const { prescriptionId, ...medicineData } = medicine;
-  if (!acc[prescriptionId]) {
-    acc[prescriptionId] = {
-      doctorId: Number(params.doctorId),
-      patientId: Number(params.patientId),
-      prescriptionDate: formData.diagnosisDate,
-      medicines: [],
-    };
-  }
-  acc[prescriptionId].medicines.push(medicineData);
-  return acc;
-}, {});
+      const groupedPrescriptions = prescriptions.reduce(
+        (acc: any, medicine: any) => {
+          const { prescriptionId, ...medicineData } = medicine;
+          if (!acc[prescriptionId]) {
+            acc[prescriptionId] = {
+              doctorId: Number(params.doctorId),
+              patientId: Number(params.patientId),
+              prescriptionDate: formData.diagnosisDate,
+              medicines: [],
+            };
+          }
+          acc[prescriptionId].medicines.push(medicineData);
+          return acc;
+        },
+        {}
+      );
 
-// Convert grouped prescriptions to array format
-const prescriptionsPayload = Object.values(groupedPrescriptions);
+      // Convert grouped prescriptions to array format
+      const prescriptionsPayload = Object.values(groupedPrescriptions);
 
-console.log('Sending prescriptions payload:', { prescriptions: prescriptionsPayload });
-
-
-console.log('Sending prescriptions payload:', { prescriptions: prescriptionsPayload });
-
-
-    
-      // Send all prescriptions in one request
       const prescriptionsResponse = await axios.post(
         `${apiUrl}/prescriptions`,
         { prescriptions: prescriptionsPayload },
@@ -323,20 +229,13 @@ console.log('Sending prescriptions payload:', { prescriptions: prescriptionsPayl
           withCredentials: true,
         }
       );
-  
+
       if (!prescriptionsResponse.data) {
         throw new Error('Failed to add prescriptions');
       }
 
-      reset({
-        height: 0,
-        weight: 0,
-        pulse: 0,
-        spo2: 0,
-        details: '',
-        temperature: 0,
-        chiefComplaints: []
-      });
+      reset();
+      setPrescriptions([]);
       enqueueSnackbar('Diagnosis and Prescriptions added successfully!', {
         variant: 'success',
       });
@@ -360,7 +259,6 @@ console.log('Sending prescriptions payload:', { prescriptions: prescriptionsPayl
           },
         }
       );
-      // console.log(response.data[0].user)
       const { content, total } = response.data;
       setAppointmentsData(response.data);
       // setTotalItems(total);
@@ -395,7 +293,6 @@ console.log('Sending prescriptions payload:', { prescriptions: prescriptionsPayl
           boxShadow: 3,
         }}
       >
-        {/* <form onSubmit={handleSubmit(handleAddDiagnosis)}> */}
         <form onSubmit={handleSubmit(handleAddDiagnosis)}>
           <Box sx={{ display: 'flex', marginBottom: '20px' }}>
             <Avatar sx={{ bgcolor: '#4FD1C5' }}>OP</Avatar>
@@ -561,44 +458,16 @@ console.log('Sending prescriptions payload:', { prescriptions: prescriptionsPayl
                     {...params}
                     variant="outlined"
                     label="Select Chief Complaints"
+                    error={!!errors.chiefComplaints}
+                      helperText={errors.chiefComplaints?.message}
                   />
                 )}
                 sx={{ marginTop: '10px' }}
               />
             )}
           />
-          {errors.chiefComplaints && (
-            <Typography color="error">
-              {errors.chiefComplaints.message}
-            </Typography>
-          )}
 
           <Divider sx={{ marginBottom: '20px', marginTop: '20px' }} />
-
-          {/* <Typography sx={{ fontWeight: 'bold', fontSize: '25px', color: '#2B3674' }}>
-            Diagnosis
-          </Typography>
-          <Controller
-            name="diagnosis"
-            control={control}
-            render={({ field }) => (
-              <Autocomplete
-                multiple
-                options={diagnosisOptions}
-                value={field.value}
-                onChange={(event, newValue) => field.onChange(newValue)}
-                renderTags={(value: string[], getTagProps) =>
-                  value.map((option, index) => (
-                    <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                  ))
-                }
-                renderInput={(params) => (
-                  <TextField {...params} variant="outlined" label="Select Diagnosis" />
-                )}
-                sx={{ marginTop: '10px' }}
-              />
-            )}
-          /> */}
 
           <Controller
             name="diagnosisDate"
@@ -608,6 +477,7 @@ console.log('Sending prescriptions payload:', { prescriptions: prescriptionsPayl
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="Date of Diagnosis"
+                  // value={today}
                   value={field.value}
                   onChange={field.onChange}
                   slotProps={{
@@ -743,8 +613,8 @@ console.log('Sending prescriptions payload:', { prescriptions: prescriptionsPayl
                 </TableRow>
               </TableHead>
               <TableBody>
-                {prescriptions?.map((prescription) => (
-                  <TableRow key={prescription.id}>
+                {prescriptions?.map((prescription, index) => (
+                  <TableRow key={index}>
                     <TableCell>{prescription.medicineName}</TableCell>
                     <TableCell>{prescription.dose}</TableCell>
                     <TableCell>{prescription.instructions}</TableCell>
@@ -752,9 +622,7 @@ console.log('Sending prescriptions payload:', { prescriptions: prescriptionsPayl
                     <TableCell>{prescription.duration}</TableCell>
                     <TableCell>
                       <IconButton
-                        onClick={() =>
-                          handleDeletePrescription(prescription.id)
-                        }
+                        onClick={() => handleDeletePrescription(index)}
                       >
                         <DeleteIcon color="error" />
                       </IconButton>

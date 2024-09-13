@@ -3,13 +3,18 @@ INSERT INTO public.appointment_statuses(
 	VALUES ( '1', 'PENDING');
 INSERT INTO public.appointment_statuses(
 	 code, name)
-	VALUES ( '2', 'INPROGRESS');
+	VALUES ( '2', 'CONFIRMED');
 INSERT INTO public.appointment_statuses(
 	 code, name)
-	VALUES ( '3', 'CANCELLED');
+	VALUES ( '3', 'INPROGRESS');
+	
 INSERT INTO public.appointment_statuses(
 	 code, name)
-	VALUES ( '4', 'CONFIRMED');
+	VALUES ( '4', 'COMPLETED');
+	
+INSERT INTO public.appointment_statuses(
+	 code, name)
+	VALUES ( '5', 'DECLINED');
 	
 INSERT INTO public.users(
 	 email, phone_number, first_name, last_name, is_active, password, roles)

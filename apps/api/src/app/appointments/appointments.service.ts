@@ -643,9 +643,10 @@ export class AppointmentsService {
   async getAppointmentCounts(hospitalId: number): Promise<{
     total: number;
     pending: number;
-    inProgress: number;
-    cancelled: number;
     confirmed: number;
+    inProgress: number;
+    completed: number;
+    declined: number;
   }> {
     const total = await this.prisma.appointment.count({
       where: {
@@ -665,36 +666,46 @@ export class AppointmentsService {
       },
     });
 
-    const inProgress = await this.prisma.appointment.count({
-      where: {
-        status: {
-          code: '2', // INPROGRESS
-        },
-      },
-    });
-
-    const cancelled = await this.prisma.appointment.count({
-      where: {
-        status: {
-          code: '3', // CANCELLED
-        },
-      },
-    });
-
     const confirmed = await this.prisma.appointment.count({
       where: {
         status: {
-          code: '4', // CONFIRMED
+          code: '2', // CONFIRMED
         },
       },
     });
+
+    const inProgress = await this.prisma.appointment.count({
+      where: {
+        status: {
+          code: '3', // INPROGRESS
+        },
+      },
+    });
+
+    const completed = await this.prisma.appointment.count({
+      where: {
+        status: {
+          code: '4', // CANCELLED
+        },
+      },
+    });
+    const declined = await this.prisma.appointment.count({
+      where: {
+        status: {
+          code: '5', // CANCELLED
+        },
+      },
+    });
+
+   
 
     return {
       total,
       pending,
-      inProgress,
-      cancelled,
       confirmed,
+      inProgress,
+      completed,
+      declined
     };
   }
 }

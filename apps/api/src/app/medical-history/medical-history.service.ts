@@ -11,7 +11,11 @@ export class MedicalHistoryService {
       where: { id:patientId },
       include: {
         diagnoses: true, // Include related diagnoses
-        prescriptions: true, // Include related prescriptions
+        prescriptions: {
+          include: {
+            medicines: true, // Include medicines for each prescription
+          },
+        },
       },
     });
 

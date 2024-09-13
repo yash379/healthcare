@@ -51,9 +51,10 @@ export interface Form {
 
 export enum StatusEnum {
   PENDING = 'Pending',
-  INPROGRESS = 'In Progress',
-  CANCELLED = 'Cancelled',
   CONFIRMED = 'Confirmed',
+  INPROGRESS = 'In Progress',
+  COMPLETED = 'Completed',
+  DECLINED = 'Declined',
 }
 
 const HospitalEditAppointment: React.FC<HospitalEditAppointmentProps> = ({
@@ -272,9 +273,10 @@ const HospitalEditAppointment: React.FC<HospitalEditAppointmentProps> = ({
                     }}
                   >
                     <MenuItem value={1}>{StatusEnum.PENDING}</MenuItem>
-                    <MenuItem value={2}>{StatusEnum.INPROGRESS}</MenuItem>
-                    <MenuItem value={3}>{StatusEnum.CANCELLED}</MenuItem>
-                    <MenuItem value={4}>{StatusEnum.CONFIRMED}</MenuItem>
+                    <MenuItem value={2}>{StatusEnum.CONFIRMED}</MenuItem>
+                    <MenuItem value={3}>{StatusEnum.INPROGRESS}</MenuItem>
+                    <MenuItem value={4}>{StatusEnum.COMPLETED}</MenuItem>
+                    <MenuItem value={5}>{StatusEnum.DECLINED}</MenuItem>
                   </Select>
                 )}
               />

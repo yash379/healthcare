@@ -22,6 +22,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ListPrescriptionPageDto } from './dto/list-prescription-page.dto';
 import { ViewPrescriptionDto } from './dto/view-prescription.dto';
 
+@ApiTags("Prescriptions")
 @Controller('prescriptions')
 export class PrescriptionController {
   constructor(private readonly prescriptionService: PrescriptionService) {}

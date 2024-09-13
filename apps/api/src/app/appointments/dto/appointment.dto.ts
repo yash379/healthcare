@@ -15,8 +15,8 @@ export class AppointmentDto implements Appointment {
 
 export class AppointmentStatusCountsDto {
   pending: number;
-  inProgress: number;
-  cancelled: number;
   confirmed: number;
+  inProgress: number;
+  completed: number;
+  declined: number;
 }
-
