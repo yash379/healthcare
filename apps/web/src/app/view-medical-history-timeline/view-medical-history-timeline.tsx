@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -12,12 +12,60 @@ import Divider from '@mui/material/Divider';
 import styles from './view-medical-history-timeline.module.scss';
 import { Box, Button } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
+import axios from 'axios';
+import { Patient } from '@healthcare/data-transfer-types';
+import { environment } from '../../environments/environment';
 
 /* eslint-disable-next-line */
-export interface ViewMedicalHistoryTimelineProps { }
+export interface ViewMedicalHistoryTimelineProps { 
+  patient:Patient | null;
+}
+
+interface Diagnosis {
+  id: number;
+  details: string;
+  height: number;
+  weight: number;
+  pulse: number;
+  spo2: number;
+  temperature: null | number;
+  chiefComplaints: string[];
+  doctorId: number;
+  patientId: number;
+  diagnosisDate: string;
+  createdAt: string;
+  updatedAt: string | null;
+  medicalHistoryId: number;
+}
+
+interface Prescription {
+  id: number;
+  medicineName: string;
+  instructions: string;
+  dose: string;
+  when: string;
+  frequency: string;
+  duration: string;
+  doctorId: number;
+  patientId: number;
+  prescriptionDate: string;
+  createdAt: string;
+  updatedAt: string | null;
+  medicalHistoryId: number;
+}
+
+interface MedicalHistoryResponse {
+  id: number;
+  patientId: number;
+  createdAt: string;
+  updatedAt: string | null;
+  diagnoses: Diagnosis[];
+  prescriptions: Prescription[];
+}
+
 
 export function ViewMedicalHistoryTimeline(
-  props: ViewMedicalHistoryTimelineProps
+  {patient}: ViewMedicalHistoryTimelineProps
 ) {
   // Dummy data for appointments
   const [dummyAppointments, setDummyAppointments] = useState([
@@ -43,6 +91,26 @@ export function ViewMedicalHistoryTimeline(
 
     },
   ]);
+  const [medicalHistory, setMedicalHistory]=useState<MedicalHistoryResponse | null>(null);
+  const apiUrl = environment.apiUrl;
+
+  const getHistory=async()=>{
+    const response = await axios.get(`${apiUrl}/medical-history/${patient?.id}`,
+      {
+        withCredentials:true
+      }
+    );
+
+    setMedicalHistory(response.data);
+
+    console.log("Medical history:", response.data);
+  }
+
+  useEffect(()=>{
+    getHistory();
+  },[patient]);
+
+
 
   return (
     <div className={styles['container']} >
@@ -89,8 +157,8 @@ export function ViewMedicalHistoryTimeline(
           // },
         }}
       >
-        {dummyAppointments.map((appointment) => (
-          <TimelineItem key={appointment.id}>
+        {medicalHistory?.diagnoses.map((item) => (
+          <TimelineItem key={item.id}>
             <TimelineSeparator >
               <TimelineDot sx={{ backgroundColor: '#064B4F' }} />
               <TimelineConnector />
@@ -98,7 +166,7 @@ export function ViewMedicalHistoryTimeline(
             <TimelineContent>
               {/* Display date outside the card */}
               <Typography color="textSecondary" sx={{ marginBottom: 1 }}>
-                {appointment.date.toDateString()}
+                {item.chiefComplaints}
               </Typography>
               {/* Card with appointment details */}
               <Card sx={{
@@ -109,10 +177,10 @@ export function ViewMedicalHistoryTimeline(
               }}>
                 <CardContent>
                   <Typography variant="h5" color="#000000">
-                    {appointment.description}
+                    {item.details}
                   </Typography>
                   <Typography variant="body2" sx={{ color: '#454C73', marginBottom: 2, fontFamily: 'Poppins, sans-serif', mt: 2 }}>
-                    {appointment.details}
+                    {item.height}
                   </Typography>
                   <Divider sx={{ marginY: 1, backgroundColor: '#F4F6FA' }} />
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -121,7 +189,7 @@ export function ViewMedicalHistoryTimeline(
                         Duration:
                       </Typography>
                       <Typography variant="body2" color="white">
-                        {appointment.duration}
+                        {item.createdAt}
                       </Typography>
                     </div>
                     <div>
@@ -129,7 +197,7 @@ export function ViewMedicalHistoryTimeline(
                         Status:
                       </Typography>
                       <Typography variant="body2" color="white">
-                        {appointment.status}
+                        {item.weight}
                       </Typography>
                     </div>
                     <div>
@@ -137,7 +205,7 @@ export function ViewMedicalHistoryTimeline(
                         Document:
                       </Typography>
                       <Typography variant="body2" color="white">
-                        {appointment.document}
+                        {item.pulse}
                       </Typography>
                     </div>
                   </div>

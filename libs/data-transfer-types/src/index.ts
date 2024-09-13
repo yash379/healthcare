@@ -7,4 +7,5 @@ export * from './lib/hospital';
 export * from './lib/patient';
 export * from './lib/appointment';
 export * from './lib/login';
-export * from './lib/diagnosis'
+export * from './lib/diagnosis';
+export * from './lib/prescription';

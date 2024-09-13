@@ -14,6 +14,9 @@ import {
   Typography,
   FormHelperText,
   InputAdornment,
+  Grid,
+  Autocomplete,
+  Chip,
 } from '@mui/material';
 import { environment } from '../../../../environments/environment';
 import Breadcrumbs from '../../../Components/bread-crumbs/bread-crumbs';
@@ -25,25 +28,38 @@ import { CountriesStates } from '../../../core/consts/countries-states';
 
 import { useContext, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Gender, Patient } from '@prisma/client';
+import { AcuteDisease, ChronicDisease, Gender, Patient } from '@prisma/client';
 import { enqueueSnackbar } from 'notistack';
 import { HospitalContext } from '../../../contexts/hospital-context';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { PatientContext } from '../../../contexts/patient-context';
-import PhoneInput from 'react-phone-input-2'
-import 'react-phone-input-2/lib/style.css'
+import { AddPatient, ViewPatient } from '@healthcare/data-transfer-types';
 import DoctorContext from '../../../contexts/doctor-context';
 
+// const AcuteDisease = [
+//   "FLU",
+//   "PNEUMONIA",
+//   "APPENDICITIS",
+//   "MIGRAINE"
+// ];
+// const ChronicDisease = [
+//   "DIABETES",
+//   "HYPERTENSION",
+//   "ASTHMA",
+//   "COPD"
+// ];
+
 export interface EditPatient {
+  id: number;
   firstName: string;
   lastName: string;
-  email?: string;
+  email: string;
   phoneNumber?: string;
   gender: Gender;
-  bloodgroup: string;
-  dob: Date;
+  age: number;
+  bloodGroup: string;
+  dob: Date | null;
   digitalHealthCode: string;
   addressLine1: string;
   addressLine2?: string;
@@ -51,27 +67,28 @@ export interface EditPatient {
   stateCode?: string;
   countryCode: string;
   postalCode: string;
-  isActive: boolean;
+  chronicDiseases?: ChronicDisease[]; // Array of ChronicDisease enums
+  acuteDiseases?: AcuteDisease[]; // Array of AcuteDisease enums
+  // isActive: boolean;
 }
 
-export interface ViewPatient {
-  firstName: string;
-  lastName: string;
-  email?: string;
-  phoneNumber?: string;
-  gender: Gender;
-  bloodGroup: string;
-  dob: Date;
-  digitalHealthCode: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  stateCode?: string;
-  countryCode: string;
-  postalCode: string;
-  isActive: boolean;
-  age:number;
-}
+// export interface ViewPatient {
+//   firstName: string;
+//   lastName: string;
+//   email?: string;
+//   phoneNumber?: string;
+//   gender: Gender;
+//   bloodgroup: string;
+//   dob: Date;
+//   digitalHealthCode: string;
+//   addressLine1: string;
+//   addressLine2?: string;
+//   city: string;
+//   stateCode?: string;
+//   countryCode: string;
+//   postalCode: string;
+//   isActive: boolean;
+// }
 
 /* eslint-disable-next-line */
 export interface EditPatientPageProps {}
@@ -79,13 +96,16 @@ export interface EditPatientPageProps {}
 export function EditPatientPage(props: EditPatientPageProps) {
   const apiUrl = environment.apiUrl;
   const [patient, setPatient] = useState<ViewPatient | null>(null);
-  const { hospitalId, patientId } = useParams<{ hospitalId: string, patientId: string }>();
+  const { hospitalId, patientId } = useParams<{
+    hospitalId: string;
+    patientId: string;
+  }>();
   console.log('Hospital ID:', hospitalId);
-console.log('Patient ID:', patientId);
-const patientContext = useContext(PatientContext);
-//get patientid as id from patientContext
-// const { patient: id } = patientContext;
-console.log(patientContext,"patientcontext");
+  console.log('Patient ID:', patientId);
+  // const patientContext = useContext(PatientContext);
+  //get patientid as id from patientContext
+  // const { patient: id } = patientContext;
+  // console.log(patientContext,"patientcontext");
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const validationSchema = yup.object().shape({
@@ -94,21 +114,40 @@ console.log(patientContext,"patientcontext");
     email: yup.string().email('Invalid email').required('Email is required'),
     phoneNumber: yup
       .string()
-      .matches(/^(?:\+?91|0)?[6-9]\d{9}$/, 'Invalid phone number')
+      .matches(/[6789][0-9]{9}/, 'Invalid phone number')
+      .min(10)
+      .max(10)
       .required('Phone number is required'),
     gender: yup.string().required('Please Select One'),
     isActive: yup.boolean().required('Please Select One'),
-    bloodgroup: yup.string().required('Blood Group is required'),
+    bloodGroup: yup.string().required('Blood Group is required'),
     dob: yup.date().required('Date Of Birth is required'),
     digitalHealthCode: yup.string().required('Digital Health Code is required'),
-    addressLine1: yup.string().required('addressLine1 is required'),
+    addressLine1: yup.string().required('Address Line 1 is required'),
     addressLine2: yup.string().notRequired(),
     city: yup.string().required('City is required'),
-    stateCode: yup.string().required('State Code is required'),
+    // stateCode: yup.string().required('State Code is required'),
+    stateCode: yup.string().notRequired(),
     countryCode: yup.string().required('Country Code is required'),
     postalCode: yup.string().required('Postal Code is required'),
-    age:yup.number().required('Age is required')
+    age: yup
+      .number()
+      .required('Age is required')
+      .min(0, 'Age cannot be less than 0')
+      .max(200, 'Age cannot be Greater then 200'),
+    chronicDiseases: yup
+      .array()
+      .of(yup.string().required('Each chronic disease must be a valid string'))
+      .min(1, 'At least one chronic disease is required')
+      .required('chronicDiseases is required'),
+
+    acuteDiseases: yup
+      .array()
+      .of(yup.string().required('Each acute disease must be a valid string'))
+      .min(1, 'At least one acute disease is required')
+      .required('acuteDiseases is required'),
   });
+
   const {
     handleSubmit,
     control,
@@ -116,32 +155,31 @@ console.log(patientContext,"patientcontext");
     formState: { errors },
     watch,
     setValue,
-  } = useForm<ViewPatient>({
+  } = useForm<EditPatient>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       isActive: true,
     },
   });
 
-  const PhoneNumber = watch('phoneNumber');
-
-  console.log("phone Number", PhoneNumber)
-
   const countryValue = watch('countryCode');
   const stateOptions =
     CountriesStates.find((c) => c.code === countryValue)?.states || [];
 
   const params = useParams();
-  console.log("params", params)
+  console.log('params', params);
+  const doctorContext=useContext(DoctorContext);
   const hospitalContext = useContext(HospitalContext);
   console.log(hospitalContext, params);
-  const doctorcontext=useContext(DoctorContext);
+
+  const chronicDiseaseOptions = Object.values(ChronicDisease);
+  const acuteDiseaseOptions = Object.values(AcuteDisease);
 
   useEffect(() => {
     async function fetchPatientData() {
       try {
-        const response = await axios.get<ViewPatient>(
-          `${apiUrl}/hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${params.patientId}`,
+        const response = await axios.get(
+          `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${params.doctorId}/patient/${params.patientId}`,
           {
             withCredentials: true,
           }
@@ -151,21 +189,23 @@ console.log(patientContext,"patientcontext");
         setPatient(patientData);
 
         // Set the form data using setValue
+        setValue('digitalHealthCode', patientData.digitalHealthCode);
+        setValue('email', patientData.email);
         setValue('firstName', patientData.firstName);
         setValue('lastName', patientData.lastName);
-        setValue('email', patientData.email);
         setValue('phoneNumber', patientData.phoneNumber);
         setValue('gender', patientData.gender);
+        setValue('dob', patientData.dob);
         setValue('bloodGroup', patientData.bloodGroup);
-        setValue('dob', new Date(patientData.dob));
-        setValue('digitalHealthCode', patientData.digitalHealthCode);
+        setValue('age', patientData.age);
         setValue('addressLine1', patientData.addressLine1);
         setValue('addressLine2', patientData.addressLine2);
         setValue('city', patientData.city);
         setValue('countryCode', patientData.countryCode);
         setValue('stateCode', patientData.stateCode);
         setValue('postalCode', patientData.postalCode);
-        setValue('age',patientData.age)
+        setValue('chronicDiseases', patientData.chronicDisease);
+        setValue('acuteDiseases', patientData.acuteDisease);
       } catch (error) {
         console.error('Error fetching Patient data:', error);
       }
@@ -177,8 +217,8 @@ console.log(patientContext,"patientcontext");
   const onSubmit = async (data: EditPatient) => {
     try {
       const response = await axios.put(
-        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/patients/${params.patientId}`,
-        data,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${params.doctorId}/patient/${params.patientId}`,
+        {...data, dob: data.dob ? data.dob.toISOString() : undefined},
         {
           withCredentials: true,
         }
@@ -186,7 +226,9 @@ console.log(patientContext,"patientcontext");
       console.log('Patient updated:', response.data);
 
       enqueueSnackbar('Patient updated successfully!', { variant: 'success' });
-      navigate(`/hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients`);
+      navigate(
+        `/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients`
+      );
     } catch (error) {
       console.error('Error updating Patient:', error);
       enqueueSnackbar(
@@ -195,7 +237,6 @@ console.log(patientContext,"patientcontext");
       );
     }
   };
-
 
   // const parseDate = (date?: any) => {
   //   if (date) {
@@ -206,13 +247,13 @@ console.log(patientContext,"patientcontext");
   //   }
   //   return undefined;
   // };
-  
+
   const breadcrumbs = [
     {
-      to: `/dashboard/${hospitalContext?.hospital?.id}`,
+      to: `/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}`,
       label: 'Dashboard',
     },
-    { to: `/hospital/${hospitalContext?.hospital?.id}/patients`, label: 'Patients' },
+    { to: `/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients`, label: 'Patients' },
     {
       label: 'Edit',
     },
@@ -225,8 +266,8 @@ console.log(patientContext,"patientcontext");
           <Icon component={EditIcon} /> Edit Patient
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+        <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
               <Controller
                 name="digitalHealthCode"
                 control={control}
@@ -238,15 +279,36 @@ console.log(patientContext,"patientcontext");
                     variant="outlined"
                     {...field}
                     fullWidth
-                    disabled
+                    // disabled
+                    inputProps={{ readOnly: true }}
                     error={!!errors.digitalHealthCode}
                     helperText={errors.digitalHealthCode?.message}
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
-              <Controller
+       </Grid>
+       <Grid item xs={12} sm={6}>
+       <Controller
+                name="email"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Email is required' }}
+                render={({ field }) => (
+                  <TextField
+                    type="email"
+                    className="form-control"
+                    placeholder="Enter Email"
+                    {...field}
+                    label="Email*"
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                    sx={{ width: '100%' }}
+                  />
+                )}
+              />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+            <Controller
                 name="firstName"
                 control={control}
                 defaultValue=""
@@ -264,10 +326,8 @@ console.log(patientContext,"patientcontext");
                   />
                 )}
               />
-            </div>
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+              </Grid>
+              <Grid item xs={12} sm={6}>
               <Controller
                 name="lastName"
                 control={control}
@@ -286,30 +346,8 @@ console.log(patientContext,"patientcontext");
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
-              <Controller
-                name="email"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Email is required' }}
-                render={({ field }) => (
-                  <TextField
-                    type="email"
-                    className="form-control"
-                    placeholder="Enter Email"
-                    {...field}
-                    label="Email*"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    sx={{ width: '100%' }}
-                  />
-                )}
-              />
-            </div>
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="phoneNumber"
                 control={control}
@@ -322,52 +360,34 @@ console.log(patientContext,"patientcontext");
                   // },
                 }}
                 render={({ field }) => (
-                  // <TextField
-                  //   type="text"
-                  //   inputMode="numeric"
-                  //   className="form-control"
-                  //   placeholder="Enter Phone Number"
-                  //   InputProps={{
-                  //     startAdornment: (
-                  //       <InputAdornment sx={{ mt: '1px' }} position="start">
-                  //         +91
-                  //       </InputAdornment>
-                  //     ),
-                  //   }}
-                  //   {...field}
-                  //   label="Phone Number*"
-                  //   error={!!errors.phoneNumber}
-                  //   helperText={errors.phoneNumber?.message}
-                  //   sx={{ width: '100%' }}
-                  // />
-
-                  <PhoneInput
-                  {...field}   
-                  
-                  inputStyle={{
-                    borderColor: (errors.phoneNumber) && "#de0835",
-                    boxSizing: 'inherit',
-                    height: '55px',
-                    width: '100%',
-                    maxWidth:"524px"                      
-                  }}                                                                                                     
-                  country={'in'}
-                  value={field.value}
-                  onChange={(phone: any) => field.onChange(phone)}
-                  // error={!!errors.phoneNumber}
-                  // helperText={errors.phoneNumber?.message}
-                /> 
+                  <TextField
+                    type="text"
+                    inputMode="numeric"
+                    className="form-control"
+                    placeholder="Enter Phone Number"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment sx={{ mt: '1px' }} position="start">
+                          +91
+                        </InputAdornment>
+                      ),
+                    }}
+                    {...field}
+                    label="Phone Number*"
+                    error={!!errors.phoneNumber}
+                    helperText={errors.phoneNumber?.message}
+                    sx={{ width: '100%' }}
+                  />
                 )}
               />
-               {!!errors.phoneNumber && <Typography sx={{color:'#de0835',fontSize:[13,"!important"],marginLeft:'13px'}} >{errors.phoneNumber.message}</Typography>} 
-            </div>
-            <div className={styles['form-item']}>
+              </Grid>
+              <Grid item xs={12} sm={6}>
               <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
                 <InputLabel htmlFor="type">Gender*</InputLabel>
                 <Controller
                   name="gender"
                   control={control}
-                  defaultValue=""
+                  defaultValue={patient?.gender}
                   rules={{ required: 'Gender is required' }}
                   render={({ field }) => (
                     <Select
@@ -375,13 +395,14 @@ console.log(patientContext,"patientcontext");
                       variant="outlined"
                       {...field}
                       error={!!errors.gender}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 97,
-                          },
-                        },
-                      }}
+                      value={field.value || ''}
+                      // MenuProps={{
+                      //   PaperProps: {
+                      //     style: {
+                      //       maxHeight: 97,
+                      //     },
+                      //   },
+                      // }}
                     >
                       <MenuItem sx={{ justifyContent: 'start' }} value="MALE">
                         Male
@@ -395,12 +416,33 @@ console.log(patientContext,"patientcontext");
                     </Select>
                   )}
                 />
-                {/* <FormHelperText>{errors.gender?.message}</FormHelperText> */}
+                <FormHelperText>{errors.gender?.message}</FormHelperText>
               </FormControl>
-            </div>
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+              <Controller
+                name="dob"
+                control={control}
+                // defaultValue={parseDate(patient?.dob)}
+                render={({ field, fieldState: { error } }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      {...field}
+                      value={field.value ? dayjs(field.value) : undefined}
+                      label="DateOf Birth"
+                      slotProps={{
+                        textField: {
+                          error: !!error,
+                          helperText: error?.message,
+                          fullWidth: true,
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
+                )}
+              />
+               </Grid>
+               <Grid item xs={12} sm={6}>
               <Controller
                 name="bloodGroup"
                 control={control}
@@ -417,33 +459,45 @@ console.log(patientContext,"patientcontext");
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
-              <Controller
-                name="dob"
+             </Grid>
+             <Grid item xs={12} sm={6}>
+             <Controller
+                name="age"
                 control={control}
-                // defaultValue={parseDate(patient?.dob)}
-                render={({ field, fieldState: { error } }) => (
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      {...field}
-                      value={field.value ? dayjs(field.value) : undefined}
-                      label="DOB"
-                      slotProps={{
-                        textField: {
-                          error: !!error,
-                          helperText: error?.message,
-                          fullWidth: true,
-                        },
-                      }}
-                    />
-                  </LocalizationProvider>
+                defaultValue={0}
+                rules={{
+                  required: 'Age is required',
+                  min: {
+                    value: 0,
+                    message: 'Age cannot be less than 0',
+                  },
+                  max: {
+                    value: 200,
+                    message: 'Age cannot be Greater than 200',
+                  },
+                }}
+                render={({ field }) => (
+                  <TextField
+                    type="number"
+                    className="form-control"
+                    placeholder="Enter Age"
+                    {...field}
+                    label="Age*"
+                    error={!!errors.age}
+                    helperText={errors.age?.message}
+                    sx={{
+                      width: '100%',
+                      marginBottom: 1,
+                    }}
+                    inputProps={{
+                      min: 0, // Set minimum value for the input
+                    }}
+                  />
                 )}
               />
-            </div>
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+                 </Grid>
+
+<Grid item xs={12} sm={6}>
               <Controller
                 name="addressLine1"
                 control={control}
@@ -460,8 +514,8 @@ console.log(patientContext,"patientcontext");
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
+               </Grid>
+               <Grid item xs={12} sm={6}>
               <Controller
                 name="addressLine2"
                 control={control}
@@ -478,11 +532,8 @@ console.log(patientContext,"patientcontext");
                   />
                 )}
               />
-            </div>
-          </div>
-
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+          </Grid>
+          <Grid item xs={12} sm={6}>
               <Controller
                 name="city"
                 control={control}
@@ -499,8 +550,8 @@ console.log(patientContext,"patientcontext");
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
+          </Grid>
+          <Grid item xs={12} sm={6}>
               <Controller
                 name="countryCode"
                 control={control}
@@ -526,10 +577,8 @@ console.log(patientContext,"patientcontext");
               <FormHelperText sx={{ ml: '12px', color: '#d32f2f' }}>
                 {errors.countryCode?.message}
               </FormHelperText>
-            </div>
-          </div>
-          <div className={styles['form-row']}>
-            <div className={styles['form-item']}>
+              </Grid>
+            <Grid item xs={12} sm={6}>
               <Controller
                 name="stateCode"
                 control={control}
@@ -547,8 +596,9 @@ console.log(patientContext,"patientcontext");
                   </FormControl>
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
+            </Grid>
+
+<Grid item xs={12} sm={6}>
               <Controller
                 name="postalCode"
                 control={control}
@@ -565,26 +615,96 @@ console.log(patientContext,"patientcontext");
                   />
                 )}
               />
-            </div>
-            <div className={styles['form-item']}>
-              <Controller
-                name="age"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Age is required' }}
-                render={({ field }) => (
+            </Grid>
+            <Grid item xs={12} sm={6}>
+            <FormControl
+                sx={{ width: '100%', marginBottom: 2 }}
+                error={!!errors.chronicDiseases}
+              >
+           <Controller
+            name="chronicDiseases"
+            control={control}
+            rules={{ required: 'Chronic Diseases are required' }}
+            render={({ field }) => (
+              <Autocomplete
+                {...field}
+                multiple
+                options={chronicDiseaseOptions}
+                getOptionLabel={(option) => option}
+                renderTags={(value: string[], getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      variant="outlined"
+                      label={option}
+                      {...getTagProps({ index })} // getTagProps already includes 'key'
+                    />
+                  ))
+                }
+                renderInput={(params) => (
                   <TextField
-                    label="Age*"
+                    {...params}
                     variant="outlined"
-                    {...field}
-                    fullWidth
-                    error={!!errors.age}
-                    helperText={errors.age?.message}
+                    label="Select Chronic Diseases"
+                    placeholder="Chronic Diseases"
+                    error={!!errors.chronicDiseases}
                   />
                 )}
+                onChange={(_, value) =>
+                  field.onChange(value.map((v) => v.toUpperCase()))
+                }
+                value={field.value || []} // Ensure controlled value
               />
-            </div>
-          </div>
+            )}
+          />
+                <FormHelperText>
+                  {errors.chronicDiseases?.message}
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl
+                sx={{ width: '100%', marginBottom: 2 }}
+                error={!!errors.acuteDiseases}
+              >
+            <Controller
+            name="acuteDiseases"
+            control={control}
+            rules={{ required: 'Acute Disease is required' }}
+            render={({ field }) => (
+              <Autocomplete
+                {...field}
+                multiple
+                options={acuteDiseaseOptions}
+                getOptionLabel={(option) => option}
+                renderTags={(value: string[], getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      variant="outlined"
+                      label={option}
+                      {...getTagProps({ index })} // getTagProps already includes 'key'
+                    />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Select Acute Diseases"
+                    placeholder="Acute Diseases"
+                    error={!!errors.acuteDiseases}
+                  />
+                )}
+                onChange={(_, value) =>
+                  field.onChange(value.map((v) => v.toUpperCase()))
+                }
+                value={field.value || []} // Ensure controlled value
+              />
+            )}
+          />
+                <FormHelperText>{errors.acuteDiseases?.message}</FormHelperText>
+              </FormControl>
+            </Grid>
+          </Grid>
           <div className={styles['form-row']}>
             <div className={styles['form-item']}>
               <Button variant="contained" color="primary" type="submit">

@@ -84,6 +84,10 @@ const componentThemeOptions: ThemeOptions = {
           borderRadius: '12px',
           minWidth: '84px',
         },
+        outlined:{
+          borderColor:'#064B4F',
+          color:'black'
+        }
       },
     },
     MuiTypography: {

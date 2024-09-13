@@ -65,9 +65,9 @@ export function Layout({ user }: LayoutProps) {
           <TopBar />
           <DrawerComponent />
           <div className={styles['outlet']}>
-            <Box className={styles['Box']}>
+            {/* <Box className={styles['Box']}> */}
               <Outlet />
-            </Box>
+            {/* </Box> */}
           </div>
         {/* </UserContext.Provider>
       )} */}

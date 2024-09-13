@@ -83,7 +83,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
 
 
         {/* doctor admin nav */}
-        {(!doctorContext?.doctor) ?
+        {/* {(!doctorContext?.doctor) ? */}
          (<List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
           <Link style={{ textDecoration: "none" }} to={`/dashboard/${hospitalcontext?.hospital?.id}`} onClick={() => handleComponentChange('dashboard')}>
           <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
@@ -108,12 +108,12 @@ export function DrawerComponent(props: DrawerComponentProps) {
           </List>
         )
         
-        :
+        {/* : */}
         
-        //patient dashboard nav
-        patientcontext?.patient  ?
+        {/* //patient dashboard nav
+        patientcontext?.patient  ? */}
 
-        (<List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
+        {/* (<List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
           <Link style={{ textDecoration: "none" }} to={`/dashboard/${hospitalcontext?.hospital?.id}`} onClick={() => handleComponentChange('dashboard')}>
           <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
             }`}>
@@ -135,12 +135,12 @@ export function DrawerComponent(props: DrawerComponentProps) {
             </ListItemButton>
           </Link>
           </List>
-        )
+        ) */}
 
 
-       :
+       {/* : */}
         
-        //doctor dashboard
+        {/* //doctor dashboard
         (<List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
 
           <Link style={{ textDecoration: "none" }} to={`/dashboard/${hospitalcontext?.hospital?.id}`} onClick={() => handleComponentChange('dashboard')}>
@@ -164,7 +164,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             </ListItemButton>
           </Link>
 
-          {/* <Link style={{ textDecoration: "none" }} to={`/hospital/${hsopitalContext?.hospital?.id}/doctors`} onClick={() => handleComponentChange('doctors')}>
+          <Link style={{ textDecoration: "none" }} to={`/hospital/${hsopitalContext?.hospital?.id}/doctors`} onClick={() => handleComponentChange('doctors')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'doctors' && styles['active-tab']
               }`}>
               <ListItemIcon>
@@ -172,7 +172,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
               </ListItemIcon>
               <ListItemText className={styles["drawertab"]} primary="Doctor" />
             </ListItemButton>
-          </Link> */}
+          </Link>
           <Link style={{ textDecoration: "none" }} to={`/hospital/${hospitalcontext?.hospital?.id}/patients`} onClick={() => handleComponentChange('patients')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'patients' && styles['active-tab']
               }`}>
@@ -210,9 +210,9 @@ export function DrawerComponent(props: DrawerComponentProps) {
             </ListItemButton>
           </Link>
 
-        </List>)
+        </List>) */}
 
-      }
+      {/* } */}
       </Drawer>
     </div>
   );
