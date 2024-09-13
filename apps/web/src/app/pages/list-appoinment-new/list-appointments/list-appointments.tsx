@@ -1,5 +1,5 @@
 import styles from './list-appointments.module.scss';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -48,6 +48,8 @@ import Chip from '../../../Components/chip/chip';
 import StatusChip from '../../../Components/chip/statusChip';
 import Loading from '../../../Components/loading/loading';
 import { ViewAllUser } from '@healthcare/data-transfer-types';
+import HospitalContext from '../../../contexts/hospital-context';
+import DoctorContext from '../../../contexts/doctor-context';
 
 
 interface Appointment {
@@ -107,6 +109,12 @@ interface Form {
   statusId: number;
 }
 
+interface Status{
+  id:number;
+  code:string;
+  name:string,
+}[];
+
 
 export function ListAppointments(props: ListAppointmentsProps) {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -130,13 +138,24 @@ export function ListAppointments(props: ListAppointmentsProps) {
     []
   );
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
-  const [appointmentStatus, setAppointmentStatus] = useState({ total:0,pending: 0, inProgress: 0, cancelled: 0, confirmed: 0 });
+  const [appointmentCount, setAppointmentCount] = useState({ total:0,pending: 0, inProgress: 0, cancelled: 0, confirmed: 0 });
   const [viewAppointment, setViewAppointment]=useState(false);
+  const [declineAppointment, setDeclineAppointment]=useState(true);
+  const [declinedAppointment, setDeclinedAppointment]=useState(false);
+  const [acceptAppointment, setAcceptAppointment]=useState(true);
+  const [appointment, setAppointment]=useState<ViewAppointment>();
+  const [appointmentStatuses, setAppointmentStatus]=useState<Status[] | null>(null);
+
+  const [status, setStatus]=useState<Status | null>(null);
+
+  const hospitalcontext=useContext(HospitalContext);
+  const doctorcontext=useContext(DoctorContext);
 
   const navigate=useNavigate()
 
   useEffect(() => {
     getCounts();
+    getStatuses();
   }, []);
 
 
@@ -144,7 +163,18 @@ export function ListAppointments(props: ListAppointmentsProps) {
     try {
       const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/appointment-count`, { withCredentials: true });
 
+      setAppointmentCount(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const getStatuses = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/appointmentStatuses`, { withCredentials: true });
+
       setAppointmentStatus(response.data);
+      console.log("Appointment statuses:", response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -384,20 +414,69 @@ export function ListAppointments(props: ListAppointmentsProps) {
     fetchAppointments();
   }, []);
 
-  const handleAccept = (id: number, value:boolean) => {
+  const handleAccept = (appointment: ViewAppointment, value:boolean) => {
     console.log(`Appointment ${id} accepted.`);
-    setViewAppointment(value);
+    // setStartAppointment(true);
+    setAcceptAppointment(false);
+    setViewAppointment(true);
+    setDeclineAppointment(value)
+    setDeclinedAppointment(value);
+    const acceptstatus = appointmentStatuses?.find((item)=>item.name==='CONFIRMED')
+    if (acceptstatus) {
+      setStatus(acceptstatus);
+    }
+
+    setAppointment(appointment);
   };
 
-  const handleView=(id: number, value:boolean)=>{
-    navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/appointments/${id}`);
+  const handleView=(appointment: ViewAppointment, value:boolean)=>{
+    // navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/appointments/${appointment.id}`);
+    navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/patients/${appointment.patient.user.id}/patient-detail`)
     setViewAppointment(value);
+    const acceptstatus = appointmentStatuses?.find((item)=>item.name==='INPROGRESS')
+    if (acceptstatus) {
+      setStatus(acceptstatus);
+    }
+    // setStatus()
+    setAppointment(appointment);
   }
 
+  console.log("appt:", appointment);
+
   const handleDecline = (id: number) => {
+    setDeclineAppointment(false);
+    setViewAppointment(false);
+    setAcceptAppointment(false);
+    setDeclinedAppointment(true)
     console.log(`Appointment ${id} declined.`);
+    const acceptstatus = appointmentStatuses?.find((item)=>item.name==='CANCELLED')
+    if (acceptstatus) {
+      setStatus(acceptstatus);
+    }
+    // setStatus();
   };
 
+  useEffect(()=>{
+    const changeAppointmentStatus = async () => {
+      try {
+        const response = await axios.put(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patient/${appointment?.patient?.user?.id}/appointments/${appointment?.id}`,{
+          ...appointment,
+          status:status
+        },{
+          withCredentials:true
+        });
+        console.log("status changed:", response.data);
+        setAppointments(response.data);
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      }
+    };
+  
+    changeAppointmentStatus();
+
+  },[status]);
+
+  
   return (
     <Box sx={{ height: '100vh'}}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={5}>
@@ -479,10 +558,11 @@ export function ListAppointments(props: ListAppointmentsProps) {
                 marginRight: '10px',
                 marginLeft: '15px',
               }}
+              key={index}
             >
               <CardHeader
                 avatar={<Avatar src="https://randomuser.me/api/portraits/men/75.jpg" />}
-                title={`${appointment.patient.user.firstName} ${appointment.patient.user.lastName}`}
+                title={`${appointment.patient.user.firstName} ${appointment.patient.user.lastName} ${appointment.status.name}`}
                 subheader={appointment.appointmentDate}
               />
               <CardContent sx={{ paddingLeft: '68px', position: 'relative', bottom: '24px',paddingBottom:'0px' }}>
@@ -509,15 +589,17 @@ export function ListAppointments(props: ListAppointmentsProps) {
                   paddingTop: '0px',
                   paddingInline:'10px'
                 }}
+                key={index}
               >
-                <Button
+                {declineAppointment &&
+                 <Button
                   variant="outlined"
                   sx={{ borderRadius: '12px', color: '#82A4A6', borderColor: '#82A4A6' }}
                   onClick={() => handleDecline(index)}
                 >
                   Decline Appointment
-                </Button>
-                {viewAppointment ? <Button
+                </Button> }
+                {viewAppointment &&  <Button
                   variant="contained"
                   sx={{
                     backgroundColor: '#064B4F',
@@ -525,12 +607,14 @@ export function ListAppointments(props: ListAppointmentsProps) {
                     position: 'relative',
                     float: 'right',
                     borderRadius: '12px',
+                    width:'-webkit-fill-available'
                   }}
-                  onClick={() => handleView(appointment.id,false)}
+                  onClick={() => handleView(appointment,false)}
                 >
-                  View Appointment
-                </Button> 
-                : <Button
+                  Start Appointment
+                </Button> }
+                {acceptAppointment &&
+                <Button
                   variant="contained"
                   sx={{
                     backgroundColor: '#064B4F',
@@ -538,11 +622,19 @@ export function ListAppointments(props: ListAppointmentsProps) {
                     position: 'relative',
                     float: 'right',
                     borderRadius: '12px',
-                    // width:'-webkit-fill-available'
+                    
                   }}
-                  onClick={() => handleAccept(appointment.id,true)}
+                  onClick={() => handleAccept(appointment,false)}
                 >
                   Accept Appointment
+                </Button>  }
+                {declinedAppointment &&  <Button
+                  variant="outlined"
+                  sx={{ borderRadius: '12px', color: '#82A4A6', borderColor: '#82A4A6',width:'-webkit-fill-available' }}
+                  onClick={() => handleDecline(index)}
+                  disabled
+                >
+                  Appointment Declined
                 </Button>}
               </CardActions>
             </Card>

@@ -6,9 +6,20 @@ import axios from 'axios';
 import { environment } from '../../../environments/environment';
 import HospitalContext from '../../contexts/hospital-context';
 import DoctorContext from '../../contexts/doctor-context';
-import { useParams } from 'react-router-dom';
-import { Patient } from '@healthcare/data-transfer-types';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Patient, ViewAllUser } from '@healthcare/data-transfer-types';
+import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
+import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined';
+import AddAppointment from './hospital-add-appointment/hospital-add-appointment';
+import { enqueueSnackbar } from 'notistack';
 /* eslint-disable-next-line */
+
+interface Form {
+  doctor: ViewAllUser | null;
+  appointmentDate: Date;
+  statusId: number;
+}
+
 export interface PatientDetailProps { }
 
 // interface Patient {
@@ -27,6 +38,7 @@ export function PatientDetail(props: PatientDetailProps) {
   const apiUrl = environment.apiUrl;
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loadingUserInfo, setLoadingUserInfo] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   // const patients: Patient[] = [
   //   {
   //     id: 1,
@@ -69,11 +81,126 @@ export function PatientDetail(props: PatientDetailProps) {
 
   useEffect(() => {
     getpatientinfo();
-  }, [patient]);
+  }, [params]);
+
+  const navigate=useNavigate();
+
+  const handleClick = () => {
+    navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${params.patientId}/medical-history`);
+  };
+
+  const handleStartDiagnosisClick = () => {
+    navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/diagnosis`);
+  };
+
+  const handleAddAppointment = async (formData: Form) => {
+    try {
+      await setIsAddModalOpen(false);
+
+      const { data: responseData } = await axios.post(
+        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${formData?.doctor?.id}/patients/${patient?.id}/appointments`,
+        {
+          appointmentDate: formData.appointmentDate,
+          statusId: formData.statusId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if (responseData) {
+        enqueueSnackbar('Appointment added successfully', { variant: 'success' });
+        setIsAddModalOpen(false);
+      } else {
+        console.log('Something went wrong');
+      }
+      console.log('Appointment added successfully', responseData);
+    } catch (error) {
+      console.log(error);
+      console.log('Something went wrong in input form');
+      enqueueSnackbar('Something went wrong', { variant: 'error' });
+    }
+  };
+
+
   return (
     <div className={styles['container']}>
       {/* {patients && patients.map((patient) => ( */}
         <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+        <Box sx={{ marginTop: '40px' }}>
+        {/* <Box sx={{ marginBottom: '25px' }}>
+          <Box sx={{ width: '350px', ml: '30px' }}>
+            <Card
+              onClick={handleClick}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                height: '100px',
+                padding: '16px',
+                borderRadius: '20px',
+                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                cursor: 'pointer', // Optional: changes cursor to pointer on hover
+              
+              }}
+            >
+              <Avatar sx={{ background: '#F4F7FE', width: 56, height: 56 }}>
+                <MedicalInformationOutlinedIcon
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    color: 'black',
+                  }}
+                />
+              </Avatar>
+              <Typography
+                sx={{
+                  color: '#0B4FA6',
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontWeight: 'bold',
+                  fontSize: '20px',
+                  ml: '40px',
+                }}
+              >
+                Medical History
+              </Typography>
+            </Card>
+          </Box>
+        </Box> */}
+        {/* <Box sx={{ width: '350px', ml: '30px' }}>
+          <Card
+            onClick={handleStartDiagnosisClick}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              height: '100px',
+              padding: '16px',
+              borderRadius: '20px',
+              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+              cursor: 'pointer', // Added cursor pointer here as well
+            }}
+          >
+            <Avatar sx={{ background: '#F4F7FE', width: 56, height: 56 }}>
+              <MonitorHeartOutlinedIcon
+                sx={{
+                  width: 36,
+                  height: 36,
+                  color: 'black',
+                }}
+              />
+            </Avatar>
+            <Typography
+              sx={{
+                color: '#139C94',
+                fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 'bold',
+                fontSize: '20px',
+                ml: '40px',
+              }}
+            >
+              Start Diagnosis
+            </Typography>
+          </Card>
+        </Box> */}
+      </Box>
           <Box key={patient?.id} sx={{ marginBottom: 2, marginTop: 5, marginLeft: 5 }}>
             <Card
               sx={{
@@ -141,6 +268,7 @@ export function PatientDetail(props: PatientDetailProps) {
                 </Box>
               </Box>
               {/* Button */}
+            <Box sx={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'96%'}}>
               <Button
                 variant="contained"
                 sx={{
@@ -148,13 +276,37 @@ export function PatientDetail(props: PatientDetailProps) {
                   fontFamily: 'Poppins, sans-serif', // Use Poppins font
                   backgroundColor: '#064B4F',
                   padding: '25px 80px', // Increase padding for larger button
-                  fontSize: '18px', // Increase font size
-                  width: 'fit-content', // Optional: adjust width if needed
+                  fontSize: '12px', // Increase font size
+                  width: '200px', // Optional: adjust width if needed
+                  textWrap:'nowrap',
                 }}
+                onClick={() => setIsAddModalOpen(true)}
               // Optionally add hover effect or other button styles
               >
                 Book Appointment
               </Button>
+              <AddAppointment
+              open={isAddModalOpen}
+              onClose={() => setIsAddModalOpen(false)}
+              onSubmit={handleAddAppointment}
+              />
+              <Button
+                variant="outlined"
+                sx={{
+                  marginTop: 2,
+                  fontFamily: 'Poppins, sans-serif', // Use Poppins font
+                  // backgroundColor: '#064B4F',
+                  padding: '25px 80px', // Increase padding for larger button
+                  fontSize: '12px', // Increase font size
+                  width: '200px', // Optional: adjust width if needed
+                  textWrap:'nowrap'
+                }}
+                onClick={handleStartDiagnosisClick}
+              // Optionally add hover effect or other button styles
+              >
+                Start Diagnosis
+              </Button>
+            </Box>
             </Card>
             {/* Patient Information Card */}
             <Card
@@ -211,7 +363,7 @@ export function PatientDetail(props: PatientDetailProps) {
             </Card>
           </Box>
           <Box>
-          <ViewMedicalHistoryTimeline ></ViewMedicalHistoryTimeline>
+          <ViewMedicalHistoryTimeline patient={patient} ></ViewMedicalHistoryTimeline>
           </Box>
 
         </Box>

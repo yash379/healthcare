@@ -180,12 +180,6 @@ CREATE TABLE "appointment_statuses" (
 -- CreateTable
 CREATE TABLE "prescriptions" (
     "id" SERIAL NOT NULL,
-    "medicineName" TEXT NOT NULL,
-    "instructions" TEXT NOT NULL,
-    "dose" TEXT NOT NULL,
-    "when" TEXT NOT NULL,
-    "frequency" TEXT NOT NULL,
-    "duration" TEXT NOT NULL,
     "doctorId" INTEGER NOT NULL,
     "patientId" INTEGER NOT NULL,
     "prescription_date" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -194,6 +188,20 @@ CREATE TABLE "prescriptions" (
     "medicalHistoryId" INTEGER,
 
     CONSTRAINT "prescriptions_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "medicines" (
+    "id" SERIAL NOT NULL,
+    "medicineName" TEXT NOT NULL,
+    "instructions" TEXT NOT NULL,
+    "dose" TEXT NOT NULL,
+    "when" TEXT NOT NULL,
+    "frequency" TEXT NOT NULL,
+    "duration" TEXT NOT NULL,
+    "prescriptionId" INTEGER NOT NULL,
+
+    CONSTRAINT "medicines_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -334,6 +342,9 @@ ALTER TABLE "prescriptions" ADD CONSTRAINT "prescriptions_patientId_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "prescriptions" ADD CONSTRAINT "prescriptions_medicalHistoryId_fkey" FOREIGN KEY ("medicalHistoryId") REFERENCES "medical_histories"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "medicines" ADD CONSTRAINT "medicines_prescriptionId_fkey" FOREIGN KEY ("prescriptionId") REFERENCES "prescriptions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "diagnoses" ADD CONSTRAINT "diagnoses_doctorId_fkey" FOREIGN KEY ("doctorId") REFERENCES "doctors"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
