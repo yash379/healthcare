@@ -1,0 +1,173 @@
+/*
+ * Replace this with your own classes
+ *
+ * e.g.
+ * .container {
+ * }
+*/
+.fc-timegrid-slot {
+    width: 236.4px !important;
+    height: 76.18px !important;
+  }
+  
+  .fc-timegrid-axis-cushion {
+    width: 236.4px !important;
+    height: 76.18px !important;
+  }
+  /* SchedulerComponent.css */  
+
+/* Global Styles */  
+body {  
+  font-family: Arial, sans-serif; /* Modify according to your design */  
+}  
+
+/* Styling for the grid layout */  
+.scheduler-container {  
+  padding: 20px;  
+  background-color: #f0f2f5; /* Example background color from your Figma (modify as needed) */  
+  border-radius: 10px;  
+}  
+
+/* Header styles */  
+.header-title {  
+  font-size: 24px;  
+  font-weight: bold;  
+  color: #064B4F; /* Header color matching your design */  
+}  
+
+/* Button styles */  
+.custom-button {  
+  background-color: #064B4F; /* Button background color */  
+  color: white;   
+}  
+
+/* Modify outine button appearance */  
+.outline-button {  
+  border: 1px solid #064B4F; /* Outline color */  
+  color: #064B4F;  
+}  
+
+/* Date picker and icons container styles */  
+.icon-container {  
+  display: flex;  
+  background-color: #064B4F;  
+  border-radius: 10px;  
+  overflow: hidden;  
+}  
+
+/* Icon Button style */  
+.icon-button {  
+  background-color: white;  
+  padding: 10px;  
+  display: flex;  
+  justify-content: center;  
+  align-items: center;  
+}  
+
+/* FullCalendar styling */  
+.fc-timegrid-slot {  
+  background-color: #ffffff !important; /* Slot background color */  
+}  
+
+/* Custom styles for the selected cell */  
+.custom-slot-lane {  
+  transition: scale 0.3s ease;  
+}
+.scheduler-container {  
+  background-color: #f9f9f9;  
+  padding: 20px;  
+  border-radius: 8px;  
+}  
+
+.header-title {  
+  color: #064B4F;  
+}  
+
+.custom-button {  
+  background-color: #064B4F;  
+  color: white;  
+}  
+
+.outline-button {  
+  color: #064B4F80;  
+  border-color: #064B4F80;  
+}  
+
+.icon-container {  
+  display: flex;  
+  background-color: #064B4F;  
+  border-radius: 10px;  
+  overflow: hidden;  
+}  
+
+.icon-button {  
+  background-color: white;  
+  padding: 10px;  
+  display: flex;  
+  justify-content: center;  
+  align-items: center;  
+}  
+
+.icon-button:last-child {  
+  background-color: #064B4F;  
+  color: white;  
+}  
+
+/* Custom styles for FullCalendar header */  
+.fc-toolbar {  
+  background-color: #064B4F; /* Header background color */  
+  color: white; /* Header text color */  
+  padding: 10px; /* Padding for the header */  
+  border-radius: 8px; /* Rounded corners */  
+}  
+
+.fc-toolbar h2 {  
+  margin: 0; /* Remove default margin */  
+  font-size: 1.5rem; /* Adjust font size */  
+}  
+
+.fc-button {  
+  background-color: transparent; /* Transparent background for buttons */  
+  color: white; /* Button text color */  
+  border: none; /* Remove border */  
+  padding: 8px 12px; /* Padding for buttons */  
+  font-weight: bold; /* Bold text */  
+}  
+
+.fc-button:hover {  
+  background-color: rgba(255, 255, 255, 0.2); /* Hover effect */  
+}  
+
+.fc-button:disabled {  
+  color: rgba(255, 255, 255, 0.5); /* Disabled button color */  
+}
+/* Existing styles... */  
+
+.fc-timegrid-slot {  
+  border-bottom: 1px solid orange; /* Horizontal grid lines */  
+}  
+
+.fc-daygrid-day {  
+  border-right: 1px solid orange; /* Vertical grid lines */  
+}  
+
+.fc-daygrid-day:last-child {  
+  border-right: none; /* Remove right border from the last column */  
+}  
+
+.fc-timegrid-axis {  
+  border-right: 1px solid orange; /* Right border for the time axis */  
+}  
+
+/* Optional: Adjust the header to match your design */  
+.fc-toolbar {  
+  background-color: #064B4F; /* Header background color */  
+  color: white; /* Header text color */  
+  padding: 10px; /* Padding for the header */  
+  border-radius: 8px; /* Rounded corners */  
+}  
+
+.fc-toolbar h2 {  
+  margin: 0; /* Remove default margin */  
+  font-size: 1.5rem; /* Adjust font size */  
+}
