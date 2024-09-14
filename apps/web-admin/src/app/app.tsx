@@ -136,7 +136,7 @@ export function App() {
                 path="/hospitals/:hospitalId/doctors/:doctorId/patients"
                 element={<ListPatients />}
               />
-              <Route path="/medical-history" element={<MedicalHistory />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:appointmentId/medical-history" element={<MedicalHistory />} />
 
               <Route
                 path="/hospitals/:hospitalId/doctors/:doctorId/patients/add"
