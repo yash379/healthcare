@@ -24,6 +24,7 @@ import axios from 'axios';
 import { environment } from '../../../environments/environment';
 import { ViewPatient } from '@healthcare/data-transfer-types';
 import { useCallback, useEffect, useState } from 'react';
+import { format } from 'date-fns';
 
 interface Medicine {
   medicineName: string;
@@ -118,6 +119,17 @@ export function MedicalHistory(props: MedicalHistoryProps) {
   if (!medicalHistory || !medicalHistory.groupedData) {
     return <div>No medical history data available.</div>;
   }
+
+  // Helper function to format date
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    try {
+      return format(new Date(dateString), 'MM/dd/yyyy');
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid date';
+    }
+  };
   return (
     <div className={styles['container']}>
       <Grid container alignItems="center" justifyContent="space-between">
@@ -151,7 +163,7 @@ export function MedicalHistory(props: MedicalHistoryProps) {
                 alignItems="center"
               >
                 <Typography variant="h6">
-                  Date: {entry.diagnosisDate}
+                  Date: {formatDate(entry.diagnosisDate)}
                 </Typography>
                 <div>
                   <IconButton
