@@ -65,6 +65,7 @@ export function MedicalHistory(props: MedicalHistoryProps) {
   const [medicalHistory, setMedicalHistory] = useState<MedicalHistory | null>(null);
   const [loading, setLoading] = useState(true);
   const [patientData, setPatientData] = useState<ViewPatient | null>(null);
+  const [printData, setPrintData] = useState<GroupedData | null>(null);
   const params = useParams();
   const apiUrl = environment.apiUrl;
 
@@ -109,6 +110,86 @@ export function MedicalHistory(props: MedicalHistoryProps) {
     getPatient();
   }, [getPatient]);
 
+ 
+  // Helper function to format date
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    try {
+      return format(new Date(dateString), 'MM/dd/yyyy');
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid date';
+    }
+  };
+
+
+ useEffect(() => {
+  // const handlePrint = () => {
+    if (printData) {
+      // Create an iframe element
+      const printFrame = document.createElement('iframe');
+      printFrame.style.position = 'absolute';
+      printFrame.style.width = '0px';
+      printFrame.style.height = '0px';
+      printFrame.style.border = 'none';
+      document.body.appendChild(printFrame);
+  
+      // Open iframe document
+      const printDoc = printFrame?.contentWindow?.document;
+      printDoc?.open();
+      printDoc?.write(`
+        <html>
+          <head>
+            <title>Print Diagnosis</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              h1 { font-size: 24px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+              h2 { font-size: 20px; margin-top: 20px; }
+              p { font-size: 16px; line-height: 1.6; }
+              table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+              th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+              th { background-color: #f2f2f2; }
+              tr:nth-child(even) { background-color: #f9f9f9; }
+            </style>
+          </head>
+          <body>
+            <h1>Medical History</h1>
+            <h2>Date: ${formatDate(printData.diagnosisDate)}</h2>
+            <p><strong>Vitals:</strong> Height: ${printData.diagnosisDetails.height} cm, Weight: ${printData.diagnosisDetails.weight} kg, Pulse: ${printData.diagnosisDetails.pulse} bpm</p>
+            <p><strong>Details:</strong> ${printData.diagnosisDetails.details}</p>
+            <p><strong>Chief Complaints:</strong> ${printData.diagnosisDetails.chiefComplaints.join(', ')}</p>
+            <h3>Prescriptions</h3>
+            <table>
+              <tr><th>Medicine Name</th><th>Dose</th><th>Instructions</th><th>Frequency</th><th>Duration</th></tr>
+              ${printData.relatedPrescriptions.map(prescription =>
+                prescription.medicines.map(medicine =>
+                  `<tr>
+                    <td>${medicine.medicineName}</td>
+                    <td>${medicine.dose}</td>
+                    <td>${medicine.instructions}</td>
+                    <td>${medicine.frequency}</td>
+                    <td>${medicine.duration}</td>
+                  </tr>`
+                ).join('')
+              ).join('')}
+            </table>
+          </body>
+        </html>
+      `);
+      printDoc?.close();
+  
+      // Delay the print dialog
+      setTimeout(() => {
+        printFrame?.contentWindow?.focus();
+        printFrame?.contentWindow?.print();
+  
+        // Remove the iframe from the document after printing
+        document.body.removeChild(printFrame);
+      }, 500); // Adjust the delay as needed
+    }
+  }, [printData]);
+  
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -121,16 +202,7 @@ export function MedicalHistory(props: MedicalHistoryProps) {
     return <div>No medical history data available.</div>;
   }
 
-  // Helper function to format date
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return 'N/A';
-    try {
-      return format(new Date(dateString), 'MM/dd/yyyy');
-    } catch (error) {
-      console.error('Error formatting date:', error);
-      return 'Invalid date';
-    }
-  };
+
   return (
     <div className={styles['container']}>
       <Grid container alignItems="center" justifyContent="space-between">
@@ -167,9 +239,12 @@ export function MedicalHistory(props: MedicalHistoryProps) {
                   Date: {formatDate(entry.diagnosisDate)}
                 </Typography>
                 <div>
-                  <IconButton
+                <IconButton
                     sx={{ marginRight: 2 }}
-                    onClick={() => window.print()}
+                    onClick={() => {
+                      setPrintData(entry);
+                      // handlePrint();
+                    }}
                     aria-label="print"
                   >
                     <PrintIcon />

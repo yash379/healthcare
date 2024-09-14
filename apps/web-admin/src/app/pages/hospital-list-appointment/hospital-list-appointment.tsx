@@ -476,7 +476,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                   Completed Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
-                  {appointmentStatus.confirmed}
+                  {appointmentStatus.completed}
                 </Typography>
               </Box>
             </CardContent>
@@ -672,7 +672,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                     ''
                   )}
                   {appointment.status.name === 'COMPLETED' ? (
-                    <StatusChip label="Primary" width="100px">
+                    <StatusChip label='Success' width="100px">
                       Completed
                     </StatusChip>
                   ) : (
