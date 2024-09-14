@@ -166,8 +166,12 @@ export function MedicalHistory(props: MedicalHistoryProps) {
             </Box>
             <Divider sx={{ marginBottom: 2 }} />
 
-            <Typography variant="subtitle1">Vitals:</Typography>
-            <Typography variant="body1" sx={{ marginBottom: 2 }}>
+            <Typography variant="subtitle1" sx={{
+                padding: '8px',
+                borderRadius: '4px',
+                display: 'inline',
+              }}>Vitals:</Typography>
+            <Typography variant="body1" sx={{ display: 'inline', marginLeft: '4px' }}>
               Height: {entry.diagnosisDetails.height} cm, Weight:{' '}
               {entry.diagnosisDetails.weight} kg, Pulse:{' '}
               {entry.diagnosisDetails.pulse} bpm
@@ -176,10 +180,10 @@ export function MedicalHistory(props: MedicalHistoryProps) {
             <Divider sx={{ marginY: 2 }} />
 
             <Typography variant="subtitle1"  sx={{
-                backgroundColor: '#ffe6e6', // Light red background
+                backgroundColor: '#ffe6e6',
                 padding: '8px',
                 borderRadius: '4px',
-                display: 'inline', // Keeps the diagnosis on the same line
+                display: 'inline',
               }}>Diagnosis:</Typography>
             <Typography variant="body1" sx={{ display: 'inline', marginLeft: '4px' }}>
               {entry.diagnosisDetails.details}
