@@ -39,6 +39,7 @@ interface DiagnosisDetails {
   weight: number;
   pulse: number;
   details: string;
+  chiefComplaints: string[];
 }
 
 interface Prescription {
@@ -182,6 +183,7 @@ export function MedicalHistory(props: MedicalHistoryProps) {
                 padding: '8px',
                 borderRadius: '4px',
                 display: 'inline',
+                backgroundColor: '#e0f7fa',
               }}>Vitals:</Typography>
             <Typography variant="body1" sx={{ display: 'inline', marginLeft: '4px' }}>
               Height: {entry.diagnosisDetails.height} cm, Weight:{' '}
@@ -197,13 +199,18 @@ export function MedicalHistory(props: MedicalHistoryProps) {
                 borderRadius: '4px',
                 display: 'inline',
               }}>Diagnosis:</Typography>
-            <Typography variant="body1" sx={{ display: 'inline', marginLeft: '4px' }}>
-              {entry.diagnosisDetails.details}
+            <Typography variant="body1" sx={{ padding: '8px', marginLeft: '4px'}}>
+             <Typography variant="body1"  sx={{fontWeight:'bold',display: 'inline'}}>Details:</Typography>  {entry.diagnosisDetails.details}
+            </Typography>
+            <Typography variant="body1" sx={{ padding: '8px', marginLeft: '4px'}}>
+            <Typography variant="body1"  sx={{fontWeight:'bold',display: 'inline'}}>Chief Complaints:</Typography> {entry.diagnosisDetails.chiefComplaints.join(', ')}
             </Typography>
 
             <Divider sx={{ marginY: 2 }} />
 
-            <Typography variant="subtitle1">Prescriptions</Typography>
+            <Typography variant="subtitle1" sx={{backgroundColor: '#fffde7', padding: '8px',
+                borderRadius: '4px',
+                display: 'inline',}}>Prescriptions</Typography>
             <TableContainer component={Paper}>
               <Table size="small">
                 <TableHead>
