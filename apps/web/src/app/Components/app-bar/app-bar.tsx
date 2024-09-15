@@ -84,9 +84,9 @@ export function TopBar() {
     }
   };
 
-  const userName = userContext?.firstName || 'unknown user';
-  const lastName = userContext?.lastName || 'unknown user';
-  const role = userContext?.superRole || 'Unknown Role';
+  const userName = userContext?.user?.firstName || 'unknown user';
+  const lastName = userContext?.user?.lastName || 'unknown user';
+  const role = userContext?.user?.superRole || 'Unknown Role';
   const name = `${userName} ${lastName}`;
 
   const getUserInitials = (firstName: string, lastName: string) => {

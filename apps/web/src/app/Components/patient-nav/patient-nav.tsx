@@ -55,6 +55,7 @@ export function PatientNav(props: PatientNavProps) {
  const patientcontext=useContext(PatientContext);
 
  console.log("patients context:", patientcontext);
+ console.log("patients:", patientcontext?.patient?.id);
  console.log("doctor context:", doctorContext);
 
  const params=useParams();
@@ -88,7 +89,7 @@ export function PatientNav(props: PatientNavProps) {
 
        (<List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
 
-         <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/patients/${patientcontext?.patient?.id}/dashboard`} onClick={() => handleComponentChange('dashboard')}>
+         <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/patients/${patientcontext?.patient?.id}`} onClick={() => handleComponentChange('dashboard')}>
            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
              }`}>
              <ListItemIcon>
