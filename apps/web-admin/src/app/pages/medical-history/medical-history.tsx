@@ -427,14 +427,14 @@ useEffect(() => {
           </Typography>
         </Grid>
         <Grid item>
-          <Tooltip title="Generate Summary">
+          {/* <Tooltip title="Generate Summary">
             <IconButton
               onClick={handleSummarizeClick}
               aria-label="ai-summarizer"
             >
               <AutoAwesomeOutlinedIcon sx={{ marginRight: 6 }} />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
         </Grid>
       </Grid>
 

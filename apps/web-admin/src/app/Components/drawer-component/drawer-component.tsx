@@ -25,6 +25,7 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
+import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined';
 /* eslint-disable-next-line */
 export interface DrawerComponentProps {}
 
@@ -96,7 +97,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
                 }`}
               >
                 <ListItemIcon sx={{ minWidth: '100px' }}>
-                  <IconHome className={styles['drawer-icons']} />
+                  <SpaceDashboardOutlinedIcon className={styles['drawer-icons']} />
                 </ListItemIcon>
                 <ListItemText
                   primary="Dashboard"
