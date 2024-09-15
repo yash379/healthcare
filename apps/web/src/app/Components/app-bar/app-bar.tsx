@@ -205,6 +205,7 @@ export function TopBar() {
      zIndex: 1000,
      width: '100vw',
      height:"45px",
+     backgroundColor:'white'
    }}>
        <div style={{ display: 'flex', alignItems: 'flex-start', flex: 1 }}>
          <div style={{ marginLeft: 'auto', marginRight:"20px", display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>

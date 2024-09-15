@@ -47,6 +47,8 @@ import PatientDashboard from './pages/patient-dashboard/patient-pages/Dashboard'
 import AppointmentPage from './pages/patient-dashboard/patient-pages/AppointmentPage';
 import MedicalReport from './pages/patient-dashboard/patient-pages/MedicalReport';
 import ListPatientAppointments from  './pages/patient-dashboard/list-appointments/list-appointments';
+import AdminLayout from './layouts/admin-layout/admin-layout';
+import ListAdminPatients from './pages/admin-portal/list-patient/list-patient';
 
 export function App() {
 
@@ -195,15 +197,20 @@ export function App() {
           {/* <Route element={<HospitalLayout />}> */}
    
             <Route path="/" element={<Layout user={user}  />}>
-              
-              <Route path="/dashboard/:hospitalId" element={<Dashboard />} />
-              <Route  path="/hospitals/:hospitalId/doctors"   element={<ListDoctors />}/>
-              {/* <Route element={<PatientLayout />}> */}
-              {/* <Route path="/appointments/:hospitalId" element={<ListAppointment />} /> */}
-              <Route path="/hospital/:hospitalId/patients" element={<ListPatients />} />
-              <Route path="/hospital/:hospitalId/appointments" element={<ListAppointment/>} />
+         
+              {/* admin portal */}
+               <Route path="/hospitals/:hospitalId/admin/:adminId" element={<AdminLayout/>}>
+                 <Route path="/hospitals/:hospitalId/admin/:adminId" index element={<Dashboard />} />
+                 <Route  path="/hospitals/:hospitalId/admin/:adminId/doctors"   element={<ListDoctors />}/>
+                 <Route path="/hospitals/:hospitalId/admin/:adminId/patients" element={<ListAdminPatients/>} />
+                 <Route path="/hospitals/:hospitalId/admin/:adminId/appointments" element={<ListAppointment/>} />
+               </Route>
+
+             
               <Route path="/hospital/:hospitalId/patients/add" element={<AddPatientPage />} />
               <Route path="/profile" element={<Profile />} /> 
+               {/* <Route element={<PatientLayout />}> */}
+              {/* <Route path="/appointments/:hospitalId" element={<ListAppointment />} /> */}
               {/* <Route path="/hospital/:hospitalId/patients/edit/:patientId" element={<EditPatientPage />} /> */}
               {/* <Route path="/hospitals/add" element={<AddHospitalPage />} />
               <Route path="/hospitals" element={<ListHospitals />} />
@@ -229,7 +236,7 @@ export function App() {
               {/* <Route path="/patient-detail" element={<PatientDetail />} /> */}
               {/* <Route path="/doctor-appointment-calender" element={<DoctorAppointmentCalender />} /> */}
               
-              </Route>
+             
 
             
               
@@ -261,6 +268,7 @@ export function App() {
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointments" element={<ListPatientAppointments/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointmentsview" element={<AppointmentPage/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/medical-report" element={<MedicalReport/>} />
+              <Route path="/hospitals/:hospitalId/patients/:patientId/ai-summarizer" element={<Summarizer />} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/settings" element={<SettingPage />} />
               {/* <Route path="/profile" element={<Profile />} />  */}
             </Route>
@@ -277,7 +285,7 @@ export function App() {
           <Route path="/logout" element={<LogOut onLogout={onLogout} />} />
           <Route path="*" element={<PageNotFound />} />
 
-
+          </Route>
           
         </Routes>
       </SnackbarProvider>

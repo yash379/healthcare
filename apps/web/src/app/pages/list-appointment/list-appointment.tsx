@@ -49,6 +49,7 @@ import DoctorContext from '../../contexts/doctor-context';
 import { HospitalContext } from '../../contexts/hospital-context';
 // import { ListAppointment } from '@healthcare/data-transfer-types';
 
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ListAppointmentProps {}
 
@@ -120,7 +121,7 @@ export function ListAppointment(props: ListAppointmentProps) {
   >(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [viewData, setViewData] = useState<ViewAppointment | null>(null);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [editData, setEditData] = useState<ViewAppointment | null>(null);
   const [totalItems, setTotalItems] = useState(0);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -133,11 +134,20 @@ export function ListAppointment(props: ListAppointmentProps) {
   const hospitalContext = useContext(HospitalContext);
   console.log("doctor context", doctorContext)
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
+  const [appointmentCount, setAppointmentCount]=useState<{
+    "total": number,
+    "pending": number,
+    "confirmed": number,
+    "inProgress": number,
+    "completed": number,
+    "declined": number
+  } | null>(null);
+
   const getAllAppointments = useCallback(async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const response = await axios.get(
-        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/appointments`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/appointments`,
         {
           withCredentials: true,
           params: {
@@ -152,10 +162,10 @@ export function ListAppointment(props: ListAppointmentProps) {
       setAppointmentsData(response.data.content);
       setTotalItems(total);
       console.log('Admin Data', response.data.content);
-      setLoading(false);
+      // setLoading(false);
     } catch (error) {
       console.error('Error fetching hospital data:', error);
-      setLoading(false);
+      // setLoading(false);
     }
   }, [apiUrl, doctorContext?.doctor?.id, hospitalContext?.hospital?.id, page, rowsPerPage]);
 
@@ -201,7 +211,7 @@ export function ListAppointment(props: ListAppointmentProps) {
 
   const getAllDoctors = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const response = await axios.get(
         `${apiUrl}/hospitals/${params.hospitalId}/doctors`,
         {
@@ -216,11 +226,11 @@ export function ListAppointment(props: ListAppointmentProps) {
 
       const { content, total } = response.data;
       setTotalItems(total);
-      setLoading(false);
+      // setLoading(false);
     } catch (error) {
       console.log(error);
       console.log('Something went wrong');
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -233,7 +243,7 @@ export function ListAppointment(props: ListAppointmentProps) {
     try {
       if (selectedAppointmentId !== null) {
         await axios.delete(
-          `${apiUrl}/hospitals/1/doctors/1/patients/1/appointments/${selectedAppointmentId}`,
+          `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/1/patients/1/appointments/${selectedAppointmentId}`,
           {
             withCredentials: true,
           }
@@ -270,10 +280,10 @@ export function ListAppointment(props: ListAppointmentProps) {
   const handleAddAppointment = async (formData: Form) => {
     try {
       await setIsAddModalOpen(false);
-      setIsLoadingModalOpen(true);
+      // setIsLoadingModalOpen(true);
 
       const { data: responseData } = await axios.post(
-        `${apiUrl}/hospitals/1/doctors/1/patients/${formData?.patient?.id}/appointments`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/1/patients/${formData?.patient?.id}/appointments`,
         {
           appointmentDate: formData.appointmentDate,
           statusId: formData.statusId,
@@ -283,20 +293,20 @@ export function ListAppointment(props: ListAppointmentProps) {
         }
       );
       if (responseData) {
-        setIsLoadingModalOpen(false);
+        // setIsLoadingModalOpen(false);
         enqueueSnackbar('Appointment added successfully', { variant: 'success' });
         setIsAddModalOpen(false);
         getAllAppointments();
       } else {
         console.log('Something went wrong');
-        setIsLoadingModalOpen(false);
+        // setIsLoadingModalOpen(false);
       }
       console.log('Appointment added successfully', responseData);
     } catch (error) {
       console.log(error);
       console.log('Something went wrong in input form');
       enqueueSnackbar('Something went wrong', { variant: 'error' });
-      setIsLoadingModalOpen(false);
+      // setIsLoadingModalOpen(false);
     }
   };
 
@@ -305,10 +315,10 @@ export function ListAppointment(props: ListAppointmentProps) {
   const handleUpdate = async (formData: Form) => {
     try {
       await setIsAddModalOpen(false);
-      setIsLoadingModalOpen(true);
+      // setIsLoadingModalOpen(true);
 
       const { data: responseData } = await axios.put(
-        `${apiUrl}/hospitals/1/doctors/1/patients/${formData?.patient?.id}/appointments/${selectedAppointmentId}`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/1/patients/${formData?.patient?.id}/appointments/${selectedAppointmentId}`,
         {
           appointmentDate: formData.appointmentDate,
           statusId: formData.statusId,
@@ -318,23 +328,44 @@ export function ListAppointment(props: ListAppointmentProps) {
         }
       );
       if (responseData) {
-        setIsLoadingModalOpen(false);
+        // setIsLoadingModalOpen(false);
         enqueueSnackbar('Appointment updated successfully', { variant: 'success' });
         setIsAddModalOpen(false);
         getAllAppointments();
       } else {
         console.log('Something went wrong');
-        setIsLoadingModalOpen(false);
+        // setIsLoadingModalOpen(false);
       }
       console.log('Appointment updated successfully', responseData);
     } catch (error) {
       console.log(error);
       console.log('Something went wrong in input form');
       enqueueSnackbar('Something went wrong', { variant: 'error' });
-      setIsLoadingModalOpen(false);
+      // setIsLoadingModalOpen(false);
     }
   };
 
+  const getCounts=async()=>{
+    try {
+      // await setIsAddModalOpen(false);
+      // setIsLoadingModalOpen(true);
+
+      const { data: responseData } = await axios.get(
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/appointment-count`,
+        {
+          withCredentials: true,
+        }
+      );
+      setAppointmentCount(responseData);
+      console.log('Appointment counts:', responseData);
+    } catch (error) {
+      console.log('eror infetching counts:',error);
+    }
+  }
+
+  useEffect(()=>{
+    getCounts();
+  },[apiUrl,hospitalContext?.hospital?.id]);
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName[0]}${lastName[0]}`.toUpperCase();
@@ -362,7 +393,7 @@ export function ListAppointment(props: ListAppointmentProps) {
           {/* Total Appointments Card */}
           <Card
             sx={{
-              minWidth: 400,
+              minWidth: '30%',
               p: 2,
               borderRadius: 5,
               display: 'flex',
@@ -389,7 +420,7 @@ export function ListAppointment(props: ListAppointmentProps) {
                   Total Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
-                  150
+                  {appointmentCount?.total}
                 </Typography>
               </Box>
             </CardContent>
@@ -398,7 +429,7 @@ export function ListAppointment(props: ListAppointmentProps) {
           {/* Completed Appointments Card */}
           <Card
             sx={{
-              minWidth: 400,
+              minWidth: '30%',
               p: 2,
               borderRadius: 5,
               display: 'flex',
@@ -425,7 +456,7 @@ export function ListAppointment(props: ListAppointmentProps) {
                   Completed Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
-                  100
+                {appointmentCount?.completed}
                 </Typography>
               </Box>
             </CardContent>
@@ -434,7 +465,7 @@ export function ListAppointment(props: ListAppointmentProps) {
           {/* Pending Appointments Card */}
           <Card
             sx={{
-              minWidth: 400,
+              minWidth: '30%',
               p: 2,
               borderRadius: 5,
               display: 'flex',
@@ -461,7 +492,7 @@ export function ListAppointment(props: ListAppointmentProps) {
                   Pending Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
-                  50
+                {appointmentCount?.pending}
                 </Typography>
               </Box>
             </CardContent>
@@ -490,12 +521,12 @@ export function ListAppointment(props: ListAppointmentProps) {
               onClose={() => setIsAddModalOpen(false)}
               onSubmit={handleAddAppointment}
             />
-            <Loading
+            {/* <Loading
               open={isLoadingModalOpen}
               onClose={() => setIsLoadingModalOpen(false)}
-            />
+            /> */}
 
-            <TextField
+            {/* <TextField
               type="text"
               variant="outlined"
               size="small"
@@ -504,16 +535,16 @@ export function ListAppointment(props: ListAppointmentProps) {
               InputProps={{
                 startAdornment: <SearchIcon color="action" />,
               }}
-            />
+            /> */}
           </Box>
-          <Button
+          {/* <Button
             sx={{ mr: '10px' }}
             variant="contained"
             color="primary"
             onClick={() => setIsAddModalOpen(true)}
           >
             <AddIcon fontSize="small" /> Add
-          </Button>
+          </Button> */}
         </Box>
         <Box
           className={styles['search-container']}
@@ -549,15 +580,15 @@ export function ListAppointment(props: ListAppointmentProps) {
             </TableRow>
           </TableHead>
           <TableBody>
-          {loading ? (
-                <TableCell align="center" colSpan={7} >
+          {/* {loading ? ( */}
+                {/* <TableCell align="center" colSpan={7} >
                   <CircularProgress size='small' />
-                </TableCell>
-              ) : Array.isArray(appointmentsData) && appointmentsData.length > 0 ? (
+                </TableCell> */}
+              {/* ) :  */}
+              {Array.isArray(appointmentsData) && appointmentsData.length > 0 ? (
             appointmentsData.map((appointment) => (
               <TableRow key={appointment.id}>
                 <TableCell>
-                
                     <Box
                       sx={{
                         display: 'flex',
@@ -624,7 +655,7 @@ export function ListAppointment(props: ListAppointmentProps) {
                   {/* </Box> */}
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleEditClick(appointment.id)}>
+                  {/* <IconButton onClick={() => handleEditClick(appointment.id)}>
                     <EditIcon color="primary" />
                   </IconButton>
                   <IconButton
@@ -632,7 +663,7 @@ export function ListAppointment(props: ListAppointmentProps) {
                     color="error"
                   >
                     <DeleteIcon />
-                  </IconButton>
+                  </IconButton> */}
                 </TableCell>
               </TableRow>
              ))
@@ -648,6 +679,7 @@ export function ListAppointment(props: ListAppointmentProps) {
                 </TableCell>
               </TableRow>
             )}
+            {/* } */}
           </TableBody>
         </Table>
       </TableContainer>

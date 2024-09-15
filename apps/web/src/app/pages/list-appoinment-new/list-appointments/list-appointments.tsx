@@ -478,7 +478,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
 
   
   return (
-    <Box sx={{ height: '100vh'}}>
+    <Box sx={{ height: '80vh'}}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={5}>
         <Typography variant="h1">
           Appointment

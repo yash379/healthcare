@@ -2,10 +2,10 @@ import React, { useContext } from 'react'
 import MedicalHistory from '../medical-history/medical-history'
 import PatientDetailCardd from '../Dashboard/PatientDetailCardd'
 import DateCalendarServerRequest from '../Dashboard/DateCalendarServerRequest'
-import { Box, Card, Link } from '@mui/material'
+import { Box, Card } from '@mui/material'
 import MedicalCheckup from '../Dashboard/MedicalCheckup';
 import PatientContext from '../../../contexts/patient-context'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
 const Dashboard: React.FC = () => {
 
@@ -33,11 +33,7 @@ const Dashboard: React.FC = () => {
           }}>
             BASIC INFORMATION
             
-            <Link href="#" underline="none" color="#064B4F" fontSize="0.875rem" 
-        sx={{
-          textDecoration: "underline",
-        }}
-        >
+            <Link to={`/hospitals/${params.hospitalId}/patients/${params.patientId}/appointments`} color="#064B4F">
           view all
         </Link>
           </div>
@@ -45,7 +41,7 @@ const Dashboard: React.FC = () => {
             style={{
               display: 'flex',
               flexDirection: 'row',
-              alignItems: 'center',
+              alignItems:'flex-start',
               marginLeft: '2%',
             }}
             >

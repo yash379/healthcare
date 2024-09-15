@@ -433,7 +433,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
 
   const handleView=(appointment: ViewAppointment, value:boolean)=>{
     // navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/appointments/${appointment.id}`);
-    navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/patients/${appointment.patient.user.id}/patient-detail`)
+    navigate(`/hospitals/${params.hospitalId}/patients/${params.patientId}/appointmentsview`)
     setViewAppointment(value);
     const acceptstatus = appointmentStatuses?.find((item)=>item.name==='INPROGRESS')
     if (acceptstatus) {
@@ -527,7 +527,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onClick={()=>navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/scheduler`)}
+              // onClick={()=>navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/scheduler`)}
             >
               <CalendarToday sx={{ color: 'black' }}/>
             </Box>

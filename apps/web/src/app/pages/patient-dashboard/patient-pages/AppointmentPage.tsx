@@ -6,38 +6,40 @@ import CancellationDetailCard from '../Appointment_comp/CancelAppointment'
 import DoctorSpecialization from '../Appointment_comp/DoctorSpecialization'
 import DoctorAvailability from '../Appointment_comp/DoctorAvailability'
 import AppointmentType from '../Appointment_comp/AppointmentType'
-import { Margin } from '@mui/icons-material'
+import { Margin } from '@mui/icons-material';
+
 
 export default function AppointmentPage() {
   return (
-    
-      <Card
+    <div style={{display:'flex', flexDirection:'row'}}>
+      {/* <Card
       sx={{
         display: 'flex',
         flexDirection: 'row',
         borderRadius: '10px',
         padding:'20px'
       }}
-      > 
+      >  */}
         
         <Schedule/>               
         <Box
         sx={{
           flexDirection: 'column',
           // alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'space-between',
           width: '80%',
-          
+          display:'flex'
         }}>
           <Appointments/>         
-          <Box
+          {/* <Box
             sx={{
               marginTop:'20px '
             }}
-          >
+          > */}
           <CancellationDetailCard/>
-          </Box>
+          {/* </Box> */}
         </Box>
-      </Card>
+      {/* </Card> */}
+    </div>
   )
 }

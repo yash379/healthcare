@@ -23,35 +23,35 @@
 
 /* layout.module.scss */
 
-.container {
-    display: flex;
-    flex-direction: column;
-  }
+// .container {
+//     display: flex;
+//     flex-direction: column;
+//   }
   
-  .outlet {
-    margin-left: 0; 
-    background-color: rgb(241, 247, 250);
+//   .outlet {
+//     margin-left: 0; 
+//     background-color: rgb(241, 247, 250);
    
   
-    @media (min-width: 100px) {
-        margin-left: 40px; 
-        top: 66px;
-        position: relative;
-    }
-    @media (min-width: 600.5px) {
-        margin-left: 190px; 
-        top: 66px;
-        position: relative;
-    }
-    @media (min-width: 960px) {
-      margin-left: 234px; 
-      top: 66px;
-      position: relative;
-    }
-  }
+//     @media (min-width: 100px) {
+//         margin-left: 40px; 
+//         top: 66px;
+//         position: relative;
+//     }
+//     @media (min-width: 600.5px) {
+//         margin-left: 190px; 
+//         top: 66px;
+//         position: relative;
+//     }
+//     @media (min-width: 960px) {
+//       margin-left: 234px; 
+//       top: 66px;
+//       position: relative;
+//     }
+//   }
   
-  .Box {
-    // overflow-y: scroll;
-    height: calc(100vh - 70px);
-  }
+//   .Box {
+//     // overflow-y: scroll;
+//     height: calc(100vh - 70px);
+//   }
   

@@ -30,16 +30,16 @@ const availabilities = [
 
 const DoctorAvailability = () => {
   return (
-    <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'left',}}>
-      <Typography variant="h6" gutterBottom sx={{color:'#064B4F'}}>
+    <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'left'}}>
+      <Typography variant="h6" gutterBottom sx={{color:'#064B4F', mt:'-12px', mb:'21px'}}>
         Select Doctor Availability
       </Typography>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
         {availabilities.map((availability, index) => (
-          <FormControlLabel
-            key={index}
-            control={<Checkbox />}
-            label={
+          // <FormControlLabel
+          //   key={index}
+          //   control={<Checkbox />}
+          //   label={
               <Box
                 sx={{
                   display: 'flex',
@@ -67,8 +67,8 @@ const DoctorAvailability = () => {
                   </Typography>
                 </CardContent>
               </Box>
-            }
-          />
+            // }
+          // />
         ))}
       </Box>
     </Box>

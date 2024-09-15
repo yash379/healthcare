@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import styles from './list-patient.module.scss';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import {
@@ -22,10 +22,10 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box } from '@mui/material';
-import Breadcrumbs from '../../Components/bread-crumbs/bread-crumbs';
+import Breadcrumbs from '../../../Components/bread-crumbs/bread-crumbs';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddPatientComponent from './add-patient/add-patient';
+// import AddPatientComponent from './add-patient/add-patient';
 import EditPatientComponent from './edit-patient/edit-patient';
 import DeletePatientComponent from './delete-patient/delete-patient';
 // import ViewPatientComponent from '../view-patient/view-patient';
@@ -33,9 +33,9 @@ import { enqueueSnackbar } from 'notistack';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { Hospital, ViewPatient } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
-import { HospitalContext } from '../../contexts/hospital-context';
+import { HospitalContext } from '../../../contexts/hospital-context';
 import { Gender } from '@prisma/client';
-import DoctorContext from '../../contexts/doctor-context';
+import DoctorContext from '../../../contexts/doctor-context';
 
 /* eslint-disable-next-line */
 export interface ListPatientsProps {}
@@ -120,7 +120,7 @@ export function ListPatients(props: ListPatientsProps) {
       setLoading(true);
       //  await new Promise((resolve) => setTimeout(resolve, 2000));
       const response = await axios.get(
-        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients`,
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/patients`,
         {
           withCredentials: true,
           params: {
@@ -136,12 +136,12 @@ export function ListPatients(props: ListPatientsProps) {
 
       const { content, total } = response.data;
       setTotalItems(total);
-      setActivePatients(content);
+      setActivePatients(response.data);
       console.log('Patient', response.data);
 
-      const Patients = response.data.content;
-      console.log(Patients);
-      setActivePatients(Patients);
+      // const Patients = response.data.content;
+      // console.log(Patients);
+      // setActivePatients(Patients);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -444,7 +444,7 @@ export function ListPatients(props: ListPatientsProps) {
               }}
             />
           </Box>
-          <Button
+          {/* <Button
             variant="contained"
             color="primary"
             // onClick={() => {
@@ -454,15 +454,15 @@ export function ListPatients(props: ListPatientsProps) {
           >
             {' '}
             <AddIcon fontSize="small" /> Add
-          </Button>
+          </Button> */}
         </Box>
-        <Box>
+        {/* <Box>
           <AddPatientComponent
             open={isAddModalOpen}
             onClose={() => setIsAddModalOpen(false)}
             onSubmit={handleAddPatient}
           />
-        </Box>
+        </Box> */}
         <Box>
           {/* <ViewPatientComponent
                 open={viewPatientOpen}
@@ -527,12 +527,12 @@ export function ListPatients(props: ListPatientsProps) {
                       />
                     </TableCell>
                     <TableCell>
-                    <NavLink
+                    {/* <NavLink
                       to={`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${patient.id}/patient-detail`}
                       className={styles['socname']}
-                    >
+                    > */}
                       {patient.firstName} {patient.lastName}
-                      </NavLink>
+                      {/* </NavLink> */}
                     </TableCell>
                     <TableCell>{patient.email}</TableCell>
                     <TableCell>+91-{patient.phoneNumber}</TableCell>
@@ -544,7 +544,7 @@ export function ListPatients(props: ListPatientsProps) {
                       {patient.city}, {patient.stateCode}, {patient.postalCode}
                     </TableCell>
                     <TableCell align="center">
-                      <IconButton
+                      {/* <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
                           navigate(
@@ -560,7 +560,7 @@ export function ListPatients(props: ListPatientsProps) {
                         onClick={() => openDeleteModal(patient.id)}
                       >
                         <DeleteIcon></DeleteIcon>
-                      </IconButton>
+                      </IconButton> */}
                     </TableCell>
                   </TableRow>
                 ))

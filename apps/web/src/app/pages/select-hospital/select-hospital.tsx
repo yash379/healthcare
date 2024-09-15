@@ -57,6 +57,7 @@ export function SelectHospital(props: SelectHospitalProps) {
   const usercontext=useContext(UserContext);
   const [patientdoctorId, setPatientDoctorId]=useState(0);
   const [patient, setPatient]=useState<PatientResponse | null>(null);
+  const [hospitalId, setHospitalId]=useState<number | null>(null);
   const navigate=useNavigate();
   const apiUrl = environment.apiUrl;
 
@@ -73,16 +74,22 @@ export function SelectHospital(props: SelectHospitalProps) {
   // },[usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles.length, navigate, usercontext?.user && usercontext?.user?.hospitalRoles]);
 
 
-  // const getHospital=async()=>{
-  //    const response=await axios.get(
-  //     `${apiUrl}/hospitals/${hospitalId}`,
-  //     {
-  //       withCredentials: true,
-  //     }
-  //   );
+  const getHospital=async()=>{
+     const response=await axios.get(
+      `${apiUrl}/hospitals/${hospitalId}`,
+      {
+        withCredentials: true,
+      }
+    );
+    hospitalContext?.setHospital(response.data);
+    console.log("response hospitalId:", response.data);
+  }
 
-  //   console.log("response hospitalId:", response.data);
-  // }
+
+
+  useEffect(()=>{
+    getHospital();
+  },[hospitalId]);
   
   
   const handleToggle = (value: number) => () => {
@@ -120,6 +127,7 @@ export function SelectHospital(props: SelectHospitalProps) {
     // hospitalcontext?.setHospital(value);
     // navigate(`/dashboard/${value}`);
     // navigate('/dashboard')
+    setHospitalId(Id);
     console.log("id selected:", Id)
     // const getHospital=async()=>{
     //   try{
@@ -154,7 +162,7 @@ export function SelectHospital(props: SelectHospitalProps) {
     console.log("patient doctor id:",patient?.doctors?.flatMap((item)=>{console.log(item.doctorId)}))
 
     if(value==='ADMIN'){
-      navigate(`/`);
+      navigate(`/hospitals/${Id}/admin/${usercontext?.user?.id}`);
     }
     if(value==='DOCTOR'){
       navigate(`/hospitals/${Id}/doctors/${usercontext?.user?.doctorId}`);
