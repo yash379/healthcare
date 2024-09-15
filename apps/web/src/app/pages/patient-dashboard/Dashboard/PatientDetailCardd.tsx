@@ -1,8 +1,8 @@
-
-
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Card, Typography, Button, Divider } from '@mui/material';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { environment } from '../../../../environments/environment';
 
 interface Patient {
   id: number;
@@ -18,28 +18,51 @@ interface Patient {
   age: number;
 }
 
-function PatientDetailCardd() {
-  const patients: Patient[] = [
-    {
-      id: 1,
-      patientid: '12345',
-      name: 'John Doe',
-      appointments: 5,
-      completed: 3,
-      weight: 70,
-      height: 182,
-      bloodpressure: '120/80',
-      disease: 'Diabetes',
-      gender: 'Male',
-      age: 24,
-    },
-  ];
+export interface PatientDetailCarddProps {
+  patientId:string | undefined;
+}
+
+function PatientDetailCardd({patientId}:PatientDetailCarddProps) {
+
+  const [patient, setPatient]=useState<Patient | null>(null);
+  const apiUrl = environment.apiUrl;
+  const params=useParams();
+
+  // const patients: Patient[] = [
+  //   {
+  //     id: 1,
+  //     patientid: '12345',
+  //     name: 'John Doe',
+  //     appointments: 5,
+  //     completed: 3,
+  //     weight: 70,
+  //     height: 182,
+  //     bloodpressure: '120/80',
+  //     disease: 'Diabetes',
+  //     gender: 'Male',
+  //     age: 24,
+  //   },
+  // ];
+
+  const getPatient=async()=>{
+    const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/patients/${patientId}`,
+      {
+        withCredentials:true
+      }
+    );
+
+    setPatient(response.data[0]);
+
+    console.log("Patient history:", response.data);
+  }
+
+  useEffect(()=>{
+    getPatient();
+  },[params.patientId,params.hospitalId, params.doctorId]);
 
   return (
     <div style={{width:'50%'}}>
-      {patients &&
-        patients.map((patient) => (
-          <Box sx={{ display: 'flex', justifyContent: 'space-around' }} key={patient.id}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-around' }} key={patient?.id}>
             <Box>
               <Card
                 sx={{
@@ -68,10 +91,10 @@ function PatientDetailCardd() {
                 // ,padding:"0px 0px 0px 10px",
                 }}>
                   {[
-                    { label: 'Weight', value: `${patient.weight} kg` },
-                    { label: 'Height', value: `${patient.height} cm` },
-                    { label: 'Gender', value: patient.gender },
-                    { label: 'Age', value: `${patient.age} years` },
+                    { label: 'Weight', value: `${patient?.weight} kg` },
+                    { label: 'Height', value: `${patient?.height} cm` },
+                    { label: 'Gender', value: patient?.gender },
+                    { label: 'Age', value: `${patient?.age} years` },
                   ].map((item, index) => (
                     <React.Fragment key={item.label}>
                       <Box
@@ -122,7 +145,6 @@ function PatientDetailCardd() {
               </Card>
             </Box>
           </Box>
-        ))}
     </div>
   );
 }

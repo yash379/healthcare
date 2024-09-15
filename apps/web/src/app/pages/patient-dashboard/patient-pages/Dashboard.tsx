@@ -1,11 +1,16 @@
-import React from 'react'
-import MedicalHistory from '../../medical-history/medical-history'
+import React, { useContext } from 'react'
+import MedicalHistory from '../medical-history/medical-history'
 import PatientDetailCardd from '../Dashboard/PatientDetailCardd'
 import DateCalendarServerRequest from '../Dashboard/DateCalendarServerRequest'
 import { Box, Card, Link } from '@mui/material'
 import MedicalCheckup from '../Dashboard/MedicalCheckup';
+import PatientContext from '../../../contexts/patient-context'
+import { useParams } from 'react-router-dom'
 
 const Dashboard: React.FC = () => {
+
+  const params=useParams();
+
   return (
     <div>
       <Box
@@ -44,7 +49,7 @@ const Dashboard: React.FC = () => {
               marginLeft: '2%',
             }}
             >
-          <PatientDetailCardd />
+          <PatientDetailCardd patientId={params.patientId}/>
           <MedicalCheckup />
           </div>
         </Card>
@@ -56,7 +61,7 @@ const Dashboard: React.FC = () => {
            marginTop: 3 ,
            padding: 2,
           }}>
-          <MedicalHistory />
+          <MedicalHistory patientId={params.patientId}/>
         </Box>
       </Box>
     </div>

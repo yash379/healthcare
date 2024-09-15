@@ -1,5 +1,9 @@
 import { Avatar, Box, Button, Card, Divider, Typography } from '@mui/material'
-import React from 'react'
+import axios from 'axios';
+import React, { useCallback, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
+import { environment } from '../../../../environments/environment';
+import { UserDetailsDto } from '@healthcare/data-transfer-types';
 
 const checkupData = [
   {
@@ -19,28 +23,72 @@ const checkupData = [
   }
 ];
 
+interface PatientDetailsDto {
+  user: UserDetailsDto;
+}
+interface DoctorDetailsDto {
+  user: UserDetailsDto;
+}
+
+export interface ViewAppointment {
+  id: number;
+  appointmentDate: string;
+  status: { id: number; code: string; name: string };
+  patient: PatientDetailsDto;
+  doctor: DoctorDetailsDto;
+}
+
+
 function MedicalCheckup() {
+
+  const [appointmentsData, setAppointmentsData] = useState<ViewAppointment[]>( []);
+  const apiUrl = environment.apiUrl;
+  const params=useParams();
+
+  const getAllAppointments = useCallback(async () => {
+
+    try {
+      const response = await axios.get(
+        `${apiUrl}/hospitals/${params.hospitalId}/appointments`,
+        {
+          withCredentials: true,
+        }
+      );
+      // console.log(response.data[0].user)
+      const { content, total } = response.data;
+      console.log('Appointment Data', response.data.content);
+      setAppointmentsData(response.data.content);
+    } catch (error) {
+      console.error('Error fetching hospital data:', error);
+    };
+  }, [apiUrl,  params.hospitalId, ]);
+
+  useEffect(() => {
+    getAllAppointments();
+  }, [apiUrl,  params.hospitalId,  getAllAppointments]);
+
   return (
     <div style={{width:'50%'}}>
       <Box sx={{ display: 'flex' }} >
         <Box>
-          <Card
-            sx={{
-              // padding: 2,
-              paddingLeft: 2,
-              paddingBottom: 2.2,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              width: '150%',
-              marginLeft: '2%',
-              // height: '87%',
-              borderRadius: '10px',
-              // margin:'24PX 0PX 0PX 16PX'
-             
-            }}
-          >
-            {checkupData.map((checkup, index) => (
+          
+            {appointmentsData?.map((appointment, index) => (
+              <Card
+              sx={{
+                // padding: 2,
+                paddingLeft: 2,
+                paddingBottom: 2.2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                width: '120%',
+                marginLeft: '2%',
+                // height: '87%',
+                borderRadius: '10px',
+                margin:'9PX 0PX 0PX 8PX'
+               
+              }}
+            >
               <Box
                 key={index}
                 sx={{
@@ -78,14 +126,14 @@ function MedicalCheckup() {
                   fontSize: '16px',
                   
                   }}>
-                    {checkup.time}
+                    {appointment.appointmentDate}
                   </Typography>
 
                   <Typography variant="h6" color="textPrimary" 
                   sx={{ color: '#000000',
                     fontSize: '18px',
                    }}>
-                    {checkup.title}
+                    {appointment.id}
                   </Typography>
 
                   <Typography color="textPrimary"
@@ -93,12 +141,13 @@ function MedicalCheckup() {
                     fontWeight: 300 ,
                     fontSize: '14px'
                     }}>
-                    {checkup.doctor}
+                    {appointment?.doctor.user.firstName}
                   </Typography>
                 </div>
               </Box>
+              </Card>
             ))}
-          </Card>
+         
         </Box>
       </Box>
     </div>

@@ -8,6 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import axios from 'axios';
 import { environment } from '../../../environments/environment';
 import { enqueueSnackbar } from 'notistack';
+import UserContext from '../../contexts/user-context';
 
 
 export interface EditProfileProps {
@@ -68,7 +69,7 @@ export function EditProfile({ editUser, userEdit }: EditProfileProps) {
     try {
       setLoadingUserInfo(true);
       // await new Promise((resolve) => setTimeout(resolve, 2000));
-      const response = await axios.get(`${apiUrl}/users/${user?.id}`, {
+      const response = await axios.get(`${apiUrl}/users/${user?.user?.id}`, {
         withCredentials: true,
       });
       setData(response.data);
@@ -95,13 +96,13 @@ export function EditProfile({ editUser, userEdit }: EditProfileProps) {
       setValue('user.phoneNumber', data?.phoneNumber as string);
       // setValue('isPrimary',initialData.isPrimary);
     }
-  }, [editUser, setValue, hsopitalContext?.hospital?.id]);
+  }, [editUser, setValue, hospitalcontext?.hospital?.id]);
 
   //Update a Manager
 
   const handleUpdate = async (formData: Manager) => {
     try {
-      const res = await axios.put(`${apiUrl}/hospitals/${hsopitalContext?.hospital?.id}/managers/${user?.id}`,
+      const res = await axios.put(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/managers/${user?.user?.id}`,
         { firstName: formData.user.firstName, lastName: formData.user.lastName, email: formData.user.email, phoneNumber: formData.user.phoneNumber },
         { withCredentials: true }
       );

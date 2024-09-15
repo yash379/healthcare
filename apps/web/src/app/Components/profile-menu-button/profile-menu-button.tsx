@@ -18,8 +18,8 @@ export function ProfileMenuButton(props: ProfileMenuButtonProps) {
   const navigate = useNavigate();
   const usercontext = useContext(UserContext);
   console.log(usercontext, 'usercont')
-  const userName = usercontext?.firstName || 'unknown user';
-  const lastName = usercontext?.lastName || 'unknown user';
+  const userName = usercontext?.user?.firstName || 'unknown user';
+  const lastName = usercontext?.user?.lastName || 'unknown user';
   // const role = usercontext?.role || 'Unknown Role';
   const [userRole, setUserRole] = useState<string>('Unknown Role');
   const name = `${userName} ${lastName}`;
@@ -77,7 +77,7 @@ export function ProfileMenuButton(props: ProfileMenuButtonProps) {
           onChange={handleSelectChange}
           displayEmpty
           renderValue={() => <div style={{display:'flex',flexDirection:'column'}}><Typography variant="body1">{name}</Typography>
-          <Typography variant='body2'>{usercontext?.superRole}</Typography>
+          <Typography variant='body2'>{usercontext?.user?.superRole}</Typography>
           </div>}
           sx={{
             '.MuiSelect-select': {
