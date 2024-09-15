@@ -249,7 +249,7 @@ export function App() {
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/ai-summarizer" element={<Summarizer />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/settings" element={<SettingPage />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/scheduler" element={<AppointmentScheduler/>}/>
-              <Route path="/profile" element={<Profile />} /> 
+              {/* <Route path="/profile" element={<Profile />} />  */}
             </Route>
 
              {/* Patient Portal */}
@@ -262,7 +262,7 @@ export function App() {
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointmentsview" element={<AppointmentPage/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/medical-report" element={<MedicalReport/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/settings" element={<SettingPage />} />
-              <Route path="/profile" element={<Profile />} /> 
+              {/* <Route path="/profile" element={<Profile />} />  */}
             </Route>
 
               
