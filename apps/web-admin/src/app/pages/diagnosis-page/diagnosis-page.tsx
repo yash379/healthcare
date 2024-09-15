@@ -236,6 +236,14 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
 
       reset();
       setPrescriptions([]);
+      setNewPrescription({
+        medicineName: '',
+        dose: '',
+        when: '',
+        instructions: '',
+        frequency: '',
+        duration: '',
+      });
       enqueueSnackbar('Diagnosis and Prescriptions added successfully!', {
         variant: 'success',
       });
@@ -284,6 +292,10 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
 
   const today = dayjs();
 
+  const getInitials = (firstName = '', lastName = '') => {
+    return `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`;
+  };
+   const initials = getInitials(appointmentsData?.firstName, appointmentsData?.lastName);
   return (
     <Box className={styles['container']}>
       <Paper
@@ -295,7 +307,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
       >
         <form onSubmit={handleSubmit(handleAddDiagnosis)}>
           <Box sx={{ display: 'flex', marginBottom: '20px' }}>
-            <Avatar sx={{ bgcolor: '#4FD1C5' }}>OP</Avatar>
+            <Avatar sx={{ bgcolor: '#4FD1C5' }}>{initials}</Avatar>
             <Box sx={{ marginLeft: '10px' }}>
               <Typography sx={{ fontWeight: 'bold' }}>
                 {appointmentsData?.firstName} {appointmentsData?.lastName}

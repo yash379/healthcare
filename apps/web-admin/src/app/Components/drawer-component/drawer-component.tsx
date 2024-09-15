@@ -180,7 +180,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             style={{ textDecoration: 'none' }}
             to={`/cancer-detection`}
             onClick={() => handleComponentChange('reports')}
-          >
+           >
             <ListItem>
               <ListItemButton
                 sx={{ padding: '10px 20px' }}
@@ -195,6 +195,30 @@ export function DrawerComponent(props: DrawerComponentProps) {
                 </ListItemIcon>
                 <ListItemText
                   primary="Reports"
+                  className={styles['drawertab']}
+                ></ListItemText>
+              </ListItemButton>
+            </ListItem>
+          </Link>
+          <Link
+            style={{ textDecoration: 'none' }}
+            to={`/saransh-ai`}
+            onClick={() => handleComponentChange('SaranshAi')}
+           >
+            <ListItem>
+              <ListItemButton
+                sx={{ padding: '10px 20px' }}
+                className={`${styles['button-tabs']} ${
+                  selectedComponent === 'SaranshAi' && styles['active-tab']
+                }`}
+              >
+                <ListItemIcon sx={{ minWidth: '100px' }}>
+                  <ArticleOutlinedIcon
+                    className={styles['drawer-icons']}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primary="SaranshAi"
                   className={styles['drawertab']}
                 ></ListItemText>
               </ListItemButton>

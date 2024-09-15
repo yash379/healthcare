@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 import styles from './view-appointment-detail.module.scss';
 import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
-import { StatusEnum } from '../hospital-list-appointment';
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined';
 import { environment } from '../../../../environments/environment';
@@ -123,7 +122,7 @@ const ViewAppointmentDetail: React.FC = () => {
   };
 
   const handleClick = () => {
-    navigate('/medical-history');
+    navigate(`/hospitals/${hospitalContext?.id}/doctors/${params.doctorId}/patients/${params.patientId}/appointments/${params.appointmentId}/medical-history`);
   };
 
   const handleStartDiagnosisClick = () => {
