@@ -1,20 +1,12 @@
-import styles from './saransh-ai.module.scss';
+// SaranshAi.tsx
 import React, { useState } from 'react';
-import {
-  Button,
-  Container,
-  Grid,
-  Typography,
-  Box,
-  CircularProgress,
-  IconButton,
-  Card,
-} from '@mui/material';
+import { Button, Container, Grid, Typography, Box, CircularProgress, IconButton, Card } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from 'axios';
 import { environment } from '../../../environments/environment';
 import { Clear as ClearIcon } from '@mui/icons-material';
-/* eslint-disable-next-line */
+import SummaryCard from './summary'; // Adjust the path as necessary
+
 export interface SaranshAiProps {}
 
 export function SaranshAi(props: SaranshAiProps) {
@@ -29,14 +21,12 @@ export function SaranshAi(props: SaranshAiProps) {
       const file = event.target.files[0];
       setSelectedFile(file);
 
-      // Create a preview URL for the selected file
       const reader = new FileReader();
       reader.onloadend = () => {
         setFilePreview(reader.result);
       };
       reader.readAsDataURL(file);
 
-      // Clear previous prediction when a new file is selected
       setPrediction(null);
     }
   };
@@ -58,8 +48,7 @@ export function SaranshAi(props: SaranshAiProps) {
           },
         }
       );
-      setPrediction(response.data);
-      console.log('data', response)
+      setPrediction(response.data.summary); // Adjust if the data structure is different
     } catch (error) {
       setPrediction('Error occurred while predicting.');
     } finally {
@@ -71,104 +60,28 @@ export function SaranshAi(props: SaranshAiProps) {
     <Container style={{ marginTop: '50px', maxWidth: '96%' }}>
       <Grid container spacing={4} sx={{ flexWrap: 'nowrap' }}>
         {/* Left Side: Upload Section */}
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginLeft: '10px',
-            paddingLeft: '0px',
-          }}
-        >
-          {/* Predict Button at Top Left */}
-          <Card
-            sx={{
-              height: '100%',
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              boxShadow:
-                '0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 1.12)',
-            }}
-          >
-            <Box
-              top="10px"
-              left="10px"
-              display={'flex'}
-              justifyContent={'space-between'}
-              width={'50%'}
-              flexDirection={'row'}
-              padding={'20px'}
-              alignSelf={'center'}
-            >
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleUpload}
-                style={{ padding: '10px 20px' }}
-                disabled={!selectedFile || loading}
-              >
-                Predict
+        <Grid item xs={12} sm={6} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginLeft: '10px', paddingLeft: '0px' }}>
+          <Card sx={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', boxShadow: '0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 1.12)' }}>
+            <Box top="10px" left="10px" display={'flex'} justifyContent={'space-between'} width={'50%'} flexDirection={'row'} padding={'20px'} alignSelf={'center'}>
+              <Button variant="contained" color="secondary" onClick={handleUpload} style={{ padding: '10px 20px' }} disabled={!selectedFile || loading}>
+                Extract
               </Button>
-              <input
-                accept=".jpg,.jpeg,.png,.pdf" // Updated to accept PDFs
-                style={{ display: 'none' }}
-                id="raised-button-file"
-                type="file"
-                onChange={handleFileChange}
-              />
+              <input accept=".jpg,.jpeg,.png,.pdf" style={{ display: 'none' }} id="raised-button-file" type="file" onChange={handleFileChange} />
               <label htmlFor="raised-button-file">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  component="span"
-                  startIcon={<CloudUploadIcon />}
-                  style={{ padding: '10px 20px', marginBottom: '10px' }}
-                >
+                <Button variant="contained" color="primary" component="span" startIcon={<CloudUploadIcon />} style={{ padding: '10px 20px', marginBottom: '10px' }}>
                   Upload File
                 </Button>
               </label>
             </Box>
-
-            {/* Centered Upload Section */}
-            <Box
-              textAlign="center"
-              style={{ width: '100%', paddingTop: '50px', margin: '10px' }}
-            >
+            <Box textAlign="center" style={{ width: '100%', paddingTop: '50px', margin: '10px' }}>
               {filePreview && (
-                <Box
-                  position="relative"
-                  style={{ width: '96%', marginTop: '-52px' }}
-                >
+                <Box position="relative" style={{ width: '96%', marginTop: '-52px' }}>
                   {selectedFile && selectedFile.type.includes('pdf') ? (
-                    <iframe
-                      src={filePreview as string}
-                      style={{ width: '100%', height: '500px', border: 'none' }}
-                      title="PDF Preview"
-                    />
+                    <iframe src={filePreview as string} style={{ width: '100%', height: '500px', border: 'none' }} title="PDF Preview" />
                   ) : (
-                    <img
-                      src={filePreview as string}
-                      alt="Preview"
-                      style={{
-                        width: '100%',
-                        borderRadius: '8px',
-                        boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-                      }}
-                    />
+                    <img src={filePreview as string} alt="Preview" style={{ width: '100%', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.2)' }} />
                   )}
-                  <IconButton
-                    onClick={() => {
-                      setFilePreview(null);
-                      setSelectedFile(null);
-                      setPrediction(null);
-                    }}
-                    style={{ position: 'absolute', top: '8px', right: '8px' }}
-                  >
+                  <IconButton onClick={() => { setFilePreview(null); setSelectedFile(null); setPrediction(null); }} style={{ position: 'absolute', top: '8px', right: '8px' }}>
                     <ClearIcon color="error" />
                   </IconButton>
                 </Box>
@@ -178,40 +91,17 @@ export function SaranshAi(props: SaranshAiProps) {
         </Grid>
 
         {/* Right Side: Prediction Section */}
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Card
-            sx={{
-              height: '98%',
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              boxShadow:
-                '0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 1.12)',
-              justifyContent: 'center',
-            }}
-          >
-            <Box textAlign="center">
+        <Grid item xs={12} sm={6} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Card sx={{ height: '98%', width: '100%', display: 'flex', flexDirection: 'column', boxShadow: '0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 1.12)', justifyContent: 'center' }}>
+            <Box textAlign="center" padding="20px">
               {loading ? (
                 <CircularProgress />
               ) : (
                 <>
                   <Typography variant="h5" style={{ marginBottom: '20px' }}>
-                    Prediction Result
+                    Extract Result
                   </Typography>
-                  <Typography variant="h6">
-                    {prediction
-                      ? prediction
-                      : 'Upload an image or PDF to get a prediction.'}
-                  </Typography>
+                  <SummaryCard summary={prediction || 'Upload an image or PDF to get a summary.'} />
                 </>
               )}
             </Box>
