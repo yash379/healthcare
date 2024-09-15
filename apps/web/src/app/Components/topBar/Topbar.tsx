@@ -24,7 +24,7 @@ export function Topbar(props: TopbarProps) {
   const navigate = useNavigate();
 
   const usercontext = useContext(UserContext);
-  console.log("usercontext:", usercontext, usercontext?.firstName, usercontext?.lastName, usercontext?.organizationRoles);
+  console.log("usercontext:", usercontext, usercontext?.user?.firstName, usercontext?.user?.lastName, usercontext?.user?.hospitalRoles);
 
   const getUserInitials = (firstName: string, lastName: string) => {
     const firstInitial = firstName.charAt(0).toUpperCase();
@@ -32,9 +32,9 @@ export function Topbar(props: TopbarProps) {
     return `${firstInitial}${lastInitial}`;
   };
 
-  const userName = usercontext?.firstName || 'unknown user';
-  const lastName = usercontext?.lastName || 'unknown user';
-  const role = usercontext?.superRole || 'Unknown Role';
+  const userName = usercontext?.user?.firstName || 'unknown user';
+  const lastName = usercontext?.user?.lastName || 'unknown user';
+  const role = usercontext?.user?.superRole || 'Unknown Role';
   const name = `${userName} ${lastName}`;
   console.log("userName:", name);
   const userInitials = getUserInitials(userName, lastName);
