@@ -23,6 +23,8 @@ import { IconHome } from '@tabler/icons-react';
 import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 /* eslint-disable-next-line */
 export interface DrawerComponentProps {}
 
@@ -154,30 +156,6 @@ export function DrawerComponent(props: DrawerComponentProps) {
           </Link>
           <Link
             style={{ textDecoration: 'none' }}
-            to={`/appointments`}
-            onClick={() => handleComponentChange('appointments')}
-          >
-            <ListItem>
-              <ListItemButton
-                sx={{ padding: '10px 20px' }}
-                className={`${styles['button-tabs']} ${
-                  selectedComponent === 'appointments' && styles['active-tab']
-                }`}
-              >
-                <ListItemIcon sx={{ minWidth: '100px' }}>
-                  <CalendarMonthOutlinedIcon
-                    className={styles['drawer-icons']}
-                  />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Appointments"
-                  className={styles['drawertab']}
-                ></ListItemText>
-              </ListItemButton>
-            </ListItem>
-          </Link>
-          <Link
-            style={{ textDecoration: 'none' }}
             to={`/cancer-detection`}
             onClick={() => handleComponentChange('reports')}
            >
@@ -189,7 +167,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
                 }`}
               >
                 <ListItemIcon sx={{ minWidth: '100px' }}>
-                  <ArticleOutlinedIcon
+                  <AssignmentOutlinedIcon
                     className={styles['drawer-icons']}
                   />
                 </ListItemIcon>
@@ -203,22 +181,22 @@ export function DrawerComponent(props: DrawerComponentProps) {
           <Link
             style={{ textDecoration: 'none' }}
             to={`/saransh-ai`}
-            onClick={() => handleComponentChange('SaranshAi')}
+            onClick={() => handleComponentChange('AI Summarizer')}
            >
             <ListItem>
               <ListItemButton
                 sx={{ padding: '10px 20px' }}
                 className={`${styles['button-tabs']} ${
-                  selectedComponent === 'SaranshAi' && styles['active-tab']
+                  selectedComponent === 'AI Summarizer' && styles['active-tab']
                 }`}
               >
                 <ListItemIcon sx={{ minWidth: '100px' }}>
-                  <ArticleOutlinedIcon
+                  <AutoAwesomeOutlinedIcon
                     className={styles['drawer-icons']}
                   />
                 </ListItemIcon>
                 <ListItemText
-                  primary="SaranshAi"
+                  primary="AI Summarizer"
                   className={styles['drawertab']}
                 ></ListItemText>
               </ListItemButton>
