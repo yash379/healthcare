@@ -4,7 +4,7 @@ import FileTable from '../DragandDrop/FileTable'
 
 function MedicalReport() {
   return (
-    <div>
+    <div style={{width:'98%'}}>
       <DragNDrop/>
       <FileTable/>
     </div>

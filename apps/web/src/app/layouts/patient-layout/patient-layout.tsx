@@ -10,6 +10,7 @@ import TopBar from '../../Components/app-bar/app-bar';
 import DrawerComponent from '../../Components/drawer-component/drawer-component';
 import PatientNav from '../../Components/patient-nav/patient-nav';
 import HospitalContext from '../../contexts/hospital-context';
+import UserContext from '../../contexts/user-context';
 /* eslint-disable-next-line */
 export interface PatientLayoutProps {
   children?: ReactNode;
@@ -22,6 +23,7 @@ export function PatientLayout({ children }: PatientLayoutProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
 
   const hospitalcontext=useContext(HospitalContext);
+  const usercontext=useContext(UserContext);
 
   useEffect(() => {
     const getPatient = async () => {
@@ -33,7 +35,7 @@ export function PatientLayout({ children }: PatientLayoutProps) {
           },
         );
         console.log('patient in layout', response.data);
-        setPatient(response.data);
+        setPatient(response.data[0]);
         setPatientContext(response.data);
       } catch (error) {
         console.log('error', error);
@@ -56,7 +58,7 @@ export function PatientLayout({ children }: PatientLayoutProps) {
     }
 
     getHospital();
-  }, []);
+  }, [usercontext?.user, params.hospitalId, params.doctorId,params.patientId,apiUrl]);
   
   console.log('params', params);
 
