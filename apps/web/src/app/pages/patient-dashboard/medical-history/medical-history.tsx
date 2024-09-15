@@ -191,7 +191,7 @@ export function MedicalHistory({patientId}: MedicalHistoryProps) {
         <Grid item>
           <Tooltip title="Generate Summary">
             <IconButton
-              onClick={() => navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/ai-summarizer`)}
+              onClick={() => navigate(`/hospitals/${params.hospitalId}/patients/${params.patientId}/ai-summarizer`)}
               aria-label="ai-summarizer"
             >
               <AutoAwesomeOutlinedIcon sx={{ marginRight: 6 }} />

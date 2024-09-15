@@ -24,7 +24,8 @@ const DoctorSpecialization = () => {
         sx={{
           display: 'flex',
           flexWrap: 'wrap',
-          gap: 5,
+          gap: 2,
+          width:'106%'
           // justifyContent: 'space-between',
         }}
       >

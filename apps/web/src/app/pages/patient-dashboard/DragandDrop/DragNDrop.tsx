@@ -10,6 +10,14 @@ interface TableRowProps {
     date: string;
 }
 
+interface FileData {
+    fileName: string;
+    labName: string;
+    uploadTime: string;
+    date: string;
+    size: string;
+  }
+
 const TableRow: React.FC<TableRowProps> = ({ fileName, labName, uploadTime, date }) => {
     return (
         <tr style={styles.tableRow}>
@@ -21,8 +29,9 @@ const TableRow: React.FC<TableRowProps> = ({ fileName, labName, uploadTime, date
     );
 };
 
-const DragNDrop: React.FC = () => {
+const DragNDrop: React.FC <{ onFilesUploaded: (files: FileData[]) => void }>= ({ onFilesUploaded }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [uploadedFiles, setUploadedFiles] = useState<FileData[]>([]);
 
     const reports = [
         { fileName: 'PDF product page presentation', labName: 'Dobria Steph', uploadTime: '10:00', date: 'Nov 04, 2022' },
@@ -34,18 +43,38 @@ const DragNDrop: React.FC = () => {
         report.fileName.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    
+
+    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files) {
+        const currentFiles: FileData[] = Array.from(files).map((file) => ({
+            fileName: file.name,
+            labName: 'Default Lab', // You can modify this based on user input or other logic
+            uploadTime: new Date().toLocaleTimeString(),
+            date: new Date().toLocaleDateString(),
+            size: `${(file.size / 1024).toFixed(2)} KB`, // File size in KB
+        }));
+
+        // Update local state and pass to parent component
+        setUploadedFiles(currentFiles);
+        onFilesUploaded(currentFiles); // Pass the uploaded files to the parent
+        }
+    };
+
     return (
         <div style={styles.mainContent}>
-            <div style={styles.uploadSection}>
-            <img src="/images/uploadSVG.svg" alt="Description of image" />
-                <span style={styles.dragDropSpan}>
-                    <br />
-                    Drag and drop your files here 
-                    <br />
-                    or click to upload (up to 10 files)
-                </span>
-            </div>
-        </div>
+      <div style={styles.uploadSection}>
+        <input type="file" multiple onChange={handleFileUpload} />
+        <img src="/images/uploadSVG.svg" alt="Description of image" />
+        <span style={styles.dragDropSpan}>
+          <br />
+          Drag and drop your files here
+          <br />
+          or click to upload (up to 10 files)
+        </span>
+      </div>
+    </div>
     );
 };
 

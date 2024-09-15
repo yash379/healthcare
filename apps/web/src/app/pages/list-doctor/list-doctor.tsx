@@ -78,7 +78,7 @@ export function ListDoctors(props: ListDoctorsProps) {
   const params = useParams();
   const hospitalContext = useContext(HospitalContext);
   console.log("Hospital Context:", hospitalContext);
-  console.log("hospital context hospital id:", hsopitalContext?.hospital?.id);
+  console.log("hospital context hospital id:", hospitalContext?.hospital?.id);
 
   const getDoctors = async () => {
     try {
@@ -287,7 +287,7 @@ export function ListDoctors(props: ListDoctorsProps) {
 
   const handleDelete = async (Id: any) => {
     try {
-      const { data } = await axios.post(`${apiUrl}/hospitals/${hsopitalContext?.hospital?.id}/doctors/${Id}`, {
+      const { data } = await axios.post(`${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/doctors/${Id}`, {
         withCredentials: true,
       });
       console.log(data);
@@ -342,8 +342,8 @@ export function ListDoctors(props: ListDoctorsProps) {
       label: 'Hospitals',
     },
     {
-      to: `/hospitals/${hsopitalContext?.hospital?.id}`,
-      label: `${hospitalContext?.name}`
+      to: `/hospitals/${hospitalContext?.hospital?.id}`,
+      label: `${hospitalContext?.hospital?.name}`
     },
     {
       label: 'Doctors',
@@ -355,7 +355,7 @@ export function ListDoctors(props: ListDoctorsProps) {
 
   return (
       <Box className={styles['container']}>
-        <Breadcrumbs paths={breadcrumbs} />
+        {/* <Breadcrumbs paths={breadcrumbs} /> */}
         <Box className={styles['building_container']}>
           <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}} >
            <Box sx={{mt:'20px',display:'flex', justifyContent:'space-between', alignItems:'center'}}>
@@ -382,14 +382,14 @@ export function ListDoctors(props: ListDoctorsProps) {
                <Loading open={isLoadingModalOpen}
                     onClose={() => setIsLoadingModalOpen(false)} />
             </Box>
-            <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}} className={styles['search-container']}>
+            {/* <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}} className={styles['search-container']}>
 
               <Button variant="contained" color="primary"
                 onClick={() => {
                   setIsAddModalOpen(true);
                 }}
               > <AddIcon fontSize='small' />Add</Button>
-            </Box>
+            </Box> */}
             {/* <Box> */}
               {/* <ViewDoctorComponent
                 open={viewDoctorOpen}
@@ -474,14 +474,14 @@ export function ListDoctors(props: ListDoctorsProps) {
                         {doctor.speciality}
                       </TableCell>
                       <TableCell align='center'>
-                        <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(doctor.id) }} sx={{ color: 'black' }}>
+                        {/* <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(doctor.id) }} sx={{ color: 'black' }}>
                           <EditIcon color="primary" ></EditIcon>
                         </IconButton>
                         <IconButton color="error" onClick={() =>
                           openDeleteModal(doctor.id)
                         }>
                           <DeleteIcon></DeleteIcon>
-                        </IconButton>
+                        </IconButton> */}
 
 
                       </TableCell>

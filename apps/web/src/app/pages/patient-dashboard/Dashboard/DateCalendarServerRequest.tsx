@@ -110,9 +110,9 @@ export default function DateCalendarServerRequest() {
                     padding:'16px 16px 0px 16px',
                   }}
                 >
-                  <Typography variant="h4" sx={{ color: '#064B4F',  }}>
+                  {/* <Typography variant="h4" sx={{ color: '#064B4F',  }}>
                   Up
-                  </Typography>
+                  </Typography> */}
     
                   
                   <LocalizationProvider dateAdapter={AdapterDayjs}>

@@ -27,7 +27,8 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
       padding: "20px", 
       maxWidth: "400px", 
       margin: "auto", 
-     backgroundColor:'#f9f9f9'
+     backgroundColor:'#f9f9f9',
+     alignSelf:'flex-end'
     }}
     >
     <Box sx={{ textAlign: 'left', my: 2, }}>
