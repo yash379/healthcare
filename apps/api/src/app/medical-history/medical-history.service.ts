@@ -8,7 +8,7 @@ export class MedicalHistoryService {
   async getMedicalHistory(patientId: number) {
     // Fetch the medical history record for the patient
     const medicalHistory = await this.prisma.medicalHistory.findUnique({
-      where: { id: patientId },
+      where: { patientId: patientId },
       include: {
         diagnoses: {
           orderBy: {

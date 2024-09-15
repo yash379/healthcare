@@ -44,6 +44,7 @@ import ViewAppointmentDetail from './pages/hospital-list-appointment/view-appoin
 import DiagnosisPage from './pages/diagnosis-page/diagnosis-page';
 import BrainTumor from './pages/brain-tumor/brain-tumor';
 import HospitalListAppointment from './pages/hospital-list-appointment/hospital-list-appointment';
+import SaranshAi from './pages/saransh-ai/saransh-ai';
 
 export function App() {
   const location = useLocation();
@@ -161,6 +162,7 @@ export function App() {
               />
               <Route path="/diagnosis" element={<DiagnosisPage />} />
               <Route path="/cancer-detection" element={<BrainTumor />} />
+              <Route path="/saransh-ai" element={<SaranshAi />} />
 
             </Route>
 
