@@ -362,7 +362,9 @@ export class DoctorsService {
       
         const doctor = await this.prisma.user.findFirst({
           where: {
-            id: doctorId,
+            doctor:{
+              id: doctorId,
+            },
             hospitalRoles: {
               some: {
                 hospitalId: hospitalId,
