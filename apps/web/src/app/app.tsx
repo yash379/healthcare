@@ -230,9 +230,9 @@ export function App() {
               <Route  path="/hospitals/:hospitalId/doctors"  element={<ListDoctors />}/>
               <Route  path="/hospitals/:hospitalId/patients"  element={<ListPatients />}/> */}
               {/* <Route  path="/hospitals/:hospitalId/patients/add"  element={<AddPatientPage />}/> */}
-              {/* <Route  path="/hospitals/:hospitalId/patients/edit/:patientId"  element={<EditPatientPage />}/>*}
+              {/* <Route  path="/hospitals/:hospitalId/patients/edit/:patientId"  element={<EditPatientPage />}/> */}
               
-              {/* <Route path="/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline />} /> */}
+            <Route path="/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline patient={null} />} /> 
               {/* <Route path="/patient-detail" element={<PatientDetail />} /> */}
               {/* <Route path="/doctor-appointment-calender" element={<DoctorAppointmentCalender />} /> */}
               
@@ -250,7 +250,7 @@ export function App() {
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments" element={<ListAppointments/>} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments/:id" element={<ViewAppointmentDetail />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline patient={null} />} />
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/diagnosis" element={<DiagnosisPage />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/diagnosis" element={<DiagnosisPage />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/medical-history" element={<MedicalHistory />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/cancer-detection" element={<BrainTumor />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/ai-summarizer" element={<Summarizer />} />
