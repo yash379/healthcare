@@ -1,4 +1,4 @@
-import styles from './medical-history.module.scss';
+import styles from './latest-prescription.module.scss';
 import {
   Card,
   CardContent,
@@ -54,31 +54,31 @@ interface GroupedData {
   relatedPrescriptions: Prescription[];
 }
 
-interface MedicalHistory {
+interface LatestPrescription {
   patientName: string;
   groupedData: GroupedData[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface MedicalHistoryProps {}
+export interface LatestPrescriptionProps {}
 
-export function MedicalHistory(props: MedicalHistoryProps) {
+export function LatestPrescription(props: LatestPrescriptionProps) {
   const [showSummary, setShowSummary] = useState(false);
-  const [medicalHistory, setMedicalHistory] = useState<MedicalHistory | null>(null);
+  const [latestPrescription, setLatestPrescription] = useState<LatestPrescription | null>(null);
   const [loading, setLoading] = useState(true);
   const [patientData, setPatientData] = useState<ViewPatient | null>(null);
   const [printData, setPrintData] = useState<GroupedData | null>(null);
   const params = useParams();
   const apiUrl = environment.apiUrl;
 
-  const getAllMedicalHistory = useCallback(async () => {
+  const getAllLatestPrescription = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(
         `${apiUrl}/medical-history/${params.patientId}`,
         { withCredentials: true }
       );
-      setMedicalHistory(response.data);
+      setLatestPrescription(response.data);
       console.log('Medical history Data', response.data);
     } catch (error) {
       console.error('Error fetching medical history data:', error);
@@ -105,8 +105,8 @@ export function MedicalHistory(props: MedicalHistoryProps) {
   }, [apiUrl, params.hospitalId, params.patientId]);
 
   useEffect(() => {
-    getAllMedicalHistory();
-  }, [getAllMedicalHistory]);
+    getAllLatestPrescription();
+  }, [getAllLatestPrescription]);
 
   useEffect(() => {
     getPatient();
@@ -125,11 +125,11 @@ export function MedicalHistory(props: MedicalHistoryProps) {
   };
 
   // // Function to send data to ML model
-  // const sendToMLModel = async (data: MedicalHistory) => {
+  // const sendToMLModel = async (data: LatestPrescription) => {
   //   try {
   //     const response = await axios.post(
   //       `${apiUrl}/chat-request/chat`,
-  //       { text: generateMedicalHistorySummary(data) },
+  //       { text: generateLatestPrescriptionSummary(data) },
   //       { withCredentials: true }
   //     );
   //     console.log('Response from ML model:', response.data);
@@ -140,7 +140,7 @@ export function MedicalHistory(props: MedicalHistoryProps) {
   // };
 
   // // Function to generate summary from medical history data
-  // const generateMedicalHistorySummary = (data: MedicalHistory) => {
+  // const generateLatestPrescriptionSummary = (data: LatestPrescription) => {
   //   let summary = `Patient Medical History Summary:\n\n`;
 
   //   data.groupedData.forEach((entry, index) => {
@@ -167,8 +167,8 @@ export function MedicalHistory(props: MedicalHistoryProps) {
 
   // // Handle button click
   // const handleSummarizeClick = () => {
-  //   if (medicalHistory) {
-  //     sendToMLModel(medicalHistory);
+  //   if (latestPrescription) {
+  //     sendToMLModel(latestPrescription);
   //   } else {
   //     console.error('No medical history data available.');
   //   }
@@ -201,11 +201,11 @@ export function MedicalHistory(props: MedicalHistoryProps) {
   }
 
   // Function to send data to ML model
-const sendToMLModel = async (data: MedicalHistory) => {
+const sendToMLModel = async (data: LatestPrescription) => {
   try {
     const response = await axios.post(
       `${apiUrl}/chat-request/chat`,
-      { text: generateMedicalHistorySummary(data) },
+      { text: generateLatestPrescriptionSummary(data) },
       { withCredentials: true }
     );
     
@@ -218,7 +218,7 @@ const sendToMLModel = async (data: MedicalHistory) => {
   }
 };
 
-const generateMedicalHistorySummary = (data: MedicalHistory) => {
+const generateLatestPrescriptionSummary = (data: LatestPrescription) => {
   let summary = `Patient Medical History Summary:\n\n`;
 
   summary += `Patient Name: ${data.patientName}\n`;
@@ -257,8 +257,8 @@ const generateMedicalHistorySummary = (data: MedicalHistory) => {
 
 // Handle button click
 const handleSummarizeClick = () => {
-  if (medicalHistory) {
-    sendToMLModel(medicalHistory);
+  if (latestPrescription) {
+    sendToMLModel(latestPrescription);
   } else {
     console.error('No medical history data available.');
   }
@@ -413,7 +413,7 @@ useEffect(() => {
     return <Summarizer />;
   }
 
-  if (!medicalHistory || !medicalHistory.groupedData) {
+  if (!latestPrescription || !latestPrescription.groupedData) {
     return <div>No medical history data available.</div>;
   }
 
@@ -439,7 +439,7 @@ useEffect(() => {
       </Grid>
 
       {/* Render the medical history data */}
-      {medicalHistory.groupedData.map((entry: GroupedData, index: number) => (
+      {latestPrescription.groupedData.map((entry: GroupedData, index: number) => (
         <Card key={index} sx={{ marginBottom: 4 }}>
           <CardContent>
             <Box
@@ -535,4 +535,4 @@ useEffect(() => {
   );
 }
 
-export default MedicalHistory;
+export default LatestPrescription;

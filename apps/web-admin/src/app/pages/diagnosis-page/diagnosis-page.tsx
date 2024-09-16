@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {
@@ -28,10 +28,11 @@ import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styles from './diagnosis-page.module.scss';
 import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
 import dayjs from 'dayjs';
+import { HospitalContext } from '../../contexts/user-contexts';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DiagnosisPageProps {}
 
@@ -84,6 +85,8 @@ export interface ViewAppointment {
 export function DiagnosisPage(props: DiagnosisPageProps) {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const navigate =useNavigate();
+  const hospitalContext = useContext(HospitalContext);
   const [loading, setLoading] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
   const params = useParams();
@@ -247,7 +250,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
       enqueueSnackbar('Diagnosis and Prescriptions added successfully!', {
         variant: 'success',
       });
-      
+      navigate(`/hospitals/${hospitalContext?.id}/doctors/${params.doctorId}/patients/${params.patientId}/appointments/${params.appointmentId}/latest-prescription`)
     } catch (error) {
       console.error('Something went wrong in the input form', error);
       enqueueSnackbar('Something went wrong', { variant: 'error' });

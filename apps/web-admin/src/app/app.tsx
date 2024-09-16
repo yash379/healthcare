@@ -45,6 +45,7 @@ import DiagnosisPage from './pages/diagnosis-page/diagnosis-page';
 import BrainTumor from './pages/brain-tumor/brain-tumor';
 import HospitalListAppointment from './pages/hospital-list-appointment/hospital-list-appointment';
 import SaranshAi from './pages/saransh-ai/saransh-ai';
+import LatestPrescription from './pages/latest-prescription/latest-prescription';
 
 export function App() {
   const location = useLocation();
@@ -138,7 +139,7 @@ export function App() {
                 element={<ListPatients />}
               />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:appointmentId/medical-history" element={<MedicalHistory />} />
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:appointmentId/latest-prescription" element={<MedicalHistory />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/appointments/:appointmentId/latest-prescription" element={<LatestPrescription />} />
 
               <Route
                 path="/hospitals/:hospitalId/doctors/:doctorId/patients/add"

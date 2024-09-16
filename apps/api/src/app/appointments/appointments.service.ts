@@ -230,11 +230,11 @@ export class AppointmentsService {
     const whereArray = [];
     let whereQuery = {};
 
-    if (appointmentDate !== undefined) {
-      whereArray.push({
-        appointmentDate: { contains: appointmentDate, mode: 'insensitive' },
-      });
-    }
+    // if (appointmentDate !== undefined) {
+    //   whereArray.push({
+    //     appointmentDate: { contains: appointmentDate, mode: 'insensitive' },
+    //   });
+    // }
 
     if (whereArray.length > 0) {
       if (whereArray.length > 1) {
@@ -255,7 +255,7 @@ export class AppointmentsService {
     // Find appointments
     const appointments = await this.prisma.appointment.findMany({
       where: {
-        doctorId,
+        doctorId:doctorId,
         // patientId,
         doctor: {
           hospitals: {
