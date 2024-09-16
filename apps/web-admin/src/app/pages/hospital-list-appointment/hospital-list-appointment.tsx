@@ -25,6 +25,7 @@ import {
   Stack,
   Pagination,
   PaginationItem,
+  Tooltip,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
@@ -45,7 +46,7 @@ import Chip from '../../Components/chip/chip';
 import StatusChip from '../../Components/chip/statusChip';
 import Loading from '../../Components/loading/loading';
 import { ViewAllUser } from '@healthcare/data-transfer-types';
-// import { ListAppointment } from '@healthcare/data-transfer-types';
+import { stringAvatar } from '../../utils/user';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface HospitalListAppointmentProps {}
@@ -379,6 +380,8 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             sx={{
               flex: '1 1 100px',
               p: 3,
+              pb:1,
+              pt:1,
               borderRadius: 5,
               display: 'flex',
               justifyContent: 'center',
@@ -400,8 +403,9 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                   variant="h6"
                   component="div"
                   sx={{ color: '#0B4FA6' }}
+                  
                 >
-                  Total Appointments
+                  Total<br /> Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
                   {appointmentStatus.total}
@@ -415,6 +419,8 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             sx={{
               flex: '1 1 100px',
               p: 3,
+              pb:1,
+              pt:1,
               borderRadius: 5,
               display: 'flex',
               justifyContent: 'center',
@@ -423,7 +429,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             <CardContent sx={{ display: 'flex' }}>
               <DescriptionOutlinedIcon
                 sx={{
-                  backgroundColor: '#FF9800', // Different color for pending appointments
+                  backgroundColor: '#C9981B', // Different color for pending appointments
                   borderRadius: '50%',
                   color: '#ffffff',
                   width: 30,
@@ -435,9 +441,9 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                 <Typography
                   variant="h6"
                   component="div"
-                  sx={{ color: '#F57C00' }}
+                  sx={{ color: '#C9981B' }}
                 >
-                  Pending Appointments
+                  Pending<br /> Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
                 {appointmentStatus.pending}
@@ -451,6 +457,8 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             sx={{
               flex: '1 1 100px',
               p: 3,
+              pb:1,
+              pt:1,
               borderRadius: 5,
               display: 'flex',
               justifyContent: 'center',
@@ -459,7 +467,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             <CardContent sx={{ display: 'flex' }}>
               <DescriptionOutlinedIcon
                 sx={{
-                  backgroundColor: '#4CAF50', // Different color for completed appointments
+                  backgroundColor: '#0C8C09', // Different color for completed appointments
                   borderRadius: '50%',
                   color: '#ffffff',
                   width: 30,
@@ -471,9 +479,9 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                 <Typography
                   variant="h6"
                   component="div"
-                  sx={{ color: '#388E3C' }}
+                  sx={{ color: '#0C8C09' }}
                 >
-                  Completed Appointments
+                  Completed<br /> Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
                   {appointmentStatus.completed}
@@ -487,6 +495,8 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             sx={{
               flex: '1 1 100px',
               p: 3,
+              pb:1,
+              pt:1,
               borderRadius: 5,
               display: 'flex',
               justifyContent: 'center',
@@ -495,7 +505,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             <CardContent sx={{ display: 'flex' }}>
               <DescriptionOutlinedIcon
                 sx={{
-                  backgroundColor: '#FF6F6F',
+                  backgroundColor: '#8C0909',
                   borderRadius: '50%',
                   color: '#ffffff',
                  width: 30,
@@ -507,9 +517,9 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                 <Typography
                   variant="h6"
                   component="div"
-                  sx={{ color: '#FF6F6F' }}
+                  sx={{ color: '#8C0909' }}
                 >
-                  Declined Appointments
+                  Declined<br /> Appointments
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#000000' }}>
                   {appointmentStatus.declined}
@@ -608,7 +618,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
             appointmentsData.map((appointment) => (
               <TableRow key={appointment.id}>
                 <TableCell>
-                  <NavLink
+                  {/* <NavLink
                     to={`/hospitals/${params.hospitalId}/appointments/${appointment.id}/view-appointment`}
                     style={{
                       textDecoration: 'none',
@@ -616,7 +626,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                       display: 'flex',
                       alignItems: 'center',
                     }}
-                  >
+                  > */}
                     <Box
                       sx={{
                         display: 'flex',
@@ -634,15 +644,37 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
                           appointment.patient.user.lastName
                         )}
                       </Avatar> */}
-
+  <Tooltip
+          title={`${appointment.patient.user.firstName} ${appointment.patient.user.lastName}`} // Full name as tooltip text
+          arrow
+        >
                        <NavLink
                     to={`/hospitals/${params.hospitalId}/doctors/${appointment.doctor.user.id}/patients/${appointment.patient.user.id}/appointments/${appointment.id}/view-appointment`}
-                    className={styles['socname']}
-                  >
+                    style={{ textDecoration: 'none' }} // Remove underline
+                    >
+                       <Stack direction="row" spacing={1} alignItems="center">
+                        <Avatar
+                          {...stringAvatar(
+                            `${appointment.patient.user.firstName} ${appointment.patient.user.lastName}`,
+                            'small'
+                          )}
+                        />
+                        {/* <Box sx={{ maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}> */}
+                          <Typography variant="body1"   sx={{
+                  maxWidth: 100, // Adjust as needed
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}  className={styles['socname']}>
                       {`${appointment.patient.user.firstName} ${appointment.patient.user.lastName}`}
-                      </NavLink>
+                        </Typography>
+                        {/* </Box> */}
+                      </Stack>
+                       
+                        </NavLink>
+                        </Tooltip>
                     </Box>
-                  </NavLink>
+                  {/* </NavLink> */}
                 </TableCell>
 
                 <TableCell>{appointment.patient.user.email}</TableCell>

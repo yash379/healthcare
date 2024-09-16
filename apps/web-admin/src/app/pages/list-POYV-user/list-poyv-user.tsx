@@ -2,7 +2,7 @@ import axios from 'axios';
 import styles from './list-poyv-user.module.scss';
 import { environment } from '../../../environments/environment';
 import { useCallback, useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, Autocomplete, TextField, Button, Modal, InputLabel, Checkbox, Box, CircularProgress, IconButton, Icon, Stack, Pagination, PaginationItem, Typography } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, Autocomplete, TextField, Button, Modal, InputLabel, Checkbox, Box, CircularProgress, IconButton, Icon, Stack, Pagination, PaginationItem, Typography, Avatar, Tooltip } from '@mui/material';
 import Breadcrumbs from '../../Components/bread-crumbs/bread-crumbs';
 import AddPOYVAdmin from './add-poyv-admin/add-poyv-admin';
 import { enqueueSnackbar } from 'notistack';
@@ -17,6 +17,7 @@ import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import BlockIcon from '@mui/icons-material/Block';
 import Loading from '../../Components/loading/loading';
 import Chip from '../../Components/chip/chip';
+import { stringAvatar } from '../../utils/user';
 
 interface POYVUser {
   id:number;
@@ -383,9 +384,32 @@ const breadcrumbs = [
                     />
                     </TableCell >
                     <TableCell >
-                       <b> {poyvUser.firstName} {poyvUser.lastName}</b> 
+                       {/* <b> {poyvUser.firstName} {poyvUser.lastName}</b> 
                         <br />
-                        {formatSuperRoleType(poyvUser.superRole)}
+                        {formatSuperRoleType(poyvUser.superRole)} */}
+ <Tooltip
+        title={`${poyvUser?.firstName} ${poyvUser?.lastName}`}
+        arrow
+      >
+<Stack direction="row" spacing={1} alignItems="center">
+                        <Avatar
+                          {...stringAvatar(
+                            `${poyvUser.firstName} ${poyvUser.lastName}`,
+                            'medium'
+                          )}
+                        />
+                        <Box>
+                          <Typography variant="body1">
+                            <b>
+                              {poyvUser.firstName} {poyvUser.lastName}
+                            </b>
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                          {formatSuperRoleType(poyvUser.superRole)}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                      </Tooltip>
                       </TableCell>
                       <TableCell>
                         {poyvUser.email}

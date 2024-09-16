@@ -9,6 +9,7 @@ import {
   Divider,
   Card,
   Grid,
+  Stack,
 } from '@mui/material';
 import styles from './view-appointment-detail.module.scss';
 import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
@@ -18,6 +19,7 @@ import { environment } from '../../../../environments/environment';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { HospitalContext } from '../../../contexts/user-contexts';
+import { stringAvatar } from '../../../utils/user';
 
 export interface ViewAppointment {
   id: number;
@@ -168,7 +170,22 @@ const ViewAppointmentDetail: React.FC = () => {
             variant="h5"
             sx={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 'bold' }}
           >
+              <Stack direction="row" spacing={1} alignItems="center">
+                        <Avatar
+                          {...stringAvatar(
+                            `${appointmentsData?.firstName} ${appointmentsData?.lastName}`,
+                            'small'
+                          )}
+                        />
+                        <Box>
+                          <Typography variant="body1"   className={styles['socname']}>
+                            <b>
             {`${appointmentsData?.firstName} ${appointmentsData?.lastName}`}
+            </b>
+                          </Typography>
+                        </Box>
+                      </Stack>
+                       
           </Typography>
         </Box>
 

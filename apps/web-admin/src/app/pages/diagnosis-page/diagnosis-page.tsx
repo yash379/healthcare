@@ -18,6 +18,7 @@ import {
   TableRow,
   IconButton,
   Button,
+  Stack,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -33,6 +34,8 @@ import styles from './diagnosis-page.module.scss';
 import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
 import dayjs from 'dayjs';
 import { HospitalContext } from '../../contexts/user-contexts';
+import { stringAvatar } from '../../utils/user';
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DiagnosisPageProps {}
 
@@ -311,7 +314,15 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
       >
         <form onSubmit={handleSubmit(handleAddDiagnosis)}>
           <Box sx={{ display: 'flex', marginBottom: '20px' }}>
-            <Avatar sx={{ bgcolor: '#4FD1C5' }}>{initials}</Avatar>
+          <Stack direction="row" spacing={1} alignItems="center">
+                        <Avatar
+                          {...stringAvatar(
+                            `${appointmentsData?.firstName} ${appointmentsData?.lastName}`,
+                            'medium'
+                          )}
+                        />
+                      </Stack>
+                       
             <Box sx={{ marginLeft: '10px' }}>
               <Typography sx={{ fontWeight: 'bold' }}>
                 {appointmentsData?.firstName} {appointmentsData?.lastName}

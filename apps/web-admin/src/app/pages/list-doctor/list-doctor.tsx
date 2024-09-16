@@ -3,7 +3,7 @@ import styles from './list-doctor.module.scss';
 import { environment } from '../../../environments/environment';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, TextField, Button, Checkbox, CircularProgress, IconButton, Stack, Pagination, PaginationItem } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, TextField, Button, Checkbox, CircularProgress, IconButton, Stack, Pagination, PaginationItem, Typography, Avatar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box } from '@mui/material';
 import Breadcrumbs from '../../Components/bread-crumbs/bread-crumbs';
@@ -20,7 +20,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/user-contexts';
 import { Gender } from '@prisma/client';
 import Loading from '../../Components/loading/loading';
-
+import { stringAvatar } from '../../utils/user';
 /* eslint-disable-next-line */
 export interface ListDoctorsProps { }
 
@@ -459,9 +459,23 @@ export function ListDoctors(props: ListDoctorsProps) {
                       <TableCell align='left'>
                       <NavLink
                       to={`/hospitals/${params.hospitalId}/doctors/${doctor.id}/patients`}
-                      className={styles['socname']}
+                      // className={styles['socname']}
+                      style={{ textDecoration: 'none' }} // Remove underline
                     >
-                        {doctor.firstName} {doctor.lastName}
+                       <Stack direction="row" spacing={1} alignItems="center">
+                        <Avatar
+                          {...stringAvatar(
+                            `${doctor.firstName} ${doctor.lastName}`,
+                            'small'
+                          )}
+                        />
+                        <Box>
+                          <Typography variant="body1"   className={styles['socname']}>
+                            {doctor.firstName} {doctor.lastName}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                       
                         </NavLink>
                       </TableCell>
                       <TableCell>{doctor.email}

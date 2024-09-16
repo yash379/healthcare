@@ -19,6 +19,8 @@ import {
   Stack,
   Pagination,
   PaginationItem,
+  Typography,
+  Avatar,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box } from '@mui/material';
@@ -35,6 +37,7 @@ import { Hospital, ViewPatient } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/user-contexts';
 import { Gender } from '@prisma/client';
+import { stringAvatar } from '../../utils/user';
 
 /* eslint-disable-next-line */
 export interface ListPatientsProps {}
@@ -529,10 +532,23 @@ export function ListPatients(props: ListPatientsProps) {
                     <TableCell>
                     <NavLink
                       to={`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/patient/${patient.id}`}
-                      className={styles['socname']}
-                    >
+                      style={{ textDecoration: 'none' }} // Remove underline
+                      >
+                         <Stack direction="row" spacing={1} alignItems="center">
+                          <Avatar
+                            {...stringAvatar(
+                              `${patient.firstName} ${patient.lastName}`,
+                              'small'
+                            )}
+                          />
+                          <Box>
+                            <Typography variant="body1"   className={styles['socname']}>
                       {patient.firstName} {patient.lastName}
-                      </NavLink>
+                          </Typography>
+                        </Box>
+                      </Stack>
+                       
+                        </NavLink>
                     </TableCell>
                     <TableCell>{patient.email}</TableCell>
                     <TableCell>+91-{patient.phoneNumber}</TableCell>

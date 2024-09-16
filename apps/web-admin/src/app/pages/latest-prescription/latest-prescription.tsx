@@ -64,12 +64,28 @@ export interface LatestPrescriptionProps {}
 
 export function LatestPrescription(props: LatestPrescriptionProps) {
   const [showSummary, setShowSummary] = useState(false);
-  const [latestPrescription, setLatestPrescription] = useState<LatestPrescription | null>(null);
+  const [latestPrescription, setLatestPrescription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [patientData, setPatientData] = useState<ViewPatient | null>(null);
   const [printData, setPrintData] = useState<GroupedData | null>(null);
   const params = useParams();
   const apiUrl = environment.apiUrl;
+
+  // const getAllLatestPrescription = useCallback(async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get(
+  //       `${apiUrl}/medical-history/${params.patientId}`,
+  //       { withCredentials: true }
+  //     );
+  //     setLatestPrescription(response.data);
+  //     console.log('Medical history Data', response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching medical history data:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, [apiUrl, params.patientId]);
 
   const getAllLatestPrescription = useCallback(async () => {
     try {
@@ -78,14 +94,37 @@ export function LatestPrescription(props: LatestPrescriptionProps) {
         `${apiUrl}/medical-history/${params.patientId}`,
         { withCredentials: true }
       );
-      setLatestPrescription(response.data);
-      console.log('Medical history Data', response.data);
+  
+      const medicalHistoryData = response.data;
+  
+      console.log('Medical history data:', medicalHistoryData);
+  
+      // Access the groupedData array from the response
+      const { groupedData } = medicalHistoryData;
+  
+      // Check if groupedData is an array and has elements
+      if (Array.isArray(groupedData) && groupedData.length > 0) {
+        // Sort by diagnosisDate to get the latest entry
+        const sortedData = groupedData.sort(
+          (a: any, b: any) => new Date(b.diagnosisDate).getTime() - new Date(a.diagnosisDate).getTime()
+        );
+  
+        // Get the latest entry
+        const latestPrescription = sortedData[0];
+  
+        setLatestPrescription(latestPrescription);
+        console.log('Latest Medical History Data', latestPrescription);
+      } else {
+        console.log('No grouped data found.');
+      }
     } catch (error) {
       console.error('Error fetching medical history data:', error);
     } finally {
       setLoading(false);
     }
   }, [apiUrl, params.patientId]);
+  
+
 
   const getPatient = useCallback(async () => {
     try {

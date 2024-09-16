@@ -33,10 +33,10 @@ const StatusChip: React.FC<CustomstatusChipProps> = ({ label, children, onClick,
   const backgroundColorMap: Record<ChipLabel, string> = {
     Primary: '#B8E8FF',
     Secondary: '#F5F5F5',
-    Error: '#FCCED4',
-    Warning: '#F6DFB3',
+    Error: '#FFDFDF',
+    Warning: '#FFF9D4',
     Info: '#CEBEE1',
-    Success: '#D3EBD6',
+    Success: '#D7FFD0',
   };
   
 
