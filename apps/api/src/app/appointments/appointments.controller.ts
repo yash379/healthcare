@@ -82,6 +82,32 @@ export class AppointmentsController {
     );
   }
 
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Get('hospitals/:hospitalId/patients/:patientId/appointments')
+  @ApiOkResponse({ type: ListAppointmentPageDto })
+  @Roles(Role.POYV_ADMIN, Role.HOSPITAL_DOCTOR, Role.HOSPITAL_PATIENT)
+  @HttpCode(HttpStatus.OK)
+  listPatientAppointments(
+    @Param('hospitalId') hospitalId: number,
+    @Param('patientId') patientId: number,
+    @Query('pageSize') pageSize?: number,
+    @Query('pageOffset') pageOffset?: number,
+    @Query('appointmentDate') appointmentDate?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc'
+  ): Promise<ListAppointmentPageDto> {
+    return this.appointmentsService.listPatientAppointments(
+      +hospitalId,
+      +patientId,
+      +pageSize,
+      +pageOffset,
+      appointmentDate,
+      sortBy,
+      sortOrder
+    );
+  }
+
   @UseGuards(AuthGuard, RolesGuard)
   @Get('hospitals/:hospitalId/appointments')
   @ApiOkResponse({ type: ListAppointmentPageDto })
