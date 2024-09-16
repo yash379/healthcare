@@ -381,7 +381,7 @@ export class DoctorsService {
             isActive: true,
             doctor: {
               select: {
-                userId: true,
+                id: true,
                 gender: true,
                 doctorCode: true,
                 speciality: true,
@@ -402,7 +402,7 @@ export class DoctorsService {
         }
       
         return {
-          id: doctor.id,
+          id: doctor.doctor.id,
           firstName: doctor.firstName,
           lastName: doctor.lastName,
           email: doctor.email,

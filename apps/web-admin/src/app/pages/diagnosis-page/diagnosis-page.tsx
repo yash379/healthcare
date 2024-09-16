@@ -247,6 +247,7 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
       enqueueSnackbar('Diagnosis and Prescriptions added successfully!', {
         variant: 'success',
       });
+      
     } catch (error) {
       console.error('Something went wrong in the input form', error);
       enqueueSnackbar('Something went wrong', { variant: 'error' });
