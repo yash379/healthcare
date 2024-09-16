@@ -85,6 +85,11 @@ export interface ViewAppointment {
   status: { id: number; code: string; name: string };
   patient: PatientDetailsDto;
   doctor: DoctorDetailsDto;
+  viewAppointment:boolean;
+  declineAppointment:boolean;
+  declinedAppointment:boolean;
+  acceptAppointment:boolean;
+  appointment:boolean;
 }
 
 interface PatientDetailsDto {
@@ -199,6 +204,14 @@ export function ListAppointments(props: ListAppointmentsProps) {
       // console.log(response.data[0].user)
       const { content, total } = response.data;
       setAppointmentsData(response.data.content);
+      const updatedAppointmentsData = content.map((appointment: ViewAppointment) => ({
+        ...appointment,
+        acceptAppointment: true,
+        declineAppointment: true,
+        viewAppointment: false,
+        declinedAppointment: false,
+      }));
+      setAppointmentsData(updatedAppointmentsData);
       setTotalItems(total);
       console.log('Admin Data', response.data.content);
       setLoading(false);
@@ -416,47 +429,72 @@ export function ListAppointments(props: ListAppointmentsProps) {
     fetchAppointments();
   }, []);
 
-  const handleAccept = (appointment: ViewAppointment, value:boolean) => {
-    console.log(`Appointment ${id} accepted.`);
-    // setStartAppointment(true);
-    setAcceptAppointment(false);
-    setViewAppointment(true);
-    setDeclineAppointment(value)
-    setDeclinedAppointment(value);
-    const acceptstatus = appointmentStatuses?.find((item)=>item.name==='CONFIRMED')
-    if (acceptstatus) {
-      setStatus(acceptstatus);
-    }
+  // useEffect(()=>{
+  //   appointmentsData.map((appointment)=>{
+  //     appointment.acceptAppointment=true;
+  //     appointment.declineAppointment=true;
+  //     appointment.viewAppointment=false;
+  //     appointment.declinedAppointment=false;
+  //   });
+  // },[]);
 
-    setAppointment(appointment);
-  };
 
-  const handleView=(appointment: ViewAppointment, value:boolean)=>{
+  // const handleAccept = (appointment: ViewAppointment, value:boolean) => {
+  //   console.log(`Appointment ${id} accepted.`);
+  //   // setStartAppointment(true);
+   
+  //   appointment.acceptAppointment=false;
+  //   appointment.viewAppointment=true;
+  //   appointment.declineAppointment=false;
+  //   appointment.declinedAppointment=false;
+
+  //   const acceptstatus = appointmentStatuses?.find((item)=>item.name==='CONFIRMED')
+  //   if (acceptstatus) {
+  //     setStatus(acceptstatus);
+  //   }
+
+  //   setAppointment(appointment);
+  // };
+
+  const handleAccept =  useCallback((appointment: ViewAppointment, value: boolean) => {
+    const updatedAppointmentsData = appointmentsData.map((appt) => {
+      if (appt.id === appointment.id) {
+        return { ...appt, acceptAppointment: false, viewAppointment: true, declineAppointment: false, declinedAppointment: false };
+      }
+      return appt;
+    });
+    setAppointmentsData(updatedAppointmentsData);
+  }, [appointmentsData]);
+  
+  const handleDecline =  useCallback((appointment: ViewAppointment, id: number) => {
+    const updatedAppointmentsData = appointmentsData.map((appt) => {
+      if (appt.id === appointment.id) {
+        return { ...appt, acceptAppointment: false, viewAppointment: false, declineAppointment: false, declinedAppointment: true };
+      }
+      return appt;
+    });
+    setAppointmentsData(updatedAppointmentsData);
+    // ... rest of your logic ...
+  },[appointmentsData,appointment]);
+
+
+
+  const handleView=useCallback((appointment: ViewAppointment, value:boolean)=>{
     // navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/appointments/${appointment.id}`);
     navigate(`/hospitals/${params.hospitalId}/patients/${params.patientId}/appointmentsview`)
-    setViewAppointment(value);
+    
+    const updatedAppointment = { ...appointment, acceptAppointment: true, viewAppointment: false, declineAppointment: true, declinedAppointment: false };
+    setAppointment(updatedAppointment);
     const acceptstatus = appointmentStatuses?.find((item)=>item.name==='INPROGRESS')
     if (acceptstatus) {
       setStatus(acceptstatus);
     }
     // setStatus()
-    setAppointment(appointment);
-  }
+    // setAppointment(appointment);
+  },[appointmentsData]);
 
   console.log("appt:", appointment);
 
-  const handleDecline = (id: number) => {
-    setDeclineAppointment(false);
-    setViewAppointment(false);
-    setAcceptAppointment(false);
-    setDeclinedAppointment(true)
-    console.log(`Appointment ${id} declined.`);
-    const acceptstatus = appointmentStatuses?.find((item)=>item.name==='CANCELLED')
-    if (acceptstatus) {
-      setStatus(acceptstatus);
-    }
-    // setStatus();
-  };
 
   useEffect(()=>{
     const changeAppointmentStatus = async () => {
@@ -549,7 +587,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
 
       <Grid container spacing={4}>
         {appointmentsData.map((appointment, index) => (
-          <Grid item xs={12} sm={6} md={6} key={index} flexWrap="wrap">
+          <Grid item xs={12} sm={6} md={6} key={appointment.id} flexWrap="wrap">
             <Card
               sx={{
                 width: '400px',
@@ -594,15 +632,15 @@ export function ListAppointments(props: ListAppointmentsProps) {
                 }}
                 key={index}
               >
-                {declineAppointment &&
+                {appointment.declineAppointment &&
                  <Button
                   variant="outlined"
                   sx={{ borderRadius: '12px', color: '#82A4A6', borderColor: '#82A4A6' }}
-                  onClick={() => handleDecline(index)}
+                  onClick={() => handleDecline(appointment,index)}
                 >
                   Decline Appointment
                 </Button> }
-                {viewAppointment &&  <Button
+                {appointment.viewAppointment &&  <Button
                   variant="contained"
                   sx={{
                     backgroundColor: '#064B4F',
@@ -616,7 +654,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
                 >
                   Start Appointment
                 </Button> }
-                {acceptAppointment &&
+                {appointment.acceptAppointment &&
                 <Button
                   variant="contained"
                   sx={{
@@ -631,10 +669,10 @@ export function ListAppointments(props: ListAppointmentsProps) {
                 >
                   Accept Appointment
                 </Button>  }
-                {declinedAppointment &&  <Button
+                {appointment.declinedAppointment &&  <Button
                   variant="outlined"
                   sx={{ borderRadius: '12px', color: '#82A4A6', borderColor: '#82A4A6',width:'-webkit-fill-available' }}
-                  onClick={() => handleDecline(index)}
+                  onClick={() => handleDecline(appointment,index)}
                   disabled
                 >
                   Appointment Declined

@@ -43,9 +43,9 @@ export function DoctorLayout(props: DoctorLayoutProps) {
     
 
     const getDOCTOR = async () => {
+      console.log("hospital id:", hospitalcontext?.hospital?.id);
         try {
-          const response = await axios.get(
-            `${apiUrl}/hospitals/${params.hospitalId}/doctors/${params.doctorId}`,
+          const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/doctors/${usercontext?.user?.doctorId}`,
             {
               withCredentials: true,
             }
@@ -56,7 +56,7 @@ export function DoctorLayout(props: DoctorLayoutProps) {
           setDoctor(response.data)
           doctorContext?.setDoctor(response.data);
         } catch (error) {
-          console.error('Error fetching hospital data:', error);
+          console.error('Error fetching doctor data:', error);
         }
     }
 
@@ -78,7 +78,7 @@ export function DoctorLayout(props: DoctorLayoutProps) {
 
     getDOCTOR();
   //  }
-  },[usercontext?.user, params.hospitalId, params.doctorId]);
+  },[usercontext?.user, params.hospitalId, params.doctorId, doctorContext?.doctor?.id,hospitalcontext?.hospital?.id]);
 
   
 

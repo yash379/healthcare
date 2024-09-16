@@ -12,6 +12,7 @@ import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined';
 import AddAppointment from './hospital-add-appointment/hospital-add-appointment';
 import { enqueueSnackbar } from 'notistack';
+import StatusChip from '../../Components/chip/statusChip';
 /* eslint-disable-next-line */
 
 interface Form {
@@ -39,6 +40,7 @@ export function PatientDetail(props: PatientDetailProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loadingUserInfo, setLoadingUserInfo] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [appointmentCount, setAppointmentCount] = useState({ total:0,pending: 0, inProgress: 0, cancelled: 0, confirmed: 0 });
   // const patients: Patient[] = [
   //   {
   //     id: 1,
@@ -58,6 +60,10 @@ export function PatientDetail(props: PatientDetailProps) {
 
   const hospitalcontext=useContext(HospitalContext);
   const doctorcontext=useContext(DoctorContext);
+
+  useEffect(() => {
+    getCounts();
+  }, []);
 
 
   const getpatientinfo = async () => {
@@ -90,7 +96,17 @@ export function PatientDetail(props: PatientDetailProps) {
   };
 
   const handleStartDiagnosisClick = () => {
-    navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/diagnosis`);
+    navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${params.patientId}/diagnosis`);
+  };
+
+  const getCounts = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/appointment-count`, { withCredentials: true });
+
+      setAppointmentCount(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const handleAddAppointment = async (formData: Form) => {
@@ -126,8 +142,8 @@ export function PatientDetail(props: PatientDetailProps) {
     <div className={styles['container']}>
       {/* {patients && patients.map((patient) => ( */}
         <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
-        <Box sx={{ marginTop: '40px' }}>
-        {/* <Box sx={{ marginBottom: '25px' }}>
+        {/* <Box sx={{ marginTop: '40px' }}>
+        <Box sx={{ marginBottom: '25px' }}>
           <Box sx={{ width: '350px', ml: '30px' }}>
             <Card
               onClick={handleClick}
@@ -164,8 +180,8 @@ export function PatientDetail(props: PatientDetailProps) {
               </Typography>
             </Card>
           </Box>
-        </Box> */}
-        {/* <Box sx={{ width: '350px', ml: '30px' }}>
+        </Box>
+        <Box sx={{ width: '350px', ml: '30px' }}>
           <Card
             onClick={handleStartDiagnosisClick}
             sx={{
@@ -199,12 +215,12 @@ export function PatientDetail(props: PatientDetailProps) {
               Start Diagnosis
             </Typography>
           </Card>
-        </Box> */}
-      </Box>
-          <Box key={patient?.id} sx={{ marginBottom: 2, marginTop: 5, marginLeft: 5 }}>
+        </Box>
+      </Box> */}
+          <Box key={patient?.id} sx={{ marginBottom: 2, marginTop: 1, marginLeft: -2, width:'40%' }}>
             <Card
               sx={{
-                padding: 2,
+                padding: 3,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -212,8 +228,13 @@ export function PatientDetail(props: PatientDetailProps) {
                 marginLeft: '2%',
                 height: 'auto', // Changed to auto to fit content
                 borderRadius: '10px',
+                // border:'none',
+                // boxShadow:'none'
               }}
             >
+              <div style={{position:'relative', right:'-44%'}}>
+                <StatusChip label={'Success'} children={'StatusId'} width={'80px'}></StatusChip>
+              </div>
               {/* Avatar with initials */}
               <Avatar
                 sx={{
@@ -230,6 +251,9 @@ export function PatientDetail(props: PatientDetailProps) {
               <Typography variant="h3" sx={{ marginTop: 3 }}>
                 Patient Id : #{patient?.digitalHealthCode}
               </Typography>
+              <Typography variant="h3" sx={{ marginTop: 3 }}>
+                 {patient?.isActive}
+              </Typography>
               {/* Appointment and Completed status */}
               <Box
                 sx={{
@@ -242,7 +266,7 @@ export function PatientDetail(props: PatientDetailProps) {
               >
                 <Box>
                   <Typography variant="h1" sx={{ marginLeft: 5, marginBottom: 2 }}>
-                    {patient?.acuteDisease}
+                    {appointmentCount.total}
                   </Typography>
                   <Typography variant="h4" color="textPrimary" sx={{ color: '#000000' }}>
                     Appointments
@@ -260,7 +284,7 @@ export function PatientDetail(props: PatientDetailProps) {
                 />
                 <Box>
                   <Typography variant="h1" sx={{ marginLeft: 4, marginBottom: 2 }}>
-                    {patient?.isActive}
+                    {appointmentCount.confirmed}
                   </Typography>
                   <Typography variant="h4" color="textPrimary" sx={{ color: '#000000' }}>
                     Completed
@@ -311,15 +335,15 @@ export function PatientDetail(props: PatientDetailProps) {
             {/* Patient Information Card */}
             <Card
               sx={{
-                padding: 2,
+                padding: 3,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 width: '100%',
                 marginLeft: '2%',
-                height: 'auto', // Changed to auto to fit content
+                height: '30vh', // Changed to auto to fit content
                 borderRadius: '10px',
-                marginTop: 3, // Added marginTop for spacing
+                marginTop: 2, // Added marginTop for spacing
               }}
             >
               <Typography variant="h2" sx={{ color: '#064B4F', marginBottom: 2 }}>
@@ -341,6 +365,8 @@ export function PatientDetail(props: PatientDetailProps) {
                   { label: 'Blood Group', value: `${patient?.bloodGroup}` },
                   // { label: 'Blood Pressure', value: patient.bloodpressure },
                   { label: 'Disease', value: patient?.acuteDisease},
+                  { label: 'Age', value: patient?.age},
+                  { label: 'Age', value: patient?.gender},
                 ].map((item) => (
                   <Box
                     key={item.label}
@@ -362,7 +388,7 @@ export function PatientDetail(props: PatientDetailProps) {
               </Box>
             </Card>
           </Box>
-          <Box>
+          <Box sx={{width:'50%'}}>
           <ViewMedicalHistoryTimeline patient={patient} ></ViewMedicalHistoryTimeline>
           </Box>
 

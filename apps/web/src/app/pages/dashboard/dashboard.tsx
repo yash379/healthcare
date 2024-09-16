@@ -48,6 +48,8 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import DoctorContext from '../../contexts/doctor-context';
 import PatientContext from '../../contexts/patient-context';
 import UserContext from '../../contexts/user-context';
+import ListPatients from '../list-patient/list-patient';
+import ListDashboardPatients from '../list-dashboard-patients/list-dashboard-patients';
 
 /* eslint-disable-next-line */
 export interface DashboardProps {}
@@ -979,6 +981,11 @@ export function Dashboard(props: DashboardProps) {
                       </CardContent>
                   </Card>
               </div> */}
+
+          <div>
+            <ListDashboardPatients/>
+          </div>
+
             </div>
 
             {/* <div className={styles['horizontal-line']} /> */}
