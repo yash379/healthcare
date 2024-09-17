@@ -1,5 +1,5 @@
 import React from 'react';
-import { Chip as MuiChip } from '@mui/material';
+import { Chip as MuiChip,SxProps  } from '@mui/material';
 import theme from '../../theme';
 
 type ChipLabel =
@@ -13,9 +13,10 @@ type ChipLabel =
 interface CustomChipProps {
   label: ChipLabel;
   children: React.ReactNode;
+  sx?: SxProps;
 }
 
-const Chip: React.FC<CustomChipProps> = ({ label, children, ...props }) => {
+const Chip: React.FC<CustomChipProps> = ({ label, children, sx, ...props }) => {
   const colorMap: Record<
     ChipLabel,
     'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success'
@@ -41,6 +42,7 @@ const Chip: React.FC<CustomChipProps> = ({ label, children, ...props }) => {
     <MuiChip
       {...props}
       label={children}
+      sx={sx}
       style={{
         backgroundColor: backgroundColorMap[label],
         color: '#064B4F',

@@ -21,6 +21,7 @@ import {
   PaginationItem,
   Typography,
   Avatar,
+  Grid,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box } from '@mui/material';
@@ -38,6 +39,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/user-contexts';
 import { Gender } from '@prisma/client';
 import { stringAvatar } from '../../utils/user';
+import PatientCard from './patient-card';
 
 /* eslint-disable-next-line */
 export interface ListPatientsProps {}
@@ -475,7 +477,7 @@ export function ListPatients(props: ListPatientsProps) {
               /> */}
         </Box>
 
-        <TableContainer>
+        {/* <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
@@ -601,7 +603,25 @@ export function ListPatients(props: ListPatientsProps) {
               justifyContent: 'flex-end',
             }}
           ></Box>
-        </TableContainer>
+        </TableContainer> */}
+         <Box>
+      <Grid container spacing={3}>
+        {activePatients.map((patient, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            <PatientCard
+              firstName={patient.firstName}
+              lastName={patient.lastName}
+              address={`${patient.addressLine1}, ${patient.city}`}
+              weight={patient.weight}
+              height={patient.height}
+              bloodGroup={patient.bloodGroup}
+              status={patient.status}
+              onClick={() => handlePatientClick(patient.id)}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
         <Stack spacing={2} className={styles['paginationContainer']}>
           <Pagination
             count={pageCount}

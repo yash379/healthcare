@@ -64,28 +64,14 @@ export interface LatestPrescriptionProps {}
 
 export function LatestPrescription(props: LatestPrescriptionProps) {
   const [showSummary, setShowSummary] = useState(false);
-  const [latestPrescription, setLatestPrescription] = useState<any>(null);
+  const [latestPrescriptions, setLatestPrescriptions] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [patientData, setPatientData] = useState<ViewPatient | null>(null);
   const [printData, setPrintData] = useState<GroupedData | null>(null);
   const params = useParams();
   const apiUrl = environment.apiUrl;
 
-  // const getAllLatestPrescription = useCallback(async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await axios.get(
-  //       `${apiUrl}/medical-history/${params.patientId}`,
-  //       { withCredentials: true }
-  //     );
-  //     setLatestPrescription(response.data);
-  //     console.log('Medical history Data', response.data);
-  //   } catch (error) {
-  //     console.error('Error fetching medical history data:', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [apiUrl, params.patientId]);
+
 
   const getAllLatestPrescription = useCallback(async () => {
     try {
@@ -106,13 +92,13 @@ export function LatestPrescription(props: LatestPrescriptionProps) {
       if (Array.isArray(groupedData) && groupedData.length > 0) {
         // Sort by diagnosisDate to get the latest entry
         const sortedData = groupedData.sort(
-          (a: any, b: any) => new Date(b.diagnosisDate).getTime() - new Date(a.diagnosisDate).getTime()
+          (a: any, b: any) => (b.diagnosisDetails.id - a.diagnosisDetails.id)
         );
   
         // Get the latest entry
         const latestPrescription = sortedData[0];
   
-        setLatestPrescription(latestPrescription);
+        setLatestPrescriptions(latestPrescription);
         console.log('Latest Medical History Data', latestPrescription);
       } else {
         console.log('No grouped data found.');
@@ -124,7 +110,7 @@ export function LatestPrescription(props: LatestPrescriptionProps) {
     }
   }, [apiUrl, params.patientId]);
   
-
+console.log(latestPrescriptions, 'groupdata')
 
   const getPatient = useCallback(async () => {
     try {
@@ -163,56 +149,6 @@ export function LatestPrescription(props: LatestPrescriptionProps) {
     }
   };
 
-  // // Function to send data to ML model
-  // const sendToMLModel = async (data: LatestPrescription) => {
-  //   try {
-  //     const response = await axios.post(
-  //       `${apiUrl}/chat-request/chat`,
-  //       { text: generateLatestPrescriptionSummary(data) },
-  //       { withCredentials: true }
-  //     );
-  //     console.log('Response from ML model:', response.data);
-  //     setShowSummary(true);
-  //   } catch (error) {
-  //     console.error('Error sending data to ML model:', error);
-  //   }
-  // };
-
-  // // Function to generate summary from medical history data
-  // const generateLatestPrescriptionSummary = (data: LatestPrescription) => {
-  //   let summary = `Patient Medical History Summary:\n\n`;
-
-  //   data.groupedData.forEach((entry, index) => {
-  //     summary += `Diagnosis ${index + 1}:\n`;
-  //     summary += `Diagnosis Date: ${formatDate(entry.diagnosisDate)}\n`;
-  //     summary += `Details: ${entry.diagnosisDetails.details}\n`;
-  //     summary += `Height: ${entry.diagnosisDetails.height} cm, Weight: ${entry.diagnosisDetails.weight} kg\n`;
-  //     summary += `Pulse: ${entry.diagnosisDetails.pulse} bpm\n`;
-  //     summary += `Chief Complaints: ${entry.diagnosisDetails.chiefComplaints.join(', ')}\n\n`;
-
-  //     entry.relatedPrescriptions.forEach((prescription, prescriptionIndex) => {
-  //       summary += `Prescription ${prescriptionIndex + 1}:\n`;
-  //       prescription.medicines.forEach((medicine, medicineIndex) => {
-  //         summary += `  Medicine ${medicineIndex + 1}: ${medicine.medicineName}\n`;
-  //         summary += `    Dose: ${medicine.dose}, Instructions: ${medicine.instructions}\n`;
-  //         summary += `    Frequency: ${medicine.frequency}, Duration: ${medicine.duration}\n`;
-  //       });
-  //       summary += '\n';
-  //     });
-  //   });
-
-  //   return summary;
-  // };
-
-  // // Handle button click
-  // const handleSummarizeClick = () => {
-  //   if (latestPrescription) {
-  //     sendToMLModel(latestPrescription);
-  //   } else {
-  //     console.error('No medical history data available.');
-  //   }
-  // };
-  
   function convertResponseToSummary(response: any) {
     // Ensure the response is a string
     const responseText = typeof response === "string" ? response : JSON.stringify(response);
@@ -296,83 +232,13 @@ const generateLatestPrescriptionSummary = (data: LatestPrescription) => {
 
 // Handle button click
 const handleSummarizeClick = () => {
-  if (latestPrescription) {
-    sendToMLModel(latestPrescription);
+  if (latestPrescriptions) {
+    sendToMLModel(latestPrescriptions);
   } else {
     console.error('No medical history data available.');
   }
 };
 
-
-
-
-
-
-//  useEffect(() => {
-//   // const handlePrint = () => {
-//     if (printData) {
-//       // Create an iframe element
-//       const printFrame = document.createElement('iframe');
-//       printFrame.style.position = 'absolute';
-//       printFrame.style.width = '0px';
-//       printFrame.style.height = '0px';
-//       printFrame.style.border = 'none';
-//       document.body.appendChild(printFrame);
-  
-//       // Open iframe document
-//       const printDoc = printFrame?.contentWindow?.document;
-//       printDoc?.open();
-//       printDoc?.write(`
-//         <html>
-//           <head>
-//             <title>Print Diagnosis</title>
-//             <style>
-//               body { font-family: Arial, sans-serif; margin: 20px; }
-//               h1 { font-size: 24px; border-bottom: 2px solid #000; padding-bottom: 10px; }
-//               h2 { font-size: 20px; margin-top: 20px; }
-//               p { font-size: 16px; line-height: 1.6; }
-//               table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-//               th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-//               th { background-color: #f2f2f2; }
-//               tr:nth-child(even) { background-color: #f9f9f9; }
-//             </style>
-//           </head>
-//           <body>
-//             <h1>Medical History</h1>
-//             <h2>Date: ${formatDate(printData.diagnosisDate)}</h2>
-//             <p><strong>Vitals:</strong> Height: ${printData.diagnosisDetails.height} cm, Weight: ${printData.diagnosisDetails.weight} kg, Pulse: ${printData.diagnosisDetails.pulse} bpm</p>
-//             <p><strong>Details:</strong> ${printData.diagnosisDetails.details}</p>
-//             <p><strong>Chief Complaints:</strong> ${printData.diagnosisDetails.chiefComplaints.join(', ')}</p>
-//             <h3>Prescriptions</h3>
-//             <table>
-//               <tr><th>Medicine Name</th><th>Dose</th><th>Instructions</th><th>Frequency</th><th>Duration</th></tr>
-//               ${printData.relatedPrescriptions.map(prescription =>
-//                 prescription.medicines.map(medicine =>
-//                   `<tr>
-//                     <td>${medicine.medicineName}</td>
-//                     <td>${medicine.dose}</td>
-//                     <td>${medicine.instructions}</td>
-//                     <td>${medicine.frequency}</td>
-//                     <td>${medicine.duration}</td>
-//                   </tr>`
-//                 ).join('')
-//               ).join('')}
-//             </table>
-//           </body>
-//         </html>
-//       `);
-//       printDoc?.close();
-  
-//       // Delay the print dialog
-//       setTimeout(() => {
-//         printFrame?.contentWindow?.focus();
-//         printFrame?.contentWindow?.print();
-  
-//         // Remove the iframe from the document after printing
-//         document.body.removeChild(printFrame);
-//       }, 500); // Adjust the delay as needed
-//     }
-//   }, [printData]);
 
 useEffect(() => {
   if (printData && patientData) {
@@ -444,17 +310,17 @@ useEffect(() => {
 
   
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (showSummary) {
-    return <Summarizer />;
-  }
+  // if (showSummary) {
+  //   return <Summarizer />;
+  // }
 
-  if (!latestPrescription || !latestPrescription.groupedData) {
-    return <div>No medical history data available.</div>;
-  }
+  // if (!latestPrescriptions || !latestPrescriptions.groupedData) {
+  //   return <div>No medical history data available.</div>;
+  // }
 
 
   return (
@@ -478,8 +344,8 @@ useEffect(() => {
       </Grid>
 
       {/* Render the medical history data */}
-      {latestPrescription.groupedData.map((entry: GroupedData, index: number) => (
-        <Card key={index} sx={{ marginBottom: 4 }}>
+      {latestPrescriptions && (
+        <Card sx={{ marginBottom: 4 }}>
           <CardContent>
             <Box
               sx={{ backgroundColor: '#e0f2f1', padding: 2, borderRadius: 1 }}
@@ -490,13 +356,13 @@ useEffect(() => {
                 alignItems="center"
               >
                 <Typography variant="h6">
-                  Date: {formatDate(entry.diagnosisDate)}
+                  Date: {formatDate(latestPrescriptions.diagnosisDate)}
                 </Typography>
                 <div>
                 <IconButton
                     sx={{ marginRight: 2 }}
                     onClick={() => {
-                      setPrintData(entry);
+                      setPrintData(latestPrescriptions);
                       // handlePrint();
                     }}
                     aria-label="print"
@@ -515,9 +381,9 @@ useEffect(() => {
                 backgroundColor: '#e0f7fa',
               }}>Vitals:</Typography>
             <Typography variant="body1" sx={{ display: 'inline', marginLeft: '4px' }}>
-              Height: {entry.diagnosisDetails.height} cm, Weight:{' '}
-              {entry.diagnosisDetails.weight} kg, Pulse:{' '}
-              {entry.diagnosisDetails.pulse} bpm
+              Height: {latestPrescriptions.diagnosisDetails?.height || 'N/A'} cm, Weight:{' '}
+              {latestPrescriptions.diagnosisDetails?.weight || 'N/A'} kg, Pulse:{' '}
+              {latestPrescriptions.diagnosisDetails?.pulse || 'N/A'} bpm
             </Typography>
 
             <Divider sx={{ marginY: 2 }} />
@@ -529,10 +395,10 @@ useEffect(() => {
                 display: 'inline',
               }}>Diagnosis:</Typography>
             <Typography variant="body1" sx={{ padding: '8px', marginLeft: '4px'}}>
-             <Typography variant="body1"  sx={{fontWeight:'bold',display: 'inline'}}>Details:</Typography>  {entry.diagnosisDetails.details}
+             <Typography variant="body1"  sx={{fontWeight:'bold',display: 'inline'}}>Details:</Typography>  {latestPrescriptions.diagnosisDetails.details|| 'N/A'}
             </Typography>
             <Typography variant="body1" sx={{ padding: '8px', marginLeft: '4px'}}>
-            <Typography variant="body1"  sx={{fontWeight:'bold',display: 'inline'}}>Chief Complaints:</Typography> {entry.diagnosisDetails.chiefComplaints.join(', ')}
+            <Typography variant="body1"  sx={{fontWeight:'bold',display: 'inline'}}>Chief Complaints:</Typography> {latestPrescriptions.diagnosisDetails.chiefComplaints.join(', ') || 'N/A'}
             </Typography>
 
             <Divider sx={{ marginY: 2 }} />
@@ -552,7 +418,7 @@ useEffect(() => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {entry.relatedPrescriptions.map((prescription: Prescription, idx: number) =>
+                  {latestPrescriptions.relatedPrescriptions.map((prescription: Prescription, idx: number) =>
                     // Loop through medicines inside the prescription
                     prescription.medicines.map((medicine: Medicine, medIdx: number) => (
                       <TableRow key={medIdx}>
@@ -569,7 +435,7 @@ useEffect(() => {
             </TableContainer>
           </CardContent>
         </Card>
-      ))}
+      )}
     </div>
   );
 }
