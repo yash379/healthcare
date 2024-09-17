@@ -158,13 +158,13 @@ export function DrawerComponent(props: DrawerComponentProps) {
           <Link
             style={{ textDecoration: 'none' }}
             to={`/cancer-detection`}
-            onClick={() => handleComponentChange('reports')}
+            onClick={() => handleComponentChange('Prediction Model')}
            >
             <ListItem>
               <ListItemButton
                 sx={{ padding: '10px 20px' }}
                 className={`${styles['button-tabs']} ${
-                  selectedComponent === 'reports' && styles['active-tab']
+                  selectedComponent === 'Prediction Model' && styles['active-tab']
                 }`}
               >
                 <ListItemIcon sx={{ minWidth: '100px' }}>
@@ -173,7 +173,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
                   />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Reports"
+                  primary="Prediction Model"
                   className={styles['drawertab']}
                 ></ListItemText>
               </ListItemButton>
