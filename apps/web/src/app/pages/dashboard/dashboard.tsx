@@ -50,6 +50,8 @@ import PatientContext from '../../contexts/patient-context';
 import UserContext from '../../contexts/user-context';
 import ListPatients from '../list-patient/list-patient';
 import ListDashboardPatients from '../list-dashboard-patients/list-dashboard-patients';
+import DashboardChart from '../dashboard-chart/dashboard-chart';
+import DashboardAppointments from '../../Components/dashboard-appointments/dashboard-appointments';
 
 /* eslint-disable-next-line */
 export interface DashboardProps {}
@@ -820,10 +822,26 @@ export function Dashboard(props: DashboardProps) {
       ) : (
         <div className={styles['main_container']}>
           <div className={styles['first_container']}>
-            <div className={styles['header']}>
-              {/* <h1 style={{ marginLeft: '0px' }}>{hospital?.name}</h1>   */}
-            </div>
+            {/* <div className={styles['header']}>
+              <h1 style={{ marginLeft: '0px' }}>{hospital?.name}</h1>  
+            </div> */}
 
+          <Box sx={{display:'flex', margin:'20px',position:'relative',top:'3%'}}>
+            <Box style={{width:'70%'}}>
+              <DashboardChart/>
+            </Box>
+
+            <Box style={{width:'30%'}}>
+              <DashboardAppointments/>
+            </Box>
+           </Box>
+
+           <div style={{margin:'10px'}}>
+            <ListDashboardPatients/>
+          </div>
+
+         
+            
             <div className={styles['dashboard-card-container']}>
               {/* <Card
                 sx={{ minWidth: '40% ' }}
@@ -850,8 +868,10 @@ export function Dashboard(props: DashboardProps) {
                   </Typography>
                 </CardContent> */}
               {/* </Card> */}
+            
+              
 
-              <Card className={styles['cards']}>
+              {/* <Card className={styles['cards']}>
                 <CardContent className={styles['cardcontent']}>
                 <Typography
                     variant="h4"
@@ -946,7 +966,7 @@ export function Dashboard(props: DashboardProps) {
                     <br />
                   </Typography>
                 </CardContent>
-              </Card>
+              </Card> */}
               {/* <div className={styles['dashboard-cards']}>
                 {countArray.map(([item, value]) => (
                   <Card className={styles['cards']}>
@@ -982,9 +1002,7 @@ export function Dashboard(props: DashboardProps) {
                   </Card>
               </div> */}
 
-          <div>
-            <ListDashboardPatients/>
-          </div>
+          
 
             </div>
 

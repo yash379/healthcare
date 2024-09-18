@@ -421,6 +421,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            marginTop:'5px'
           }}
         >
           {/* <Box
@@ -471,7 +472,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
               /> */}
         </Box>
 
-        <TableContainer>
+        <TableContainer sx={{width:"81vw"}}>
           <Table>
             <TableHead>
               <TableRow>
