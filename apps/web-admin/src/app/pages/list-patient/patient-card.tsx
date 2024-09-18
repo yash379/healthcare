@@ -26,7 +26,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
   onClick,
 }) => {
   return (
-<Card sx={{ width: 250, m: 2, height: 300, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+<Card sx={{ width: 250, m: 2, height: 300, display: 'flex', flexDirection: 'column', position: 'relative'}}>
 <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Avatar
@@ -48,7 +48,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
           {address}
         </Typography>
         <Divider sx={{mt:1}} />
-        <Box display="flex" flexDirection="row" justifyContent='center' >
+        <Box display="flex" flexDirection="row" justifyContent='center'>
         <Box mt={2} display="flex" flexDirection="column" justifyContent='center' gap={1}>
           <Typography variant="body2">Weight: {firstName}</Typography>
           <Typography variant="body2">Height: {lastName}</Typography>
