@@ -66,9 +66,10 @@ function MedicalCheckup() {
   useEffect(() => {
     getAllAppointments();
   }, [apiUrl,  params.hospitalId,  getAllAppointments]);
+  
 
   return (
-    <div style={{width:'50%'}}>
+    <div style={{width:'50%',height:'375px', overflowY:'scroll', marginTop:'-28px', marginBottom:'10px'}}>
       <Box sx={{ display: 'flex' }} >
         <Box>
           

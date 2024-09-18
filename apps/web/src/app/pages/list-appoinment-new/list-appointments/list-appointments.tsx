@@ -532,13 +532,31 @@ export function ListAppointments(props: ListAppointmentsProps) {
   
     changeAppointmentStatus();
 
-  },[status]);
+  },[status,appointment]);
 
-  const formatDate = (isoDateString: string) => {
-    const date=new Date(isoDateString).toLocaleDateString();
-    const time=new Date(isoDateString).toLocaleTimeString();
-    const response=date+''+time;
-    return response; // Convert ISO string to local date format
+  // const formatDate = (isoDateString: string) => {
+  //   const date=new Date(isoDateString).toLocaleDateString();
+  //   const time=new Date(isoDateString).toLocaleTimeString();
+  //   const response=date+''+time;
+  //   return response; // Convert ISO string to local date format
+  // };
+
+  const formatDate= (dateTime: string) => {
+    const date = new Date(dateTime);
+    
+    // Convert to Indian Standard Time (IST)
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long', // Can be 'short', 'numeric', or '2-digit'
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true, // 12-hour format, can set to false for 24-hour
+      timeZone: 'Asia/Kolkata' // IST time zone
+    };
+  
+    return date.toLocaleString('en-IN', options);
   };
 
   

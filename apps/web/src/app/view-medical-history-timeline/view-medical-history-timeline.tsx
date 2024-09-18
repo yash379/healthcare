@@ -117,10 +117,10 @@ export function ViewMedicalHistoryTimeline({ patient }: ViewMedicalHistoryTimeli
         </Box>
       </Box>
 
-      <Timeline sx={{position:'relative'}}>
+      <Timeline sx={{position:'relative', height:'72vh', overflowY:'scroll'}}>
         {medicalHistory?.groupedData.length ? (
           medicalHistory.groupedData.map((item)=>(
-            <TimelineItem key={item.diagnosisDetails.id} position="right">
+            <TimelineItem key={item.diagnosisDetails.id} position="right" sx={{minHeight:'fit-content'}}>
               <TimelineSeparator>
                 <TimelineDot sx={{ backgroundColor: '#064B4F' }} />
                 <TimelineConnector />

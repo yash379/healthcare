@@ -8,6 +8,9 @@ import styles from './profile-menu-button.scss';
 import UserContext from '../../contexts/user-context';
 import axios from 'axios';
 import { environment } from '../../../environments/environment';
+import HospitalContext from '../../contexts/hospital-context';
+import DoctorContext from '../../contexts/doctor-context';
+import PatientContext from '../../contexts/patient-context';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ProfileMenuButtonProps {}
@@ -23,6 +26,10 @@ export function ProfileMenuButton(props: ProfileMenuButtonProps) {
   // const role = usercontext?.role || 'Unknown Role';
   const [userRole, setUserRole] = useState<string>('Unknown Role');
   const name = `${userName} ${lastName}`;
+
+  const hospitalcontext=useContext(HospitalContext);
+  const doctorcontext=useContext(DoctorContext);
+  const patientcontext=useContext(PatientContext);
 
   const getUserInitials = (firstName: string, lastName: string) => {
     const firstInitial = firstName.charAt(0).toUpperCase();
@@ -49,7 +56,13 @@ export function ProfileMenuButton(props: ProfileMenuButtonProps) {
   };
 
   const handleProfile = () => {
-    navigate('/profile');
+    if(doctorcontext?.doctor){
+      navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext.doctor?.id}/profile`);
+    }else if(patientcontext?.patient){
+      navigate(`/hospitals/${hospitalcontext?.hospital?.id}/patients/${patientcontext?.patient?.id}/profile`)
+    }else{
+      navigate(`/hospitals/${hospitalcontext?.hospital?.id}/admin/${usercontext?.user?.id}/profile`)
+    }
   };
 
   useEffect(()=>{
@@ -69,7 +82,7 @@ export function ProfileMenuButton(props: ProfileMenuButtonProps) {
           marginRight: '12px',
         }}
       >
-        <Avatar sx={{ width: 24, height: 24, bgcolor: 'purple', marginLeft: '4px', fontSize: '12px' }}>
+        <Avatar sx={{ width: 24, height: 24, bgcolor: '#064B4F', marginLeft: '4px', fontSize: '12px' }}>
           {userInitials}
         </Avatar>
         <Select

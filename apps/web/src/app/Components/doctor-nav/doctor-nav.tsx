@@ -144,7 +144,7 @@ export function DoctorNav(props: DoctorNavProps) {
         {/* //doctor dashboard */}
         (<List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
 
-          <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/dashboard`} onClick={() => handleComponentChange('dashboard')}>
+          <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}`} onClick={() => handleComponentChange('dashboard')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
               }`}>
               <ListItemIcon>

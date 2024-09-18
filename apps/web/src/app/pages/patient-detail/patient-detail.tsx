@@ -254,6 +254,9 @@ export function PatientDetail(props: PatientDetailProps) {
               <Typography variant="h3" sx={{ marginTop: 3 }}>
                  {patient?.isActive}
               </Typography>
+              <Typography variant="h3" sx={{ marginTop: 3 }}>
+                 {patient?.firstName}{patient?.lastName}
+              </Typography>
               {/* Appointment and Completed status */}
               <Box
                 sx={{
