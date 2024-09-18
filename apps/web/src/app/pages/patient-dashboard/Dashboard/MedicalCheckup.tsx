@@ -67,8 +67,28 @@ function MedicalCheckup() {
     getAllAppointments();
   }, [apiUrl,  params.hospitalId,  getAllAppointments]);
 
+  const formatDate= (dateTime: string) => {
+    const date = new Date(dateTime);
+    
+    // Convert to Indian Standard Time (IST)
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long', // Can be 'short', 'numeric', or '2-digit'
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true, // 12-hour format, can set to false for 24-hour
+      timeZone: 'Asia/Kolkata' // IST time zone
+    };
+  
+    return date.toLocaleString('en-IN', options);
+  };
+  
+
   return (
-    <div style={{width:'50%'}}>
+    <div style={{width:'54%',height:'375px', overflowY:'scroll', marginTop:'-28px', marginBottom:'10px',marginLeft: '-47px'
+    }}>
       <Box sx={{ display: 'flex' }} >
         <Box>
           
@@ -126,7 +146,7 @@ function MedicalCheckup() {
                   fontSize: '16px',
                   
                   }}>
-                    {appointment.appointmentDate}
+                    {formatDate(appointment.appointmentDate)}
                   </Typography>
 
                   <Typography variant="h6" color="textPrimary" 

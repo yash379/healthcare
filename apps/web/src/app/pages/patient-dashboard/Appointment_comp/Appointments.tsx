@@ -46,6 +46,20 @@ const Appointments: React.FC = () => {
     getAllAppointments();
   }, [apiUrl,  hospitalcontext?.hospital?.id,  getAllAppointments]);
 
+  const formatTime = (dateTime: string) => {
+    const date = new Date(dateTime);
+    
+    // Convert to Indian Standard Time (IST)
+    const options: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true, // 12-hour format
+      timeZone: 'Asia/Kolkata' // Explicitly set to IST (Indian Time)
+    };
+  
+    return date.toLocaleTimeString('en-IN', options);
+  };
   return (
     <Box sx={{ padding: "20px", maxWidth: "400px", margin: "10px", backgroundColor: "#fff", alignSelf:'flex-start'
       //  borderRadius: "8px", 
@@ -70,7 +84,7 @@ const Appointments: React.FC = () => {
             {/* Time Section */}
             <Box sx={{ width: "25%", textAlign: "center" }}>
               <Typography variant="body1" sx={{ fontWeight: "bold"}}>
-                {appointment.appointmentDate}
+                {formatTime(appointment.appointmentDate)}
               </Typography>
             </Box>
 

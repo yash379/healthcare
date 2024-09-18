@@ -33,7 +33,11 @@ const Dashboard: React.FC = () => {
           }}>
             BASIC INFORMATION
             
-            <Link to={`/hospitals/${params.hospitalId}/patients/${params.patientId}/appointments`} color="#064B4F">
+            <Link to={`/hospitals/${params.hospitalId}/patients/${params.patientId}/appointments`} color="#064B4F" style={{position: 'relative',
+              right: '-64px',
+              marginTop:' -22px',
+              float: 'right'
+            }}>
           view all
         </Link>
           </div>
@@ -43,6 +47,7 @@ const Dashboard: React.FC = () => {
               flexDirection: 'row',
               alignItems:'flex-start',
               marginLeft: '2%',
+              width:'100%'
             }}
             >
           <PatientDetailCardd patientId={params.patientId}/>

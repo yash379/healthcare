@@ -49,6 +49,7 @@ import MedicalReport from './pages/patient-dashboard/patient-pages/MedicalReport
 import ListPatientAppointments from  './pages/patient-dashboard/list-appointments/list-appointments';
 import AdminLayout from './layouts/admin-layout/admin-layout';
 import ListAdminPatients from './pages/admin-portal/list-patient/list-patient';
+import AdminDashboard from './pages/admin-dashboard/admin-dashboard';
 
 export function App() {
 
@@ -200,15 +201,16 @@ export function App() {
          
               {/* admin portal */}
                <Route path="/hospitals/:hospitalId/admin/:adminId" element={<AdminLayout/>}>
-                 <Route path="/hospitals/:hospitalId/admin/:adminId" index element={<Dashboard />} />
+                 <Route path="/hospitals/:hospitalId/admin/:adminId" index element={<AdminDashboard />} />
                  <Route  path="/hospitals/:hospitalId/admin/:adminId/doctors"   element={<ListDoctors />}/>
                  <Route path="/hospitals/:hospitalId/admin/:adminId/patients" element={<ListAdminPatients/>} />
                  <Route path="/hospitals/:hospitalId/admin/:adminId/appointments" element={<ListAppointment/>} />
+                 <Route path="/hospitals/:hospitalId/admin/:adminId/profile" element={<Profile />} />
                </Route>
 
              
               <Route path="/hospital/:hospitalId/patients/add" element={<AddPatientPage />} />
-              <Route path="/profile" element={<Profile />} /> 
+              {/* <Route path="/profile" element={<Profile />} />  */}
                {/* <Route element={<PatientLayout />}> */}
               {/* <Route path="/appointments/:hospitalId" element={<ListAppointment />} /> */}
               {/* <Route path="/hospital/:hospitalId/patients/edit/:patientId" element={<EditPatientPage />} /> */}
@@ -242,13 +244,13 @@ export function App() {
               
            {/* doc portal */}
             <Route path="/hospitals/:hospitalId/doctors/:doctorId" element={<DoctorLayout/>}>
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/dashboard" index element={<Dashboard />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId" index element={<Dashboard />} />
               <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/add"  element={<AddPatientComponent />}/>
               <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/edit"  element={<EditPatientPage />}/>
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients" element={<ListPatients />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail" element={<PatientDetail />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments" element={<ListAppointments/>} />
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments/:id" element={<ViewAppointmentDetail />} />
+              {/* <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments/:id" element={<ViewAppointmentDetail />} /> */}
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline patient={null} />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/diagnosis" element={<DiagnosisPage />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/medical-history" element={<MedicalHistory />} />
@@ -256,6 +258,7 @@ export function App() {
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/ai-summarizer" element={<Summarizer />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/settings" element={<SettingPage />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/scheduler" element={<AppointmentScheduler/>}/>
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/profile" element={<Profile />} />
               {/* <Route path="/profile" element={<Profile />} />  */}
             </Route>
 
@@ -271,6 +274,7 @@ export function App() {
               <Route path="/hospitals/:hospitalId/patients/:patientId/ai-summarizer" element={<Summarizer />} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/settings" element={<SettingPage />} />
               {/* <Route path="/profile" element={<Profile />} />  */}
+              <Route path="/hospitals/:hospitalId/patients/:patientId/profile" element={<Profile />} />
             </Route>
 
               
@@ -278,7 +282,7 @@ export function App() {
             
           {/* </Route> */}
           <Route path="/selectHospital" element={<SelectHospital />} />
-          <Route path="/profile" element={<Profile />} />
+          {/* <Route path="/profile" element={<Profile />} /> */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/update-password/email/:emailId/token/:token" element={<UpdatePassword />} />
           <Route path="/login" element={<Login onLogin={onLogin} />} />

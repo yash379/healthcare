@@ -18,6 +18,9 @@ import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import axios from "axios";
 import { enqueueSnackbar } from "notistack";
 import ProfileMenuButton from "../profile-menu-button/profile-menu-button";
+import DoctorContext from "../../contexts/doctor-context";
+import PatientContext from "../../contexts/patient-context";
+import HospitalContext from "../../contexts/hospital-context";
 
 
 
@@ -63,6 +66,10 @@ export function TopBar() {
   const [selectedOption, setSelectedOption] = useState<string>('');
   const user=useContext(UserContext);
   const menuPaperRef = useRef(null);
+
+  const hospitalcontext=useContext(HospitalContext);
+  const doctorcontext=useContext(DoctorContext);
+  const patientcontext=useContext(PatientContext);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -114,7 +121,13 @@ export function TopBar() {
   };
 
   const handleProfile = () => {
-    navigate('/profile');
+    if(doctorcontext?.doctor){
+      navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext.doctor?.id}/profile`);
+    }else if(patientcontext?.patient){
+      navigate(`/hospitals/${hospitalcontext?.hospital?.id}/patients/${patientcontext?.patient?.id}/profile`)
+    }else{
+      navigate(`/hospitals/${hospitalcontext?.hospital?.id}/admin/${userContext?.user?.id}/profile`)
+    }
   };
   
 
