@@ -145,7 +145,7 @@ export function AdminDashboard(props: AdminDashboardProps) {
 
   return (
     <div className={styles['container']}>
-      <h1>Welcome to AdminDashboard!</h1>
+      <h1>Welcome to Admin Dashboard!</h1>
              <Card
                 sx={{ minWidth: '40%', marginInline:'30px' }}
                 className={styles['hospital-details']}

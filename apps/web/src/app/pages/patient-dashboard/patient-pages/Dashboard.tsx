@@ -47,6 +47,7 @@ const Dashboard: React.FC = () => {
               flexDirection: 'row',
               alignItems:'flex-start',
               marginLeft: '2%',
+              width:'100%'
             }}
             >
           <PatientDetailCardd patientId={params.patientId}/>

@@ -69,9 +69,13 @@ function PatientDetailCardd({patientId}:PatientDetailCarddProps) {
                   padding: 2,
                   display: 'flex',
                   flexDirection: 'column',
-                  width: '100%',
-                  height: 'auto',
                   borderRadius: '10px',
+                  width: '100%',
+                  height: '40vh',
+                  marginLeft:'-64px',
+                  paddingInline: '50px',
+                  marginTop: '-20px',
+                  paddingTop: '38px',
                 }}
               >
                 <Typography variant="h4"
