@@ -3,15 +3,18 @@ import { Card, CardContent, Avatar, Typography, Button, Box, Stack, Divider } fr
 import { CheckCircleOutline, CancelOutlined } from '@mui/icons-material';
 import Chip from '../../Components/chip/chip';
 import { stringAvatar } from '../../utils/user';
+import { Gender } from '@prisma/client';
 
 interface PatientCardProps {
   firstName: string;
   lastName: string;
   address: string;
-  weight: string;
-  height: string;
+  digitalHealthCode:string;
+  dob: string;
+  age: number;
   bloodGroup: string;
-  status: 'Active' | 'Inactive';
+  gender: Gender;
+  status:boolean;
   onClick: () => void;
 }
 
@@ -19,9 +22,11 @@ const PatientCard: React.FC<PatientCardProps> = ({
   firstName,
   lastName,
   address,
-  weight,
-  height,
+  digitalHealthCode,
+  dob,
   bloodGroup,
+  age,
+  gender,
   status,
   onClick,
 }) => {
@@ -36,7 +41,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
                             'medium'
                           )}
                         />
-          {status === 'Active' ? (
+          {!status ? (
                          <Chip label="Error"  sx={{ position: 'absolute', top: 8, right: 8 }}>Inactive</Chip>
                         ) : (
                           
@@ -50,8 +55,12 @@ const PatientCard: React.FC<PatientCardProps> = ({
         <Divider sx={{mt:1}} />
         <Box display="flex" flexDirection="row" justifyContent='center'>
         <Box mt={2} display="flex" flexDirection="column" justifyContent='center' gap={1}>
-          <Typography variant="body2">Weight: {firstName}</Typography>
-          <Typography variant="body2">Height: {lastName}</Typography>
+          <Typography variant="body2">
+            Digital Health Code: {digitalHealthCode}
+            </Typography>
+          {/* <Typography variant="body2">Date of birth: {dob}</Typography>  */}
+          <Typography variant="body2">Age: {age}</Typography>
+          <Typography variant="body2">Gender: {gender}</Typography>
           <Typography variant="body2">Blood Group: {bloodGroup}</Typography>
         </Box>
         </Box>

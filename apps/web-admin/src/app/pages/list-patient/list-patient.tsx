@@ -612,10 +612,12 @@ export function ListPatients(props: ListPatientsProps) {
               firstName={patient.firstName}
               lastName={patient.lastName}
               address={`${patient.addressLine1}, ${patient.city}`}
-              weight={patient.weight}
-              height={patient.height}
+              digitalHealthCode={patient.digitalHealthCode}
+              dob={patient.dob}
               bloodGroup={patient.bloodGroup}
-              status={patient.status}
+              age={patient.age}
+              gender={patient.gender}
+              status={patient.isActive}
               onClick={() => handlePatientClick(patient.id)}
             />
           </Grid>
