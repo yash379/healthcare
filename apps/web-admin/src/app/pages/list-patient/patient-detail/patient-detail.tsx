@@ -14,6 +14,7 @@ import { enqueueSnackbar } from 'notistack';
 import StatusChip from '../../../Components/chip/statusChip';
 import { HospitalContext } from '../../../contexts/user-contexts';
 import ViewMedicalHistoryTimeline from '../../view-medical-history-timeline/view-medical-history-timeline';
+import Chip from '../../../Components/chip/chip';
 /* eslint-disable-next-line */
 
 interface Form {
@@ -234,7 +235,19 @@ export function PatientDetail(props: PatientDetailProps) {
               }}
             >
               <div style={{position:'relative', right:'-44%'}}>
-                <StatusChip label={'Success'} children={'StatusId'} width={'80px'}></StatusChip>
+                {/* <StatusChip label={'Success'} children={'StatusId'} width={'80px'}></StatusChip> */}
+                {!patient?.isActive ? (
+            <Chip label="Error" >
+              Inactive
+            </Chip>
+          ) : (
+            <Chip
+              label="Success"
+              
+            >
+              Active
+            </Chip>
+          )}
               </div>
               {/* Avatar with initials */}
               <Avatar
