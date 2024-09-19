@@ -173,7 +173,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
                   />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Prediction Model"
+                  primary="Forecasting"
                   className={styles['drawertab']}
                 ></ListItemText>
               </ListItemButton>
