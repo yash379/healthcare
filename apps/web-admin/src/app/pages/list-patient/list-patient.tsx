@@ -609,6 +609,7 @@ export function ListPatients(props: ListPatientsProps) {
         {activePatients.map((patient, index) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
             <PatientCard
+              patientId={patient.id}
               firstName={patient.firstName}
               lastName={patient.lastName}
               address={`${patient.addressLine1}, ${patient.city}`}
@@ -618,7 +619,7 @@ export function ListPatients(props: ListPatientsProps) {
               age={patient.age}
               gender={patient.gender}
               status={patient.isActive}
-              onClick={() => handlePatientClick(patient.id)}
+              // onClick={() => handlePatientClick(patient.id)}
             />
           </Grid>
         ))}
