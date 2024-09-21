@@ -17,7 +17,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import DeviceHubIcon from '@mui/icons-material/DeviceHub';
 import barrier from '../../../assets/parking_1057371.png';
-import fountlab from "../../../assets/fount-lab-logo.png"
+import fountlab from '../../../assets/fount-lab-logo.png';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { HospitalContext } from '../../contexts/hospital-context';
@@ -26,19 +26,21 @@ import MedicalServicesOutlinedIcon from '@mui/icons-material/MedicalServicesOutl
 import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import mediPlus from "../../../assets/Mediplus.png";
-import digimedic from "../../../assets/DigiMedic_logo.svg";
+import mediPlus from '../../../assets/Mediplus.png';
+import digimedic from '../../../assets/DigiMedic_logo.svg';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import DoctorContext from '../../contexts/doctor-context';
 import PatientContext from '../../contexts/patient-context';
-/* eslint-disable-next-line */
-export interface DoctorNavProps { };
+import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined';
 
-const drawerWidth = 200;
+/* eslint-disable-next-line */
+export interface DoctorNavProps {}
+
+const drawerWidth = 240;
 
 export function DoctorNav(props: DoctorNavProps) {
   // const [menudata, setMenudata] = useState("home")
-  const [selectedComponent, setSelectedComponent] = useState("dashboard");
+  const [selectedComponent, setSelectedComponent] = useState('dashboard');
 
   const handleComponentChange = (componentName: any) => {
     setSelectedComponent(componentName);
@@ -46,28 +48,29 @@ export function DoctorNav(props: DoctorNavProps) {
   const { id } = useParams();
 
   const hospitalcontext = useContext(HospitalContext);
-  console.log("hospital context:", hospitalcontext);
-  console.log("hospital id:", hospitalcontext?.hospital?.id);
+  console.log('hospital context:', hospitalcontext);
+  console.log('hospital id:', hospitalcontext?.hospital?.id);
 
-  const doctorContext=useContext(DoctorContext);
-  const patientcontext=useContext(PatientContext);
+  const doctorContext = useContext(DoctorContext);
+  const patientcontext = useContext(PatientContext);
 
-  console.log("patients context:", patientcontext);
-  console.log("doctor context:", doctorContext);
-
+  console.log('patients context:', patientcontext);
+  console.log('doctor context:', doctorContext);
 
   return (
     <div>
       <Drawer
         sx={{
+          width: drawerWidth,
+          flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: '225px',
+            width: drawerWidth,
             boxSizing: 'border-box',
-            // marginTop: '64px',
+            // marginTop:'64px',
             backgroundColor: '#FFFFFF',
-            color: "black"
+            color: 'black',
           },
-          '@media (max-width: 600px)': {
+          '@media (max-width: 768px)': {
             '& .MuiDrawer-paper': {
               width: '48px',
             },
@@ -77,12 +80,24 @@ export function DoctorNav(props: DoctorNavProps) {
         anchor="left"
         className={styles['side-drawer']}
       >
-
         {/* <Toolbar sx={{height:"59px"}}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></Toolbar> */}
-        <Toolbar sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}><img src={digimedic} alt="medi plus logo" width="185px" height="75px" style={{marginTop: '10px'}} /></Toolbar>
+        <Toolbar
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <img
+            src={digimedic}
+            alt="medi plus logo"
+            width="185px"
+            height="75px"
+            style={{ marginTop: '10px' }}
+          />
+        </Toolbar>
         {/* <Divider /> */}
-
-
         {/* doctor admin nav */}
         {/* {(!doctorContext?.doctor) ?
          (<List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
@@ -110,7 +125,6 @@ export function DoctorNav(props: DoctorNavProps) {
         )
         
         : */}
-        
         {/* patient dashboard nav
         patientcontext?.patient  ?
 
@@ -140,38 +154,69 @@ export function DoctorNav(props: DoctorNavProps) {
 
 
        : */}
-        
         {/* //doctor dashboard */}
-        <List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
-
-          <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}`} onClick={() => handleComponentChange('dashboard')}>
-            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
-              }`}>
-              <ListItemIcon>
-                <div className={styles['icon-bg']}>
-                <DashboardIcon className={styles['drawer-icons']} />
-                </div>
+        <List
+          sx={{ mt: '30px', mr: '10px', ml: '10px' }}
+          className={styles['Nav']}
+        >
+          <Link
+            style={{ textDecoration: 'none' }}
+            to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}`}
+            onClick={() => handleComponentChange('dashboard')}
+          >
+            <ListItemButton
+              sx={{ padding: '10px 20px', margin: '5px'}}
+              className={`${styles['button-tabs']} ${
+                selectedComponent === 'dashboard' && styles['active-tab']
+              }`}
+            >
+              <ListItemIcon sx={{ minWidth: '100px' }}>
+                <SpaceDashboardOutlinedIcon
+                  className={styles['drawer-icons']}
+                />
               </ListItemIcon>
-              <ListItemText className={styles["drawertab"]} primary="Dashboard" />
+              <ListItemText
+                className={styles['drawertab']}
+                primary="Dashboard"
+              />
             </ListItemButton>
           </Link>
-          <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/appointments`} onClick={() => handleComponentChange('appointments')}>
-            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'appointments' && styles['active-tab']
-              }`}>
-              <ListItemIcon>
+          <Link
+            style={{ textDecoration: 'none' }}
+            to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/appointments`}
+            onClick={() => handleComponentChange('appointments')}
+          >
+            <ListItemButton
+              sx={{ padding: '10px 20px', margin: '5px' }}
+              className={`${styles['button-tabs']} ${
+                selectedComponent === 'appointments' && styles['active-tab']
+              }`}
+            >
+              <ListItemIcon sx={{ minWidth: '100px' }}>
                 <AssignmentOutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon>
-              <ListItemText className={styles["drawertab"]} primary="Appointment" />
+              <ListItemText
+                className={styles['drawertab']}
+                primary="Appointment"
+              />
             </ListItemButton>
           </Link>
 
-          <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients`} onClick={() => handleComponentChange('patients')}>
-            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'patients' && styles['active-tab']
-              }`}>
-              <ListItemIcon >
+          <Link
+            style={{ textDecoration: 'none' }}
+            to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients`}
+            onClick={() => handleComponentChange('patients')}
+          >
+            <ListItemButton
+              sx={{ padding: '10px 20px', margin: '5px' }}
+              className={`${styles['button-tabs']} ${
+                selectedComponent === 'patients' && styles['active-tab']
+              }`}
+            >
+              <ListItemIcon sx={{ minWidth: '100px' }}>
                 <Groups2OutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon>
-              <ListItemText className={styles["drawertab"]} primary="Patient" />
+              <ListItemText className={styles['drawertab']} primary="Patient" />
             </ListItemButton>
           </Link>
           {/* <Link style={{ textDecoration: "none" }} to="/reports" onClick={() => handleComponentChange('reports')}>
@@ -183,13 +228,21 @@ export function DoctorNav(props: DoctorNavProps) {
               <ListItemText className={styles["drawertab"]} primary="Report" />
             </ListItemButton>
           </Link> */}
-          <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/settings`} onClick={() => handleComponentChange('settings')}>
-            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'settings' && styles['active-tab']
-              }`}>
-              <ListItemIcon >
+          <Link
+            style={{ textDecoration: 'none' }}
+            to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/settings`}
+            onClick={() => handleComponentChange('settings')}
+          >
+            <ListItemButton
+              sx={{ padding: '10px 20px', margin: '5px' }}
+              className={`${styles['button-tabs']} ${
+                selectedComponent === 'settings' && styles['active-tab']
+              }`}
+            >
+              <ListItemIcon sx={{ minWidth: '100px' }}>
                 <SettingsOutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon>
-              <ListItemText className={styles["drawertab"]} primary="Setting" />
+              <ListItemText className={styles['drawertab']} primary="Setting" />
             </ListItemButton>
           </Link>
           {/* <Link style={{ textDecoration: "none" }} to="/logout" onClick={() => handleComponentChange('logout')}>
@@ -201,20 +254,11 @@ export function DoctorNav(props: DoctorNavProps) {
               <ListItemText className={styles["drawertab"]} primary="Logout" />
             </ListItemButton>
           </Link> */}
-
-        </List>)
-
-      {/* } */}
+        </List>
+        {/* } */}
       </Drawer>
     </div>
   );
 }
 
 export default DoctorNav;
-
-
-
-
-
-
-

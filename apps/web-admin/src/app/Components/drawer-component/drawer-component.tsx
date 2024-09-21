@@ -97,7 +97,9 @@ export function DrawerComponent(props: DrawerComponentProps) {
                 }`}
               >
                 <ListItemIcon sx={{ minWidth: '100px' }}>
-                  <SpaceDashboardOutlinedIcon className={styles['drawer-icons']} />
+                  <SpaceDashboardOutlinedIcon
+                    className={styles['drawer-icons']}
+                  />
                 </ListItemIcon>
                 <ListItemText
                   primary="Dashboard"
@@ -159,18 +161,17 @@ export function DrawerComponent(props: DrawerComponentProps) {
             style={{ textDecoration: 'none' }}
             to={`/cancer-detection`}
             onClick={() => handleComponentChange('Prediction Model')}
-           >
+          >
             <ListItem>
               <ListItemButton
                 sx={{ padding: '10px 20px' }}
                 className={`${styles['button-tabs']} ${
-                  selectedComponent === 'Prediction Model' && styles['active-tab']
+                  selectedComponent === 'Prediction Model' &&
+                  styles['active-tab']
                 }`}
               >
                 <ListItemIcon sx={{ minWidth: '100px' }}>
-                  <AssignmentOutlinedIcon
-                    className={styles['drawer-icons']}
-                  />
+                  <AssignmentOutlinedIcon className={styles['drawer-icons']} />
                 </ListItemIcon>
                 <ListItemText
                   primary="Forecasting"
@@ -183,7 +184,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
             style={{ textDecoration: 'none' }}
             to={`/saransh-ai`}
             onClick={() => handleComponentChange('AI Summarizer')}
-           >
+          >
             <ListItem>
               <ListItemButton
                 sx={{ padding: '10px 20px' }}
@@ -192,9 +193,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
                 }`}
               >
                 <ListItemIcon sx={{ minWidth: '100px' }}>
-                  <AutoAwesomeOutlinedIcon
-                    className={styles['drawer-icons']}
-                  />
+                  <AutoAwesomeOutlinedIcon className={styles['drawer-icons']} />
                 </ListItemIcon>
                 <ListItemText
                   primary="AI Summarizer"

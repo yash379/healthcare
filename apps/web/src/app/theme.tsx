@@ -77,7 +77,7 @@ const componentThemeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           textTransform: 'none',
-          height: '48px !important'
+          height: '40px !important'
         },
         sizeLarge: {
           height: '40px !important',

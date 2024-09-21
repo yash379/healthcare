@@ -169,11 +169,11 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
 
   return (
     <div style={{height:'calc(100vh - 1000px)'}}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={5}>
-        <Typography variant="h5" component="div" sx={{ color: 'rgba(0, 0, 0, 1)', fontWeight: '700', fontSize: '29px', fontFamily: 'DM Sans', width: '267px',height:'42.35px', lineHeight: '43.3px', letter:'-2%', }}>
-          Appointment
+      <Box display="flex" justifyContent="space-between" alignItems="center"  marginLeft={5} marginRight={5} marginTop={3} marginBottom={2}>
+        <Typography variant="h1" component="div" sx={{ color: 'rgba(0, 0, 0, 1)', }}>
+          Appointment Scheduler
         </Typography>
-        <Box display="flex" gap={2} alignItems="center">
+        <Box display="flex" gap={0.5} alignItems="center">
           <Button
             variant="contained"
             // sx={{ backgroundColor:'rgba(6,75,79,1)', shadow:'rgba(0,0,0,0.25)', borderRadius:'6px', gap:'8px', width:'Fixed(210px)', height:'37px', }}
@@ -251,7 +251,7 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
         </Box>
       </Box>
 
-      <TableContainer component={Paper} sx={{height:'calc(100vh - 80%)' , width:'calc(100vw - 20%)'}}>
+      <TableContainer component={Paper} sx={{height:'calc(100vh - 80%)' , width:'calc(100vw - 20%)',  marginLeft: 5, marginRight:5, marginTop: 3,  marginBottom: 2}}>
         <Table >
           <TableHead >
             <TableRow  >

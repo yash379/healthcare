@@ -114,7 +114,9 @@ export function Login({ onLogin }: LoginProps) {
           {/* <div > */}
           <img src={digimedic} alt="medi plus logo" width="300px" height="100px" className={styles['logo']}/>
           {/* </div> */}
-          <h1 style={{ fontFamily: 'Secular One' }}>WELCOME!</h1>
+          <div style={{alignSelf: 'center', marginTop: '10px', marginBottom: '4px'}}>
+          <h2 style={{ fontFamily: 'Inter, sans-serif' }}>Welcome Back!</h2>
+          </div>
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></div> */}
             {/* <div className={styles['login-header']}>Welcome Back <span className={styles['login-emoji']}>👋</span></div> */}
@@ -150,7 +152,7 @@ export function Login({ onLogin }: LoginProps) {
                 />
               </div>
               <div className={styles['forgot-password']}>
-                <Link to="/forgot-password" style={{ textDecoration: 'none', color:'#064B4FD1' }}>
+                <Link to="/forgot-password" style={{fontSize:'14px', fontFamily: 'Inter, sans-serif' , textDecoration: 'none', color:'#064B4F' }}>
                   Forgot Password?
                 </Link>
               </div>
@@ -161,6 +163,7 @@ export function Login({ onLogin }: LoginProps) {
               type="submit"
               className="btn btn-primary"
               sx={{
+                fontSize: '16px',
                 width: '100%',
                 backgroundColor: '#064B4F',
                 color: 'white',
