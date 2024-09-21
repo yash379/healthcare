@@ -213,6 +213,8 @@ const AddAppointment: React.FC<AddAppointmentProps> = ({
                       sx={{ width: '100%', marginBottom: 1 }}
                       label="Status*"
                       variant="outlined"
+                      defaultValue={1} // Set the default value to 1 (PENDING)
+                      disabled={true} // Disable the entire select field
                       {...field}
                       error={!!errors.statusId}
                       MenuProps={{
