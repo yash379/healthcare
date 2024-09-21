@@ -40,6 +40,12 @@ export function Login({ onLogin }: LoginProps) {
 
   const usercontext = useContext(UserContext);
 
+  useEffect(()=>{
+    const userrrr=localStorage.getItem('user');
+    const userfromlocalstorage=JSON.stringify(userrrr);
+     usercontext?.setUser(JSON.parse(userfromlocalstorage));
+  },[usercontext?.user,user])
+
   const onSubmit = async (formData: { email: string; password: string }) => {
     try {
       const res = await axios.post<any>(`${apiUrl}/login`, formData, {
@@ -96,62 +102,59 @@ export function Login({ onLogin }: LoginProps) {
 
   return (
     <Box className={styles['main_root']}>
-      <Box className={styles['second_container']}>
-        <img
-          src={digimedic}
-          alt="medi plus logo"
-          width="300px"
-          height="100px"
-          className={styles['logo']}
-        />
-        <div style={{ marginTop: '20px', alignSelf: 'center' }}>
-          <h2 style={{ fontFamily: 'Inter, sans-serif' }}>Welcome Back!</h2>
-        </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className={styles['login-form']}>
-            <div className={styles['email']}>
-              <TextField
-                type="email"
-                {...register('email')}
-                label="Email"
-                error={!!errors.email}
-                helperText={
-                  errors.email && errors.email.message
-                    ? errors.email.message
-                    : ''
-                }
-                fullWidth
-                className="form-control"
-                placeholder="Enter Your Email Id"
-                sx={{ width: '100%', marginTop: '10px' }}
-              />
+      {/* <Box className={styles['main_container']}> */}
+        <Box className={styles['second_container']}>
+          {/* <Grid className={styles['logo_image']}> */}
+            {/* <img
+              // src={logoImg}
+              alt="Background"
+              style={{ marginTop: '30px', objectFit: 'cover' }}
+            /> */}
+          {/* </Grid> */}
+          {/* <div > */}
+          <img src={digimedic} alt="medi plus logo" width="300px" height="100px" className={styles['logo']}/>
+          {/* </div> */}
+          <h1 style={{ fontFamily: 'Secular One' }}>WELCOME!</h1>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></div> */}
+            {/* <div className={styles['login-header']}>Welcome Back <span className={styles['login-emoji']}>👋</span></div> */}
+            <div className={styles['login-form']}>
+              {/* <Typography>Username</Typography> */}
+              <div className={styles['email']}>
+                <TextField
+                  type="email"
+                  {...register('email')}
+                  label="Email"
+                  error={!!errors.email}
+                  helperText={
+                    errors.email && errors.email.message
+                      ? errors.email.message
+                      : ''
+                  }
+                  fullWidth
+                  className="form-control"
+                  placeholder="Enter Your Email Id"
+                />
+              </div>
+              <div className={styles['password']}>
+              {/* <Typography>Password</Typography> */}
+                <TextField
+                  type="password"
+                  {...register('password')}
+                  label="Password"
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                  className="form-control"
+                  placeholder="Enter Your Password"
+                  sx={{ width: '100%' }}
+                />
+              </div>
+              <div className={styles['forgot-password']}>
+                <Link to="/forgot-password" style={{ textDecoration: 'none', color:'#064B4FD1' }}>
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
-            <div className={styles['password']}>
-              <TextField
-                type="password"
-                {...register('password')}
-                label="Password"
-                error={!!errors.password}
-                helperText={errors.password?.message}
-                className="form-control"
-                placeholder="Enter Your Password"
-                sx={{ width: '100%', marginTop: '10px' }}
-              />
-            </div>
-            <div className={styles['forgot-password']}>
-              <Link
-                to="/forgot-password"
-                style={{
-                  textDecoration: 'none',
-                  color: '#064B4F',
-                  fontFamily: 'Inter, sans-serif',
-                  marginTop: '10px',
-                }}
-              >
-                Forgot Password?
-              </Link>
-            </div>
-          </div>
 
           <div className={styles['submit_btn']}>
             <Button

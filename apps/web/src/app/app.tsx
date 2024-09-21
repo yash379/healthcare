@@ -84,13 +84,53 @@ export function App() {
 
   const usercontext = useContext(UserContext);
   console.log('User context:', usercontext);
+  const doctorcontext=useContext(DoctorContext);
+  const patientcontext=useContext(PatientContext);
+  const hospitalcontext=useContext(HospitalContext);
 
   const onLogout = async () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('doctor');
+    localStorage.removeItem('patient');
     console.log("logout", user);
     setUser(null);
     navigate("/login");
   }
+
+  useEffect(()=>{
+    const userfromlocalstorage=localStorage.getItem('user');
+    // const userfromlocalstorage=JSON.stringify(userrrr);
+    if(userfromlocalstorage){
+      usercontext?.setUser(JSON.parse(userfromlocalstorage ?? ''));
+      setUser(JSON.parse(userfromlocalstorage ?? ''));
+      navigate("/selectHospital");
+    }else{
+      navigate('/login');
+    } 
+  },[]);
+
+  useEffect(()=>{
+    const doctorfromlocalstorage=localStorage.getItem('doctor');
+    if(doctorfromlocalstorage){
+      // const doctor=JSON.parse(doctorfromlocalstorage ?? '');
+      doctorcontext?.setDoctor(JSON.parse(doctorfromlocalstorage ?? ''));
+      setDoctor(JSON.parse(doctorfromlocalstorage ?? ''));
+      navigate(`/hospitals/${hospital?.id}/doctors/${doctor?.id}`);
+    }
+  },[doctorcontext?.doctor, hospital?.id]);
+
+
+  useEffect(()=>{
+    const patientfromlocalstorage=localStorage.getItem('patient');
+    if(patientfromlocalstorage){
+      // const patient=JSON.parse(patientfromlocalstorage ?? '');
+      patientcontext?.setPatient(JSON.parse(patientfromlocalstorage ?? ''));
+      setPatient(JSON.parse(patientfromlocalstorage ?? ''));
+      navigate(`/hospitals/${hospital?.id}/patients/${patient?.id}`);
+    } 
+  },[patientcontext?.patient, hospital?.id]);
+
+  // console.log("doctorcontet:",doctorcontext);
 
   const onLogin = (user: User) => {
     localStorage.setItem('user', JSON.stringify(user));
@@ -100,10 +140,18 @@ export function App() {
     // console.log("onLogin", user);
     // // navigate("/dashboard");
     // navigate("/selectHospital");
-    if (user.hospitalRoles?.length === 0) {
-      enqueueSnackbar("User does not have a hospital manager role.", { variant: 'warning' });
-      navigate("/login");
-    }else if(user===null){
+    // if (user.hospitalRoles?.length === 0) {
+    //   enqueueSnackbar("User does not have a hospital manager role.", { variant: 'warning' });
+    //   navigate("/login");
+    // }else if(user===null){
+    //   navigate("/login");
+    // } else {
+    //   setUser(user);
+    //   navigate("/selectHospital");
+    //   enqueueSnackbar("Login successfully!", { variant: 'success' });
+    // }
+
+    if(user===null){
       navigate("/login");
     } else {
       setUser(user);

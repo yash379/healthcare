@@ -174,7 +174,7 @@ export function DashboardAppointments(props: DashboardAppointmentsProps) {
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Typography variant="body2">
                         {appointment.doctor?.user.email}
-                      </Typography>
+                      </Typography> 
                     </div>
                   </CardContent>
                 </Card>

@@ -36,6 +36,7 @@ export function PatientLayout({ children }: PatientLayoutProps) {
         );
         console.log('patient in layout', response.data);
         setPatient(response.data[0]);
+        localStorage.setItem('patient', JSON.stringify(response.data));
         setPatientContext(response.data);
       } catch (error) {
         console.log('error', error);
