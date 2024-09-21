@@ -7,6 +7,8 @@ import { UsersService } from '../users/users.service';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
 import { NotificationsService } from '../notifications/notifications.service';
+import { GoogleStrategy } from './google.strategy';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [UsersModule],
@@ -15,6 +17,7 @@ import { NotificationsService } from '../notifications/notifications.service';
     LocalStrategy,
     SessionSerializer,
     UsersService,
+    GoogleStrategy,
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
@@ -22,5 +25,6 @@ import { NotificationsService } from '../notifications/notifications.service';
     NotificationsService
   ],
   exports: [AuthService],
+  controllers: [AuthController]
 })
 export class AuthModule {}

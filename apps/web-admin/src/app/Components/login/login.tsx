@@ -15,6 +15,7 @@ import loginImg from '../../../assets/LoginImage.jpg';
 import logoImg from '../../../assets/DigiMedic_logo.svg';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import GoogleIcon from '../../../assets/google.png';
 
 /* eslint-disable-next-line */
 export interface LoginProps {
@@ -64,6 +65,11 @@ export function Login({ onLogin }: LoginProps) {
     
   }
   }
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${environment.apiUrl}/auth/google`;
+  };
+
 
 
   return (
@@ -174,6 +180,14 @@ export function Login({ onLogin }: LoginProps) {
             sx={{ mt: 3, mb: 2 }}>
             Sign In
           </Button>
+          <Button
+              fullWidth
+              variant="outlined"
+              startIcon={<img src={GoogleIcon} alt="Google" style={{ width: '18px', height: '18px' }} />}
+              sx={{ mb: 2 }}
+              onClick={handleGoogleLogin}>
+              Sign in with Google
+            </Button>
         </Box>
       </Box>
     </Grid>

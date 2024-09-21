@@ -318,7 +318,7 @@ export function ViewHospitalPage(props: ViewHospitalPageProps) {
         <Box sx={{ display: 'flex' }}>
           {loadingHospitalInfo ? (
             <Paper
-              elevation={3}
+              // elevation={3}
               sx={{ padding: '20px', marginBottom: '20px' }}
               style={{
                 display: 'flex',
@@ -326,6 +326,7 @@ export function ViewHospitalPage(props: ViewHospitalPageProps) {
                 justifyContent: 'center',
                 alignItems: 'center',
                 height: '30vh',
+                width: '100%',
               }}
             >
               <CircularProgress />
