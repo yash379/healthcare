@@ -65,7 +65,8 @@ const componentThemeOptions: ThemeOptions = {
     MuiButtonBase: {
       styleOverrides: {
         root: {
-          borderRadius: '12px',
+          borderRadius: '15px !important',
+          height: '40px !important',
           '&:hover': {
             backgroundColor: 'rgba(39, 95, 161, 0.1)',
           },
@@ -76,12 +77,12 @@ const componentThemeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           textTransform: 'none',
-          boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.1)',
+          height: '48px !important'
         },
-        sizeMedium: {
-          height: '32px',
+        sizeLarge: {
+          height: '40px !important',
           padding: '6px 8px',
-          borderRadius: '12px',
+          borderRadius: '15px !important',
           minWidth: '84px',
         },
         outlined:{
@@ -165,9 +166,8 @@ const componentThemeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           backgroundColor: '#FFFFFF',
-          color: '#275FA1',
+          height: '12px',
           '& .Mui-selected': {
-            backgroundColor: '#275FA1',
             color: '#FFFFFF',
           },
           borderBottomLeftRadius: '12px',
@@ -192,31 +192,31 @@ const componentThemeOptions: ThemeOptions = {
     },
     MuiTextField: {
       defaultProps: {
-        size: 'small',
       },
       styleOverrides: {
         root: {
+          borderWidth: '2px !important',
           '& .MuiOutlinedInput-root': {
-            borderRadius: '12px',
+            borderRadius: '15px',
+            height: '48px !important',
             '& fieldset': {
-              borderColor: '#ededed',
+              borderColor: '#064B4F',
             },
             '&:hover fieldset': {
-              borderColor: '#ededed',
+              borderColor: '#064B4F',
             },
-            size:'medium'
           },
         },
       },
     },
     MuiFormControl: {
       defaultProps: {
-        size: 'small',
       },
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: '12px',
+            borderRadius: '15px !important',
+            height: '48px !important',
             '& fieldset': {
               borderColor: '#ededed',
             },
@@ -295,41 +295,6 @@ const componentThemeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           marginRight: '8px',
-        },
-      },
-    },
-    MuiTablePagination: {
-      styleOverrides: {
-        root: {
-          backgroundColor: '#FFFFFF',
-          color: '#275FA1',
-          '& .Mui-selected': {
-            backgroundColor: '#275FA1',
-            color: '#FFFFFF',
-          },
-          borderBottomLeftRadius: '12px',
-          borderBottomRightRadius: '12px',
-          border: '1px solid rgba(224, 224, 224, 1)',
-          padding: '60px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-        },
-        displayedRows: {
-          color: 'black',
-          fontWeight: 400,
-          lineHeight: 1.43,
-          letterSpacing: '0.01071em',
-          flexShrink: 0,
-          marginTop: '30px',
-        },
-        selectLabel: {
-          color: 'black',
-          fontWeight: 400,
-          lineHeight: 1.43,
-          letterSpacing: '0.01071em',
-          flexShrink: 0,
-          marginTop: '28px',
         },
       },
     },

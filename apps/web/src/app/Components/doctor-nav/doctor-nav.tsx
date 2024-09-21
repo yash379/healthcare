@@ -27,7 +27,7 @@ import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import mediPlus from "../../../assets/Mediplus.png";
-import digimedic from "../../../assets/digimedic.png";
+import digimedic from "../../../assets/DigiMedic_logo.svg";
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import DoctorContext from '../../contexts/doctor-context';
 import PatientContext from '../../contexts/patient-context';
@@ -79,7 +79,7 @@ export function DoctorNav(props: DoctorNavProps) {
       >
 
         {/* <Toolbar sx={{height:"59px"}}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></Toolbar> */}
-        <Toolbar sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}><img src={digimedic} alt="medi plus logo" width="165px" height="60px" /></Toolbar>
+        <Toolbar sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}><img src={digimedic} alt="medi plus logo" width="185px" height="75px" style={{marginTop: '10px'}} /></Toolbar>
         {/* <Divider /> */}
 
 
@@ -142,7 +142,7 @@ export function DoctorNav(props: DoctorNavProps) {
        : */}
         
         {/* //doctor dashboard */}
-        (<List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
+        <List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
 
           <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}`} onClick={() => handleComponentChange('dashboard')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']

@@ -27,7 +27,7 @@ import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import mediPlus from "../../../assets/Mediplus.png";
-import digimedic from "../../../assets/digimedic.png";
+import digimedic from "../../../assets/DigiMedic_logo.svg";
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import DoctorContext from '../../contexts/doctor-context';
 import PatientContext from '../../contexts/patient-context';
