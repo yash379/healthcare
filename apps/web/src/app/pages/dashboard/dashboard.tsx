@@ -418,7 +418,7 @@ export function Dashboard(props: DashboardProps) {
             </Box>
            </Box>
 
-           <div style={{margin:'10px'}}>
+           <div style={{margin:'10px',display:'flex',flexDirection:'column'}}>
             <ListDashboardPatients/>
           </div>
 

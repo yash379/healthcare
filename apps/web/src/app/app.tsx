@@ -50,6 +50,7 @@ import ListPatientAppointments from  './pages/patient-dashboard/list-appointment
 import AdminLayout from './layouts/admin-layout/admin-layout';
 import ListAdminPatients from './pages/admin-portal/list-patient/list-patient';
 import AdminDashboard from './pages/admin-dashboard/admin-dashboard';
+import AppointmentLayout from './layouts/appointment-layout/appointment-layout';
 
 export function App() {
 
@@ -155,7 +156,22 @@ export function App() {
       navigate("/login");
     } else {
       setUser(user);
-      navigate("/selectHospital");
+      if(user?.hospitalRoles?.length && user?.hospitalRoles?.length>1){
+        navigate("/selectHospital");
+      }else{
+        (user?.hospitalRoles?.map((item)=>
+        {  
+          if(item.hospitalRole==='DOCTOR'){
+            navigate(`/hospitals/${item.hospitalId}/doctors/${user.doctorId}`);
+          }else if(item.hospitalRole==='PATIENT'){
+             navigate(`/hospitals/${item.hospitalId}/patients/${user.patientId}`);
+          }else{
+            navigate(`/hospitals/${item.hospitalId}/admin/${user.id}`);
+          }
+        }
+        ));
+      }
+      // navigate("/selectHospital");
       enqueueSnackbar("Login successfully!", { variant: 'success' });
     }
   }
@@ -296,11 +312,13 @@ export function App() {
               <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/add"  element={<AddPatientComponent />}/>
               <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/edit"  element={<EditPatientPage />}/>
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients" element={<ListPatients />} />
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail" element={<PatientDetail />} />
+              <Route element={<AppointmentLayout/>}>
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments" element={<ListAppointments/>} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail" element={<PatientDetail />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/diagnosis" element={<DiagnosisPage />} />
+              </Route>
               {/* <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments/:id" element={<ViewAppointmentDetail />} /> */}
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline patient={null} />} />
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/diagnosis" element={<DiagnosisPage />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/medical-history" element={<MedicalHistory />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/cancer-detection" element={<BrainTumor />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/ai-summarizer" element={<Summarizer />} />
