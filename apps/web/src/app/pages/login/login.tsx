@@ -40,6 +40,12 @@ export function Login({ onLogin }: LoginProps) {
 
   const usercontext=useContext(UserContext);
 
+  useEffect(()=>{
+    const userrrr=localStorage.getItem('user');
+    const userfromlocalstorage=JSON.stringify(userrrr);
+     usercontext?.setUser(JSON.parse(userfromlocalstorage));
+  },[usercontext?.user,user])
+
   const onSubmit = async (formData: { email: string; password: string }) => {
     try {
       const res = await axios.post<any>(`${apiUrl}/login`, formData, {
@@ -113,7 +119,7 @@ export function Login({ onLogin }: LoginProps) {
             {/* <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></div> */}
             {/* <div className={styles['login-header']}>Welcome Back <span className={styles['login-emoji']}>👋</span></div> */}
             <div className={styles['login-form']}>
-              <Typography>Username</Typography>
+              {/* <Typography>Username</Typography> */}
               <div className={styles['email']}>
                 <TextField
                   type="email"
@@ -131,7 +137,7 @@ export function Login({ onLogin }: LoginProps) {
                 />
               </div>
               <div className={styles['password']}>
-              <Typography>Password</Typography>
+              {/* <Typography>Password</Typography> */}
                 <TextField
                   type="password"
                   {...register('password')}

@@ -497,7 +497,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                   Digital Health Code
                 </TableCell>
                 <TableCell sx={{ border: 'hidden' }}>Address</TableCell>
-                <TableCell sx={{ border: 'hidden' }}>Actions</TableCell>
+                {/* <TableCell sx={{ border: 'hidden' }}>Actions</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -543,7 +543,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                       {patient.addressLine1} {patient.addressLine2} ,
                       {patient.city}, {patient.stateCode}, {patient.postalCode}
                     </TableCell>
-                    <TableCell align="center">
+                    {/* <TableCell align="center">
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
@@ -561,7 +561,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                       >
                         <DeleteIcon></DeleteIcon>
                       </IconButton>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))
               ) : (
@@ -586,7 +586,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
             }}
           ></Box>
         </TableContainer>
-        <Stack spacing={2} className={styles['paginationContainer']}>
+        {/* <Stack spacing={2} className={styles['paginationContainer']}>
           <Pagination
             count={pageCount}
             page={page}
@@ -600,7 +600,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
             showFirstButton
             showLastButton
           />
-        </Stack>
+        </Stack> */}
       </Box>
 
       {/* <EditPatientComponent
