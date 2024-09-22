@@ -67,9 +67,31 @@ export function Login({ onLogin }: LoginProps) {
   }
 
   const handleGoogleLogin = () => {
-    window.location.href = `${environment.apiUrl}/auth/google`;
+    window.location.href = `${apiUrl}/auth/google`;
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const loginResponse = await axios.get(`${apiUrl}/profile`, {
+          withCredentials: true,
+        });
+        console.log('Login user', loginResponse.data);
+        const userData = (loginResponse.data);
+        navigate("/dashboard")
+        if (!userData?.superRole) {
+          // enqueueSnackbar("User does not have a Super Role. Can't log in.", { variant: 'warning' });
+          navigate("/login");
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 403) {
+          navigate('/login');
+        }
+      }
+    };
+  
+    fetchData();
+  }, [apiUrl, navigate]);
 
 
   return (

@@ -34,26 +34,6 @@ export class UserDto implements User {
 }
 
 
-export class AssetCountDashboardDto  {
-  @ApiProperty() Societies: number;
-
-  @ApiProperty()
-  Buildings: number;
-
-  @ApiProperty()
-  Flats: number;
-
-  @ApiProperty() Residents: number;
-
-  @ApiProperty() Vehicles: number
-
-  @ApiProperty()
-  Users:number;
-
-  @ApiProperty()
-  Devices: number
-}
-
 export class ManagerDto implements User {
   @ApiProperty()
   id: number;

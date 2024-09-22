@@ -331,7 +331,7 @@ export function ListPatients(props: ListPatientsProps) {
       console.log(response.data);
 
       if (response.data) {
-        console.log('Building Name Updated Successfully');
+        console.log('Patient details Updated Successfully');
         enqueueSnackbar('Patient details updated successfully', {
           variant: 'success',
         });
@@ -366,14 +366,6 @@ export function ListPatients(props: ListPatientsProps) {
       console.log('Something went wrong');
     }
   };
-
-  //Select Particular Table Row Function
-  // function handleRowClick(residentid: number, event: React.MouseEvent<HTMLTableRowElement>) {
-  //   if (event.target instanceof HTMLElement && event.target.classList.contains('action-button')) {
-  //     return;
-  //   }
-  //   setSelectedResident(residentid)
-  // }
 
   const handleCheckboxChange = (PatientId: number) => {
     const isSelected = selectedItems.includes(PatientId);
@@ -416,7 +408,7 @@ export function ListPatients(props: ListPatientsProps) {
   return (
     <Box className={styles['container']}>
       {/* <Breadcrumbs paths={breadcrumbs} /> */}
-      <Box className={styles['building_container']}>
+      <Box className={styles['main_container']}>
         <Box
           sx={{
             display: 'flex',
@@ -481,8 +473,8 @@ export function ListPatients(props: ListPatientsProps) {
                     {...label}
                     checked={
                       activePatients.length > 0 &&
-                      activePatients.every((building) =>
-                        selectedItems.includes(building.id)
+                      activePatients.every((patient) =>
+                        selectedItems.includes(patient.id)
                       )
                     }
                     onChange={handleHeaderCheckboxChange}
@@ -1028,7 +1020,7 @@ export default ListPatients;
 //       console.log(response.data);
 
 //       if (response.data) {
-//         console.log('Building Name Updated Successfully');
+//         console.log('Patient Updated Successfully');
 //         enqueueSnackbar('Patient details updated successfully', {
 //           variant: 'success',
 //         });
@@ -1061,13 +1053,6 @@ export default ListPatients;
 //     }
 //   }
 
-//   //Select Particular Table Row Function
-//   // function handleRowClick(residentid: number, event: React.MouseEvent<HTMLTableRowElement>) {
-//   //   if (event.target instanceof HTMLElement && event.target.classList.contains('action-button')) {
-//   //     return;
-//   //   }
-//   //   setSelectedResident(residentid)
-//   // }
 
 //   const handleCheckboxChange = (PatientId: number) => {
 //     const isSelected = selectedItems.includes(PatientId);
@@ -1114,7 +1099,7 @@ export default ListPatients;
 //   return (
 //       <Box className={styles['container']}>
 //         <Breadcrumbs paths={breadcrumbs} />
-//         <Box className={styles['building_container']}>
+//         <Box className={styles['main_container']}>
 //           <Box className={styles['btn_container']}>
 //             <h1>Patients</h1>
 //             <Box>
@@ -1161,8 +1146,8 @@ export default ListPatients;
 //                       {...label}
 //                       checked={
 //                         activePatients.length > 0 &&
-//                         activePatients.every((building) =>
-//                           selectedItems.includes(building.id)
+//                         activePatients.every((patient) =>
+//                           selectedItems.includes(patient.id)
 //                         )
 //                       }
 //                       onChange={handleHeaderCheckboxChange}

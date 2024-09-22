@@ -138,25 +138,7 @@ export class HospitalsService {
   //   const hospitalIdList = await this.prisma.hospital.findFirst({
   //     select:{
   //       id: true,
-  //       buildings:{
-  //         select: {
-  //           id: true,
-  //           floors: {
-  //             select: {
-  //               id: true,
-  //               flats: {
-  //                 select: {
-  //                   id: true,
-  //                   residents: {
-  //                     select: {
-  //                       id: true,
-  //                     },
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
+  //   
   //       }
   //     },
   //     where: {
@@ -179,53 +161,6 @@ export class HospitalsService {
 
     
 
-
-  //   async function getNestedLengths(PrismaClient,data, depth, Buildings, Floors, Flats, Residents,Vehicles) { 
-      
-  //     if (depth === 3) Buildings += data.length;
-  //     else if (depth === 2) Floors += data.length;
-  //     else if (depth === 1) Flats += data.length;
-  //     else if (depth === 0) Residents += data.length;
-  
-  //     if (depth <= 0) {
-  //         return { Buildings, Floors, Flats, Residents,Vehicles };
-  //     }
-  
-  //     // Recursively print lengths of nested arrays
-  //     for (const item of data) {
-  //         if (typeof item === 'object') {
-  //             let innerData;
-  //             if (depth === 3) innerData = item.floors;
-  //             else if (depth === 2) innerData = item.flats;
-  //             else if (depth === 1) {
-  //               const vehicleResponse = await PrismaClient.vehicleFlat.count({
-  //                 where: {
-  //                   flatId: item.id
-  //                 }
-
-  //               })
-  //               if(vehicleResponse) Vehicles =vehicleResponse;
-  //               innerData = item.residents;
-  //             }
-  
-  //             const lengths = await getNestedLengths(PrismaClient,innerData, depth - 1, Buildings, Floors, Flats, Residents,Vehicles);
-  //             Buildings = lengths.Buildings;
-  //             Floors = lengths.Floors;
-  //             Flats = lengths.Flats;
-  //             Residents = lengths.Residents;
-  //             Vehicles = lengths.Vehicles;
-  //         }
-  //     }
-  
-  //     return { Buildings, Floors, Flats, Residents ,Vehicles};
-  // }
-  
- 
-  //   const tempresult = await getNestedLengths(this.prisma,hospitalIdList.buildings,3, 0, 0, 0, 0,0)
-  //   listhospital['assetcount'] = tempresult;
-    
-  //   return listhospital
-  // }
 
  
 

@@ -314,7 +314,7 @@ export class UsersService {
 
     const sentMail = await this.notificationService.sendEmail(
       newUser.email,
-      'You have been added in Fountlab',
+      'You have been added in POYV',
       message
     );
 
@@ -1433,7 +1433,7 @@ export class UsersService {
 
     const sentMail = await this.notificationService.sendEmail(
       user.email,
-      'You have been removed from Fountlab',
+      'You have been removed from POYV',
       message
     );
 
@@ -1541,15 +1541,15 @@ export class UsersService {
   //       // }
 
   //       // if (superRole) {
-  //       //   const fntrole = await prisma.superRole.findFirst({
+  //       //   const poyvrole = await prisma.superRole.findFirst({
   //       //     where: { name: superRole },
   //       //   });
   //       //   const role = await prisma.userSuperRole.findFirst({
-  //       //     where: { userId: id, superRoleId: fntrole.id },
+  //       //     where: { userId: id, superRoleId: poyvrole.id },
   //       //   });
   //       //   if (!role) {
   //       //     await prisma.userSuperRole.create({
-  //       //       data: { userId: id, superRoleId: fntrole.id },
+  //       //       data: { userId: id, superRoleId: poyvrole.id },
   //       //     });
   //       //   }
   //       // }

@@ -25,11 +25,11 @@ export class RolesGuard implements CanActivate {
       for (const role of requiredRoles) {
         switch (role) {
           case Role.POYV_ADMIN: {
-            //console.log('poyvlab admin')
+            //console.log('poyv admin')
             const poyvRole = await this.prisma.superRole.findFirst({
               where: { name: SuperRoleName.ADMIN },
             });
-            //console.log('poyvlab role id', poyvRole.id);
+            //console.log('poyv role id', poyvRole.id);
             const frcondition =
               (await this.prisma.userSuperRole.count({
                 where: { userId: user.id, superRoleId: poyvRole.id },

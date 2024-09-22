@@ -6,7 +6,6 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Box, IconButton, Chip, Button, CardActionArea, CardActions, Grid } from '@mui/material';
 import { environment } from '../../../environments/environment';
-// import { assetCount, assetPerBuilding } from '@healthcare/data-transfer-types';
 import { Hospital } from '@healthcare/data-transfer-types';
 import axios from "axios";
 import { Link, useParams } from 'react-router-dom';
@@ -54,52 +53,7 @@ interface AddForm {
 }
 
 
-const columns: GridColDef[] = [
-  { field: 'vehicle', headerName: 'Vehcile', width: 100, flex: 1 },
-  // {field:'id', headerName:"Id", width:90},
-  {
-    field: 'device',
-    headerName: 'Device',
-    width: 100,
-    editable: false,
-    flex: 1
-  },
-  {
-    field: 'date',
-    headerName: 'Date',
-    width: 100,
-    editable: false,
-    flex: 1
-  },
-  {
-    field: 'type',
-    headerName: 'Type',
-    width: 100,
-    editable: false,
-    flex: 1
-  },
-  {
-    field: 'direction',
-    headerName: 'Direction',
-    type: 'number',
-    width: 100,
-    editable: false,
-    flex: 1,
-  },
-  {
-    field: 'status',
-    headerName: 'Status',
-    type: 'number',
-    width: 100,
-    editable: false,
-    flex: 1,
-    // maxWidth:200
-  },
-];
-
-
 export function Dashboard(props: DashboardProps) {
-  // const [count, setCount] = useState<assetPerBuilding[]>([]);
   const [hospitaldata, sethospitalData] = useState<HospitalDetails[]>([]);
   const [hospitalId, sethospitalId] = useState<string>('');
   const [hospital, setHospital] = useState<Hospital[]>([]);
@@ -162,33 +116,7 @@ export function Dashboard(props: DashboardProps) {
     }
   };
 
-  // const getAllAdmin = async () => {
-  //   try {
-  //     setLoadingAllAdmin(true);
-  //     // await new Promise((resolve) => setTimeout(resolve, 2000));
-  //     const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.id}/managers`, {
-  //       withCredentials: true,
-  //     });
-  //     // console.log(response.data[0].user)
-  //     const sortedResidents = response.data.sort((a: any, b: any) => {
-  //       if (a.isPrimary && !b.isPrimary) {
-  //         return -1;
-  //       }
-  //       else if (!a.isPrimary && b.isPrimary) {
-  //         return 1;
-  //       }
-  //       else {
-  //         return 0;
-  //       }
-  //     });
-  //     setAdminData(sortedResidents);
-  //     console.log("Admin Data", response.data);
-  //     setLoadingAllAdmin(false);
-  //   } catch (error) {
-  //     console.error('Error fetching hospital data:', error);
-  //     setLoadingAllAdmin(false);
-  //   }
-  // };
+
 
 
   // useEffect(() => {
@@ -196,7 +124,6 @@ export function Dashboard(props: DashboardProps) {
   // }, [hospitalcontext?.id]);
 
   console.log("user details", user)
-  // const dashboardCards = ["Buildings", "Flats", "Residents", "Vehicles", "Devices"];
 
 
 
@@ -258,22 +185,6 @@ export function Dashboard(props: DashboardProps) {
       setLoadingDetails(false);
     }
   };
-
-
-
-  const generateRandomData = () => ({
-    id: Math.floor(Math.random() * 1000),
-    vehicle: `Vehicle-${Math.floor(Math.random() * 1000)}`,
-    device: `Device-${Math.floor(Math.random() * 1000)}`,
-    date: new Date().toLocaleDateString(),
-    type: Math.random() > 0.5 ? 'TWO_WHEELER' : 'FOUR_WHEELER',
-    direction: Math.random() > 0.5 ? 'In' : 'Out',
-    status: Math.random() > 0.5 ? 'Active' : 'Inactive',
-  });
-
-  const data = Array.from({ length: 10 }, (_, index) => generateRandomData());
-
-
 
 
   // const countArray = Object.entries(count);
