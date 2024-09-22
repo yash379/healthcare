@@ -51,6 +51,7 @@ import AdminLayout from './layouts/admin-layout/admin-layout';
 import ListAdminPatients from './pages/admin-portal/list-patient/list-patient';
 import AdminDashboard from './pages/admin-dashboard/admin-dashboard';
 import AppointmentLayout from './layouts/appointment-layout/appointment-layout';
+import PatientView from './pages/patient-dashboard/patient-view/patient-view';
 
 export function App() {
 
@@ -333,8 +334,10 @@ export function App() {
               {/* <Route path="/hospital/:hospitalId/doctors/:doctorId/patients/:patientId" element={<ListPatients />} /> */}
               {/* <Route path="/hospitals/:hospitalId/patients/:patientId/dashboard" element={<Dashboard />} /> */}
               <Route path="/hospitals/:hospitalId/patients/:patientId" index element={<PatientDashboard/>} />
-              <Route path="/hospitals/:hospitalId/patients/:patientId/patient-detail" element={<PatientDetail />} />
+              <Route element={<AppointmentLayout/>}>
+              <Route path="/hospitals/:hospitalId/patients/:patientId/patient-detail" element={<PatientView/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointments" element={<ListPatientAppointments/>} />
+              </Route>
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointmentsview" element={<AppointmentPage/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/medical-report" element={<MedicalReport/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/ai-summarizer" element={<Summarizer />} />

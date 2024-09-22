@@ -19,7 +19,7 @@ interface Patient {
 }
 
 export interface PatientDetailCarddProps {
-  patientId:string | undefined;
+  patientId:number | undefined;
 }
 
 function PatientDetailCardd({patientId}:PatientDetailCarddProps) {
