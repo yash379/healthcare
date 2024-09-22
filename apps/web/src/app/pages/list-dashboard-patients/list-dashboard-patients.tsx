@@ -29,7 +29,7 @@ import EditPatientComponent from '../list-patient//edit-patient/edit-patient';
 import DeletePatientComponent from '../list-patient//delete-patient/delete-patient';
 // import ViewPatientComponent from '../view-patient/view-patient';
 import { enqueueSnackbar } from 'notistack';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { Hospital, ViewPatient } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/hospital-context';
@@ -491,7 +491,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                   Digital Health Code
                 </TableCell>
                 <TableCell sx={{ border: 'hidden' }}>Address</TableCell>
-                <TableCell sx={{ border: 'hidden' }}>Actions</TableCell>
+                {/* <TableCell sx={{ border: 'hidden' }}>Actions</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -501,7 +501,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                   <CircularProgress size='small' />
                 </TableCell>
               ) : Array.isArray(activePatients) && activePatients.length > 0 ? (
-                activePatients.map((patient: ViewPatient, index: number) => (
+                activePatients.slice(0,5).map((patient: ViewPatient, index: number) => (
                   <TableRow
                     // className={styles['table_row']}
                     onClick={(e) => {
@@ -537,7 +537,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                       {patient.addressLine1} {patient.addressLine2} ,
                       {patient.city}, {patient.stateCode}, {patient.postalCode}
                     </TableCell>
-                    <TableCell align="center">
+                    {/* <TableCell align="center">
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
@@ -555,7 +555,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                       >
                         <DeleteIcon></DeleteIcon>
                       </IconButton>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))
               ) : (
@@ -580,7 +580,8 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
             }}
           ></Box>
         </TableContainer>
-        <Stack spacing={2} className={styles['paginationContainer']}>
+        <Link to={`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients`} style={{float:'right', textDecoration:'none'}}>view more</Link>
+        {/* <Stack spacing={2} className={styles['paginationContainer']}>
           <Pagination
             count={pageCount}
             page={page}
@@ -594,7 +595,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
             showFirstButton
             showLastButton
           />
-        </Stack>
+        </Stack> */}
       </Box>
 
       {/* <EditPatientComponent

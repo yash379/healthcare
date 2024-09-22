@@ -85,7 +85,8 @@ export function PatientNav(props: PatientNavProps) {
        {/* <Divider /> */}
 
 
-       (<List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
+       {/* ( */}
+        <List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
 
          <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/patients/${patientcontext?.patient?.id}`} onClick={() => handleComponentChange('dashboard')}>
            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
@@ -136,7 +137,7 @@ export function PatientNav(props: PatientNavProps) {
          </Link> */}
 
        </List>
-       )
+       {/* ) */}
      </Drawer>
    </div>
  );

@@ -1,20 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Box, Card, Typography, Avatar, Button, Divider } from '@mui/material';
-import styles from './patient-detail.module.scss';
-import ViewMedicalHistoryTimeline from '../../view-medical-history-timeline/view-medical-history-timeline';
+import styles from './patient-view.module.scss';
+import ViewMedicalHistoryTimeline from '../../../view-medical-history-timeline/view-medical-history-timeline';
 import axios from 'axios';
-import { environment } from '../../../environments/environment';
-import HospitalContext from '../../contexts/hospital-context';
-import DoctorContext from '../../contexts/doctor-context';
+import { environment } from '../../../../environments/environment';
+import HospitalContext from '../../../contexts/hospital-context';
+import DoctorContext from '../../../contexts/doctor-context';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Patient, ViewAllUser, ViewAppointment } from '@healthcare/data-transfer-types';
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined';
 import AddAppointment from './hospital-add-appointment/hospital-add-appointment';
 import { enqueueSnackbar } from 'notistack';
-import StatusChip from '../../Components/chip/statusChip';
-import AppointmentContext from '../../contexts/appointment-context';
+import StatusChip from '../../../Components/chip/statusChip';
+import AppointmentContext from '../../../contexts/appointment-context';
 import { format, formatDate } from 'date-fns';
+import PatientContext from '../../../contexts/patient-context';
 /* eslint-disable-next-line */
 
 interface Form {
@@ -68,6 +69,7 @@ export function PatientDetail(props: PatientDetailProps) {
   const hospitalcontext=useContext(HospitalContext);
   const doctorcontext=useContext(DoctorContext);
   const appointmentcontext=useContext(AppointmentContext);
+  const patientcontext=useContext(PatientContext);
 
   console.log("appointmentcontext:",appointmentcontext);
 
@@ -88,15 +90,15 @@ export function PatientDetail(props: PatientDetailProps) {
     try {
       setLoadingUserInfo(true);
       // await new Promise((resolve) => setTimeout(resolve, 2000));
-      const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patient/${params.patientId}`, {
+      const response = await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/patients/${patientcontext?.patient?.id}`, {
         withCredentials: true,
       });
-      setPatient(response.data);
-      console.log("Patient Detail:", response.data);
-      console.log("Patient Detail:", response.data.isPrimary);
+      setPatient(response.data[0]);
+      console.log("PAtient Detail:", response.data[0]);
+      console.log("PAtient Detail:", response.data.isPrimary);
       setLoadingUserInfo(false);
     } catch (error) {
-      console.log("Error in fetching Patient details", error);
+      console.log("Error in fetching device details", error);
       setLoadingUserInfo(false);
     }
 
@@ -104,7 +106,7 @@ export function PatientDetail(props: PatientDetailProps) {
 
   useEffect(() => {
     getpatientinfo();
-  }, [params]);
+  }, [params,patientcontext?.patient?.id]);
 
   const navigate=useNavigate();
 
@@ -165,7 +167,7 @@ export function PatientDetail(props: PatientDetailProps) {
   return (
     <div className={styles['container']}>
       {/* {patients && patients.map((patient) => ( */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-around', width:'80vw' }}>
         {/* <Box sx={{ marginTop: '40px' }}>
         <Box sx={{ marginBottom: '25px' }}>
           <Box sx={{ width: '350px', ml: '30px' }}>
@@ -376,7 +378,7 @@ export function PatientDetail(props: PatientDetailProps) {
               onClose={() => setIsAddModalOpen(false)}
               onSubmit={handleAddAppointment}
               />
-              <Button
+              {/* <Button
                 variant="outlined"
                 sx={{
                   marginTop: 2,
@@ -391,7 +393,7 @@ export function PatientDetail(props: PatientDetailProps) {
               // Optionally add hover effect or other button styles
               >
                 Start Diagnosis
-              </Button>
+              </Button> */}
             {/* </Box> */}
             </Card>
             {/* Patient Information Card */}

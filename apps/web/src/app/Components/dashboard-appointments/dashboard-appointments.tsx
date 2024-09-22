@@ -44,6 +44,7 @@ export function DashboardAppointments(props: DashboardAppointmentsProps) {
   const [appointmentsData, setAppointmentsData] = useState<ViewAppointment[]>(
     []
   );
+  const appointments=[];
   const apiUrl = environment.apiUrl;
   const hospitalcontext=useContext(HospitalContext);
   const doctorcontext=useContext(DoctorContext);
@@ -64,6 +65,7 @@ export function DashboardAppointments(props: DashboardAppointmentsProps) {
       console.error('Error fetching hospital data:', error);
     }
   }, [apiUrl,hospitalcontext?.hospital?.id]);
+
 
   useEffect(() => {
     getAllAppointments();
@@ -152,7 +154,7 @@ export function DashboardAppointments(props: DashboardAppointmentsProps) {
  
       {/* <Typography variant="h4" sx={{textAlign:'center'}}>Appointment Schedule</Typography> */}
       <Timeline sx={{position:'relative',padding:'6px 0px', marginRight:'14px'}}>
-      {appointmentsData ? appointmentsData.map((appointment, index) => (
+      {appointmentsData ? appointmentsData.slice(-2).map((appointment, index) => (
             <TimelineItem key={appointment.id} position="right">
               <TimelineSeparator>
                 <TimelineDot sx={{ backgroundColor: '#064B4F' }} />
@@ -163,9 +165,9 @@ export function DashboardAppointments(props: DashboardAppointmentsProps) {
                    {formatDate(appointment.appointmentDate)}
                 </Typography>
                 <Card sx={{marginBottom: 2 , width:'20vw'}}>
-                  <CardContent>
+                  <CardContent sx={{paddingTop:'24px !important'}}>
                     <Typography variant="h5" color="#000000">
-                       {appointment.doctor.user.firstName}
+                       {appointment.patient.user.firstName}{appointment.patient.user.lastName}
                     </Typography>
                     <Typography variant="body2" sx={{ color: '#454C73', marginBottom: 2 }}>
                       {appointment?.status.name}
@@ -173,8 +175,13 @@ export function DashboardAppointments(props: DashboardAppointmentsProps) {
                     <Divider sx={{ marginY: 1, backgroundColor: '#F4F6FA' }} />
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Typography variant="body2">
-                        {appointment.doctor?.user.email}
-                      </Typography>
+                        {appointment.patient.user.email}
+                      </Typography> 
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2">
+                        {appointment.patient.user.phoneNumber}
+                      </Typography> 
                     </div>
                   </CardContent>
                 </Card>

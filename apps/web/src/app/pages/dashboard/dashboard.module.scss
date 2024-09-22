@@ -40,6 +40,9 @@
 .main_container {
     display: flex;
     flex-direction: row;
+    height:92vh;
+    overflow: hidden;
+    margin-top:10px;
 }
 
 .first_container{

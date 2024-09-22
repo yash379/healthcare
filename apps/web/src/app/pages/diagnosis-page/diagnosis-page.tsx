@@ -34,6 +34,9 @@ import { AcuteDisease, ChronicDisease, Gender } from '@prisma/client';
 import dayjs from 'dayjs';
 import HospitalContext from '../../contexts/hospital-context';
 import DoctorContext from '../../contexts/doctor-context';
+import AppointmentContext from '../../contexts/appointment-context';
+import { PatientDetailsDto, UserDetailsDto} from '@healthcare/data-transfer-types';
+import { ViewAppointment } from '../list-appoinment-new/list-appointments/list-appointments';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DiagnosisPageProps {}
 
@@ -58,7 +61,7 @@ interface Diagnosis {
   bmi: string;
 }
 
-export interface ViewAppointment {
+export interface ViewAppointmentData {
   id: number;
   appointmentDate: string;
   status: { id: number; code: string; name: string };
@@ -83,6 +86,10 @@ export interface ViewAppointment {
   isActive: boolean;
 }
 
+interface DoctorDetailsDto {
+  user: UserDetailsDto;
+}
+
 export function DiagnosisPage(props: DiagnosisPageProps) {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -99,10 +106,12 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     duration: '',
   });
   const [appointmentsData, setAppointmentsData] =
-    useState<ViewAppointment | null>(null);
+    useState<ViewAppointmentData | null>(null);
+  const [appointment,setAppointment]=useState<ViewAppointment | null>(null);
 
   const hospitalcontext=useContext(HospitalContext);
   const doctorcontext=useContext(DoctorContext);
+  const appointmentcontext=useContext(AppointmentContext);
   const navigate=useNavigate();
 
   const validationSchema = yup.object().shape({
@@ -179,6 +188,41 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
     setPrescriptions(newPrescriptions);
   };
 
+  // const getAppointment=async()=>{
+  //   const response=await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${params.patientId}/appointments/${appointmentcontext?.appointment?.id}`, {
+  //     withCredentials: true,
+  //   });
+  //   setAppointment(response.data);
+  // }
+
+
+  // Edit Appointment
+  const handleUpdate = async (appoinmentId: number,appoinmentDoctor: DoctorDetailsDto,appointmentPatient: PatientDetailsDto,statusId: number, appointmentDate: string) => {
+    try {
+
+      const { data: responseData } = await axios.put(
+        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${appoinmentDoctor.user.id}/patients/${appointmentPatient.user.id}/appointments/${appoinmentId}`,
+        {
+          appointmentDate:appointmentDate,
+          statusId: statusId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if (responseData) {
+        enqueueSnackbar('Appointment updated successfully', { variant: 'success' });
+      } else {
+        console.log('Something went wrong');
+      }
+      console.log('Appointment updated successfully', responseData);
+    } catch (error) {
+      console.log(error);
+      console.log('Something went wrong in input form');
+      enqueueSnackbar('Something went wrong', { variant: 'error' });
+    }
+  };
+
   const handleAddDiagnosis = async (formData: any) => {
     try {
       const diagnosisPayload = {
@@ -253,6 +297,26 @@ export function DiagnosisPage(props: DiagnosisPageProps) {
       enqueueSnackbar('Diagnosis and Prescriptions added successfully!', {
         variant: 'success',
       });
+
+      // const updatedAppointment={id:Number(appointmentcontext?.appointment?.id), acceptAppointment: false, viewAppointment: false, declineAppointment: false, declinedAppointment: false, status:{id:4,code:"4",name:"COMPLETED"}, 
+      // appointmentDate:String(appointmentcontext?.appointment?.appointmentDate),patient:appointmentcontext?.appointment?.patient,
+      // doctor:appointmentcontext?.appointment?.doctor , appointment:appointmentcontext?.appointment?.appointment
+      // };
+
+      if (appointmentcontext?.appointment?.doctor) {
+        handleUpdate(
+          Number(appointmentcontext?.appointment?.id),
+          appointmentcontext?.appointment?.doctor,
+          appointmentcontext?.appointment?.patient,
+          4,
+          appointmentcontext?.appointment?.appointmentDate
+        );
+        const updatedAppointment={...appointmentcontext.appointment,acceptAppointment: false, viewAppointment: false, declineAppointment: false, declinedAppointment: false, status:{id:4,code:"4",name:"COMPLETED"},}
+        appointmentcontext?.setAppointment(updatedAppointment);
+      }
+      // const updatedAppointment={...appointment && appointment,status:{id:4,code:"4",name:"COMPLETED"},}
+      
+      // appointmentcontext?.setAppointment(updatedAppointment);
 
       navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/patients/${params.patientId}/patient-detail`)
       

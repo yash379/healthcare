@@ -266,6 +266,8 @@ const HospitalAddAppointment: React.FC<HospitalAddAppointmentProps> = ({
                       label="Status*"
                       variant="outlined"
                       {...field}
+                      defaultValue={1} // Set the default value to 1 (PENDING)
+                      disabled={true} // Disable the entire select field
                       error={!!errors.statusId}
                       MenuProps={{
                         PaperProps: {

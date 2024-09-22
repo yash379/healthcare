@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import MedicalHistory from '../medical-history/medical-history'
 import PatientDetailCardd from '../Dashboard/PatientDetailCardd'
 import DateCalendarServerRequest from '../Dashboard/DateCalendarServerRequest'
@@ -11,6 +11,8 @@ const Dashboard: React.FC = () => {
 
   const params=useParams();
 
+  const patientcontext=useContext(PatientContext);
+  
   return (
     <div>
       <Box
@@ -33,7 +35,7 @@ const Dashboard: React.FC = () => {
           }}>
             BASIC INFORMATION
             
-            <Link to={`/hospitals/${params.hospitalId}/patients/${params.patientId}/appointments`} color="#064B4F" style={{position: 'relative',
+            <Link to={`/hospitals/${params.hospitalId}/patients/${patientcontext?.patient?.id}/appointments`} color="#064B4F" style={{position: 'relative',
               right: '-64px',
               marginTop:' -22px',
               float: 'right'
@@ -50,7 +52,7 @@ const Dashboard: React.FC = () => {
               width:'100%'
             }}
             >
-          <PatientDetailCardd patientId={params.patientId}/>
+          <PatientDetailCardd patientId={patientcontext?.patient?.id}/>
           <MedicalCheckup />
           </div>
         </Card>
