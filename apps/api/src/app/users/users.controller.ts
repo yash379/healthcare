@@ -20,7 +20,7 @@ import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
 import { ListUserPageDto } from './dto/list-user-page.dto';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AdminCountsDto, AssetCountDashboardDto, ManagerDto, UserDto } from './dto/user.dto';
+import { AdminCountsDto, ManagerDto, UserDto } from './dto/user.dto';
 import { EditUserStatus, ViewUserDto } from './dto/view-user.dto';
 import { ForgotPasswordDto, LoginDto, UpdatePasswordDto, UpdatePasswordThroughProfileDto } from '../core/dto/user-login.dto';
 import { ListAllUserDto, ListUserDto } from './dto/list-user.dto';
