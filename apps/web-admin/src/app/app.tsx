@@ -3,7 +3,7 @@ import styles from './app.module.scss';
 import axios from 'axios';
 import { UserContext } from '../app/contexts/user-contexts';
 import { User, ViewUser } from '@healthcare/data-transfer-types';
-import { useState, useEffect, Component } from 'react';
+import { useState, useEffect, Component, useRef } from 'react';
 import {
   Route,
   Routes,
@@ -50,6 +50,7 @@ import Callback from './Components/callback/callback';
 
 export function App() {
   const location = useLocation();
+  const snackbarShownRef = useRef(false);
   const [user, _setUser] = useState<User | null>(() => {
     const userFromStorage = localStorage.getItem('user');
     if (userFromStorage) {
@@ -79,14 +80,18 @@ export function App() {
 
   const onLogin = (user: User) => {
     localStorage.setItem('user', JSON.stringify(user));
-    if (!user?.superRole) {
+    if (!user?.superRole&& !snackbarShownRef.current) {
       enqueueSnackbar("User does not have a Super Role. Can't log in.", {
         variant: 'warning',
       });
+      snackbarShownRef.current = true;
       navigate('/login');
     } else {
       setUser(user);
+      if (!snackbarShownRef.current) {
       enqueueSnackbar('Login successfully!', { variant: 'success' });
+      }
+      snackbarShownRef.current = true;
       navigate('/dashboard');
     }
   };

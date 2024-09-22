@@ -2,7 +2,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Login from './pages/login/login';
 import Layout from './Components/layout/layout';
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect,useRef } from 'react';
 import { Doctor, Hospital, Patient, User, ViewUser } from '@healthcare/data-transfer-types';
 import Dashboard from './pages/dashboard/dashboard';
 import PageNotFound from './Components/page-not-found/page-not-found';
@@ -53,6 +53,7 @@ import AdminDashboard from './pages/admin-dashboard/admin-dashboard';
 import AppointmentLayout from './layouts/appointment-layout/appointment-layout';
 import PatientView from './pages/patient-dashboard/patient-view/patient-view';
 import ListPatientsCards from './pages/list-patients-cards/list-patients-cards';
+import Callback from './Components/callback/callback';
 
 export function App() {
 
@@ -74,6 +75,7 @@ export function App() {
   const [doctorId, setDoctorId]=useState(0);
   const [hospitalId, sethospitalId]=useState(0);
   const apiUrl = environment.apiUrl;
+  const snackbarShownRef = useRef(false);
 // const setUser = (user: User | null) => {
 //   if (user) {
 //     localStorage.setItem('user', JSON.stringify(user));
@@ -174,7 +176,9 @@ export function App() {
         ));
       }
       // navigate("/selectHospital");
+      if (!snackbarShownRef.current) {
       enqueueSnackbar("Login successfully!", { variant: 'success' });
+      }
     }
   }
 
@@ -360,6 +364,7 @@ export function App() {
           {/* <Route path="/profile" element={<Profile />} /> */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/update-password/email/:emailId/token/:token" element={<UpdatePassword />} />
+          <Route path="/callback" element={<Callback onLogin={onLogin} />} />
           <Route path="/login" element={<Login onLogin={onLogin} />} />
           <Route path="/logout" element={<LogOut onLogout={onLogout} />} />
           <Route path="*" element={<PageNotFound />} />

@@ -14,6 +14,7 @@ import { User, ViewUser } from '@healthcare/data-transfer-types';
 import digimedic from "../../../assets/digimedic.png";
 import loginImage from "../../../assets/loginImage.png";
 import UserContext from '../../contexts/user-context';
+import GoogleIcon from '../../../assets/google.png';
 
 export interface LoginProps {
   onLogin: (user: User) => void;
@@ -77,26 +78,9 @@ export function Login({ onLogin }: LoginProps) {
 
   console.log("usercontext in user:", usercontext?.user)
 
-  // const onSubmit = async (formData: { email: string; password: string }) => {
-  //   try {
-  //     const { email, password } = formData;
-  //     const res = await axios.post<User>(
-  //       `${apiUrl}/login`,
-  //       { email, password },
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-  //     const user = res.data;
-  //     onLogin(user);
-  //     enqueueSnackbar("Login successfully!", { variant: 'success' });
-  //     console.log('res', res);
-  //   } catch (error) {
-  //     console.log(error);
-  //     enqueueSnackbar('Invalid username or password ', { variant: 'error' });
-  //     console.log('Something went wrong');
-  //   }
-  // };
+  const handleGoogleLogin = () => {
+    window.location.href = `${apiUrl}/auth/google`;
+  };
 
   
 
@@ -165,6 +149,15 @@ export function Login({ onLogin }: LoginProps) {
               >
                 Log In
               </Button>
+              <Button
+              fullWidth
+              
+              variant="outlined"
+              startIcon={<img src={GoogleIcon} alt="Google" style={{ width: '18px', height: '18px' }} />}
+              sx={{ mt: 1 }}
+              onClick={handleGoogleLogin}>
+              Sign in with Google
+            </Button>
             </div>
           </form>
         </Box>
