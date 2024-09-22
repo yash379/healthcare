@@ -52,6 +52,7 @@ import ListAdminPatients from './pages/admin-portal/list-patient/list-patient';
 import AdminDashboard from './pages/admin-dashboard/admin-dashboard';
 import AppointmentLayout from './layouts/appointment-layout/appointment-layout';
 import PatientView from './pages/patient-dashboard/patient-view/patient-view';
+import ListPatientsCards from './pages/list-patients-cards/list-patients-cards';
 
 export function App() {
 
@@ -312,7 +313,12 @@ export function App() {
               <Route path="/hospitals/:hospitalId/doctors/:doctorId" index element={<Dashboard />} />
               <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/add"  element={<AddPatientComponent />}/>
               <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/edit"  element={<EditPatientPage />}/>
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients" element={<ListPatients />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients-list" element={<ListPatients />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients" element={<ListPatientsCards patients={[]} onEditPatient={function (index: number, updatedPatient: Patient): void {
+                  throw new Error('Function not implemented.');
+                } } onDeletePatient={function (index: number): void {
+                  throw new Error('Function not implemented.');
+                } } />} />
               <Route element={<AppointmentLayout/>}>
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments" element={<ListAppointments/>} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail" element={<PatientDetail />} />
