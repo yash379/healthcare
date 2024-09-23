@@ -48,7 +48,7 @@ export function Layout({user}: LayoutProps) {
   };
 
   fetchData();
-}, [apiUrl, navigate]);
+}, [apiUrl, navigate, user?.superRole]);
 
 
   return (

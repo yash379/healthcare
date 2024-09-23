@@ -9,7 +9,6 @@ import { Link, useNavigate } from 'react-router-dom';
 // import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-// import fountlab from "../../../assets/fount-lab-logo.png";
 import UserImg from "../../../assets/User.png";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -123,7 +122,7 @@ export function TopBar() {
     // <AppBar className={styles['appbar']}>
     //       <div>
     //       {/* <Link to="/logout"><Button className={styles['person_icon']} color="primary">LogOut</Button></Link> */}
-    //       {/* <img src={fountlab} alt="font lab logo" width="150px" height="23px" className={styles['logo']} /> */}
+    //       {/* <img src={POYV} alt="font lab logo" width="150px" height="23px" className={styles['logo']} /> */}
 
     //       <Box>
     //         <div className={styles["userbox"]} >

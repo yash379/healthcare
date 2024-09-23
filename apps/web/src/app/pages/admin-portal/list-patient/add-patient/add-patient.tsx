@@ -47,9 +47,7 @@ interface Form {
 
 const AddPatientComponent: React.FC<AddPatientProps> = ({ open, onClose, onSubmit }) => {
   const apiUrl = environment.apiUrl;
-  const [totalbuildingValue, setTotalbuildingValue] = useState<number | null>(null);
   const [totalValue, setTotalValue] = useState<number | null>(null);
-  const [totalFlatValue, setTotalFlatValue] = useState<number | null>(null);
   const [page, setPage] = useState(0);
 
   const validationSchema = yup.object().shape({
@@ -76,9 +74,6 @@ const AddPatientComponent: React.FC<AddPatientProps> = ({ open, onClose, onSubmi
     }
   });
 
-  // const selectedBuildingId = watch('buildingId');
-  // const selectedFloorId = watch('floorId');
-
   const params=useParams();
 
   const handleFormSubmit = (data: Form) => {
@@ -96,11 +91,6 @@ const AddPatientComponent: React.FC<AddPatientProps> = ({ open, onClose, onSubmi
   //     // setValue('name', initialData.name);
   //     // setValue('email', initialData.email);
   //     // setValue('phoneNumber', initialData.phoneNumber);
-  //     // setValue('isChild', initialData.isChild);
-  //     // setValue('flats.0.type', initialData.flats[0].type);
-  //     setValue('floorId', initialData.floor.id);
-  //     setValue('buildingId', initialData.floor.building.id);
-  //     setValue('flatId', initialData.id);
 
   //   }
   // }, [initialData, setValue]);

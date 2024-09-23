@@ -2,7 +2,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Login from './pages/login/login';
 import Layout from './Components/layout/layout';
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect,useRef } from 'react';
 import { Doctor, Hospital, Patient, User, ViewUser } from '@healthcare/data-transfer-types';
 import Dashboard from './pages/dashboard/dashboard';
 import PageNotFound from './Components/page-not-found/page-not-found';
@@ -50,6 +50,10 @@ import ListPatientAppointments from  './pages/patient-dashboard/list-appointment
 import AdminLayout from './layouts/admin-layout/admin-layout';
 import ListAdminPatients from './pages/admin-portal/list-patient/list-patient';
 import AdminDashboard from './pages/admin-dashboard/admin-dashboard';
+import AppointmentLayout from './layouts/appointment-layout/appointment-layout';
+import PatientView from './pages/patient-dashboard/patient-view/patient-view';
+import ListPatientsCards from './pages/list-patients-cards/list-patients-cards';
+import Callback from './Components/callback/callback';
 
 export function App() {
 
@@ -71,6 +75,7 @@ export function App() {
   const [doctorId, setDoctorId]=useState(0);
   const [hospitalId, sethospitalId]=useState(0);
   const apiUrl = environment.apiUrl;
+  const snackbarShownRef = useRef(false);
 // const setUser = (user: User | null) => {
 //   if (user) {
 //     localStorage.setItem('user', JSON.stringify(user));
@@ -84,13 +89,53 @@ export function App() {
 
   const usercontext = useContext(UserContext);
   console.log('User context:', usercontext);
+  const doctorcontext=useContext(DoctorContext);
+  const patientcontext=useContext(PatientContext);
+  const hospitalcontext=useContext(HospitalContext);
 
   const onLogout = async () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('doctor');
+    localStorage.removeItem('patient');
     console.log("logout", user);
     setUser(null);
     navigate("/login");
   }
+
+  useEffect(()=>{
+    const userfromlocalstorage=localStorage.getItem('user');
+    // const userfromlocalstorage=JSON.stringify(userrrr);
+    if(userfromlocalstorage){
+      usercontext?.setUser(JSON.parse(userfromlocalstorage ?? ''));
+      setUser(JSON.parse(userfromlocalstorage ?? ''));
+      navigate("/selectHospital");
+    }else{
+      navigate('/login');
+    } 
+  },[]);
+
+  useEffect(()=>{
+    const doctorfromlocalstorage=localStorage.getItem('doctor');
+    if(doctorfromlocalstorage){
+      // const doctor=JSON.parse(doctorfromlocalstorage ?? '');
+      doctorcontext?.setDoctor(JSON.parse(doctorfromlocalstorage ?? ''));
+      setDoctor(JSON.parse(doctorfromlocalstorage ?? ''));
+      navigate(`/hospitals/${hospital?.id}/doctors/${doctor?.id}`);
+    }
+  },[doctorcontext?.doctor, hospital?.id]);
+
+
+  useEffect(()=>{
+    const patientfromlocalstorage=localStorage.getItem('patient');
+    if(patientfromlocalstorage){
+      // const patient=JSON.parse(patientfromlocalstorage ?? '');
+      patientcontext?.setPatient(JSON.parse(patientfromlocalstorage ?? ''));
+      setPatient(JSON.parse(patientfromlocalstorage ?? ''));
+      navigate(`/hospitals/${hospital?.id}/patients/${patient?.id}`);
+    } 
+  },[patientcontext?.patient, hospital?.id]);
+
+  // console.log("doctorcontet:",doctorcontext);
 
   const onLogin = (user: User) => {
     localStorage.setItem('user', JSON.stringify(user));
@@ -100,15 +145,40 @@ export function App() {
     // console.log("onLogin", user);
     // // navigate("/dashboard");
     // navigate("/selectHospital");
-    if (user.hospitalRoles?.length === 0) {
-      enqueueSnackbar("User does not have a hospital manager role.", { variant: 'warning' });
-      navigate("/login");
-    }else if(user===null){
+    // if (user.hospitalRoles?.length === 0) {
+    //   enqueueSnackbar("User does not have a hospital manager role.", { variant: 'warning' });
+    //   navigate("/login");
+    // }else if(user===null){
+    //   navigate("/login");
+    // } else {
+    //   setUser(user);
+    //   navigate("/selectHospital");
+    //   enqueueSnackbar("Login successfully!", { variant: 'success' });
+    // }
+
+    if(user===null){
       navigate("/login");
     } else {
       setUser(user);
-      navigate("/selectHospital");
+      if(user?.hospitalRoles?.length && user?.hospitalRoles?.length>1){
+        navigate("/selectHospital");
+      }else{
+        (user?.hospitalRoles?.map((item)=>
+        {  
+          if(item.hospitalRole==='DOCTOR'){
+            navigate(`/hospitals/${item.hospitalId}/doctors/${user.doctorId}`);
+          }else if(item.hospitalRole==='PATIENT'){
+             navigate(`/hospitals/${item.hospitalId}/patients/${user.patientId}`);
+          }else{
+            navigate(`/hospitals/${item.hospitalId}/admin/${user.id}`);
+          }
+        }
+        ));
+      }
+      // navigate("/selectHospital");
+      if (!snackbarShownRef.current) {
       enqueueSnackbar("Login successfully!", { variant: 'success' });
+      }
     }
   }
 
@@ -247,12 +317,19 @@ export function App() {
               <Route path="/hospitals/:hospitalId/doctors/:doctorId" index element={<Dashboard />} />
               <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/add"  element={<AddPatientComponent />}/>
               <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/edit"  element={<EditPatientPage />}/>
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients" element={<ListPatients />} />
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail" element={<PatientDetail />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients-list" element={<ListPatients />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients" element={<ListPatientsCards patients={[]} onEditPatient={function (index: number, updatedPatient: Patient): void {
+                  throw new Error('Function not implemented.');
+                } } onDeletePatient={function (index: number): void {
+                  throw new Error('Function not implemented.');
+                } } />} />
+              <Route element={<AppointmentLayout/>}>
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments" element={<ListAppointments/>} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail" element={<PatientDetail />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/diagnosis" element={<DiagnosisPage />} />
+              </Route>
               {/* <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments/:id" element={<ViewAppointmentDetail />} /> */}
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline patient={null} />} />
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/diagnosis" element={<DiagnosisPage />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/medical-history" element={<MedicalHistory />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/cancer-detection" element={<BrainTumor />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/ai-summarizer" element={<Summarizer />} />
@@ -267,8 +344,10 @@ export function App() {
               {/* <Route path="/hospital/:hospitalId/doctors/:doctorId/patients/:patientId" element={<ListPatients />} /> */}
               {/* <Route path="/hospitals/:hospitalId/patients/:patientId/dashboard" element={<Dashboard />} /> */}
               <Route path="/hospitals/:hospitalId/patients/:patientId" index element={<PatientDashboard/>} />
-              <Route path="/hospitals/:hospitalId/patients/:patientId/patient-detail" element={<PatientDetail />} />
+              <Route element={<AppointmentLayout/>}>
+              <Route path="/hospitals/:hospitalId/patients/:patientId/patient-detail" element={<PatientView/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointments" element={<ListPatientAppointments/>} />
+              </Route>
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointmentsview" element={<AppointmentPage/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/medical-report" element={<MedicalReport/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/ai-summarizer" element={<Summarizer />} />
@@ -285,6 +364,7 @@ export function App() {
           {/* <Route path="/profile" element={<Profile />} /> */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/update-password/email/:emailId/token/:token" element={<UpdatePassword />} />
+          <Route path="/callback" element={<Callback onLogin={onLogin} />} />
           <Route path="/login" element={<Login onLogin={onLogin} />} />
           <Route path="/logout" element={<LogOut onLogout={onLogout} />} />
           <Route path="*" element={<PageNotFound />} />

@@ -107,19 +107,19 @@ export function ViewMedicalHistoryTimeline({ patient }: ViewMedicalHistoryTimeli
     <div>
       <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: 'center', marginBottom: 2 }}>
         <h3 style={{marginInline:'50px'}}>Medical History</h3>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        {/* <Box sx={{ display: 'flex', gap: 2 }}>
           <Button variant="contained" color="primary" sx={{ padding: '12px 24px' }}>
             Generate Summary
           </Button>
           <Button variant="outlined" color="primary" sx={{ padding: '12px 24px' }}>
             <PrintIcon sx={{ marginRight: 1 }} /> Print
           </Button>
-        </Box>
+        </Box> */}
       </Box>
 
-      <Timeline sx={{position:'relative', height:'72vh', overflowY:'scroll'}}>
+      <Timeline sx={{position:'relative', height:'72vh'}}>
         {medicalHistory?.groupedData.length ? (
-          medicalHistory.groupedData.map((item)=>(
+          medicalHistory.groupedData.sort((a,b)=>b.diagnosisDetails.id-a.diagnosisDetails.id).slice(0,3).map((item)=>(
             <TimelineItem key={item.diagnosisDetails.id} position="right" sx={{minHeight:'fit-content'}}>
               <TimelineSeparator>
                 <TimelineDot sx={{ backgroundColor: '#064B4F' }} />
@@ -127,7 +127,8 @@ export function ViewMedicalHistoryTimeline({ patient }: ViewMedicalHistoryTimeli
               </TimelineSeparator>
               <TimelineContent>
                 <Typography color="textSecondary" sx={{ marginBottom: 1 }}>
-                  {item.diagnosisDetails.chiefComplaints.join(', ')}
+                  Date: {formatDate(item.diagnosisDate)}
+                  {/* {item.diagnosisDetails.chiefComplaints.join(', ')} */}
                 </Typography>
                 <Card sx={{ backgroundColor: 'rgba(6, 75, 79, 0.55)', marginBottom: 2 , width:'30vw'}}>
                   <CardContent>
@@ -140,7 +141,7 @@ export function ViewMedicalHistoryTimeline({ patient }: ViewMedicalHistoryTimeli
                     <Divider sx={{ marginY: 1, backgroundColor: '#F4F6FA' }} />
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Typography variant="body2" color="white">
-                        Date: {formatDate(item.diagnosisDate)}
+                      {item.diagnosisDetails.chiefComplaints.join(', ')} 
                       </Typography>
                       <Typography variant="body2" color="white">
                         Pulse: {item.diagnosisDetails.pulse} bpm

@@ -45,7 +45,7 @@ export function AdminNav(props: AdminNavProps) {
         className={styles['side-drawer']}
       >
 
-        {/* <Toolbar sx={{height:"59px"}}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></Toolbar> */}
+        {/* <Toolbar sx={{height:"59px"}}><img src={POYV} alt="POYV logo" width="150px" height="23px"/></Toolbar> */}
         <Toolbar sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}><img src={digimedic} alt="medi plus logo" width="165px" height="60px" /></Toolbar>
         {/* <Divider /> */}
 

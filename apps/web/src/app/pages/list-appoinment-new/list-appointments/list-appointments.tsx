@@ -50,6 +50,7 @@ import Loading from '../../../Components/loading/loading';
 import { ViewAllUser } from '@healthcare/data-transfer-types';
 import HospitalContext from '../../../contexts/hospital-context';
 import DoctorContext from '../../../contexts/doctor-context';
+import AppointmentContext from '../../../contexts/appointment-context';
 
 
 interface Appointment {
@@ -151,10 +152,14 @@ export function ListAppointments(props: ListAppointmentsProps) {
   const [appointment, setAppointment]=useState<ViewAppointment>();
   const [appointmentStatuses, setAppointmentStatus]=useState<Status[] | null>(null);
 
+
   const [status, setStatus]=useState<Status | null>(null);
 
   const hospitalcontext=useContext(HospitalContext);
   const doctorcontext=useContext(DoctorContext);
+  const appointmentcontext=useContext(AppointmentContext);
+
+  console.log("appointmentcontext:", appointmentcontext);
 
   const navigate=useNavigate()
 
@@ -249,7 +254,6 @@ export function ListAppointments(props: ListAppointmentsProps) {
     if (selectedAppointment) {
       setViewData(selectedAppointment);
       setSelectedAppointmentId(appointmentId);
-      
       setIsDeleteModalOpen(true);
     }
   };
@@ -340,7 +344,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
         `${apiUrl}/hospitals/${params.hospitalId}/doctors/${formData?.doctor?.id}/patients/${formData?.patient?.id}/appointments`,
         {
           appointmentDate: formData.appointmentDate,
-          statusId: formData.statusId,
+          statusId:formData.statusId ,
         },
         {
           withCredentials: true,
@@ -367,16 +371,16 @@ export function ListAppointments(props: ListAppointmentsProps) {
 
 
   // Edit Appointment
-  const handleUpdate = async (formData: Form) => {
+  const handleUpdate = async (appoinmentId: number,appoinmentDoctor: DoctorDetailsDto,appointmentPatient: PatientDetailsDto,statusId: number, appointmentDate: string) => {
     try {
       await setIsAddModalOpen(false);
       setIsLoadingModalOpen(true);
 
       const { data: responseData } = await axios.put(
-        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${formData?.doctor?.id}/patients/${formData?.patient?.id}/appointments/${selectedAppointmentId}`,
+        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${appoinmentDoctor.user.id}/patients/${appointmentPatient.user.id}/appointments/${appoinmentId}`,
         {
-          appointmentDate: formData.appointmentDate,
-          statusId: formData.statusId,
+          appointmentDate:appointmentDate,
+          statusId: statusId,
         },
         {
           withCredentials: true,
@@ -445,9 +449,11 @@ export function ListAppointments(props: ListAppointmentsProps) {
   //     appointment.acceptAppointment=false;
   //   })
   // },[appointment?.declineAppointment])
+  console.log("appointmentsData:",appointmentsData);
 
   const handleAccept =  useCallback((appointment: ViewAppointment, value:boolean) => {
     console.log(`Appointment ${id} accepted.`);
+    // handleUpdate(appointment.id,appointment.doctor,appointment.patient,3,appointment.appointmentDate);
     // setStartAppointment(true);
     // setAcceptAppointment(false);
     // setViewAppointment(true);
@@ -463,21 +469,24 @@ export function ListAppointments(props: ListAppointmentsProps) {
     // }
     const updatedAppointmentsData = appointmentsData.map((appt) => {
       if (appt.id === appointment.id) {
-        return { ...appt, acceptAppointment: false, viewAppointment: true, declineAppointment: false, declinedAppointment: false };
+        return { ...appt, acceptAppointment: false, viewAppointment: true, declineAppointment: false, declinedAppointment: false,status:{id:2,code:"2",name:"CONFIRMED"} };
       }
       return appt;
     });
     setAppointmentsData(updatedAppointmentsData);
     // setAppointment(appointment);
-  }, [appointmentsData]);
+  }, [appointmentsData,appointment]);
 
   const handleView=useCallback((appointment: ViewAppointment, value:boolean)=>{
-    // navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/appointments/${appointment.id}`);
-    const updatedAppointment = { ...appointment, acceptAppointment: true, viewAppointment: false, declineAppointment: true, declinedAppointment: false };
+    const updatedAppointment = { ...appointment, acceptAppointment: true, viewAppointment: false, declineAppointment: true, declinedAppointment: false,status:{id:3,code:"3",name:"INPROGRESS"}  };
     setAppointment(updatedAppointment);
+
+    appointmentcontext?.setAppointment(updatedAppointment);
+
+    handleUpdate(updatedAppointment.id,updatedAppointment.doctor,updatedAppointment.patient,3,updatedAppointment.appointmentDate);
+   
     navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/patients/${appointment.patient.user.id}/patient-detail`)
-    // setViewAppointment(value);
-    // appointment.viewAppointment=false;
+
     const acceptstatus = appointmentStatuses?.find((item)=>item.name==='INPROGRESS')
     if (acceptstatus) {
       setStatus(acceptstatus);
@@ -489,7 +498,8 @@ export function ListAppointments(props: ListAppointmentsProps) {
   console.log("appt:", appointment);
 
   const handleDecline =  useCallback((appointment:ViewAppointment,id: number) => {
-    // setDeclineAppointment(false);
+    // handleUpdate(appointment.id,appointment.doctor,appointment.patient,5,appointment.appointmentDate);
+    // // setDeclineAppointment(false);
     // setViewAppointment(false);
     // setAcceptAppointment(false);
     // setDeclinedAppointment(true);
@@ -500,7 +510,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
 
     const updatedAppointmentsData = appointmentsData.map((appt) => {
       if (appt.id === appointment.id) {
-        return { ...appt, acceptAppointment: false, viewAppointment: false, declineAppointment: false, declinedAppointment: true };
+        return { ...appt, acceptAppointment: false, viewAppointment: false, declineAppointment: false, declinedAppointment: true, status:{id:5,code:"5",name:"DECLINED"} };
       }
       return appt;
     });
@@ -514,25 +524,25 @@ export function ListAppointments(props: ListAppointmentsProps) {
     // setStatus();
   },[appointmentsData,appointment]);
 
-  useEffect(()=>{
-    const changeAppointmentStatus = async () => {
-      try {
-        const response = await axios.put(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patient/${appointment?.patient?.user?.id}/appointments/${appointment?.id}`,{
-          ...appointment,
-          status:status
-        },{
-          withCredentials:true
-        });
-        console.log("status changed:", response.data);
-        setAppointments(response.data);
-      } catch (error) {
-        console.error('Error fetching appointments:', error);
-      }
-    };
+  // useEffect(()=>{
+  //   const changeAppointmentStatus = async () => {
+  //     try {
+  //       const response = await axios.put(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patient/${appointment?.patient?.user?.id}/appointments/${appointment?.id}`,{
+  //         ...appointment,
+  //         status:status
+  //       },{
+  //         withCredentials:true
+  //       });
+  //       console.log("status changed:", response.data);
+  //       setAppointments(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching appointments:', error);
+  //     }
+  //   };
   
-    changeAppointmentStatus();
+  //   changeAppointmentStatus();
 
-  },[status,appointment]);
+  // },[status,appointment]);
 
   // const formatDate = (isoDateString: string) => {
   //   const date=new Date(isoDateString).toLocaleDateString();
@@ -582,13 +592,13 @@ export function ListAppointments(props: ListAppointmentsProps) {
           />
 
           {/* Button with ArrowDropDown icon */}
-          <Button
+          {/* <Button
             variant="outlined"
             endIcon={<ArrowDropDown />}
             sx={{ color: '#064B4F80', borderColor: '#064B4F80' }}
           >
             Dec 14 - Dec 17
-          </Button>
+          </Button> */}
 
           {/* Combined Calendar and Tune icons */}
           <Box
@@ -678,11 +688,12 @@ export function ListAppointments(props: ListAppointmentsProps) {
                 }}
                 key={index}
               >
-                {appointment.declineAppointment &&
+                {appointment.declineAppointment && 
                  <Button
                   variant="outlined"
                   sx={{ borderRadius: '12px', color: '#82A4A6', borderColor: '#82A4A6' }}
                   onClick={() => handleDecline(appointment,index)}
+                  disabled={appointment.status.name==='COMPLETED'}
                 >
                   Decline Appointment
                 </Button> }
@@ -710,6 +721,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
                     float: 'right',
                     borderRadius: '12px', 
                   }}
+                  disabled={appointment.status.name==='COMPLETED'}
                   onClick={() => handleAccept(appointment,false)}
                 >
                   Accept Appointment

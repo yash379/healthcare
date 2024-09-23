@@ -14,6 +14,7 @@ import { HospitalContext } from '../../contexts/hospital-context';
 import axios from 'axios';
 import { environment } from '../../../environments/environment';
 import { Gender } from '@prisma/client';
+import { HospitalRoleDto } from '@healthcare/data-transfer-types';
 
 /* eslint-disable-next-line */
 export interface SelectHospitalProps {}
@@ -41,6 +42,7 @@ interface PatientResponse {
   isActive: boolean;
 }
 
+
 interface Doctor {
   doctorId: number;
   doctorGender: Gender;
@@ -58,6 +60,7 @@ export function SelectHospital(props: SelectHospitalProps) {
   const [patientdoctorId, setPatientDoctorId]=useState(0);
   const [patient, setPatient]=useState<PatientResponse | null>(null);
   const [hospitalId, setHospitalId]=useState<number | null>(null);
+  const [roles,setRoles]=useState<HospitalRoleDto[]>();
   const navigate=useNavigate();
   const apiUrl = environment.apiUrl;
 
@@ -89,7 +92,12 @@ export function SelectHospital(props: SelectHospitalProps) {
 
   useEffect(()=>{
     getHospital();
-  },[hospitalId]);
+    setRoles(usercontext?.user?.hospitalRoles);
+    localStorage.removeItem('doctor');
+    localStorage.removeItem('patient');
+  },[hospitalId,hospitalcontext,usercontext]);
+
+  console.log("roles:", roles);
   
   
   const handleToggle = (value: number) => () => {
@@ -196,7 +204,7 @@ export function SelectHospital(props: SelectHospitalProps) {
           </Box>
           <div className={styles['hospital-list']}>
             <List sx={{ bgcolor: 'background.paper' }}>
-                {usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles.map((value) => {
+                {roles?.map((value) => {
                     const labelId = `checkbox-list-label-${value.hospitalId}`;
 
                     return (

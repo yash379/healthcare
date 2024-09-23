@@ -17,17 +17,8 @@ export function TemplateOptions({ onSelect, open, onClose, }: TemplateOptionsPro
     <Box  className={styles['template_modal_container']}>
       <h2 className={styles['h2_tag']}>Select Template</h2>
       <Box className={styles['option_container']}>
-      <Button color="info" variant="contained" onClick={() => handleOptionClick('building')}>
-        Building
-      </Button>
-      <Button color="info" variant="contained" onClick={() => handleOptionClick('flat')}>
-        Flat
-      </Button>
-      <Button color="info" variant="contained" onClick={() => handleOptionClick('resident')}>
-        Resident
-      </Button>
-      <Button color="info" variant="contained" onClick={() => handleOptionClick('vehicle')}>
-        Vehicle
+      <Button color="info" variant="contained" onClick={() => handleOptionClick('hospital')}>
+        Hospital
       </Button>
       </Box>
     <Box>

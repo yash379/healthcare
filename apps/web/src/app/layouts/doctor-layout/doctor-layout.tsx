@@ -53,7 +53,8 @@ export function DoctorLayout(props: DoctorLayoutProps) {
           // console.log(response.data[0].user)
           const { content, total } = response.data;
           console.log('DOCTOR Data', response.data);
-          setDoctor(response.data)
+          setDoctor(response.data);
+          localStorage.setItem('doctor', JSON.stringify(response.data));
           doctorContext?.setDoctor(response.data);
         } catch (error) {
           console.error('Error fetching doctor data:', error);

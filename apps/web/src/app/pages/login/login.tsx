@@ -14,6 +14,7 @@ import { User, ViewUser } from '@healthcare/data-transfer-types';
 import digimedic from "../../../assets/digimedic.png";
 import loginImage from "../../../assets/loginImage.png";
 import UserContext from '../../contexts/user-context';
+import GoogleIcon from '../../../assets/google.png';
 
 export interface LoginProps {
   onLogin: (user: User) => void;
@@ -39,6 +40,12 @@ export function Login({ onLogin }: LoginProps) {
   const [user, setUser]=useState<User |  null>(null);
 
   const usercontext=useContext(UserContext);
+
+  useEffect(()=>{
+    const userrrr=localStorage.getItem('user');
+    const userfromlocalstorage=JSON.stringify(userrrr);
+     usercontext?.setUser(JSON.parse(userfromlocalstorage));
+  },[usercontext?.user,user])
 
   const onSubmit = async (formData: { email: string; password: string }) => {
     try {
@@ -71,26 +78,9 @@ export function Login({ onLogin }: LoginProps) {
 
   console.log("usercontext in user:", usercontext?.user)
 
-  // const onSubmit = async (formData: { email: string; password: string }) => {
-  //   try {
-  //     const { email, password } = formData;
-  //     const res = await axios.post<User>(
-  //       `${apiUrl}/login`,
-  //       { email, password },
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-  //     const user = res.data;
-  //     onLogin(user);
-  //     enqueueSnackbar("Login successfully!", { variant: 'success' });
-  //     console.log('res', res);
-  //   } catch (error) {
-  //     console.log(error);
-  //     enqueueSnackbar('Invalid username or password ', { variant: 'error' });
-  //     console.log('Something went wrong');
-  //   }
-  // };
+  const handleGoogleLogin = () => {
+    window.location.href = `${apiUrl}/auth/google`;
+  };
 
   
 
@@ -110,10 +100,10 @@ export function Login({ onLogin }: LoginProps) {
           {/* </div> */}
           <h1 style={{ fontFamily: 'Secular One' }}>WELCOME!</h1>
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></div> */}
+            {/* <div className={styles['logo']}><img src={POYV} alt="font lab logo" width="150px" height="23px"/></div> */}
             {/* <div className={styles['login-header']}>Welcome Back <span className={styles['login-emoji']}>👋</span></div> */}
             <div className={styles['login-form']}>
-              <Typography>Username</Typography>
+              {/* <Typography>Username</Typography> */}
               <div className={styles['email']}>
                 <TextField
                   type="email"
@@ -131,7 +121,7 @@ export function Login({ onLogin }: LoginProps) {
                 />
               </div>
               <div className={styles['password']}>
-              <Typography>Password</Typography>
+              {/* <Typography>Password</Typography> */}
                 <TextField
                   type="password"
                   {...register('password')}
@@ -159,6 +149,15 @@ export function Login({ onLogin }: LoginProps) {
               >
                 Log In
               </Button>
+              <Button
+              fullWidth
+              
+              variant="outlined"
+              startIcon={<img src={GoogleIcon} alt="Google" style={{ width: '18px', height: '18px' }} />}
+              sx={{ mt: 1 }}
+              onClick={handleGoogleLogin}>
+              Sign in with Google
+            </Button>
             </div>
           </form>
         </Box>

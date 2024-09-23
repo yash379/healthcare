@@ -7,7 +7,6 @@ import { User } from '@healthcare/data-transfer-types';
 import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios, { AxiosError } from 'axios';
-// import fountlab from "../../../assets/fount-lab-logo.png";
 import { enqueueSnackbar } from 'notistack';
 import { Button, TextField, CircularProgress, Divider, Typography } from '@mui/material';
 import Alert from '@mui/material/Alert';

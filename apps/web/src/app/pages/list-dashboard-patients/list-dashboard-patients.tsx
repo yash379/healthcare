@@ -29,7 +29,7 @@ import EditPatientComponent from '../list-patient//edit-patient/edit-patient';
 import DeletePatientComponent from '../list-patient//delete-patient/delete-patient';
 // import ViewPatientComponent from '../view-patient/view-patient';
 import { enqueueSnackbar } from 'notistack';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { Hospital, ViewPatient } from '@healthcare/data-transfer-types';
 import AddIcon from '@mui/icons-material/Add';
 import { HospitalContext } from '../../contexts/hospital-context';
@@ -330,7 +330,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
       console.log(response.data);
 
       if (response.data) {
-        console.log('Building Name Updated Successfully');
+        console.log('Patient Updated Successfully');
         enqueueSnackbar('Patient details updated successfully', {
           variant: 'success',
         });
@@ -366,13 +366,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
     }
   };
 
-  //Select Particular Table Row Function
-  // function handleRowClick(residentid: number, event: React.MouseEvent<HTMLTableRowElement>) {
-  //   if (event.target instanceof HTMLElement && event.target.classList.contains('action-button')) {
-  //     return;
-  //   }
-  //   setSelectedResident(residentid)
-  // }
+
 
   const handleCheckboxChange = (PatientId: number) => {
     const isSelected = selectedItems.includes(PatientId);
@@ -415,7 +409,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
   return (
     <Box className={styles['container']}>
       {/* <Breadcrumbs paths={breadcrumbs} /> */}
-      <Box className={styles['building_container']}>
+      <Box className={styles['main_container']}>
         <Box
           sx={{
             display: 'flex',
@@ -481,8 +475,8 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                     {...label}
                     checked={
                       activePatients.length > 0 &&
-                      activePatients.every((building) =>
-                        selectedItems.includes(building.id)
+                      activePatients.every((patient) =>
+                        selectedItems.includes(patient.id)
                       )
                     }
                     onChange={handleHeaderCheckboxChange}
@@ -497,7 +491,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                   Digital Health Code
                 </TableCell>
                 <TableCell sx={{ border: 'hidden' }}>Address</TableCell>
-                <TableCell sx={{ border: 'hidden' }}>Actions</TableCell>
+                {/* <TableCell sx={{ border: 'hidden' }}>Actions</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -507,7 +501,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                   <CircularProgress size='small' />
                 </TableCell>
               ) : Array.isArray(activePatients) && activePatients.length > 0 ? (
-                activePatients.map((patient: ViewPatient, index: number) => (
+                activePatients.slice(0,5).map((patient: ViewPatient, index: number) => (
                   <TableRow
                     // className={styles['table_row']}
                     onClick={(e) => {
@@ -543,7 +537,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                       {patient.addressLine1} {patient.addressLine2} ,
                       {patient.city}, {patient.stateCode}, {patient.postalCode}
                     </TableCell>
-                    <TableCell align="center">
+                    {/* <TableCell align="center">
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
@@ -561,7 +555,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                       >
                         <DeleteIcon></DeleteIcon>
                       </IconButton>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))
               ) : (
@@ -586,7 +580,8 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
             }}
           ></Box>
         </TableContainer>
-        <Stack spacing={2} className={styles['paginationContainer']}>
+        <Link to={`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients`} style={{float:'right', textDecoration:'none'}}>view more</Link>
+        {/* <Stack spacing={2} className={styles['paginationContainer']}>
           <Pagination
             count={pageCount}
             page={page}
@@ -600,7 +595,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
             showFirstButton
             showLastButton
           />
-        </Stack>
+        </Stack> */}
       </Box>
 
       {/* <EditPatientComponent

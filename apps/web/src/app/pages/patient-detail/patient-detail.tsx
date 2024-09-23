@@ -7,12 +7,14 @@ import { environment } from '../../../environments/environment';
 import HospitalContext from '../../contexts/hospital-context';
 import DoctorContext from '../../contexts/doctor-context';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Patient, ViewAllUser } from '@healthcare/data-transfer-types';
+import { Patient, ViewAllUser, ViewAppointment } from '@healthcare/data-transfer-types';
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined';
 import AddAppointment from './hospital-add-appointment/hospital-add-appointment';
 import { enqueueSnackbar } from 'notistack';
 import StatusChip from '../../Components/chip/statusChip';
+import AppointmentContext from '../../contexts/appointment-context';
+import { format, formatDate } from 'date-fns';
 /* eslint-disable-next-line */
 
 interface Form {
@@ -40,7 +42,9 @@ export function PatientDetail(props: PatientDetailProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loadingUserInfo, setLoadingUserInfo] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [appointment,setAppointment]=useState<ViewAppointment>();
   const [appointmentCount, setAppointmentCount] = useState({ total:0,pending: 0, inProgress: 0, cancelled: 0, confirmed: 0 });
+  const address=`${patient?.addressLine1},${(patient?.addressLine2 || '')},${patient?.city},${patient?.stateCode},${patient?.countryCode},${patient?.postalCode}`;
   // const patients: Patient[] = [
   //   {
   //     id: 1,
@@ -55,16 +59,29 @@ export function PatientDetail(props: PatientDetailProps) {
   //   },
 
   // ];
+
+
+
   const params=useParams();
   console.log("params:",params);
 
   const hospitalcontext=useContext(HospitalContext);
   const doctorcontext=useContext(DoctorContext);
+  const appointmentcontext=useContext(AppointmentContext);
+
+  console.log("appointmentcontext:",appointmentcontext);
 
   useEffect(() => {
     getCounts();
   }, []);
 
+
+  const getAppointment=async()=>{
+    const response=await axios.get(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${params.patientId}/appointments/{id}`, {
+      withCredentials: true,
+    });
+    setAppointment(response.data);
+  }
 
   const getpatientinfo = async () => {
 
@@ -75,11 +92,11 @@ export function PatientDetail(props: PatientDetailProps) {
         withCredentials: true,
       });
       setPatient(response.data);
-      console.log("PAtient Detail:", response.data);
-      console.log("PAtient Detail:", response.data.isPrimary);
+      console.log("Patient Detail:", response.data);
+      console.log("Patient Detail:", response.data.isPrimary);
       setLoadingUserInfo(false);
     } catch (error) {
-      console.log("Error in fetching device details", error);
+      console.log("Error in fetching Patient details", error);
       setLoadingUserInfo(false);
     }
 
@@ -96,6 +113,7 @@ export function PatientDetail(props: PatientDetailProps) {
   };
 
   const handleStartDiagnosisClick = () => {
+
     navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${params.patientId}/diagnosis`);
   };
 
@@ -136,6 +154,12 @@ export function PatientDetail(props: PatientDetailProps) {
       enqueueSnackbar('Something went wrong', { variant: 'error' });
     }
   };
+
+  const formatDate = (isoDateString: string) => {
+    return new Date(isoDateString).toLocaleDateString(); // Convert ISO string to local date format
+  };
+
+  
 
 
   return (
@@ -233,7 +257,9 @@ export function PatientDetail(props: PatientDetailProps) {
               }}
             >
               <div style={{position:'relative', right:'-44%'}}>
-                <StatusChip label={'Success'} children={'StatusId'} width={'80px'}></StatusChip>
+                {patient?.isActive ? <StatusChip label={'Success'} children={'Active'} width={'80px'}></StatusChip> :
+                   <StatusChip label={'Success'} children={'InActive'} width={'80px'}></StatusChip>
+                }
               </div>
               {/* Avatar with initials */}
               <Avatar
@@ -245,20 +271,20 @@ export function PatientDetail(props: PatientDetailProps) {
                   marginTop: '10px',
                 }}
               >
-                {patient?.firstName.split(' ').map((name) => name[0]).join('')}
+              {patient?.firstName.split(' ').map((name) => name[0]).join('')}
               </Avatar>
               {/* Patient ID */}
               <Typography variant="h3" sx={{ marginTop: 3 }}>
                 Patient Id : #{patient?.digitalHealthCode}
               </Typography>
               <Typography variant="h3" sx={{ marginTop: 3 }}>
-                 {patient?.isActive}
+                 {appointmentcontext?.appointment?.status.name}
               </Typography>
               <Typography variant="h3" sx={{ marginTop: 3 }}>
                  {patient?.firstName}{patient?.lastName}
               </Typography>
               {/* Appointment and Completed status */}
-              <Box
+              {/* <Box
                 sx={{
                   display: 'flex',
                   justifyContent: 'space-evenly',
@@ -275,7 +301,7 @@ export function PatientDetail(props: PatientDetailProps) {
                     Appointments
                   </Typography>
                 </Box>
-                {/* Vertical Divider */}
+                Vertical Divider
                 <Divider
                   orientation="vertical"
                   flexItem
@@ -293,10 +319,10 @@ export function PatientDetail(props: PatientDetailProps) {
                     Completed
                   </Typography>
                 </Box>
-              </Box>
+              </Box> */}
               {/* Button */}
-            <Box sx={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'96%'}}>
-              <Button
+            {/* <Box sx={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'96%'}}> */}
+              {/* <Button
                 variant="contained"
                 sx={{
                   marginTop: 2,
@@ -311,7 +337,40 @@ export function PatientDetail(props: PatientDetailProps) {
               // Optionally add hover effect or other button styles
               >
                 Book Appointment
-              </Button>
+              </Button> */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column', // Main axis is vertical
+                  width: '100%',
+                  padding: '5px 16px', // Horizontal padding for content
+                }}
+              >
+                {[
+                  { label: 'Number', value: `${patient?.phoneNumber}` },
+                  { label: 'Email', value: `${patient?.email}` },
+                  // { label: 'Blood Pressure', value: patient.bloodpressure },
+                  { label: 'Date of Birth', value:patient?.dob  && formatDate(patient?.dob)},
+                  { label: 'Address', value:address},
+                ].map((item) => (
+                  <Box
+                    key={item.label}
+                    sx={{
+                      display: 'flex', // Layout is horizontal
+                      justifyContent: 'space-between', // Space between label and value
+                      alignItems: 'center', // Center align items vertically
+                      marginBottom: 1, // Space between rows
+                    }}
+                  >
+                    <Typography variant="h5" sx={{ color: '#000000' }}>
+                      {item.label}:
+                    </Typography>
+                    <Typography variant="h5" sx={{ color: '#064B4F' }}>
+                      {item.value}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
               <AddAppointment
               open={isAddModalOpen}
               onClose={() => setIsAddModalOpen(false)}
@@ -333,7 +392,7 @@ export function PatientDetail(props: PatientDetailProps) {
               >
                 Start Diagnosis
               </Button>
-            </Box>
+            {/* </Box> */}
             </Card>
             {/* Patient Information Card */}
             <Card
@@ -369,7 +428,8 @@ export function PatientDetail(props: PatientDetailProps) {
                   // { label: 'Blood Pressure', value: patient.bloodpressure },
                   { label: 'Disease', value: patient?.acuteDisease},
                   { label: 'Age', value: patient?.age},
-                  { label: 'Age', value: patient?.gender},
+                  { label: 'Gender', value: patient?.gender},
+                  {label:'Chronic Diseases',value:patient?.chronicDisease}
                 ].map((item) => (
                   <Box
                     key={item.label}

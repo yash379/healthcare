@@ -127,7 +127,6 @@ const EditHospitalComponent: React.FC<EditHospitalProps> = ({
   }, [initialData, setValue]);
 
   const handleUpdate = (data: AddHospital) => {
-    // data.flatId = parseInt(data.flatId);
     onUpdate(data);
     reset();
   };

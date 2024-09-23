@@ -156,7 +156,7 @@ export function ListHospitals(props: ListHospitalsProps) {
   //   searchQueryCountryCode,
   // ]);
 
-  // // Add Building
+  // // Add Hospital
 
   // const handleAddHospital = async (newData: AddHospital) => {
   //   try {
@@ -181,7 +181,7 @@ export function ListHospitals(props: ListHospitalsProps) {
   //   }
   // };
 
-  // //Building Update CloseModal
+  // //Hospital Update CloseModal
 
   // const closeEditModal = () => {
   //   setIsEditModalOpen(false);
@@ -226,7 +226,7 @@ export function ListHospitals(props: ListHospitalsProps) {
   //   getHospitals();
   // };
 
-  // //Building Update OpenModal
+  // //Hospital Update OpenModal
 
   // const handleEditClick = (hospitalId: number) => {
   //   const selectedHospital: ViewHospital | undefined = activeHospitals.find(
@@ -283,7 +283,7 @@ export function ListHospitals(props: ListHospitalsProps) {
   // const handleChangeRowsPerPage = (event: any) => {
   //   const newRowsPerPage = parseInt(
   //     event.target.value
-  //     // activeBuildingFlats.length
+  //    
   //   );
   //   console.log('Rows per page changed to:', newRowsPerPage);
   //   setRowsPerPage(newRowsPerPage);
@@ -445,7 +445,7 @@ export function ListHospitals(props: ListHospitalsProps) {
     searchQueryCountryCode,
   ]);
 
-  // Add Building
+  // Add Hospital
 
   const handleAddHospital = async (newData: AddHospital) => {
     try {
@@ -472,7 +472,7 @@ export function ListHospitals(props: ListHospitalsProps) {
     }
   };
 
-  //Building Update CloseModal
+  //Hospital Update CloseModal
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);
@@ -517,7 +517,7 @@ export function ListHospitals(props: ListHospitalsProps) {
     getHospitals();
   };
 
-  //Building Update OpenModal
+  //Hospital Update OpenModal
 
   const handleEditClick = (hospitalId: number) => {
     const selectedHospital: ViewHospital | undefined =
@@ -566,7 +566,6 @@ export function ListHospitals(props: ListHospitalsProps) {
   const handleChangeRowsPerPage = (event: any) => {
     const newRowsPerPage = parseInt(
       event.target.value
-      // activeBuildingFlats.length
     );
     console.log('Rows per page changed to:', newRowsPerPage);
     setRowsPerPage(newRowsPerPage);
@@ -983,7 +982,7 @@ export function ListHospitals(props: ListHospitalsProps) {
                         aria-label="edit"
                         color="error"
                         onClick={() =>
-                          // handleDelete(building.id)
+                          // handleDelete(hospital.id)
                           openDeleteModal({
                             id: hospital.id,
                             isActive: hospital.isActive,
@@ -997,7 +996,7 @@ export function ListHospitals(props: ListHospitalsProps) {
                         aria-label="edit"
                         color="error"
                         onClick={() =>
-                          // handleDelete(building.id)
+                          // handleDelete(hospital.id)
                           openDeleteModal({
                             id: hospital.id,
                             isActive: hospital.isActive,

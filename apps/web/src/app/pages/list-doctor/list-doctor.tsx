@@ -154,7 +154,7 @@ export function ListDoctors(props: ListDoctorsProps) {
   };
 
 
-  //Building Update Function
+  //Doctor Update Function
   const handleEditClick = (doctorId: number) => {
     const selectedDoctor: ViewDoctor | undefined = activeDoctors.find(
       (doctor) => doctor.id === doctorId
@@ -269,7 +269,7 @@ export function ListDoctors(props: ListDoctorsProps) {
       console.log(response.data);
 
       if (response.data) {
-        console.log('Building Name Updated Successfully');
+        console.log('Doctor Updated Successfully');
         enqueueSnackbar('Doctor details updated successfully', { variant: 'success' });
         getDoctors();
         setIsModalOpen(false)
@@ -301,13 +301,7 @@ export function ListDoctors(props: ListDoctorsProps) {
   }
 
 
-  //Select Particular Table Row Function
-  // function handleRowClick(residentid: number, event: React.MouseEvent<HTMLTableRowElement>) {
-  //   if (event.target instanceof HTMLElement && event.target.classList.contains('action-button')) {
-  //     return;
-  //   }
-  //   setSelectedResident(residentid)
-  // }
+
 
   const handleCheckboxChange = (DoctorId: number) => {
     const isSelected = selectedItems.includes(DoctorId);
@@ -356,7 +350,7 @@ export function ListDoctors(props: ListDoctorsProps) {
   return (
       <Box className={styles['container']}>
         {/* <Breadcrumbs paths={breadcrumbs} /> */}
-        <Box className={styles['building_container']}>
+        <Box className={styles['main_container']}>
           <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}} >
            <Box sx={{mt:'20px',display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <h1 style={{marginTop:'10px'}}>Doctors</h1>
@@ -417,8 +411,8 @@ export function ListDoctors(props: ListDoctorsProps) {
                     {...label}
                     checked={
                       activeDoctors.length > 0 &&
-                      activeDoctors.every((building) =>
-                        selectedItems.includes(building.id)
+                      activeDoctors.every((doctor) =>
+                        selectedItems.includes(doctor.id)
                       )
                     }
                     onChange={handleHeaderCheckboxChange}
@@ -435,8 +429,6 @@ export function ListDoctors(props: ListDoctorsProps) {
                   </TableCell>
                   <TableCell sx={{ border: "hidden" }}>Speciality
                   </TableCell>
-                  {/* <TableCell sx={{ border: "hidden" }}>Flat Number</TableCell>
-                  <TableCell sx={{ border: "hidden" }}>Building Name</TableCell> */}
                   <TableCell sx={{ border: "hidden" }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
