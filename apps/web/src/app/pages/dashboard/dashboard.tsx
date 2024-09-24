@@ -12,15 +12,14 @@ import {
   CardActionArea,
   CardActions,
   Grid,
-  Divider,
   Modal,
 } from '@mui/material';
 import { environment } from '../../../environments/environment';
-
+import { Divider } from '@mui/material';
 import { Hospital } from '@healthcare/data-transfer-types';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
-import { HospitalContext } from '../../contexts/hospital-context';
+import hospitalContext, { HospitalContext } from '../../contexts/hospital-context';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -56,7 +55,6 @@ import DashboardAppointments from '../../Components/dashboard-appointments/dashb
 /* eslint-disable-next-line */
 export interface DashboardProps {}
 
-
 interface HospitalDetails {
   id: string;
   isActive: boolean;
@@ -85,8 +83,6 @@ interface AddForm {
   firstName: string;
   lastName: string;
 }
-
-
 
 export function Dashboard(props: DashboardProps) {
   const [hospitaldata, setHospitalData] = useState<HospitalDetails[]>([]);
@@ -120,6 +116,8 @@ export function Dashboard(props: DashboardProps) {
   const [showFileInput, setShowFileInput] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
+  const hospitalContext = useContext(HospitalContext);
+
 
   const params = useParams();
   console.log('params:', params.hospitalId);
@@ -128,14 +126,11 @@ export function Dashboard(props: DashboardProps) {
   console.log('hospital context:', hospitalcontext);
   console.log('hospital id:', hospitalcontext?.hospital?.id);
 
-  const doctorContext=useContext(DoctorContext);
-  const patientcontext=useContext(PatientContext);
+  const doctorContext = useContext(DoctorContext);
+  const patientcontext = useContext(PatientContext);
 
-  console.log("patients context:", patientcontext);
-  console.log("doctor context:", doctorContext);
-
-  
-  
+  console.log('patients context:', patientcontext);
+  console.log('doctor context:', doctorContext);
 
   const getAllAdmin = async () => {
     try {
@@ -172,7 +167,6 @@ export function Dashboard(props: DashboardProps) {
   }, [hospitalcontext?.hospital?.id]);
 
   console.log('user details', user);
-  
 
   // const keys=Object.keys(count);
   // const entries=Object.entries(count);
@@ -220,7 +214,6 @@ export function Dashboard(props: DashboardProps) {
       setLoadingDetails(false);
     }
   };
-
 
   // const countArray = Object.entries(count);
   // console.log(countArray);
@@ -368,7 +361,6 @@ export function Dashboard(props: DashboardProps) {
     }
   };
 
-
   const handleCloseModal = () => {
     setModalOpen(false);
     setImportType('');
@@ -376,7 +368,6 @@ export function Dashboard(props: DashboardProps) {
     setShowFileInput(false); // Reset showFileInput
   };
 
-  
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -384,8 +375,6 @@ export function Dashboard(props: DashboardProps) {
   const handleCloseTemplateModal = () => {
     setIsModalOpen(false);
   };
-
-  
 
   return (
     <div className={styles['container']}>
@@ -396,7 +385,7 @@ export function Dashboard(props: DashboardProps) {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '75vh',
+            height: '100%',
           }}
         >
           <CircularProgress />
@@ -405,31 +394,89 @@ export function Dashboard(props: DashboardProps) {
         <div className={styles['main_container']}>
           <div className={styles['first_container']}>
             {/* <div className={styles['header']}>
-              <h1 style={{ marginLeft: '0px' }}>{hospital?.name}</h1>  
+              <h1 style={{ marginLeft: '0px' }}>{hospital?.name}</h1>
             </div> */}
+            <div style={{ margin: '10px' }}>
+              <Box
+                sx={{
+                  marginLeft: '30px',
+                  marginTop: '10px',
+                  textAlign: 'left',
+                }}
+              >
+                <Typography variant="h2" component="h1" fontWeight="bold">
+                  Welcome back, Doctor !
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  margin: '20px',
+                  position: 'relative',
+                  marginTop: '10px',
+                  marginRight: '10px',
+                }}
+              >
+                <Box style={{ width: '70%', marginRight: '10px' }}>
+                  <DashboardChart />
+                </Box>
 
-          <Box sx={{display:'flex', margin:'20px',position:'relative',top:'3%'}}>
-            <Box style={{width:'70%'}}>
-              <DashboardChart/>
-            </Box>
+                <Box style={{ width: '20%' }}>
+                  <DashboardAppointments />
+                </Box>
+              </Box>
 
-            <Box style={{width:'30%'}}>
-              <DashboardAppointments/>
-            </Box>
-           </Box>
+              <Divider
+                sx={{
+                  marginTop: 4,
+                  marginLeft: 5,
+                  marginRight: 3,
+                  borderColor: '#000000',
+                  borderWidth: 0.2,
+                  borderRadius: 1,
+                  opacity: 0.1,
+                  boxShadow: 4,
+                }}
+              />
+              <div
+              style={{marginLeft: 25}}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '15px',
+                }}
+              >
+                {/* Header for the patient list */}
+                <Typography
+                  variant="h3"
+                  component="h2"
+                  fontWeight="bold"
+                  color="#064B4F"
+                  marginTop={2}
+                >
+                  Recently Visited Patients
+                </Typography>
 
-           <div style={{margin:'10px',display:'flex',flexDirection:'column'}}>
-            <ListDashboardPatients/>
-          </div>
+                {/* View More Button Link */}
+                <Link to={`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients`} style={{ textDecoration: 'none', marginTop: '14px', }}>
+                  <Button variant="contained" color="primary" style={{marginRight: 20 }}
+                  >
+                    View all patients
+                  </Button>
+                </Link>
+              </Box>
+                <ListDashboardPatients />
+              </div>
+            </div>
 
-         
-            
             <div className={styles['dashboard-card-container']}>
               {/* <Card
                 sx={{ minWidth: '40% ' }}
                 className={styles['hospital-details']}
               > */}
-                {/* <CardContent>
+              {/* <CardContent>
                   <Typography variant="body2">
                     <div className={styles['soc-detail-add']}>
                       <LocalPhoneIcon sx={{ marginRight: '4px' }} />
@@ -450,8 +497,6 @@ export function Dashboard(props: DashboardProps) {
                   </Typography>
                 </CardContent> */}
               {/* </Card> */}
-            
-              
 
               {/* <Card className={styles['cards']}>
                 <CardContent className={styles['cardcontent']}>
@@ -550,10 +595,9 @@ export function Dashboard(props: DashboardProps) {
                 </CardContent>
               </Card> */}
 
-          
+
 
             </div>
-
             {/* <div className={styles['horizontal-line']} /> */}
 
             {/* <div>
@@ -612,7 +656,6 @@ export function Dashboard(props: DashboardProps) {
               </Box> */}
             {/* <AllDoctorLogs refreshLogs={refreshLogs} /> */}
             {/* </Box> */}
-          </div>
 
           {/* <div className={styles['vertical-line']} /> */}
 
@@ -638,7 +681,7 @@ export function Dashboard(props: DashboardProps) {
                     <div>
                       <h2  className={styles['h2_tag']} >Select Import Type</h2>
                         <Button color="info" variant="contained" onClick={() => handleImportType('doctor')}>Import Doctor</Button>
-                      
+
                     </div>
                     </Box>
                   </Modal>
@@ -668,7 +711,7 @@ export function Dashboard(props: DashboardProps) {
                     <div>
                       <h2 className={styles['h2_tag']}>Select Export Type</h2>
                         <Button color="info" variant="contained" onClick={() => handleExportDoctorType('doctors')}>Export Doctors</Button>
-              
+
                     </div>
                     </Box>
             </Modal>       */}
@@ -712,8 +755,8 @@ export function Dashboard(props: DashboardProps) {
               ) : (Array.isArray(adminData) && adminData.length > 0 ? (
                 adminData.map((response: Manager, index: number) => (
                   <Grid container key={index} columnGap={3} className={styles['grid-container']}> */}
-            {/* 
-                      
+            {/*
+
                       <IconButton onClick={(e) => {
                         e.stopPropagation()
                         handleEditClick(response.user.id)

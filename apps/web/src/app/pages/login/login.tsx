@@ -11,8 +11,8 @@ import * as yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
 import { User, ViewUser } from '@healthcare/data-transfer-types';
-import digimedic from "../../../assets/digimedic.png";
-import loginImage from "../../../assets/loginImage.png";
+import digimedic from '../../../assets/DigiMedic_logo.svg';
+import loginImage from '../../../assets/loginImage.png';
 import UserContext from '../../contexts/user-context';
 import GoogleIcon from '../../../assets/google.png';
 
@@ -37,9 +37,9 @@ export function Login({ onLogin }: LoginProps) {
   const apiUrl = environment.apiUrl;
   const navigate = useNavigate();
 
-  const [user, setUser]=useState<User |  null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  const usercontext=useContext(UserContext);
+  const usercontext = useContext(UserContext);
 
   useEffect(()=>{
     const userrrr=localStorage.getItem('user');
@@ -59,15 +59,17 @@ export function Login({ onLogin }: LoginProps) {
       // enqueueSnackbar('Login successfully', { variant: 'success' });
       // console
       // if (user || null) {
-        // navigate("/dashboard")
+      // navigate("/dashboard")
       // }
-      console.log(res)
+      console.log(res);
       if (user.hospitalRoles.length > 0) {
         onLogin(user);
       } else {
         console.log('User does not have the required superRole to log in');
         // navigate('/login')
-        enqueueSnackbar(`User does not have a hospital role. Can't login`, { variant: 'warning' });
+        enqueueSnackbar(`User does not have a hospital role. Can't login`, {
+          variant: 'warning',
+        });
       }
     } catch (error) {
       console.log(error);
@@ -76,13 +78,11 @@ export function Login({ onLogin }: LoginProps) {
     }
   };
 
-  console.log("usercontext in user:", usercontext?.user)
+  console.log('usercontext in user:', usercontext?.user);
 
   const handleGoogleLogin = () => {
     window.location.href = `${apiUrl}/auth/google`;
   };
-
-  
 
   return (
     <Box className={styles['main_root']}>
@@ -98,7 +98,9 @@ export function Login({ onLogin }: LoginProps) {
           {/* <div > */}
           <img src={digimedic} alt="medi plus logo" width="300px" height="100px" className={styles['logo']}/>
           {/* </div> */}
-          <h1 style={{ fontFamily: 'Secular One' }}>WELCOME!</h1>
+          <div style={{alignSelf: 'center', marginTop: '10px', marginBottom: '4px'}}>
+          <h2 style={{ fontFamily: 'Inter, sans-serif' }}>Welcome Back!</h2>
+          </div>
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* <div className={styles['logo']}><img src={POYV} alt="font lab logo" width="150px" height="23px"/></div> */}
             {/* <div className={styles['login-header']}>Welcome Back <span className={styles['login-emoji']}>👋</span></div> */}
@@ -134,7 +136,7 @@ export function Login({ onLogin }: LoginProps) {
                 />
               </div>
               <div className={styles['forgot-password']}>
-                <Link to="/forgot-password" style={{ textDecoration: 'none', color:'#064B4FD1' }}>
+                <Link to="/forgot-password" style={{fontSize:'14px', fontFamily: 'Inter, sans-serif' , textDecoration: 'none', color:'#064B4F' }}>
                   Forgot Password?
                 </Link>
               </div>
@@ -151,7 +153,7 @@ export function Login({ onLogin }: LoginProps) {
               </Button>
               <Button
               fullWidth
-              
+
               variant="outlined"
               startIcon={<img src={GoogleIcon} alt="Google" style={{ width: '18px', height: '18px' }} />}
               sx={{ mt: 1 }}
