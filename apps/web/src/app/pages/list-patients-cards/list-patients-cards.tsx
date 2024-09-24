@@ -2,7 +2,21 @@ import styles from './list-patients-cards.module.scss';
 import React, { useContext, useEffect, useState } from 'react';
 import PatientCard from './PatientCard';
 import DeleteConfirmationModal from './DeleteCard';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, FormControl, InputLabel, Select, MenuItem, Typography, IconButton, Box } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
+  IconButton,
+  Box,
+} from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import axios from 'axios';
 import HospitalContext from '../../contexts/hospital-context';
@@ -74,12 +88,14 @@ export interface ListPatientsCardsProps {
   onDeletePatient: (index: number) => void;
 }
 
-export function ListPatientsCards({  onEditPatient, onDeletePatient }: ListPatientsCardsProps) {
-
+export function ListPatientsCards({
+  onEditPatient,
+  onDeletePatient,
+}: ListPatientsCardsProps) {
   const apiUrl = environment.apiUrl;
 
   const [activePatients, setActivePatients] = useState<ViewPatient[]>([]);
-  const [patients,setPatients]=useState<ViewPatient[]>([]);
+  const [patients, setPatients] = useState<ViewPatient[]>([]);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
@@ -92,8 +108,8 @@ export function ListPatientsCards({  onEditPatient, onDeletePatient }: ListPatie
   );
   const [editData, setEditData] = useState<ViewPatient | null>(null);
 
-  const hospitalcontext=useContext(HospitalContext);
-  const doctorcontext=useContext(DoctorContext);
+  const hospitalcontext = useContext(HospitalContext);
+  const doctorcontext = useContext(DoctorContext);
 
   const navigate = useNavigate();
 
@@ -134,11 +150,10 @@ export function ListPatientsCards({  onEditPatient, onDeletePatient }: ListPatie
 
   useEffect(() => {
     getPatients();
-  }, [hospitalcontext?.hospital?.id,doctorcontext?.doctor?.id]);
+  }, [hospitalcontext?.hospital?.id, doctorcontext?.doctor?.id]);
 
-
-   //Patient Update Function
-   const handleEditClick = (patientId: number) => {
+  //Patient Update Function
+  const handleEditClick = (patientId: number) => {
     const selectedPatient: ViewPatient | undefined = activePatients.find(
       (patient) => patient.id === patientId
     );
@@ -201,7 +216,6 @@ export function ListPatientsCards({  onEditPatient, onDeletePatient }: ListPatie
       enqueueSnackbar('Something went wrong', { variant: 'error' });
     }
   };
-
 
   // Add Patient
   const handleAddPatient = async (formData: Form) => {
@@ -287,65 +301,64 @@ export function ListPatientsCards({  onEditPatient, onDeletePatient }: ListPatie
 
   return (
     <>
-    <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Box
-            sx={{
-              mt: '20px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
+      <Box
+        sx={{
+          mt: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginLeft: '50px',
+          marginRight: '20px'
+        }}
+      >
+        <h1 style={{ marginTop: '5px', fontFamily: 'Inter, sans-serif' }}>Patients</h1>
+
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <TextField
+            type="text"
+            variant="outlined"
+            size="small"
+            sx={{ ml: '10px', height: '40px' }}
+            InputProps={{
+              startAdornment: <SearchIcon color="action" />,
             }}
-          >
-            <h1 style={{ marginTop: '10px' }}>Patients</h1>
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{ ml: '10px' }}
-              // onChange={handleSearchNameChange}
-              InputProps={{
-                startAdornment: <SearchIcon color="action" />,
-              }}
-            />
-          </Box>
+          />
           <Button
             variant="contained"
             color="primary"
-            // onClick={() => {
-            //   setIsAddModalOpen(true)
-            // }}
-            onClick={() => navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/add`)}
+            sx={{ ml: 2 }} 
+            onClick={() =>
+              navigate(
+                `/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/add`
+              )
+            }
           >
-            {' '}
-            <AddIcon fontSize="small" /> Add
+            <AddIcon fontSize="small" /> Add Patient
           </Button>
         </Box>
-        <Box>
-          <AddPatientComponent
-            open={isAddModalOpen}
-            onClose={() => setIsAddModalOpen(false)}
-            onSubmit={handleAddPatient}
-          />
-        </Box>
-      <div style={{ 
-        display: 'flex', 
-        flexWrap: 'wrap', 
-        justifyContent: 'flex-start', 
-        gap: '16px',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '0 16px',
-        rowGap:'20px',
-        
-      }}>
+      </Box>
+      <Box>
+        <AddPatientComponent
+          open={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onSubmit={handleAddPatient}
+        />
+      </Box>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'flex-start',
+          gap: '30px',
+          marginLeft: '40px',
+          rowGap: '20px',
+        }}
+      >
         {patients.map((patient, index) => (
-          <div key={index} style={{ flex: '0 0 calc(25% - 12px)', minWidth: '250px' }}>
+          <div
+            key={index}
+            style={{ width: '200' }}
+          >
             <PatientCard
               patient={patient}
               onEdit={() => handleEditClick(index)}
@@ -364,7 +377,12 @@ export function ListPatientsCards({  onEditPatient, onDeletePatient }: ListPatie
             color="inherit"
             onClick={handleEditCancel}
             aria-label="close"
-            style={{ position: 'absolute', right: 25, top: 8, color: '#323232' }}
+            style={{
+              position: 'absolute',
+              right: 25,
+              top: 8,
+              color: '#323232',
+            }}
           >
             <CancelIcon />
           </IconButton>
@@ -414,7 +432,9 @@ export function ListPatientsCards({  onEditPatient, onDeletePatient }: ListPatie
                 <Select
                   labelId="blood-group-label"
                   value={editingPatient.bloodgroup}
-                  onChange={(e) => handleEditChange('bloodgroup', e.target.value)}
+                  onChange={(e) =>
+                    handleEditChange('bloodgroup', e.target.value)
+                  }
                   label="Blood Group"
                 >
                   <MenuItem value="">
@@ -434,24 +454,51 @@ export function ListPatientsCards({  onEditPatient, onDeletePatient }: ListPatie
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleEditCancel} color="primary" variant="contained" sx={{ backgroundColor:'white',width:'81px', height:'38px',}}>
-          <Typography sx={{
-          fontFamily:'Roboto', fontWeight:'500', fontSize:'14px', lineHeight:'24px', letterSpacing:'0.4px',color:'rgba(52, 126, 125, 1)',
-          width:'55px', height:'24px',
-        }}>
-          Cancel
-          </Typography>
-            
+          <Button
+            onClick={handleEditCancel}
+            color="primary"
+            variant="contained"
+            sx={{ backgroundColor: 'white', width: '81px', height: '38px' }}
+          >
+            <Typography
+              sx={{
+                fontFamily: 'Roboto',
+                fontWeight: '500',
+                fontSize: '14px',
+                lineHeight: '24px',
+                letterSpacing: '0.4px',
+                color: 'rgba(52, 126, 125, 1)',
+                width: '55px',
+                height: '24px',
+              }}
+            >
+              Cancel
+            </Typography>
           </Button>
-          <Button onClick={handleEditSave} color="primary" variant="contained" sx={{ backgroundColor:'rgba(52, 126, 125, 1)',
-          width:'175px',
-          height:'38px',
-          borderRadius:'6px',
-          gap:'8px',}}>
-            <Typography sx={{ fontFamily:'Roboto', fontWeight:'600', fontSize:'13px', lineHeight:'30px', color:'rgba(255, 255, 255, 1)', width:'134px',
-          height:'30px',
-        }}>
-            Save Changes
+          <Button
+            onClick={handleEditSave}
+            color="primary"
+            variant="contained"
+            sx={{
+              backgroundColor: 'rgba(52, 126, 125, 1)',
+              width: '175px',
+              height: '38px',
+              borderRadius: '6px',
+              gap: '8px',
+            }}
+          >
+            <Typography
+              sx={{
+                fontFamily: 'Roboto',
+                fontWeight: '600',
+                fontSize: '13px',
+                lineHeight: '30px',
+                color: 'rgba(255, 255, 255, 1)',
+                width: '134px',
+                height: '30px',
+              }}
+            >
+              Save Changes
             </Typography>
           </Button>
         </DialogActions>
