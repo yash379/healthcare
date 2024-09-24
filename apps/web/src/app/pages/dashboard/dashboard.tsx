@@ -19,7 +19,9 @@ import { Divider } from '@mui/material';
 import { Hospital } from '@healthcare/data-transfer-types';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
-import hospitalContext, { HospitalContext } from '../../contexts/hospital-context';
+import hospitalContext, {
+  HospitalContext,
+} from '../../contexts/hospital-context';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -117,7 +119,6 @@ export function Dashboard(props: DashboardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const hospitalContext = useContext(HospitalContext);
-
 
   const params = useParams();
   console.log('params:', params.hospitalId);
@@ -438,35 +439,40 @@ export function Dashboard(props: DashboardProps) {
                   boxShadow: 4,
                 }}
               />
-              <div
-              style={{marginLeft: 25}}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '15px',
-                }}
-              >
-                {/* Header for the patient list */}
-                <Typography
-                  variant="h3"
-                  component="h2"
-                  fontWeight="bold"
-                  color="#064B4F"
-                  marginTop={2}
+              <div style={{ marginLeft: 25 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '15px',
+                  }}
                 >
-                  Recently Visited Patients
-                </Typography>
-
-                {/* View More Button Link */}
-                <Link to={`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients`} style={{ textDecoration: 'none', marginTop: '14px', }}>
-                  <Button variant="contained" color="primary" style={{marginRight: 20 }}
+                  {/* Header for the patient list */}
+                  <Typography
+                    variant="h3"
+                    component="h2"
+                    fontWeight="bold"
+                    color="#064B4F"
+                    marginTop={2}
                   >
-                    View all patients
-                  </Button>
-                </Link>
-              </Box>
+                    Recently Visited Patients
+                  </Typography>
+
+                  {/* View More Button Link */}
+                  <Link
+                    to={`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients`}
+                    style={{ textDecoration: 'none', marginTop: '14px' }}
+                  >
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      style={{ marginRight: 20 }}
+                    >
+                      View all patients
+                    </Button>
+                  </Link>
+                </Box>
                 <ListDashboardPatients />
               </div>
             </div>
@@ -594,9 +600,6 @@ export function Dashboard(props: DashboardProps) {
                   </Typography>
                 </CardContent>
               </Card> */}
-
-
-
             </div>
             {/* <div className={styles['horizontal-line']} /> */}
 
@@ -657,16 +660,16 @@ export function Dashboard(props: DashboardProps) {
             {/* <AllDoctorLogs refreshLogs={refreshLogs} /> */}
             {/* </Box> */}
 
-          {/* <div className={styles['vertical-line']} /> */}
+            {/* <div className={styles['vertical-line']} /> */}
 
-          <div className={styles['rightColumn']}>
-            {/* <Box className={styles['import-export']}> */}
-            {/* <Button startIcon={<InsertDriveFileIcon/>} color="info"
+            <div className={styles['rightColumn']}>
+              {/* <Box className={styles['import-export']}> */}
+              {/* <Button startIcon={<InsertDriveFileIcon/>} color="info"
               variant="contained"  onClick={handleOpenModal} className={styles['import-export-button']}>Template</Button>
 
         <TemplateOptions open={isModalOpen} onClose={handleCloseTemplateModal} onSelect={handleOptionSelect} /> */}
 
-            {/* <>
+              {/* <>
                   <Button
                     startIcon={<FileUploadIcon />}
                     color="info"
@@ -687,17 +690,17 @@ export function Dashboard(props: DashboardProps) {
                   </Modal>
                 </> */}
 
-            {/* {showFileInput && ( */}
-            {/* <input
+              {/* {showFileInput && ( */}
+              {/* <input
                     type="file"
                     id="excel-file-input"
                     accept=".xls, .xlsx"
                     style={{ display: 'none' }}
                     onChange={handleImport}
                   /> */}
-            {/* )} */}
+              {/* )} */}
 
-            {/* <Button
+              {/* <Button
               startIcon={<DownloadIcon/>}
               color="info"
               variant="contained"
@@ -706,7 +709,7 @@ export function Dashboard(props: DashboardProps) {
             >
               Export
             </Button> */}
-            {/* <Modal open={modalExportOpen} onClose={handleCloseExportModal}>
+              {/* <Modal open={modalExportOpen} onClose={handleCloseExportModal}>
                     <Box  className={styles['modal-container']}>
                     <div>
                       <h2 className={styles['h2_tag']}>Select Export Type</h2>
@@ -716,11 +719,11 @@ export function Dashboard(props: DashboardProps) {
                     </Box>
             </Modal>       */}
 
-            {/* </Box> */}
+              {/* </Box> */}
 
-            {/* <div className={styles['column_second']}> */}
+              {/* <div className={styles['column_second']}> */}
 
-            {/* <Grid container className={styles['headerStyles']}>
+              {/* <Grid container className={styles['headerStyles']}>
               <Grid item sx={{width:'100%'}}>
                 <div className={styles['grid-header']}>
                   <h3 id={styles['grid_detail']}>Managers</h3>
@@ -755,7 +758,7 @@ export function Dashboard(props: DashboardProps) {
               ) : (Array.isArray(adminData) && adminData.length > 0 ? (
                 adminData.map((response: Manager, index: number) => (
                   <Grid container key={index} columnGap={3} className={styles['grid-container']}> */}
-            {/*
+              {/*
 
                       <IconButton onClick={(e) => {
                         e.stopPropagation()
@@ -775,13 +778,13 @@ export function Dashboard(props: DashboardProps) {
                       </IconButton>
                     </Grid>
                   </Grid> */}
-            {/* ))
+              {/* ))
               ) : (
                 <div className={styles['no-data']}>No Admin found</div>
               )
               )} */}
-            {/* </Box> */}
-            {/* <EditAdmin
+              {/* </Box> */}
+              {/* <EditAdmin
               open={isEditModalOpen}
               onClose={closeEditModal}
               onUpdate={(data) => {
@@ -790,7 +793,7 @@ export function Dashboard(props: DashboardProps) {
               }}
               initialData={editData} /> */}
 
-            {/* <DeleteAdmin
+              {/* <DeleteAdmin
               open={isDeleteModalOpen}
               onClose={closeDeleteModal}
               onDelete={() => {
@@ -799,7 +802,8 @@ export function Dashboard(props: DashboardProps) {
               }}
               adminData={deleteData} /> */}
 
-            {/* </div> */}
+              {/* </div> */}
+            </div>
           </div>
         </div>
       )}
