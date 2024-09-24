@@ -1,8 +1,35 @@
 import styles from './appointment-scheduler.module.scss';
 import React, { useContext, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Typography, Button, Modal, IconButton, Card, CardContent, Collapse, Fade } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Typography,
+  Button,
+  Modal,
+  IconButton,
+  Card,
+  CardContent,
+  Collapse,
+  Fade,
+} from '@mui/material';
 import { borderRadius, color, styled } from '@mui/system';
-import { Add, ArrowDropDown, CalendarToday, Tune, ArrowLeft, ArrowRight, Edit as EditIcon, Close as CloseIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import {
+  Add,
+  ArrowDropDown,
+  CalendarToday,
+  Tune,
+  ArrowLeft,
+  ArrowRight,
+  Edit as EditIcon,
+  Close as CloseIcon,
+  Delete as DeleteIcon,
+} from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -61,7 +88,6 @@ const AppointmentCard = styled(Card)(({ theme }) => ({
 export interface AppointmentSchedulerProps {}
 
 export function AppointmentScheduler(props: AppointmentSchedulerProps) {
-
   const validationSchema = yup.object().shape({
     name: yup.string().required('Name is required'),
     description: yup.string().required('Description is required'),
@@ -73,14 +99,17 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [expandedAppointment, setExpandedAppointment] = useState<string | null>(null);
+  const [expandedAppointment, setExpandedAppointment] = useState<string | null>(
+    null
+  );
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const navigate=useNavigate();
-  const doctorcontext=useContext(DoctorContext);
-  const hospitalcontext=useContext(HospitalContext);
+  const navigate = useNavigate();
+  const doctorcontext = useContext(DoctorContext);
+  const hospitalcontext = useContext(HospitalContext);
 
   const { control, handleSubmit, reset } = useForm<Appointment>({
     resolver: yupResolver(validationSchema),
@@ -105,13 +134,16 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
   };
 
   const getAppointmentForSlot = (date: Date, timeSlot: string) => {
-    return appointments.find(appointment => 
-      isSameDay(appointment.date, date) && 
-      appointment.time === timeSlot
+    return appointments.find(
+      (appointment) =>
+        isSameDay(appointment.date, date) && appointment.time === timeSlot
     );
   };
 
-  const getAppointmentStyle = (appointment: Appointment, isExpanded: boolean) => {
+  const getAppointmentStyle = (
+    appointment: Appointment,
+    isExpanded: boolean
+  ) => {
     return {
       top: '0',
       height: isExpanded ? '200px' : '100%',
@@ -145,7 +177,13 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
   const generateTimeSlots = () => {
     const timeSlots = [];
     for (let i = 8; i <= 17; i++) {
-      timeSlots.push(i < 12 ? `${i.toString().padStart(2, '0')}:00` : i === 12 ? '12:00' : `${(i - 12).toString().padStart(2, '0')}:00`);
+      timeSlots.push(
+        i < 12
+          ? `${i.toString().padStart(2, '0')}:00`
+          : i === 12
+          ? '12:00'
+          : `${(i - 12).toString().padStart(2, '0')}:00`
+      );
     }
     return timeSlots;
   };
@@ -158,40 +196,47 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
   };
 
   const toggleAppointmentDetails = (appointmentId: string) => {
-    setExpandedAppointment(prevId => prevId === appointmentId ? null : appointmentId);
+    setExpandedAppointment((prevId) =>
+      prevId === appointmentId ? null : appointmentId
+    );
   };
 
-  const handleEditClick = (appointment: Appointment, event: React.MouseEvent) => {
+  const handleEditClick = (
+    appointment: Appointment,
+    event: React.MouseEvent
+  ) => {
     event.stopPropagation();
     setSelectedAppointment(appointment);
     setEditModalOpen(true);
   };
 
   return (
-    <div style={{height:'calc(100vh - 1000px)'}}>
-      <Box display="flex" justifyContent="space-between" alignItems="center"  marginLeft={5} marginRight={5} marginTop={3} marginBottom={2}>
-        <Typography variant="h1" component="div" sx={{ color: 'rgba(0, 0, 0, 1)', }}>
+    <div style={{ height: 'calc(100vh - 1000px)' }}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        marginLeft={5}
+        marginRight={3}
+        marginTop={3}
+        marginBottom={2}
+      >
+        <Typography
+          variant="h1"
+          component="div"
+          sx={{ color: 'rgba(0, 0, 0, 1)' }}
+        >
           Appointment Scheduler
         </Typography>
         <Box display="flex" gap={0.5} alignItems="center">
-          <Button
-            variant="contained"
-            // sx={{ backgroundColor:'rgba(6,75,79,1)', shadow:'rgba(0,0,0,0.25)', borderRadius:'6px', gap:'8px', width:'Fixed(210px)', height:'37px', }}
-            onClick={handleOpenModal}
-            startIcon={<Add />}
-            sx={{ backgroundColor: '#064B4F', color: 'white' }}
-          >
-            {/* <Typography sx={{ color:'rgba(255,255,255,1)', lineHeight:'20px',fontSize:'18px',fontWeight:'600',fontFamily:'Inter', }}> */}
-            Add Appointment
-            {/* </Typography> */}
-          </Button>
-
           <IconButton
-            onClick={() => setCurrentDate(prevDate => {
-              const newDate = new Date(prevDate);
-              newDate.setDate(newDate.getDate() - 7);
-              return newDate;
-            })}
+            onClick={() =>
+              setCurrentDate((prevDate) => {
+                const newDate = new Date(prevDate);
+                newDate.setDate(newDate.getDate() - 7);
+                return newDate;
+              })
+            }
           >
             <ArrowLeft />
           </IconButton>
@@ -201,19 +246,41 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
             endIcon={<ArrowDropDown />}
             sx={{ color: '#064B4F80', borderColor: '#064B4F80' }}
           >
-            {dates[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {dates[dates.length - 1].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            {dates[0].toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+            })}{' '}
+            -{' '}
+            {dates[dates.length - 1].toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            })}
           </Button>
 
           <IconButton
-            onClick={() => setCurrentDate(prevDate => {
-              const newDate = new Date(prevDate);
-              newDate.setDate(newDate.getDate() + 7);
-              return newDate;
-            })}
+            onClick={() =>
+              setCurrentDate((prevDate) => {
+                const newDate = new Date(prevDate);
+                newDate.setDate(newDate.getDate() + 7);
+                return newDate;
+              })
+            }
           >
             <ArrowRight />
           </IconButton>
 
+          <Button
+            variant="contained"
+            // sx={{ backgroundColor:'rgba(6,75,79,1)', shadow:'rgba(0,0,0,0.25)', borderRadius:'6px', gap:'8px', width:'Fixed(210px)', height:'37px', }}
+            onClick={handleOpenModal}
+            startIcon={<Add />}
+            sx={{ backgroundColor: '#064B4F', color: 'white', marginRight: '5px' }}
+          >
+            {/* <Typography sx={{ color:'rgba(255,255,255,1)', lineHeight:'20px',fontSize:'18px',fontWeight:'600',fontFamily:'Inter', }}> */}
+            Add Appointment
+            {/* </Typography> */}
+          </Button>
           <Box
             sx={{
               display: 'flex',
@@ -225,59 +292,144 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
             <Box
               sx={{
                 backgroundColor: 'white',
+                border: '1px solid #064B4F',
+                borderRadius: '10px',
+                borderTopRightRadius: '0px',
+                borderBottomRightRadius: '0px',
                 padding: '10px',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                cursor: 'pointer',
+                cursor:'pointer'
               }}
-              onClick={goToToday}
+              onClick={() =>
+                navigate(
+                  `/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/appointments`
+                )
+              }
             >
-              <CalendarToday sx={{ color: 'black' }} />
+              <Tune sx={{ color: '#064B4F' }} />
             </Box>
+
             <Box
               sx={{
                 backgroundColor: '#064B4F',
+                border: '1px solid #064B4F',
+                borderRadius: '10px',
+                borderTopLeftRadius: '0px',
+                borderBottomLeftRadius: '0px',
                 padding: '10px',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onClick={()=>navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/appointments`)}
+              onClick={goToToday}
             >
-              <Tune sx={{ color: 'white' }} />
+              <CalendarToday sx={{ color: 'white' }} />
             </Box>
           </Box>
         </Box>
       </Box>
 
-      <TableContainer component={Paper} sx={{height:'calc(100vh - 80%)' , width:'calc(100vw - 20%)',  marginLeft: 5, marginRight:5, marginTop: 3,  marginBottom: 2}}>
-        <Table >
-          <TableHead >
-            <TableRow  >
-              <StyledTableHeadCell sx={{ color:'rgba(6,75,79,0.76)', fontSize:'16px', lineHeight:'33px', fontWeight:'600', fontFamily:'poppins', width:'40px',height:'20px', backgroundColor: 'white' }} >Time</StyledTableHeadCell>
+      <TableContainer
+        component={Paper}
+        sx={{
+          height: 'calc(100vh - 80%)',
+          width: 'calc(100vw - 19%)',
+          marginLeft: 5,
+          marginRight: 5,
+          marginTop: 3,
+          marginBottom: 2,
+        }}
+      >
+        <Table>
+          <TableHead>
+            <TableRow>
+              <StyledTableHeadCell
+                sx={{
+                  color: 'rgba(6,75,79,0.76)',
+                  fontSize: '16px',
+                  lineHeight: '33px',
+                  fontWeight: '600',
+                  fontFamily: 'poppins',
+                  width: '40px',
+                  height: '20px',
+                  backgroundColor: 'white',
+                }}
+              >
+                Time
+              </StyledTableHeadCell>
               {dates.map((date, index) => (
-                <StyledTableHeadCell key={index} sx={{  color:'rgba(6,75,79,0.76)', fontSize:'16px', lineHeight:'33px', fontWeight:'600', fontFamily:'poppins', width:'40px',height:'20px', backgroundColor: 'white' }}>
-                  {date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                <StyledTableHeadCell
+                  key={index}
+                  sx={{
+                    color: 'rgba(6,75,79,0.76)',
+                    fontSize: '16px',
+                    lineHeight: '33px',
+                    fontWeight: '600',
+                    fontFamily: 'poppins',
+                    width: '40px',
+                    height: '20px',
+                    backgroundColor: 'white',
+                  }}
+                >
+                  {date.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
                 </StyledTableHeadCell>
               ))}
             </TableRow>
           </TableHead>
-          <TableBody >
+          <TableBody>
             {timeSlots.map((timeSlot, rowIndex) => (
-              <TableRow key={rowIndex} sx={{height:'30px !important'}}>
-                <StyledTableCell sx={{color:'rgba(141,141,141,1)', lineHeight:'30px',fontSize:'16px',fontWeight:'600', fontFamily:'poppins', width:'87px',height:'22.17px',}}>{timeSlot}</StyledTableCell>
+              <TableRow key={rowIndex} sx={{ height: '30px !important' }}>
+                <StyledTableCell
+                  sx={{
+                    color: 'rgba(141,141,141,1)',
+                    lineHeight: '30px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    fontFamily: 'poppins',
+                    width: '87px',
+                    height: '22.17px',
+                  }}
+                >
+                  {timeSlot}
+                </StyledTableCell>
                 {dates.map((date, colIndex) => {
                   const appointment = getAppointmentForSlot(date, timeSlot);
-                  const isExpanded = expandedAppointment === `${appointment?.date.toISOString()}-${appointment?.time}`;
+                  const isExpanded =
+                    expandedAppointment ===
+                    `${appointment?.date.toISOString()}-${appointment?.time}`;
                   return (
-                    <StyledTableCell key={colIndex} style={{ position: 'relative', height: '73.18px', top: '-3px',}}>
+                    <StyledTableCell
+                      key={colIndex}
+                      style={{
+                        position: 'relative',
+                        height: '73.18px',
+                        top: '-3px',
+                      }}
+                    >
                       {appointment && (
                         <AppointmentCard
-                          onClick={() => toggleAppointmentDetails(`${appointment.date.toISOString()}-${appointment.time}`)}
+                          onClick={() =>
+                            toggleAppointmentDetails(
+                              `${appointment.date.toISOString()}-${
+                                appointment.time
+                              }`
+                            )
+                          }
                           style={getAppointmentStyle(appointment, isExpanded)}
                         >
-                          <CardContent style={{ width: '100%', textAlign: 'center', backgroundColor:'white',}}>
+                          <CardContent
+                            style={{
+                              width: '100%',
+                              textAlign: 'center',
+                              backgroundColor: 'white',
+                            }}
+                          >
                             {isExpanded && (
                               <>
                                 <IconButton
@@ -287,7 +439,9 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
                                     top: 5,
                                     right: 40,
                                   }}
-                                  onClick={(event) => handleEditClick(appointment, event)}
+                                  onClick={(event) =>
+                                    handleEditClick(appointment, event)
+                                  }
                                 >
                                   <EditIcon fontSize="small" />
                                 </IconButton>
@@ -313,7 +467,10 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
                                 <Typography variant="body2" component="div">
                                   {appointment.name}
                                 </Typography>
-                                <Typography variant="caption" color="text.secondary">
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                >
                                   {appointment.description}
                                 </Typography>
                                 <Typography variant="caption" display="block">
@@ -322,11 +479,48 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
                               </Box>
                             </Fade>
                             <Fade in={isExpanded}>
-                              <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%' }}>
-                                <Typography variant="body2" sx={{ color:'rgba(0,0,0,1)',lineHeight:'33px',fontSize:'22px',fontWeight:'600', fontFamily:'poppins',width:'83',height:'33',}}><strong>Name:</strong> {appointment.name} 
+                              <Box
+                                sx={{
+                                  position: 'absolute',
+                                  top: '50%',
+                                  left: '50%',
+                                  transform: 'translate(-50%, -50%)',
+                                  width: '100%',
+                                }}
+                              >
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    color: 'rgba(0,0,0,1)',
+                                    lineHeight: '33px',
+                                    fontSize: '22px',
+                                    fontWeight: '600',
+                                    fontFamily: 'poppins',
+                                    width: '83',
+                                    height: '33',
+                                  }}
+                                >
+                                  <strong>Name:</strong> {appointment.name}
                                 </Typography>
-                                <Typography variant="body2"sx={{ color:'rgba(0,0,0,1)',fontFamily:'poppins',}}><strong>Description:</strong> {appointment.description}</Typography>
-                                <Typography variant="body2" sx={{ color:'rgba(132,143,172,1)', lineHeight:'18px', fontSize:'12px',fontWeight:'600'}}>{`${appointment.time} - ${appointment.toTime}`}</Typography>
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    color: 'rgba(0,0,0,1)',
+                                    fontFamily: 'poppins',
+                                  }}
+                                >
+                                  <strong>Description:</strong>{' '}
+                                  {appointment.description}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    color: 'rgba(132,143,172,1)',
+                                    lineHeight: '18px',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                  }}
+                                >{`${appointment.time} - ${appointment.toTime}`}</Typography>
                               </Box>
                             </Fade>
                           </CardContent>
@@ -347,17 +541,19 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
         aria-labelledby="add-appointment-modal"
         aria-describedby="modal-to-add-new-appointment"
       >
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          borderRadius: '8px',
-        }}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: '8px',
+          }}
+        >
           <IconButton
             aria-label="close"
             onClick={handleCloseModal}
@@ -368,18 +564,56 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
               color: (theme) => theme.palette.grey[500],
             }}
           >
-            <CloseIcon sx={{backgroundColor:'rgba(50, 50, 50, 1)',borderRadius:'50%', color:'white'}}/>
+            <CloseIcon
+              sx={{
+                backgroundColor: 'rgba(50, 50, 50, 1)',
+                borderRadius: '50%',
+                color: 'white',
+              }}
+            />
           </IconButton>
-          <Typography variant="h6" component="h2" gutterBottom sx={{ color:'rgba(0,0,0,0.87)', lineHeight:'32px',fontSize:'24px',fontWeight:'400', fontFamily:'poppins', width:'678px',height:'32px',}}>
+          <Typography
+            variant="h6"
+            component="h2"
+            gutterBottom
+            sx={{
+              color: 'rgba(0,0,0,0.87)',
+              lineHeight: '32px',
+              fontSize: '24px',
+              fontWeight: '400',
+              fontFamily: 'poppins',
+              width: '678px',
+              height: '32px',
+            }}
+          >
             Add Appointment
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormFields control={control} />
-            <Button type="submit" variant="contained" sx={{ mt: 2 , backgroundColor:'rgba(52,126,125,1)', gap:'8px',borderRadius:'6px', width:'Fixed(150px)',height:'Fixed(40px)',}}>
-              <Typography sx={{color:'rgba(255,255,255,1)', lineHeight:'20px',fontSize:'16px',fontWeight:'600', fontFamily:'poppins',}}>
-              Add Appointment
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                mt: 2,
+                backgroundColor: 'rgba(52,126,125,1)',
+                gap: '8px',
+                borderRadius: '6px',
+                width: 'Fixed(150px)',
+                height: 'Fixed(40px)',
+              }}
+            >
+              <Typography
+                sx={{
+                  color: 'rgba(255,255,255,1)',
+                  lineHeight: '20px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  fontFamily: 'poppins',
+                }}
+              >
+                Add Appointment
               </Typography>
-            </Button>   
+            </Button>
           </form>
         </Box>
       </Modal>
@@ -389,9 +623,11 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
         onClose={() => setEditModalOpen(false)}
         appointment={selectedAppointment}
         onSave={(updatedAppointment) => {
-          setAppointments(appointments.map(app => 
-            app === selectedAppointment ? updatedAppointment : app
-          ));
+          setAppointments(
+            appointments.map((app) =>
+              app === selectedAppointment ? updatedAppointment : app
+            )
+          );
           setEditModalOpen(false);
         }}
       />
@@ -401,7 +637,9 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={() => {
           // Logic to delete the appointment
-          setAppointments(appointments.filter(app => app !== selectedAppointment));
+          setAppointments(
+            appointments.filter((app) => app !== selectedAppointment)
+          );
           setDeleteModalOpen(false);
         }}
       />

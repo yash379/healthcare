@@ -527,6 +527,7 @@ export function HospitalListAppointment(props: HospitalListAppointmentProps) {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
+              
             }}
           >
             <h1 style={{ marginTop: '10px' }}>Upcoming Appointments</h1>

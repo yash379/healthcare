@@ -421,7 +421,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginTop:'5px'
+            marginTop:'5px',
           }}
         >
           {/* <Box
@@ -472,7 +472,7 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
               /> */}
         </Box>
 
-        <TableContainer sx={{width:"81vw"}}>
+        <TableContainer sx={{width:'100%'}}>
           <Table>
             <TableHead>
               <TableRow>
@@ -489,13 +489,14 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                   />
                 </TableCell> */}
                 <TableCell sx={{ border: 'hidden' }}>Name</TableCell>
+                <TableCell sx={{ border: 'hidden' }}>
+                  Digital Health Code
+                </TableCell>
                 <TableCell sx={{ border: 'hidden' }}>Email</TableCell>
                 <TableCell sx={{ border: 'hidden' }}>Phone Number</TableCell>
                 <TableCell sx={{ border: 'hidden' }}>Gender</TableCell>
                 <TableCell sx={{ border: 'hidden' }}>Blood Group</TableCell>
-                <TableCell sx={{ border: 'hidden' }}>
-                  Digital Health Code
-                </TableCell>
+               
                 <TableCell sx={{ border: 'hidden' }}>Address</TableCell>
                 {/* <TableCell sx={{ border: 'hidden' }}>Actions</TableCell> */}
               </TableRow>
@@ -534,11 +535,11 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
                       {patient.firstName} {patient.lastName}
                       </NavLink>
                     </TableCell>
+                    <TableCell>{patient.digitalHealthCode}</TableCell>
                     <TableCell>{patient.email}</TableCell>
                     <TableCell>+91-{patient.phoneNumber}</TableCell>
                     <TableCell>{patient.gender}</TableCell>
                     <TableCell>{patient.bloodGroup}</TableCell>
-                    <TableCell>{patient.digitalHealthCode}</TableCell>
                     <TableCell>
                       {patient.addressLine1} {patient.addressLine2} ,
                       {patient.city}, {patient.stateCode}, {patient.postalCode}
@@ -586,7 +587,6 @@ export function ListDashboardPatients(props: ListDashboardPatientsProps) {
             }}
           ></Box>
         </TableContainer>
-        <Link to={`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients`} style={{float:'right', textDecoration:'none'}}>view more</Link>
         {/* <Stack spacing={2} className={styles['paginationContainer']}>
           <Pagination
             count={pageCount}

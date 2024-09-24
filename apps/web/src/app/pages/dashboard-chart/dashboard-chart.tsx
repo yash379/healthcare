@@ -1,3 +1,4 @@
+import { Card, Typography } from '@mui/material';
 import styles from './dashboard-chart.module.scss';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -21,13 +22,24 @@ export function DashboardChart(props: DashboardChartProps) {
 
 
   return (
-    <div style={{ width: '88%', height: 385 }}>
+    
+    <Card style={{ width: '100%', height: 430 }}>
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        color="#064B4F"
+        marginTop={3}
+        marginLeft={3}
+      >
+        Patients Analysis Overview
+      </Typography>
     <ResponsiveContainer>
       <BarChart
         data={data}
-        margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+        margin={{ top: 40, right: 30, left: 5, bottom: 40 }}
         barCategoryGap="15%"
       >
+        
         {/* Grid lines */}
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
 
@@ -51,10 +63,10 @@ export function DashboardChart(props: DashboardChartProps) {
 
         {/* Legend positioned top-right */}
         <Legend
-          verticalAlign="top"
+          verticalAlign="bottom"
           align="right"
           iconType="circle"
-          wrapperStyle={{ top: -10, right: 20 }}
+          wrapperStyle={{ top: 1, right: 20, }}
           formatter={(value) => <span style={{ color: '#264e58', fontWeight: 'bold' }}>{value}</span>}
         />
 
@@ -73,7 +85,7 @@ export function DashboardChart(props: DashboardChartProps) {
         />
       </BarChart>
     </ResponsiveContainer>
-  </div>
+  </Card>
   );
 }
 

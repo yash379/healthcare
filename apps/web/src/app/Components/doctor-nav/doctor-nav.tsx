@@ -165,7 +165,7 @@ export function DoctorNav(props: DoctorNavProps) {
             onClick={() => handleComponentChange('dashboard')}
           >
             <ListItemButton
-              sx={{ padding: '10px 20px', margin: '5px'}}
+              sx={{ padding: '10px 20px', margin: '5px' }}
               className={`${styles['button-tabs']} ${
                 selectedComponent === 'dashboard' && styles['active-tab']
               }`}
@@ -197,7 +197,7 @@ export function DoctorNav(props: DoctorNavProps) {
               </ListItemIcon>
               <ListItemText
                 className={styles['drawertab']}
-                primary="Appointment"
+                primary="Appointments"
               />
             </ListItemButton>
           </Link>
@@ -216,7 +216,7 @@ export function DoctorNav(props: DoctorNavProps) {
               <ListItemIcon sx={{ minWidth: '100px' }}>
                 <Groups2OutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon>
-              <ListItemText className={styles['drawertab']} primary="Patient" />
+              <ListItemText className={styles['drawertab']} primary="Patients" />
             </ListItemButton>
           </Link>
           {/* <Link style={{ textDecoration: "none" }} to="/reports" onClick={() => handleComponentChange('reports')}>
@@ -242,7 +242,10 @@ export function DoctorNav(props: DoctorNavProps) {
               <ListItemIcon sx={{ minWidth: '100px' }}>
                 <SettingsOutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon>
-              <ListItemText className={styles['drawertab']} primary="Setting" />
+              <ListItemText
+                className={styles['drawertab']}
+                primary="Settings"
+              />
             </ListItemButton>
           </Link>
           {/* <Link style={{ textDecoration: "none" }} to="/logout" onClick={() => handleComponentChange('logout')}>

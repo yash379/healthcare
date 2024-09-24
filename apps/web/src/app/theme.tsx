@@ -104,9 +104,8 @@ const componentThemeOptions: ThemeOptions = {
         root: {
           '& .MuiTableCell-head': {
             fontWeight: 'bold',
-            backgroundColor:'white',
+            backgroundColor:'#E8E8E8',
             borderBottom: '1px solid rgba(224, 224, 224, 1)',
-            height: '52px !important',
             textTransform: 'none',
             position:'sticky',
             
@@ -114,33 +113,6 @@ const componentThemeOptions: ThemeOptions = {
         },
       },
     },
-    // MuiTableRow: {
-    //   styleOverrides: {
-    //     root: {
-    //       '&:hover': {
-    //         backgroundColor: 'rgba(33, 150, 243, 0.08)',
-    //       },
-    //       '&:last-child td, &:last-child th': {
-    //         border: 0,
-    //       },
-    //       textTransform: 'none',
-    //       height: "52px !important",
-    //     },
-    //   },
-    // },
-    // MuiTableCell: {
-    //   styleOverrides: {
-    //     root: {
-    //       borderBottom: '1px solid rgba(224, 224, 224, 1)',
-    //       padding:5,
-    //     },
-    //     head: {
-    //       fontWeight: 600,
-    //       backgroundColor: '#F8F8F8',
-    //       color: '#000000',
-    //     },
-    //   },
-    // },
      MuiTableCell: {
       styleOverrides: {
         root: {
@@ -149,7 +121,6 @@ const componentThemeOptions: ThemeOptions = {
           overflow:'hidden',
           textOverflow:'ellipsis',
           maxWidth:"100px",
-          padding:'8px 16px'
         },
       },
     },
