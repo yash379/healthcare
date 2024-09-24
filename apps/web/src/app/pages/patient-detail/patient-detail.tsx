@@ -197,7 +197,7 @@ export function PatientDetail(props: PatientDetailProps) {
                 borderRadius: '20px',
                 boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                 cursor: 'pointer', // Optional: changes cursor to pointer on hover
-              
+
               }}
             >
               <Avatar sx={{ background: '#F4F7FE', width: 56, height: 56 }}>

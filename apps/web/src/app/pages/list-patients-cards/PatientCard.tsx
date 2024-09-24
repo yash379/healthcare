@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
-import { Avatar, Box, Button, IconButton, Typography } from '@mui/material';
+import React, { useContext, useState } from 'react';
+import { Avatar, Box, Button, IconButton, Menu, MenuItem, Typography, ListItemIcon } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ViewPatient } from '@healthcare/data-transfer-types';
 import HospitalContext from '../../contexts/hospital-context';
 import DoctorContext from '../../contexts/doctor-context';
@@ -37,6 +38,26 @@ const PatientCard: React.FC<PatientCardProps> = ({
   const params = useParams;
   const navigate = useNavigate();
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  // Handle opening the MoreVertIcon menu
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // Handle closing the MoreVertIcon menu
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Navigate to edit the patient
+  const handleEdit = () => {
+    navigate(
+      `/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${patient.id}/edit`
+    );
+    handleClose();
+  };
   return (
     <div
       style={{
@@ -49,7 +70,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
         alignItems: 'flex-start',
         backgroundColor: '#ffffff',
         margin: '10px',
-        height: '320px',
+        height: '315px',
         opacity: '0px',
         borderRadius: '20px',
       }}
@@ -99,30 +120,40 @@ const PatientCard: React.FC<PatientCardProps> = ({
 
         <div>
           <IconButton
+            aria-controls={open ? 'action-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={handleClick}
             size="small"
-            style={{
-              padding: '0',
-              color: 'rgba(50,50,50,1)',
-              width: '15px',
-              height: '15px',
-              marginRight: '15px',
-            }}
-            onClick={onEdit}
           >
-            <EditIcon fontSize="small" />
+            <MoreVertIcon />
           </IconButton>
-          <IconButton
-            size="small"
-            style={{
-              padding: '0',
-              color: 'rgba(203,1,1,1)',
-              width: '15px',
-              height: '15px',
+
+          <Menu
+            id="action-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              'aria-labelledby': 'action-menu-button',
             }}
-            onClick={onDelete}
           >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+            {/* Edit Option */}
+            <MenuItem onClick={handleEdit}>
+              <ListItemIcon>
+                <EditIcon fontSize="small" sx={{ color: 'primary.main' }} />
+              </ListItemIcon>
+              <Typography variant="inherit">Edit</Typography>
+            </MenuItem>
+
+            {/* Delete Option */}
+            <MenuItem onClick={onDelete}>
+              <ListItemIcon>
+                <DeleteIcon fontSize="small" sx={{ color: 'error.main' }} />
+              </ListItemIcon>
+              <Typography variant="inherit">Delete</Typography>
+            </MenuItem>
+          </Menu>
         </div>
       </div>
       <hr
@@ -195,6 +226,23 @@ const PatientCard: React.FC<PatientCardProps> = ({
           Blood Group:
           <strong style={{ color: 'rgba(6,75,79,1)' }}>
             {patient.bloodGroup}
+          </strong>
+        </Typography>
+        <Typography
+          style={{
+            fontSize: '16px',
+            marginBottom: '5px',
+          }}
+        >
+          Gender :
+          <strong
+            style={{
+              color: 'rgba(6,75,79,1)',
+              fontSize: '16px',
+              marginBottom: '5px',
+            }}
+          >
+            {patient.gender}
           </strong>
         </Typography>
       </Box>

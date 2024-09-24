@@ -29,6 +29,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
 import { Gender } from '@prisma/client';
 import { enqueueSnackbar } from 'notistack';
+import hospitalContext from '../../contexts/hospital-context';
 
 interface Patient {
   name: string;
@@ -276,9 +277,27 @@ export function ListPatientsCards({
     setEditingIndex(null);
   };
 
-  const handleDeleteClick = (index: number) => {
-    setDeleteIndex(index);
-    setIsDeleteModalOpen(true);
+  // const handleDeleteClick = (index: number) => {
+  //   setDeleteIndex(index);
+  //   setIsDeleteModalOpen(true);
+  // };
+  
+  const handleDeleteClick = async (Id: any) => {
+    try {
+      const { data } = await axios.delete(
+        `${apiUrl}/hospitals/${hospitalContext?.hospital?.id}/patients/${Id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(data);
+      console.log('Patient DeActive successfully');
+      enqueueSnackbar('Patient Deleted Successfully', { variant: 'success' });
+      getPatients();
+    } catch (error) {
+      console.log(error);
+      console.log('Something went wrong');
+    }
   };
 
   const handleDeleteConfirm = () => {
