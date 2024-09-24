@@ -1,10 +1,17 @@
 import styles from './dashboard-appointments.module.scss';
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Box, Card, CardContent, Typography, Avatar, Link, Divider } from "@mui/material";
-import { blue } from "@mui/material/colors";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Divider,
+} from '@mui/material';
+import { blue } from '@mui/material/colors';
 import axios from 'axios';
 import { environment } from '../../../environments/environment';
-import HospitalContext from "../../contexts/hospital-context";
+import HospitalContext from '../../contexts/hospital-context';
 import { UserDetailsDto } from '@healthcare/data-transfer-types';
 import DoctorContext from '../../contexts/doctor-context';
 import Timeline from '@mui/lab/Timeline';
@@ -13,7 +20,8 @@ import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
-
+import doctorContext from '../../contexts/doctor-context';
+import { Link } from 'react-router-dom';
 
 /* eslint-disable-next-line */
 export interface DashboardAppointmentsProps {}
@@ -24,11 +32,11 @@ export interface ViewAppointment {
   status: { id: number; code: string; name: string };
   patient: PatientDetailsDto;
   doctor: DoctorDetailsDto;
-  viewAppointment:boolean;
-  declineAppointment:boolean;
-  declinedAppointment:boolean;
-  acceptAppointment:boolean;
-  appointment:boolean;
+  viewAppointment: boolean;
+  declineAppointment: boolean;
+  declinedAppointment: boolean;
+  acceptAppointment: boolean;
+  appointment: boolean;
 }
 
 interface PatientDetailsDto {
@@ -38,16 +46,21 @@ interface DoctorDetailsDto {
   user: UserDetailsDto;
 }
 
-
 export function DashboardAppointments(props: DashboardAppointmentsProps) {
-
   const [appointmentsData, setAppointmentsData] = useState<ViewAppointment[]>(
     []
   );
-  const appointments=[];
+  const appointments = [];
   const apiUrl = environment.apiUrl;
-  const hospitalcontext=useContext(HospitalContext);
-  const doctorcontext=useContext(DoctorContext);
+  const hospitalcontext = useContext(HospitalContext);
+  const doctorcontext = useContext(DoctorContext);
+
+  const [selectedComponent, setSelectedComponent] = useState('dashboard');
+  const handleComponentChange = (componentName: any) => {
+    setSelectedComponent(componentName);
+  };
+
+  const doctorContext = useContext(DoctorContext);
 
   const getAllAppointments = useCallback(async () => {
     try {
@@ -64,23 +77,26 @@ export function DashboardAppointments(props: DashboardAppointmentsProps) {
     } catch (error) {
       console.error('Error fetching hospital data:', error);
     }
-  }, [apiUrl,hospitalcontext?.hospital?.id]);
-
+  }, [apiUrl, hospitalcontext?.hospital?.id]);
 
   useEffect(() => {
     getAllAppointments();
-  }, [apiUrl,  hospitalcontext?.hospital?.id,  getAllAppointments]);
+  }, [apiUrl, hospitalcontext?.hospital?.id, getAllAppointments]);
 
   const formatDate = (dateTime: string) => {
-      return new Date(dateTime).toLocaleTimeString();
+    return new Date(dateTime).toLocaleTimeString();
   };
 
   return (
-    <Box sx={{ padding: "0px", maxWidth: "400px",  backgroundColor: "#fff", alignSelf:'flex-start',
-     
-      //  borderRadius: "8px", 
-      //  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" 
-    }}>
+    <Box
+      sx={{
+        maxWidth: '100px',
+        backgroundColor: '#fff',
+        alignSelf: 'flex-start',
+        //  borderRadius: "8px",
+        //  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
+      }}
+    >
       {/* Header */}
       {/* <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Link href="#" underline="none" color="#064B4F" fontSize="0.875rem" 
@@ -93,9 +109,42 @@ export function DashboardAppointments(props: DashboardAppointmentsProps) {
       </Box> */}
 
       {/* Timeline Container */}
-      <Card  sx={{ marginInline:' -10px',position: 'relative',marginTop: '-40px'}}>
-      <Box sx={{ position: "relative" }}>
-        {/* {appointmentsData.map((appointment, index) => (
+      <Card
+        sx={{
+          position: 'absolute',
+          height: '430px',
+        }}
+      >
+         <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        mt: 2,
+        ml: 2,
+        mr: 2, // margin-right to give some space on the right side
+      }}
+    >
+      {/* Header */}
+      <Typography variant="h5" fontWeight="bold" color="#064B4F" marginBottom={1}>
+        Upcoming Appointments
+      </Typography>
+
+      {/* View All Link */}
+      <Link
+        style={{ textDecoration: 'none', color: '#064B4F', }}
+        to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/appointments`}
+        onClick={() => handleComponentChange('appointments')}
+      >
+        <Typography variant="body2" sx={{ textDecoration: 'underline', marginRight: '15px' }}>
+          View All
+        </Typography>
+      </Link>
+    </Box>
+
+
+        <Box sx={{ position: 'relative' }}>
+          {/* {appointmentsData.map((appointment, index) => (
           <Box key={index} sx={{ display: "flex", alignItems: "center", mb: 3,color:'#064B4F' }}>
             Time Section
             <Box sx={{ width: "25%", textAlign: "center" }}>
@@ -151,65 +200,90 @@ export function DashboardAppointments(props: DashboardAppointmentsProps) {
             </Box>
           </Box>
         ))} */}
- 
-      {/* <Typography variant="h4" sx={{textAlign:'center'}}>Appointment Schedule</Typography> */}
-      <Timeline sx={{position:'relative',padding:'6px 0px', marginRight:'14px'}}>
-      {appointmentsData ? appointmentsData.slice(-2).map((appointment, index) => (
-            <TimelineItem key={appointment.id} position="right">
-              <TimelineSeparator>
-                <TimelineDot sx={{ backgroundColor: '#064B4F' }} />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <TimelineContent>
-                <Typography color="textSecondary" sx={{ marginBottom: 1 }}>
-                   {formatDate(appointment.appointmentDate)}
-                </Typography>
-                <Card sx={{marginBottom: 2 , width:'20vw'}}>
-                  <CardContent sx={{paddingTop:'24px !important'}}>
-                    <Typography variant="h5" color="#000000">
-                       {appointment.patient.user.firstName}{appointment.patient.user.lastName}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#454C73', marginBottom: 2 }}>
-                      {appointment?.status.name}
-                    </Typography>
-                    <Divider sx={{ marginY: 1, backgroundColor: '#F4F6FA' }} />
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body2">
-                        {appointment.patient.user.email}
-                      </Typography> 
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body2">
-                        {appointment.patient.user.phoneNumber}
-                      </Typography> 
-                    </div>
-                  </CardContent>
-                </Card>
-              </TimelineContent>
-            </TimelineItem>
-          )
-        ) : (
-          // Render a placeholder item if no diagnoses exist
-          <TimelineItem position="right">
-            <TimelineSeparator>
-              <TimelineDot sx={{ backgroundColor: '#064B4F' }} /> {/* Optional: Different color for 'No Data' */}
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>
-              <Card sx={{ marginBottom: 2 }}>
-                <CardContent>
-                  <Typography variant="h6" color="textSecondary">
-                    No Data Available
-                  </Typography>
-                </CardContent>
-              </Card>
-            </TimelineContent>
-          </TimelineItem>
-        )}
-      </Timeline>
 
-      </Box>
-    </Card>
+          {/* <Typography variant="h4" sx={{textAlign:'center'}}>Appointment Schedule</Typography> */}
+          <Timeline
+            sx={{
+              position: 'relative',
+              padding: '6px 0px',
+              marginRight: '14px',
+              marginTop: '-3px'
+            }}
+          >
+            {appointmentsData ? (
+              appointmentsData.slice(-2).map((appointment, index) => (
+                <TimelineItem key={appointment.id} position="right">
+                  <TimelineSeparator>
+                    <TimelineDot sx={{ backgroundColor: '#064B4F' }} />
+                    <TimelineConnector />
+                  </TimelineSeparator>
+                  <TimelineContent>
+                    <Typography color="textSecondary" sx={{ marginBottom: 1 }}>
+                      {formatDate(appointment.appointmentDate)}
+                    </Typography>
+                    <Card sx={{ marginBottom: 1, width: '20vw' }}>
+                      <CardContent sx={{ padding: '10px' }}>
+                        <Typography variant="h5" color="#000000">
+                          {appointment.patient.user.firstName}
+                          {' '}
+                          {appointment.patient.user.lastName}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{ color: '#454C73', marginBottom: 1 }}
+                        >
+                          {appointment?.status.name}
+                        </Typography>
+                        <Divider
+                          sx={{ marginY: 1, backgroundColor: '#F4F6FA' }}
+                        />
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {appointment.patient.user.email}
+                          </Typography>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {appointment.patient.user.phoneNumber}
+                          </Typography>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TimelineContent>
+                </TimelineItem>
+              ))
+            ) : (
+              // Render a placeholder item if no diagnoses exist
+              <TimelineItem position="right">
+                <TimelineSeparator>
+                  <TimelineDot sx={{ backgroundColor: '#064B4F' }} />{' '}
+                  {/* Optional: Different color for 'No Data' */}
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent>
+                  <Card sx={{ marginBottom: 2 }}>
+                    <CardContent>
+                      <Typography variant="h6" color="textSecondary">
+                        No Data Available
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </TimelineContent>
+              </TimelineItem>
+            )}
+          </Timeline>
+        </Box>
+      </Card>
     </Box>
   );
 }

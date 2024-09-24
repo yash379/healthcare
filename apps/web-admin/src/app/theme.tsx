@@ -1,3 +1,4 @@
+import { Height, Padding } from '@mui/icons-material';
 import { createTheme, responsiveFontSizes, ThemeOptions } from '@mui/material';
 import { alignProperty } from '@mui/material/styles/cssUtils';
 
@@ -108,42 +109,17 @@ const componentThemeOptions: ThemeOptions = {
         },
       },
     },
-    // MuiTableRow: {
-    //   styleOverrides: {
-    //     root: {
-    //       '&:hover': {
-    //         backgroundColor: 'rgba(33, 150, 243, 0.08)',
-    //       },
-    //       '&:last-child td, &:last-child th': {
-    //         border: 0,
-    //       },
-    //       textTransform: 'none',
-    //       height: "52px !important",
-    //     },
-    //   },
-    // },
-    // MuiTableCell: {
-    //   styleOverrides: {
-    //     root: {
-    //       borderBottom: '1px solid rgba(224, 224, 224, 1)',
-    //       padding:5,
-    //     },
-    //     head: {
-    //       fontWeight: 600,
-    //       backgroundColor: '#F8F8F8',
-    //       color: '#000000',
-    //     },
-    //   },
-    // },
      MuiTableCell: {
       styleOverrides: {
         root: {
-          borderBottom: `1px solid #e5eaef`,
-          whiteSpace:'nowrap',
-          overflow:'hidden',
-          textOverflow:'ellipsis',
-          maxWidth:"100px",
-          padding:'8px 16px'
+          '&.MuiTableCell-root':{
+            borderBottom: `1px solid #e5eaef`,
+            whiteSpace:'nowrap',
+            overflow:'hidden',
+            textOverflow:'ellipsis',
+            maxWidth:"100px",
+            height: '52px !important',
+          }, 
         },
       },
     },
@@ -151,7 +127,7 @@ const componentThemeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           "&:last-child td": {
-            borderBottom: 0,
+            borderBottom: 0, 
           },
         },
       },
@@ -161,7 +137,7 @@ const componentThemeOptions: ThemeOptions = {
         root: {
           backgroundColor: '#FFFFFF',
           color: '#275FA1',
-          '& .Mui-selected': {
+          '&.Mui-selected': {
             backgroundColor: '#275FA1',
             color: '#FFFFFF',
           },
