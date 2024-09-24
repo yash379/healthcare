@@ -70,7 +70,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
         alignItems: 'flex-start',
         backgroundColor: '#ffffff',
         margin: '10px',
-        height: '315px',
+        height: '350px',
         opacity: '0px',
         borderRadius: '20px',
       }}
