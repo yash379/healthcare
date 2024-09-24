@@ -45,6 +45,7 @@ export interface ViewPatient {
   postalCode: string;
   chronicDisease?: ChronicDisease[]; // Array of ChronicDisease enums
   acuteDisease?: AcuteDisease[]; // Array of AcuteDisease enums
+  isActive: boolean;
   hospitalRoles: ViewHospitalRoleDto[];
   superRole?: SuperRoleName;
 }

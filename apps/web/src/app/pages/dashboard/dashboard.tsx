@@ -439,30 +439,30 @@ export function Dashboard(props: DashboardProps) {
                   boxShadow: 4,
                 }}
               />
-              <div
-              style={{marginLeft: 25}}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '15px',
-                }}
-              >
-                {/* Header for the patient list */}
-                <Typography
-                  variant="h3"
-                  component="h2"
-                  fontWeight="bold"
-                  color="#064B4F"
-                  marginTop={2}
+              <div style={{ marginLeft: 25 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '15px',
+                  }}
                 >
-                  Recently Visited Patients
-                </Typography>
+                  {/* Header for the patient list */}
+                  <Typography
+                    variant="h3"
+                    component="h2"
+                    fontWeight="bold"
+                    color="#064B4F"
+                    marginTop={2}
+                  >
+                    Recently Visited Patients
+                  </Typography>
 
-                {/* View More Button Link */}
-                <Link to={`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients`} style={{ textDecoration: 'none', marginTop: '14px', }}>
-                  <Button variant="contained" color="primary" style={{marginRight: 20 }}
+                  {/* View More Button Link */}
+                  <Link
+                    to={`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients`}
+                    style={{ textDecoration: 'none', marginTop: '14px' }}
                   >
                     <Button
                       variant="contained"
@@ -600,9 +600,6 @@ export function Dashboard(props: DashboardProps) {
                   </Typography>
                 </CardContent>
               </Card> */}
-
-
-
             </div>
             {/* <div className={styles['horizontal-line']} /> */}
 
@@ -761,7 +758,7 @@ export function Dashboard(props: DashboardProps) {
               ) : (Array.isArray(adminData) && adminData.length > 0 ? (
                 adminData.map((response: Manager, index: number) => (
                   <Grid container key={index} columnGap={3} className={styles['grid-container']}> */}
-            {/*
+              {/*
 
                       <IconButton onClick={(e) => {
                         e.stopPropagation()
@@ -809,12 +806,9 @@ export function Dashboard(props: DashboardProps) {
             </div>
           </div>
         </div>
-        </div>
       )}
     </div>
-
-   );
-
+  );
 }
 
 export default Dashboard;

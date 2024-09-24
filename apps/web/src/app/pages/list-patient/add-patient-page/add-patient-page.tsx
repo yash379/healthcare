@@ -728,7 +728,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
             type="submit"
             variant="contained"
             color="primary"
-            sx={{ mt: 2, width: '20%' }}
+            sx={{ mb: 2, width: '20%' }}
           >
             Submit
           </Button>

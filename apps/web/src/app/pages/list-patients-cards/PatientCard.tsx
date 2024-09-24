@@ -49,7 +49,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
         alignItems: 'flex-start',
         backgroundColor: '#ffffff',
         margin: '10px',
-        height: '270px',
+        height: '320px',
         opacity: '0px',
         borderRadius: '20px',
       }}
@@ -140,6 +140,23 @@ const PatientCard: React.FC<PatientCardProps> = ({
             marginBottom: '5px',
           }}
         >
+          Digital Health Code:
+          <strong
+            style={{
+              color: 'rgba(6,75,79,1)',
+              fontSize: '16px',
+              marginBottom: '5px',
+            }}
+          >
+            {patient.digitalHealthCode}
+          </strong>
+        </Typography>
+        <Typography
+          style={{
+            fontSize: '16px',
+            marginBottom: '5px',
+          }}
+        >
           Contact :
           <strong
             style={{
@@ -166,6 +183,15 @@ const PatientCard: React.FC<PatientCardProps> = ({
             marginBottom: '5px',
           }}
         >
+          Gender:
+          <strong style={{ color: 'rgba(6,75,79,1)' }}>{patient.gender}</strong>
+        </Typography>
+        <Typography
+          style={{
+            fontSize: '16px',
+            marginBottom: '5px',
+          }}
+        >
           Blood Group:
           <strong style={{ color: 'rgba(6,75,79,1)' }}>
             {patient.bloodGroup}
@@ -178,8 +204,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
           justifyContent: 'center',
           alignItems: 'center',
           height: '100%',
-          width: '100%'
-
+          width: '100%',
         }}
       >
         <Button
