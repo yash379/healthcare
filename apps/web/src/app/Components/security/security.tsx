@@ -48,11 +48,11 @@ export function Security(props: SecurityProps) {
         withCredentials: true,
       });
       setData(response.data);
-      console.log("Device Detail:", response.data);
-      console.log("Device Detail:", response.data.isPrimary);
+      console.log("User Detail:", response.data);
+      console.log("User Detail:", response.data.isPrimary);
       setLoading(false);
     } catch (error) {
-      console.log("Error in fetching device details", error);
+      console.log("Error in fetching User details", error);
       setLoading(false);
     }
 

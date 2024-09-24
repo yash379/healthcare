@@ -3,7 +3,7 @@ import styles from './app.module.scss';
 import axios from 'axios';
 import { UserContext } from '../app/contexts/user-contexts';
 import { User, ViewUser } from '@healthcare/data-transfer-types';
-import { useState, useEffect, Component } from 'react';
+import { useState, useEffect, Component, useRef } from 'react';
 import {
   Route,
   Routes,
@@ -21,7 +21,6 @@ import View from './pages/view/view';
 import AddHospitalPage from './pages/list-hospitals/add-hospital-page/add-hospital-page';
 import EditHospitalPage from './pages/list-hospitals/edit-hospital-page/edit-hospital-page';
 import ViewHospitalPage from './pages/list-hospitals/view-hospital-page/view-hospital-page';
-// import ListResidents from './pages/list-resident/list-resident';
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 import HospitalLayout from './Routes/hospital-layout/hospital-layout';
 import PageNotFound from './Components/page-not-found/page-not-found';
@@ -47,9 +46,11 @@ import HospitalListAppointment from './pages/hospital-list-appointment/hospital-
 import SaranshAi from './pages/saransh-ai/saransh-ai';
 import LatestPrescription from './pages/latest-prescription/latest-prescription';
 import PatientDetail from './pages/list-patient/patient-detail/patient-detail';
+import Callback from './Components/callback/callback';
 
 export function App() {
   const location = useLocation();
+  const snackbarShownRef = useRef(false);
   const [user, _setUser] = useState<User | null>(() => {
     const userFromStorage = localStorage.getItem('user');
     if (userFromStorage) {
@@ -79,14 +80,18 @@ export function App() {
 
   const onLogin = (user: User) => {
     localStorage.setItem('user', JSON.stringify(user));
-    if (!user?.superRole) {
+    if (!user?.superRole&& !snackbarShownRef.current) {
       enqueueSnackbar("User does not have a Super Role. Can't log in.", {
         variant: 'warning',
       });
+      snackbarShownRef.current = true;
       navigate('/login');
     } else {
       setUser(user);
+      if (!snackbarShownRef.current) {
       enqueueSnackbar('Login successfully!', { variant: 'success' });
+      }
+      snackbarShownRef.current = true;
       navigate('/dashboard');
     }
   };
@@ -210,6 +215,7 @@ export function App() {
             element={<UpdatePassword />}
           />
           <Route path="/logout" element={<LogOut onLogout={onLogout} />} />
+          <Route path="/callback" element={<Callback onLogin={onLogin} />} />
           <Route path="/login" element={<Login onLogin={onLogin} />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>

@@ -44,3 +44,4 @@ export class EditManagerStatus {
   @ApiProperty() isActive: boolean;
 }
 
+

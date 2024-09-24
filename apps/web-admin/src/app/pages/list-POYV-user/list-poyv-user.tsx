@@ -237,9 +237,9 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
     console.log(response.data);
 
     if (response.data) {
-      console.log('Building Name Updated Successfully');
+      console.log('User Updated Successfully');
       enqueueSnackbar("User updated successfully!", { variant: 'success' });
-      // navigate(`/buildinglist/${params.id}`);
+      // navigate(`/Userlist/${params.id}`);
       getAllPOYVUsers();
       setIsModalOpen(false)
     } else {
@@ -297,7 +297,7 @@ const breadcrumbs = [
   return (
     <Box className={styles['container']}>
         <Breadcrumbs paths={breadcrumbs} />
-        <Box className={styles['building_container']}>
+        <Box className={styles['main_container']}>
           <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}} >
            <Box sx={{mt:'20px',display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <h1 style={{marginTop:'10px'}}>Users</h1>
@@ -373,7 +373,7 @@ const breadcrumbs = [
                 </TableCell>
               ) : (Array.isArray(poyvUserData) && poyvUserData.length > 0 ? (
                   poyvUserData.map((poyvUser: POYVUser) => (
-                    <TableRow className={styles['table-row']} onClick={(e) => {handleRowClick(poyvUser.id, e); setViewPOYVUserOpen(true); }}>
+                    <TableRow  onClick={(e) => {handleRowClick(poyvUser.id, e); setViewPOYVUserOpen(true); }}>
                       <TableCell><Checkbox
                       checked={selectedItems.includes(poyvUser.id)}
                       onChange={() => handleCheckboxChange(poyvUser.id)}
@@ -383,7 +383,7 @@ const breadcrumbs = [
                       }}
                     />
                     </TableCell >
-                    <TableCell >
+                    <TableCell style={{ textDecoration: 'none' }}>
                        {/* <b> {poyvUser.firstName} {poyvUser.lastName}</b> 
                         <br />
                         {formatSuperRoleType(poyvUser.superRole)} */}
@@ -399,11 +399,9 @@ const breadcrumbs = [
                           )}
                         />
                         <Box>
-                          <Typography variant="body1">
-                            <b>
+                        <Typography variant="body1" sx={{cursor:'pointer'}}  className={styles['socname']}>
                               {poyvUser.firstName} {poyvUser.lastName}
-                            </b>
-                          </Typography>
+                              </Typography>
                           <Typography variant="body2" color="textSecondary">
                           {formatSuperRoleType(poyvUser.superRole)}
                           </Typography>
@@ -442,7 +440,7 @@ const breadcrumbs = [
                         </IconButton>
                         
                         {/* <DeleteIcon sx={{ ml: 1 }} classes="btn btn-danger action-button" color="error" className={styles['row-action-button']} onClick={(e) => {
-                          // handleDelete(building.id)
+                          // handleDelete(User.id)
                           e.stopPropagation();
                           openDeleteModal({ id: poyvUser.id, isActive: poyvUser.isActive })
                         }}>

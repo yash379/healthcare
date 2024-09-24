@@ -2,7 +2,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Login from './pages/login/login';
 import Layout from './Components/layout/layout';
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect,useRef } from 'react';
 import { Doctor, Hospital, Patient, User, ViewUser } from '@healthcare/data-transfer-types';
 import Dashboard from './pages/dashboard/dashboard';
 import PageNotFound from './Components/page-not-found/page-not-found';
@@ -51,6 +51,9 @@ import AdminLayout from './layouts/admin-layout/admin-layout';
 import ListAdminPatients from './pages/admin-portal/list-patient/list-patient';
 import AdminDashboard from './pages/admin-dashboard/admin-dashboard';
 import AppointmentLayout from './layouts/appointment-layout/appointment-layout';
+import PatientView from './pages/patient-dashboard/patient-view/patient-view';
+import ListPatientsCards from './pages/list-patients-cards/list-patients-cards';
+import Callback from './Components/callback/callback';
 
 export function App() {
 
@@ -72,6 +75,7 @@ export function App() {
   const [doctorId, setDoctorId]=useState(0);
   const [hospitalId, sethospitalId]=useState(0);
   const apiUrl = environment.apiUrl;
+  const snackbarShownRef = useRef(false);
 // const setUser = (user: User | null) => {
 //   if (user) {
 //     localStorage.setItem('user', JSON.stringify(user));
@@ -172,7 +176,9 @@ export function App() {
         ));
       }
       // navigate("/selectHospital");
+      if (!snackbarShownRef.current) {
       enqueueSnackbar("Login successfully!", { variant: 'success' });
+      }
     }
   }
 
@@ -311,7 +317,12 @@ export function App() {
               <Route path="/hospitals/:hospitalId/doctors/:doctorId" index element={<Dashboard />} />
               <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/add"  element={<AddPatientComponent />}/>
               <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/edit"  element={<EditPatientPage />}/>
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients" element={<ListPatients />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients-list" element={<ListPatients />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients" element={<ListPatientsCards patients={[]} onEditPatient={function (index: number, updatedPatient: Patient): void {
+                  throw new Error('Function not implemented.');
+                } } onDeletePatient={function (index: number): void {
+                  throw new Error('Function not implemented.');
+                } } />} />
               <Route element={<AppointmentLayout/>}>
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments" element={<ListAppointments/>} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail" element={<PatientDetail />} />
@@ -333,8 +344,10 @@ export function App() {
               {/* <Route path="/hospital/:hospitalId/doctors/:doctorId/patients/:patientId" element={<ListPatients />} /> */}
               {/* <Route path="/hospitals/:hospitalId/patients/:patientId/dashboard" element={<Dashboard />} /> */}
               <Route path="/hospitals/:hospitalId/patients/:patientId" index element={<PatientDashboard/>} />
-              <Route path="/hospitals/:hospitalId/patients/:patientId/patient-detail" element={<PatientDetail />} />
+              <Route element={<AppointmentLayout/>}>
+              <Route path="/hospitals/:hospitalId/patients/:patientId/patient-detail" element={<PatientView/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointments" element={<ListPatientAppointments/>} />
+              </Route>
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointmentsview" element={<AppointmentPage/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/medical-report" element={<MedicalReport/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/ai-summarizer" element={<Summarizer />} />
@@ -351,6 +364,7 @@ export function App() {
           {/* <Route path="/profile" element={<Profile />} /> */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/update-password/email/:emailId/token/:token" element={<UpdatePassword />} />
+          <Route path="/callback" element={<Callback onLogin={onLogin} />} />
           <Route path="/login" element={<Login onLogin={onLogin} />} />
           <Route path="/logout" element={<LogOut onLogout={onLogout} />} />
           <Route path="*" element={<PageNotFound />} />

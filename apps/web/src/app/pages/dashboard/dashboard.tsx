@@ -394,7 +394,7 @@ export function Dashboard(props: DashboardProps) {
         <div className={styles['main_container']}>
           <div className={styles['first_container']}>
             {/* <div className={styles['header']}>
-              <h1 style={{ marginLeft: '0px' }}>{hospital?.name}</h1>  
+              <h1 style={{ marginLeft: '0px' }}>{hospital?.name}</h1>
             </div> */}
             <div style={{ margin: '10px' }}>
               <Box
@@ -458,7 +458,7 @@ export function Dashboard(props: DashboardProps) {
                 >
                   Recently Visited Patients
                 </Typography>
-              
+
                 {/* View More Button Link */}
                 <Link to={`/hospitals/${hospitalContext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/patients`} style={{ textDecoration: 'none', marginTop: '14px', }}>
                   <Button variant="contained" color="primary" style={{marginRight: 20 }}
@@ -470,7 +470,7 @@ export function Dashboard(props: DashboardProps) {
                 <ListDashboardPatients />
               </div>
             </div>
-            
+
             <div className={styles['dashboard-card-container']}>
               {/* <Card
                 sx={{ minWidth: '40% ' }}
@@ -594,41 +594,9 @@ export function Dashboard(props: DashboardProps) {
                   </Typography>
                 </CardContent>
               </Card> */}
-              {/* <div className={styles['dashboard-cards']}>
-                {countArray.map(([item, value]) => (
-                  <Card className={styles['cards']}>
-                    <Link style={{ textDecoration: "none", cursor: item === "Residents" || item === "Vehicles" ? "default" : "pointer", }} to={`/hospital/${hospitalcontext?.hospital?.id}/${item === "Floors" ? "Buildings" : item.toLowerCase()}`} onClick={(e) => {
-                      if (item === "Residents" || item === "Vehicles") {
-                        e.preventDefault();
 
-                        console.log(`${item} clicked, no redirect.`);
-                      }
-                    }}>
-                      <CardContent className={styles['cardcontent']}>
-                        <Typography variant="h6" color="text.secondary" gutterBottom className={styles['fields']}>
-                          {item}
-                        </Typography>
-                        <Typography className={styles['count']}>
-                          {value}
-                          <br />
-                        </Typography>
-                      </CardContent>
-                    </Link>
-                  </Card>
-                ))}
-                 <Card className={styles['cards']}>
-                      <CardContent className={styles['cardcontent']}>
-                        <Typography variant="h6" color="text.secondary" gutterBottom className={styles['fields']}>
-                          Managers
-                        </Typography>
-                        <Typography className={styles['count']}>
-                          {adminlength}
-                          <br />
-                        </Typography>
-                      </CardContent>
-                  </Card>
-              </div> */}
-            </div>
+
+
             </div>
             {/* <div className={styles['horizontal-line']} /> */}
 
@@ -686,7 +654,7 @@ export function Dashboard(props: DashboardProps) {
               <Box style={{ margin: '9px', float: 'right', display: 'flex', justifyContent: 'flex-end' }}>
                 <RefreshIcon onClick={handleRefresh} style={{ cursor: 'pointer' }} />
               </Box> */}
-            {/* <AllVehicleLogs refreshLogs={refreshLogs} /> */}
+            {/* <AllDoctorLogs refreshLogs={refreshLogs} /> */}
             {/* </Box> */}
 
           {/* <div className={styles['vertical-line']} /> */}
@@ -712,10 +680,8 @@ export function Dashboard(props: DashboardProps) {
                     <Box  className={styles['modal-container']}>
                     <div>
                       <h2  className={styles['h2_tag']} >Select Import Type</h2>
-                        <Button color="info" variant="contained" onClick={() => handleImportType('flats')}>Import Flats</Button>
-                        <Button color="info" variant="contained" onClick={() => handleImportType('residents')}>Import Residents</Button>
-                        <Button color="info" variant="contained" onClick={() => handleImportType('vehicles')}>Import Vehicles</Button>
-                      
+                        <Button color="info" variant="contained" onClick={() => handleImportType('doctor')}>Import Doctor</Button>
+
                     </div>
                     </Box>
                   </Modal>
@@ -744,10 +710,8 @@ export function Dashboard(props: DashboardProps) {
                     <Box  className={styles['modal-container']}>
                     <div>
                       <h2 className={styles['h2_tag']}>Select Export Type</h2>
-                        <Button color="info" variant="contained" onClick={() => handleExportFlatType('flats')}>Export Flats</Button>
-                        <Button color="info" variant="contained" onClick={() => handleExportType('residents')}>Export Residents</Button>
-                        <Button color="info" variant="contained" onClick={() => handleExportType('vehicles')}>Export Vehicles</Button>
-              
+                        <Button color="info" variant="contained" onClick={() => handleExportDoctorType('doctors')}>Export Doctors</Button>
+
                     </div>
                     </Box>
             </Modal>       */}
@@ -791,13 +755,8 @@ export function Dashboard(props: DashboardProps) {
               ) : (Array.isArray(adminData) && adminData.length > 0 ? (
                 adminData.map((response: Manager, index: number) => (
                   <Grid container key={index} columnGap={3} className={styles['grid-container']}> */}
-            {/* <Grid item xs={12} md={1}><div className={styles['resident-primary']}>{response.isPrimary === true ? (<Chip label="primary" color="primary" variant="outlined" />) : (<></>)}</div></Grid> */}
-            {/* <Grid item xs={3} md={1.5} ><div className={styles['resident-name']}>{response.user.firstName}</div></Grid> */}
-            {/* <Grid item xs={2}> <div className={styles['resident-phone']}>{response.user.lastName}</div></Grid> */}
-            {/* <Grid item xs={2}> <div className={styles['resident-phone']}>{response.user.email}</div></Grid>
-                  <Grid item xs={2}> <div className={styles['resident-phone']}>+91-{response.user.phoneNumber}</div></Grid> */}
-            {/* <Grid item xs={1} className={styles['resident-actions']}>
-                      
+            {/*
+
                       <IconButton onClick={(e) => {
                         e.stopPropagation()
                         handleEditClick(response.user.id)

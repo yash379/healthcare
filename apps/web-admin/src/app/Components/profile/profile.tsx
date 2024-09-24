@@ -54,14 +54,7 @@ export function Profile(props: ProfileProps) {
 
             </Box>
           </Box>
-          {/* <Button
-      className={styles['add_btn']}
-      onClick={() => {
-        // Handle the click event for "Add New Flat" button
-      }}
-    >
-      Add
-</Button> */}
+       
           <Box>
             <TabPanel value="1"><EditProfile editUser={edit} userEdit={handleUserEditChange} /></TabPanel>
             <TabPanel className={styles['Password-card']}  value="2"><Security /></TabPanel>

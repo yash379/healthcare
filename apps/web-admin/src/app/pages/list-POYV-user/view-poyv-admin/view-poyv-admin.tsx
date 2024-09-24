@@ -19,7 +19,6 @@ export interface ViewPOYVUserComponentProps {
   open: boolean;
   onClose: () => void;
   initialData: POYVUser | null;
-  // initialData: ViewResident | null;
 }
 
 interface POYVUser {

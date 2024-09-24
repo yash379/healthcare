@@ -8,7 +8,6 @@ import { Link, useNavigate } from 'react-router-dom';
 // import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-// import fountlab from "../../../assets/fount-lab-logo.png";
 import UserImg from "../../../assets/User.png";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -93,9 +92,9 @@ export function ProfileMenuButton(props: ProfileMenuButtonProps) {
           '.MuiOutlinedInput-notchedOutline': { border: 'none' },
         }}
       >
-        <MenuItem disabled value="">
+        {/* <MenuItem disabled value="">
           <Typography variant="body1">{role}</Typography>
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem value="profile">
           <PersonIcon
             sx={{

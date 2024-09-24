@@ -15,9 +15,7 @@ import { Box } from '@mui/material';
 import { useContext, useState } from 'react';
 // import Home from '../../pages/home/home';
 import { Link, useParams } from 'react-router-dom';
-import DeviceHubIcon from '@mui/icons-material/DeviceHub';
 import barrier from '../../../assets/parking_1057371.png';
-import fountlab from "../../../assets/fount-lab-logo.png"
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { HospitalContext } from '../../contexts/hospital-context';
@@ -77,7 +75,7 @@ export function DrawerComponent(props: DrawerComponentProps) {
         className={styles['side-drawer']}
       >
 
-        {/* <Toolbar sx={{height:"59px"}}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></Toolbar> */}
+        {/* <Toolbar sx={{height:"59px"}}><img src={POYV} alt="POYV logo" width="150px" height="23px"/></Toolbar> */}
         <Toolbar sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}><img src={digimedic} alt="medi plus logo" width="165px" height="60px" /></Toolbar>
         {/* <Divider /> */}
 

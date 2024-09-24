@@ -15,6 +15,7 @@ import loginImg from '../../../assets/LoginImage.jpg';
 import logoImg from '../../../assets/DigiMedic_logo.svg';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import GoogleIcon from '../../../assets/google.png';
 
 /* eslint-disable-next-line */
 export interface LoginProps {
@@ -64,6 +65,33 @@ export function Login({ onLogin }: LoginProps) {
     
   }
   }
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${apiUrl}/auth/google`;
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const loginResponse = await axios.get(`${apiUrl}/profile`, {
+          withCredentials: true,
+        });
+        console.log('Login user', loginResponse.data);
+        const userData = (loginResponse.data);
+        navigate("/dashboard")
+        if (!userData?.superRole) {
+          // enqueueSnackbar("User does not have a Super Role. Can't log in.", { variant: 'warning' });
+          navigate("/login");
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 403) {
+          navigate('/login');
+        }
+      }
+    };
+  
+    fetchData();
+  }, [apiUrl, navigate]);
 
 
   return (
@@ -174,6 +202,14 @@ export function Login({ onLogin }: LoginProps) {
             sx={{ mt: 3, mb: 2 }}>
             Sign In
           </Button>
+          <Button
+              fullWidth
+              variant="outlined"
+              startIcon={<img src={GoogleIcon} alt="Google" style={{ width: '18px', height: '18px' }} />}
+              sx={{ mb: 2 }}
+              onClick={handleGoogleLogin}>
+              Sign in with Google
+            </Button>
         </Box>
       </Box>
     </Grid>

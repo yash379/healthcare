@@ -39,7 +39,7 @@ export interface EditAdminProps {
 interface Manager {
   id: number;
   isPrimary: boolean;
-  societyRole: {
+  hospitalRole: {
     name: string;
   },
   user: {

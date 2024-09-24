@@ -14,6 +14,7 @@ import { User, ViewUser } from '@healthcare/data-transfer-types';
 import digimedic from '../../../assets/DigiMedic_logo.svg';
 import loginImage from '../../../assets/loginImage.png';
 import UserContext from '../../contexts/user-context';
+import GoogleIcon from '../../../assets/google.png';
 
 export interface LoginProps {
   onLogin: (user: User) => void;
@@ -79,26 +80,9 @@ export function Login({ onLogin }: LoginProps) {
 
   console.log('usercontext in user:', usercontext?.user);
 
-  // const onSubmit = async (formData: { email: string; password: string }) => {
-  //   try {
-  //     const { email, password } = formData;
-  //     const res = await axios.post<User>(
-  //       `${apiUrl}/login`,
-  //       { email, password },
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-  //     const user = res.data;
-  //     onLogin(user);
-  //     enqueueSnackbar("Login successfully!", { variant: 'success' });
-  //     console.log('res', res);
-  //   } catch (error) {
-  //     console.log(error);
-  //     enqueueSnackbar('Invalid username or password ', { variant: 'error' });
-  //     console.log('Something went wrong');
-  //   }
-  // };
+  const handleGoogleLogin = () => {
+    window.location.href = `${apiUrl}/auth/google`;
+  };
 
   return (
     <Box className={styles['main_root']}>
@@ -118,7 +102,7 @@ export function Login({ onLogin }: LoginProps) {
           <h2 style={{ fontFamily: 'Inter, sans-serif' }}>Welcome Back!</h2>
           </div>
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* <div className={styles['logo']}><img src={fountlab} alt="font lab logo" width="150px" height="23px"/></div> */}
+            {/* <div className={styles['logo']}><img src={POYV} alt="font lab logo" width="150px" height="23px"/></div> */}
             {/* <div className={styles['login-header']}>Welcome Back <span className={styles['login-emoji']}>👋</span></div> */}
             <div className={styles['login-form']}>
               {/* <Typography>Username</Typography> */}
@@ -158,40 +142,43 @@ export function Login({ onLogin }: LoginProps) {
               </div>
             </div>
 
-          <div className={styles['submit_btn']}>
-            <Button
-              type="submit"
-              className="btn btn-primary"
-              sx={{
-                fontSize: '16px',
-                width: '100%',
-                backgroundColor: '#064B4F',
-                color: 'white',
-                marginTop: '10px',
-              }}
-            >
-              Log In
-            </Button>
-          </div>
-        </form>
-      </Box>
-      <Box className={styles['first_container']}>
-        {/* <Grid className={styles['image']}> */}
-        <img
-          src={loginImage}
-          alt="Background"
-          // style={{
-          //   width: '50vh', // Ensure the image does not exceed the container width
-          //   height: '65vh', // Allow the height to adjust proportionally
-          //   objectFit: 'cover', // Maintain aspect ratio and cover the entire container
-          //   borderTopLeftRadius: '40px',
-          //   borderBottomLeftRadius: '40px',
-          className={styles['loginImg']}
-          // }}
-        />
+            <div className={styles['submit_btn']}>
+              <Button
+                type="submit"
+                // variant="contained"
+                className="btn btn-primary"
+                sx={{width:"100%", height:"40px", backgroundColor:"#064B4FD1", color:"white"}}
+              >
+                Log In
+              </Button>
+              <Button
+              fullWidth
 
-        {/* </Grid> */}
-      </Box>
+              variant="outlined"
+              startIcon={<img src={GoogleIcon} alt="Google" style={{ width: '18px', height: '18px' }} />}
+              sx={{ mt: 1 }}
+              onClick={handleGoogleLogin}>
+              Sign in with Google
+            </Button>
+            </div>
+          </form>
+        </Box>
+        <Box className={styles['first_container']}>
+          {/* <Grid className={styles['image']}> */}
+            <img
+              src={loginImage}
+              alt="Background"
+              // style={{
+              //   width: '50vh', // Ensure the image does not exceed the container width
+              //   height: '65vh', // Allow the height to adjust proportionally
+              //   objectFit: 'cover', // Maintain aspect ratio and cover the entire container
+              //   borderTopLeftRadius: '40px',
+              //   borderBottomLeftRadius: '40px',
+              className={styles['loginImg']}
+              // }}
+            />
+          {/* </Grid> */}
+        </Box>
       {/* </Box> */}
     </Box>
   );

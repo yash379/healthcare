@@ -48,9 +48,7 @@ interface EditForm {
 
 const EditPatientComponent: React.FC<EditPatientProps> = ({ open, onClose, onUpdate, initialData }) => {
   const apiUrl = environment.apiUrl;
-  const [totalbuildingValue, setTotalbuildingValue] = useState<number | null>(null);
   const [totalValue, setTotalValue] = useState<number | null>(null);
-  const [totalFlatValue, setTotalFlatValue] = useState<number | null>(null);
   const theme = useTheme();
   const [page, setPage] = useState(0);
 
@@ -286,7 +284,6 @@ const EditPatientComponent: React.FC<EditPatientProps> = ({ open, onClose, onUpd
                           },
                         }}
                       >
-                        {/* <FormHelperText>{errors.flats?.type.message}</FormHelperText> */}
                         <MenuItem sx={{ justifyContent: "start" }} value="MALE" >MALE</MenuItem>
                         <MenuItem sx={{ justifyContent: "start" }} value="FEMALE">FEMALE</MenuItem>
                         <MenuItem sx={{ justifyContent: "start" }} value="OTHERS">OTHERS</MenuItem>

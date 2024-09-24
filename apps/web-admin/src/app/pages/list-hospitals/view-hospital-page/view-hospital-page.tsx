@@ -147,7 +147,7 @@ export function ViewHospitalPage(props: ViewHospitalPageProps) {
         }
       );
       // console.log(response.data[0].user)
-      const sortedResidents = response.data.sort((a: any, b: any) => {
+      const sortedAdmins = response.data.sort((a: any, b: any) => {
         if (a.isPrimary && !b.isPrimary) {
           return -1;
         } else if (!a.isPrimary && b.isPrimary) {
@@ -156,7 +156,7 @@ export function ViewHospitalPage(props: ViewHospitalPageProps) {
           return 0;
         }
       });
-      setAdminData(sortedResidents);
+      setAdminData(sortedAdmins);
       console.log('Admin Data', response.data);
       setLoadingAllAdmin(false);
     } catch (error) {
@@ -318,7 +318,7 @@ export function ViewHospitalPage(props: ViewHospitalPageProps) {
         <Box sx={{ display: 'flex' }}>
           {loadingHospitalInfo ? (
             <Paper
-              elevation={3}
+              // elevation={3}
               sx={{ padding: '20px', marginBottom: '20px' }}
               style={{
                 display: 'flex',
@@ -326,6 +326,7 @@ export function ViewHospitalPage(props: ViewHospitalPageProps) {
                 justifyContent: 'center',
                 alignItems: 'center',
                 height: '30vh',
+                width: '100%',
               }}
             >
               <CircularProgress />

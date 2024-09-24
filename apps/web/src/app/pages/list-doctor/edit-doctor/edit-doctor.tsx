@@ -60,11 +60,7 @@ const EditDoctorComponent: React.FC<EditDoctorProps> = ({
   initialData,
 }) => {
   const apiUrl = environment.apiUrl;
-  const [totalbuildingValue, setTotalbuildingValue] = useState<number | null>(
-    null
-  );
   const [totalValue, setTotalValue] = useState<number | null>(null);
-  const [totalFlatValue, setTotalFlatValue] = useState<number | null>(null);
   const theme = useTheme();
   const [page, setPage] = useState(0);
 
@@ -293,7 +289,6 @@ const EditDoctorComponent: React.FC<EditDoctorProps> = ({
                             },
                           }}
                         >
-                          {/* <FormHelperText>{errors.flats?.type.message}</FormHelperText> */}
                           <MenuItem
                             sx={{ justifyContent: 'start' }}
                             value="MALE"

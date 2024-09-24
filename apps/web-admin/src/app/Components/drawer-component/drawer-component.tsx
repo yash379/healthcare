@@ -14,7 +14,6 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { Box } from '@mui/material';
 import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import DeviceHubIcon from '@mui/icons-material/DeviceHub';
 import BikeScooterIcon from '@mui/icons-material/BikeScooter';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import mediPlus from '../../../assets/DigiMedic_logo.svg';

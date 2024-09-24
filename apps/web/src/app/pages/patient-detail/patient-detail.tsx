@@ -92,11 +92,11 @@ export function PatientDetail(props: PatientDetailProps) {
         withCredentials: true,
       });
       setPatient(response.data);
-      console.log("PAtient Detail:", response.data);
-      console.log("PAtient Detail:", response.data.isPrimary);
+      console.log("Patient Detail:", response.data);
+      console.log("Patient Detail:", response.data.isPrimary);
       setLoadingUserInfo(false);
     } catch (error) {
-      console.log("Error in fetching device details", error);
+      console.log("Error in fetching Patient details", error);
       setLoadingUserInfo(false);
     }
 

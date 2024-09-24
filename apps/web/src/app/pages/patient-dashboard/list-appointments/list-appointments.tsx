@@ -39,7 +39,7 @@ import { enqueueSnackbar } from 'notistack';
 import axios from 'axios';
 import { environment } from '../../../../environments/environment';
 import { useParams } from 'react-router-dom';
-// import EditAppointment from '../hospital-edit-appointment/hospital-edit-appointment';
+// import EditAppointment from '../../hospital-edit-appointment/hospital-edit-appointment';
 import AddAppointment from './hospital-add-appointment/hospital-add-appointment';
 // import DeleteAppointment from '../hospital-delete-appointment/hospital-delete-appointment';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
@@ -50,6 +50,7 @@ import Loading from '../../../Components/loading/loading';
 import { ViewAllUser } from '@healthcare/data-transfer-types';
 import HospitalContext from '../../../contexts/hospital-context';
 import DoctorContext from '../../../contexts/doctor-context';
+import AppointmentContext from '../../../contexts/appointment-context';
 import PatientContext from '../../../contexts/patient-context';
 
 
@@ -145,18 +146,22 @@ export function ListAppointments(props: ListAppointmentsProps) {
   );
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
   const [appointmentCount, setAppointmentCount] = useState({ total:0,pending: 0, inProgress: 0, cancelled: 0, confirmed: 0 });
-  const [viewAppointment, setViewAppointment]=useState(false);
-  const [declineAppointment, setDeclineAppointment]=useState(true);
-  const [declinedAppointment, setDeclinedAppointment]=useState(false);
-  const [acceptAppointment, setAcceptAppointment]=useState(true);
+  // const [viewAppointment, setViewAppointment]=useState(false);
+  // const [declineAppointment, setDeclineAppointment]=useState(true);
+  // const [declinedAppointment, setDeclinedAppointment]=useState(false);
+  // const [acceptAppointment, setAcceptAppointment]=useState(true);
   const [appointment, setAppointment]=useState<ViewAppointment>();
   const [appointmentStatuses, setAppointmentStatus]=useState<Status[] | null>(null);
+
 
   const [status, setStatus]=useState<Status | null>(null);
 
   const hospitalcontext=useContext(HospitalContext);
   const doctorcontext=useContext(DoctorContext);
+  const appointmentcontext=useContext(AppointmentContext);
   const patientcontext=useContext(PatientContext);
+
+  console.log("appointmentcontext:", appointmentcontext);
 
   const navigate=useNavigate()
 
@@ -187,28 +192,32 @@ export function ListAppointments(props: ListAppointmentsProps) {
     }
   };
 
+  console.log("hospital context:", hospitalcontext);
+
   const getAllAppointments = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${apiUrl}/hospitals/${params.hospitalId}/appointments`,
+        `${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/patients/${patientcontext?.patient?.id}/appointments`,
         {
           withCredentials: true,
-          params: {
-            pageSize: rowsPerPage,
-            pageOffset: page -1,
-            // appointmentDate: searchQueryName,
-          },
+          // params: {
+          //   pageSize: rowsPerPage,
+          //   pageOffset: page -1,
+          //   appointmentDate: searchQueryName,
+          //   sortBy:'desc',
+          //   sortOrder:'desc'
+          // },
         }
       );
       // console.log(response.data[0].user)
       const { content, total } = response.data;
-      setAppointmentsData(response.data.content);
+      // setAppointmentsData(response.data.content);
       const updatedAppointmentsData = content.map((appointment: ViewAppointment) => ({
         ...appointment,
-        acceptAppointment: true,
-        declineAppointment: true,
-        viewAppointment: false,
+        acceptAppointment: false,
+        declineAppointment: false,
+        viewAppointment: true,
         declinedAppointment: false,
       }));
       setAppointmentsData(updatedAppointmentsData);
@@ -249,7 +258,6 @@ export function ListAppointments(props: ListAppointmentsProps) {
     if (selectedAppointment) {
       setViewData(selectedAppointment);
       setSelectedAppointmentId(appointmentId);
-      
       setIsDeleteModalOpen(true);
     }
   };
@@ -340,7 +348,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
         `${apiUrl}/hospitals/${params.hospitalId}/doctors/${formData?.doctor?.id}/patients/${patientcontext?.patient?.id}/appointments`,
         {
           appointmentDate: formData.appointmentDate,
-          statusId: formData.statusId,
+          statusId:formData.statusId ,
         },
         {
           withCredentials: true,
@@ -367,16 +375,16 @@ export function ListAppointments(props: ListAppointmentsProps) {
 
 
   // Edit Appointment
-  const handleUpdate = async (formData: Form) => {
+  const handleUpdate = async (appoinmentId: number,appoinmentDoctor: DoctorDetailsDto,appointmentPatient: PatientDetailsDto,statusId: number, appointmentDate: string) => {
     try {
       await setIsAddModalOpen(false);
       setIsLoadingModalOpen(true);
 
       const { data: responseData } = await axios.put(
-        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${formData?.doctor?.id}/patients/${formData?.patient?.id}/appointments/${selectedAppointmentId}`,
+        `${apiUrl}/hospitals/${params.hospitalId}/doctors/${appoinmentDoctor.user.id}/patients/${appointmentPatient.user.id}/appointments/${appoinmentId}`,
         {
-          appointmentDate: formData.appointmentDate,
-          statusId: formData.statusId,
+          appointmentDate:appointmentDate,
+          statusId: statusId,
         },
         {
           withCredentials: true,
@@ -436,90 +444,139 @@ export function ListAppointments(props: ListAppointmentsProps) {
   //     appointment.viewAppointment=false;
   //     appointment.declinedAppointment=false;
   //   });
-  // },[]);
+  // },[appointmentsData]);
 
+  // useEffect(()=>{
+  //   appointmentsData.map((appointment)=>{
+  //     appointment.declineAppointment=false;
+  //     appointment.declinedAppointment=true;
+  //     appointment.acceptAppointment=false;
+  //   })
+  // },[appointment?.declineAppointment])
+  console.log("appointmentsData:",appointmentsData);
 
-  // const handleAccept = (appointment: ViewAppointment, value:boolean) => {
-  //   console.log(`Appointment ${id} accepted.`);
-  //   // setStartAppointment(true);
-   
-  //   appointment.acceptAppointment=false;
-  //   appointment.viewAppointment=true;
-  //   appointment.declineAppointment=false;
-  //   appointment.declinedAppointment=false;
-
-  //   const acceptstatus = appointmentStatuses?.find((item)=>item.name==='CONFIRMED')
-  //   if (acceptstatus) {
-  //     setStatus(acceptstatus);
-  //   }
-
-  //   setAppointment(appointment);
-  // };
-
-  const handleAccept =  useCallback((appointment: ViewAppointment, value: boolean) => {
+  const handleAccept =  useCallback((appointment: ViewAppointment, value:boolean) => {
+    console.log(`Appointment ${id} accepted.`);
+    // handleUpdate(appointment.id,appointment.doctor,appointment.patient,3,appointment.appointmentDate);
+    // setStartAppointment(true);
+    // setAcceptAppointment(false);
+    // setViewAppointment(true);
+    // setDeclineAppointment(value)
+    // setDeclinedAppointment(value);
+    // appointment.acceptAppointment=false;
+    // appointment.viewAppointment=true;
+    // appointment.declineAppointment=false;
+    // appointment.declinedAppointment=false;
+    // const acceptstatus = appointmentStatuses?.find((item)=>item.name==='CONFIRMED')
+    // if (acceptstatus) {
+    //   setStatus(acceptstatus);
+    // }
     const updatedAppointmentsData = appointmentsData.map((appt) => {
       if (appt.id === appointment.id) {
-        return { ...appt, acceptAppointment: false, viewAppointment: true, declineAppointment: false, declinedAppointment: false };
+        return { ...appt, acceptAppointment: false, viewAppointment: true, declineAppointment: false, declinedAppointment: false,status:{id:2,code:"2",name:"CONFIRMED"} };
       }
       return appt;
     });
     setAppointmentsData(updatedAppointmentsData);
-  }, [appointmentsData]);
-  
-  const handleDecline =  useCallback((appointment: ViewAppointment, id: number) => {
-    const updatedAppointmentsData = appointmentsData.map((appt) => {
-      if (appt.id === appointment.id) {
-        return { ...appt, acceptAppointment: false, viewAppointment: false, declineAppointment: false, declinedAppointment: true };
-      }
-      return appt;
-    });
-    setAppointmentsData(updatedAppointmentsData);
-    // ... rest of your logic ...
-  },[appointmentsData,appointment]);
-
-
+    // setAppointment(appointment);
+  }, [appointmentsData,appointment]);
 
   const handleView=useCallback((appointment: ViewAppointment, value:boolean)=>{
-    // navigate(`/hospitals/${params.hospitalId}/doctors/${params.doctorId}/appointments/${appointment.id}`);
-    navigate(`/hospitals/${params.hospitalId}/patients/${params.patientId}/appointmentsview`)
-    
-    const updatedAppointment = { ...appointment, acceptAppointment: true, viewAppointment: false, declineAppointment: true, declinedAppointment: false };
+    const updatedAppointment = { ...appointment, acceptAppointment: true, viewAppointment: false, declineAppointment: true, declinedAppointment: false,status:{id:3,code:"3",name:"INPROGRESS"}  };
     setAppointment(updatedAppointment);
+
+    appointmentcontext?.setAppointment(updatedAppointment);
+
+    // handleUpdate(updatedAppointment.id,updatedAppointment.doctor,updatedAppointment.patient,3,updatedAppointment.appointmentDate);
+   
+    navigate(`/hospitals/${params.hospitalId}/patients/${patientcontext?.patient?.id}/patient-detail`)
+
     const acceptstatus = appointmentStatuses?.find((item)=>item.name==='INPROGRESS')
     if (acceptstatus) {
       setStatus(acceptstatus);
     }
     // setStatus()
     // setAppointment(appointment);
-  },[appointmentsData]);
+  },[appointmentsData,appointment]);
 
   console.log("appt:", appointment);
 
+  const handleDecline =  useCallback((appointment:ViewAppointment,id: number) => {
+    // handleUpdate(appointment.id,appointment.doctor,appointment.patient,5,appointment.appointmentDate);
+    // // setDeclineAppointment(false);
+    // setViewAppointment(false);
+    // setAcceptAppointment(false);
+    // setDeclinedAppointment(true);
+    // appointment.declinedAppointment=true;
+    // appointment.acceptAppointment=false;
+    // appointment.viewAppointment=false;
+    // appointment.declineAppointment=false;
 
-  useEffect(()=>{
-    const changeAppointmentStatus = async () => {
-      try {
-        const response = await axios.put(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patient/${appointment?.patient?.user?.id}/appointments/${appointment?.id}`,{
-          ...appointment,
-          status:status
-        },{
-          withCredentials:true
-        });
-        console.log("status changed:", response.data);
-        setAppointments(response.data);
-      } catch (error) {
-        console.error('Error fetching appointments:', error);
+    const updatedAppointmentsData = appointmentsData.map((appt) => {
+      if (appt.id === appointment.id) {
+        return { ...appt, acceptAppointment: false, viewAppointment: false, declineAppointment: false, declinedAppointment: true, status:{id:5,code:"5",name:"DECLINED"} };
       }
+      return appt;
+    });
+    setAppointmentsData(updatedAppointmentsData);
+    
+    console.log(`Appointment ${id} declined.`);
+    const acceptstatus = appointmentStatuses?.find((item)=>item.name==='CANCELLED')
+    // if (acceptstatus) {
+    //   setStatus(acceptstatus);
+    // }
+    // setStatus();
+  },[appointmentsData,appointment]);
+
+  // useEffect(()=>{
+  //   const changeAppointmentStatus = async () => {
+  //     try {
+  //       const response = await axios.put(`${apiUrl}/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patient/${appointment?.patient?.user?.id}/appointments/${appointment?.id}`,{
+  //         ...appointment,
+  //         status:status
+  //       },{
+  //         withCredentials:true
+  //       });
+  //       console.log("status changed:", response.data);
+  //       setAppointments(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching appointments:', error);
+  //     }
+  //   };
+  
+  //   changeAppointmentStatus();
+
+  // },[status,appointment]);
+
+  // const formatDate = (isoDateString: string) => {
+  //   const date=new Date(isoDateString).toLocaleDateString();
+  //   const time=new Date(isoDateString).toLocaleTimeString();
+  //   const response=date+''+time;
+  //   return response; // Convert ISO string to local date format
+  // };
+
+  const formatDate= (dateTime: string) => {
+    const date = new Date(dateTime);
+    
+    // Convert to Indian Standard Time (IST)
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long', // Can be 'short', 'numeric', or '2-digit'
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true, // 12-hour format, can set to false for 24-hour
+      timeZone: 'Asia/Kolkata' // IST time zone
     };
   
-    changeAppointmentStatus();
-
-  },[status]);
+    return date.toLocaleString('en-IN', options);
+  };
 
   
   return (
-    <Box sx={{ height: '100vh'}}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={5} gap="44vw">
+    <Box sx={{ height: '80vh'}}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={5}>
         <Typography variant="h1">
           Appointment
         </Typography>
@@ -539,13 +596,13 @@ export function ListAppointments(props: ListAppointmentsProps) {
           />
 
           {/* Button with ArrowDropDown icon */}
-          <Button
+          {/* <Button
             variant="outlined"
             endIcon={<ArrowDropDown />}
             sx={{ color: '#064B4F80', borderColor: '#064B4F80' }}
           >
             Dec 14 - Dec 17
-          </Button>
+          </Button> */}
 
           {/* Combined Calendar and Tune icons */}
           <Box
@@ -557,7 +614,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
             }}
           >
             {/* Calendar Icon on the left side */}
-            <Box
+            {/* <Box
               sx={{
                 backgroundColor: 'white',
                 padding: '10px',
@@ -565,12 +622,12 @@ export function ListAppointments(props: ListAppointmentsProps) {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              // onClick={()=>navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/scheduler`)}
+              onClick={()=>navigate(`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/scheduler`)}
             >
               <CalendarToday sx={{ color: 'black' }}/>
-            </Box>
+            </Box> */}
             {/* Tune Icon on the right side */}
-            <Box
+            {/* <Box
               sx={{
                 backgroundColor: '#064B4F',
                 padding: '10px',
@@ -580,17 +637,17 @@ export function ListAppointments(props: ListAppointmentsProps) {
               }}
             >
               <Tune sx={{ color: 'white' }} />
-            </Box>
+            </Box> */}
           </Box>
         </Box>
       </Box>
 
       <Grid container spacing={4}>
         {appointmentsData.map((appointment, index) => (
-          <Grid item xs={12} sm={6} md={6} key={appointment.id} flexWrap="wrap">
+          <Grid item xs={12} sm={6} md={6} key={index} flexWrap="wrap">
             <Card
               sx={{
-                width: '400px',
+                width: '39vw',
                 height: '175px',
                 borderRadius: '10px',
                 display: 'flex',
@@ -603,22 +660,25 @@ export function ListAppointments(props: ListAppointmentsProps) {
             >
               <CardHeader
                 avatar={<Avatar src="https://randomuser.me/api/portraits/men/75.jpg" />}
-                title={`${appointment.patient.user.firstName} ${appointment.patient.user.lastName} ${appointment.status.name}`}
-                subheader={appointment.appointmentDate}
+                title={`${appointment.doctor.user.firstName} ${appointment.doctor.user.lastName}`}
+                subheader={formatDate(appointment.appointmentDate)}
               />
-              <CardContent sx={{ paddingLeft: '68px', position: 'relative', bottom: '24px',paddingBottom:'0px' }}>
+              <div style={{display:'flex', flexDirection:'row-reverse', position:'relative',top:'-51px', right:'20px'}}>
+              <StatusChip label={'Success'} children={appointment.status.name} width={'max-content'} />
+              </div>
+              <CardContent sx={{ paddingLeft: '68px', position: 'relative', bottom: '45px',paddingBottom:'0px' }}>
                 <Typography variant="body2" color="textSecondary">
                   {/* {appointment.description} */}
-                  {appointment.patient.user.email}
+                  {appointment.doctor.user.email}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   {/* {appointment.description} */}
-                  {appointment.patient.user.phoneNumber}
+                  {appointment.doctor.user.phoneNumber}
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {/* {appointment.description} */}
+                {/* <Typography variant="body2" color="textSecondary">
+                  {appointment.description}
                   {appointment.doctor.user.firstName} {appointment.doctor.user.lastName}
-                </Typography>
+                </Typography> */}
               </CardContent>
               <CardActions
                 sx={{
@@ -626,20 +686,21 @@ export function ListAppointments(props: ListAppointmentsProps) {
                   // paddingRight: '36px',
                   // paddingLeft: '70px',
                   position: 'relative',
-                  bottom: '18px',
+                  bottom: '36px',
                   paddingTop: '0px',
                   paddingInline:'10px'
                 }}
                 key={index}
               >
-                {appointment.declineAppointment &&
+                {/* {appointment.declineAppointment && 
                  <Button
                   variant="outlined"
                   sx={{ borderRadius: '12px', color: '#82A4A6', borderColor: '#82A4A6' }}
                   onClick={() => handleDecline(appointment,index)}
+                  disabled={appointment.status.name==='COMPLETED'}
                 >
                   Decline Appointment
-                </Button> }
+                </Button> } */}
                 {appointment.viewAppointment &&  <Button
                   variant="contained"
                   sx={{
@@ -652,9 +713,9 @@ export function ListAppointments(props: ListAppointmentsProps) {
                   }}
                   onClick={() => handleView(appointment,false)}
                 >
-                  Start Appointment
+                  View Appointment
                 </Button> }
-                {appointment.acceptAppointment &&
+                {/* {appointment.acceptAppointment &&
                 <Button
                   variant="contained"
                   sx={{
@@ -662,21 +723,21 @@ export function ListAppointments(props: ListAppointmentsProps) {
                     color: 'white',
                     position: 'relative',
                     float: 'right',
-                    borderRadius: '12px',
-                    
+                    borderRadius: '12px', 
                   }}
+                  disabled={appointment.status.name==='COMPLETED'}
                   onClick={() => handleAccept(appointment,false)}
                 >
                   Accept Appointment
-                </Button>  }
-                {appointment.declinedAppointment &&  <Button
+                </Button>  } */}
+                {/* {appointment.declinedAppointment &&  <Button
                   variant="outlined"
                   sx={{ borderRadius: '12px', color: '#82A4A6', borderColor: '#82A4A6',width:'-webkit-fill-available' }}
                   onClick={() => handleDecline(appointment,index)}
                   disabled
                 >
                   Appointment Declined
-                </Button>}
+                </Button>} */}
               </CardActions>
             </Card>
           </Grid>

@@ -63,11 +63,11 @@ export function EditProfile({editUser, userEdit }: EditProfileProps) {
         withCredentials: true,
       });
       setData(response.data);
-      console.log("Device Detail:", response.data);
-      console.log("Device Detail:", response.data.isPrimary);
+      console.log("User Detail:", response.data);
+      console.log("User Detail:", response.data.isPrimary);
       setLoadingUserInfo(false);
     } catch (error) {
-      console.log("Error in fetching device details", error);
+      console.log("Error in fetching User details", error);
       setLoadingUserInfo(false);
     }
 
