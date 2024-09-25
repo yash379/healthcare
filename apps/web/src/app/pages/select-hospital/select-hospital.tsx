@@ -200,7 +200,7 @@ export function SelectHospital(props: SelectHospitalProps) {
         {/* <h1>Welcome to SelectHospital!</h1> */}
         <div className={styles['form-container']}>
           <Box className={styles['hospital-header']}>
-             <h1 >Select Hospital</h1>
+             <h1>Select Hospital</h1>
           </Box>
           <div className={styles['hospital-list']}>
             <List sx={{ bgcolor: 'background.paper' }}>

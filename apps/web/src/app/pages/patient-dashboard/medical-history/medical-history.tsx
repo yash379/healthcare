@@ -88,47 +88,37 @@ const dummyMedicalHistory = {
   ],
 };
 
+interface Medicine {
+  medicineName: string;
+  dose: string;
+  instructions: string;
+  frequency: string;
+  duration: string;
+}
 
-interface Diagnosis {
-  id: number;
-  details: string;
+interface DiagnosisDetails {
   height: number;
   weight: number;
   pulse: number;
-  spo2: number;
-  temperature: null | number;
+  details: string;
   chiefComplaints: string[];
-  doctorId: number;
-  patientId: number;
-  diagnosisDate: string;
-  createdAt: string;
-  updatedAt: string | null;
-  medicalHistoryId: number;
+  spo2:number;
+  temperature:number;
 }
 
 interface Prescription {
-  id: number;
-  medicineName: string;
-  instructions: string;
-  dose: string;
-  when: string;
-  frequency: string;
-  duration: string;
-  doctorId: number;
-  patientId: number;
-  prescriptionDate: string;
-  createdAt: string;
-  updatedAt: string | null;
-  medicalHistoryId: number;
+  medicines: Medicine[];
+}
+
+interface GroupedData {
+  diagnosisDate: string;
+  diagnosisDetails: DiagnosisDetails;
+  relatedPrescriptions: Prescription[];
 }
 
 interface MedicalHistoryResponse {
-  id: number;
-  patientId: number;
-  createdAt: string;
-  updatedAt: string | null;
-  diagnoses: Diagnosis[];
-  prescriptions: Prescription[];
+  patientName: string;
+  groupedData: GroupedData[];
 }
 
 
@@ -200,7 +190,7 @@ export function MedicalHistory({patientId}: MedicalHistoryProps) {
         </Grid> */}
       </Grid>
 
-      
+      {medicalHistory?.groupedData.slice(0,1).map((item)=>(
         <Card  sx={{ marginBottom: 4 }}>
           <CardContent>
             <Box
@@ -211,7 +201,7 @@ export function MedicalHistory({patientId}: MedicalHistoryProps) {
                 justifyContent="space-between"
                 alignItems="center"
               >
-                <Typography variant="h6">Date: {medicalHistory?.createdAt}</Typography>
+                <Typography variant="h6">Date: {item.diagnosisDate}</Typography>
                 <div>
                   <IconButton
                     sx={{ marginRight: 2 }}
@@ -226,16 +216,16 @@ export function MedicalHistory({patientId}: MedicalHistoryProps) {
             <Divider sx={{ marginBottom: 2 }} />
 
             <Typography variant="subtitle1">Vitals:</Typography>
-            {medicalHistory?.diagnoses.map((item)=>(
+            {/* {meditem.((item)=>( */}
                <Typography variant="body1" sx={{ marginBottom: 2 }}>
-               Height: {item.height} cm, Weight: {item.weight}{' '}
-               kg, Pulse: {item.pulse} bpm, SPO2: {item.spo2} %,
-               BMI: {}, Temperature: {item.temperature}{' '}
+               Height: {item.diagnosisDetails.height} cm, Weight: {item.diagnosisDetails.weight}{' '}
+               kg, Pulse: {item.diagnosisDetails.pulse} bpm, SPO2: {item.diagnosisDetails.spo2} %,
+               BMI: {}, Temperature: {item.diagnosisDetails.temperature}{' '}
                °C
              </Typography>
-            ))
+            {/* )) */}
 
-            }
+            {/* } */}
             
 
             <Divider sx={{ marginY: 2 }} />
@@ -251,13 +241,14 @@ export function MedicalHistory({patientId}: MedicalHistoryProps) {
             >
               Diagnosis:
             </Typography>
-            {medicalHistory?.diagnoses.map((item)=>
+            {/* {medicalHistory?.diagnoses.map((item)=> */}
             (<Typography
               variant="body1"
               sx={{ display: 'inline', marginLeft: '4px' }}
             >
-              {item.details}
-            </Typography>))}
+              {item.diagnosisDetails.details}
+            </Typography>)
+            {/* )} */}
 
             <Divider sx={{ marginY: 2 }} />
 
@@ -274,20 +265,23 @@ export function MedicalHistory({patientId}: MedicalHistoryProps) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {medicalHistory?.prescriptions.map((prescription, idx) => (
-                    <TableRow key={idx}>
-                      <TableCell>{prescription.medicineName}</TableCell>
-                      <TableCell>{prescription.dose}</TableCell>
-                      <TableCell>{prescription.instructions}</TableCell>
-                      <TableCell>{prescription.frequency}</TableCell>
-                      <TableCell>{prescription.duration}</TableCell>
+                  {item?.relatedPrescriptions.map((prescription, idx) => 
+                    (prescription.medicines.map((medicine)=>(
+                      <TableRow key={idx}>
+                      <TableCell>{medicine.medicineName}</TableCell>
+                      <TableCell>{medicine.dose}</TableCell>
+                      <TableCell>{medicine.instructions}</TableCell>
+                      <TableCell>{medicine.frequency}</TableCell>
+                      <TableCell>{medicine.duration}</TableCell>
                     </TableRow>
-                  ))}
+                    )))
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
           </CardContent>
         </Card>
+        ))}
     </div>
   );
 }

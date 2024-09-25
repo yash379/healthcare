@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Box, Card, Typography, Button, Divider } from '@mui/material';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { environment } from '../../../../environments/environment';
+import PatientContext from '../../../contexts/patient-context';
 
 interface Patient {
   id: number;
@@ -18,15 +19,36 @@ interface Patient {
   age: number;
 }
 
+interface Diagnosis {
+  id: number;
+  details: string;
+  height: number;
+  weight: number;
+  pulse: number;
+  spo2: number;
+  temperature: number;
+  chiefComplaints: string[];
+  doctorId: number;
+  patientId: number;
+  diagnosisDate: string;
+  createdAt: string;
+  updatedAt: string;
+  medicalHistoryId: number;
+}
+
 export interface PatientDetailCarddProps {
   patientId:number | undefined;
 }
 
+
+
 function PatientDetailCardd({patientId}:PatientDetailCarddProps) {
 
   const [patient, setPatient]=useState<Patient | null>(null);
+  const [detail,setDetail]=useState<Diagnosis | null>(null);
   const apiUrl = environment.apiUrl;
   const params=useParams();
+  const patientcontext=useContext(PatientContext);
 
   // const patients: Patient[] = [
   //   {
@@ -44,6 +66,18 @@ function PatientDetailCardd({patientId}:PatientDetailCarddProps) {
   //   },
   // ];
 
+  const getDiagnosis=async()=>{
+    const response = await axios.get(`${apiUrl}/diagnoses/${patientId}`,
+      {
+        withCredentials:true
+      }
+    );
+
+    setDetail(response.data);
+
+    console.log("Patient diagnosis:", response.data);
+  }
+
   const getPatient=async()=>{
     const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/patients/${patientId}`,
       {
@@ -58,7 +92,8 @@ function PatientDetailCardd({patientId}:PatientDetailCarddProps) {
 
   useEffect(()=>{
     getPatient();
-  },[params.patientId,params.hospitalId, params.doctorId]);
+    getDiagnosis();
+  },[params.patientId,params.hospitalId, params.doctorId,patientcontext?.patient?.id ]);
 
   return (
     <div style={{width:'50%'}}>
@@ -95,8 +130,8 @@ function PatientDetailCardd({patientId}:PatientDetailCarddProps) {
                 // ,padding:"0px 0px 0px 10px",
                 }}>
                   {[
-                    { label: 'Weight', value: `${patient?.weight} kg` },
-                    { label: 'Height', value: `${patient?.height} cm` },
+                    { label: 'Weight', value: `${detail?.weight} kg` },
+                    { label: 'Height', value: `${detail?.height} cm` },
                     { label: 'Gender', value: patient?.gender },
                     { label: 'Age', value: `${patient?.age} years` },
                   ].map((item, index) => (

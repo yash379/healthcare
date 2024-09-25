@@ -54,6 +54,7 @@ import AppointmentLayout from './layouts/appointment-layout/appointment-layout';
 import PatientView from './pages/patient-dashboard/patient-view/patient-view';
 import ListPatientsCards from './pages/list-patients-cards/list-patients-cards';
 import Callback from './Components/callback/callback';
+import PatientDetailCardd from './pages/patient-dashboard/Dashboard/PatientDetailCardd';
 import SaranshAi from './pages/saransh-ai/saransh-ai';
 import { PatientDetailFromPatient } from './pages/patient-detail-from-patient/patient-detail-from-patient';
 
@@ -113,7 +114,7 @@ export function App() {
       navigate("/selectHospital");
     }else{
       navigate('/login');
-    } 
+    }
   },[]);
 
   useEffect(()=>{
@@ -134,7 +135,7 @@ export function App() {
       patientcontext?.setPatient(JSON.parse(patientfromlocalstorage ?? ''));
       setPatient(JSON.parse(patientfromlocalstorage ?? ''));
       navigate(`/hospitals/${hospital?.id}/patients/${patient?.id}`);
-    } 
+    }
   },[patientcontext?.patient, hospital?.id]);
 
   // console.log("doctorcontet:",doctorcontext);
@@ -142,7 +143,7 @@ export function App() {
   const onLogin = (user: User) => {
     localStorage.setItem('user', JSON.stringify(user));
 
-    
+
     // setUser(user);
     // console.log("onLogin", user);
     // // navigate("/dashboard");
@@ -166,7 +167,7 @@ export function App() {
         navigate("/selectHospital");
       }else{
         (user?.hospitalRoles?.map((item)=>
-        {  
+        {
           if(item.hospitalRole==='DOCTOR'){
             navigate(`/hospitals/${item.hospitalId}/doctors/${user.doctorId}`);
           }else if(item.hospitalRole==='PATIENT'){
@@ -216,8 +217,8 @@ export function App() {
 
    }},[user]);
 
-   
-   
+
+
 
 
   //  useEffect(()=>{
@@ -266,11 +267,11 @@ export function App() {
     <HospitalContext.Provider value={{hospital,setHospital}}>
       <SnackbarProvider maxSnack={3}>
         <Routes>
-       
+
           {/* <Route element={<HospitalLayout />}> */}
-   
+
             <Route path="/" element={<Layout user={user}  />}>
-         
+
               {/* admin portal */}
                <Route path="/hospitals/:hospitalId/admin/:adminId" element={<AdminLayout/>}>
                  <Route path="/hospitals/:hospitalId/admin/:adminId" index element={<AdminDashboard />} />
@@ -280,7 +281,7 @@ export function App() {
                  <Route path="/hospitals/:hospitalId/admin/:adminId/profile" element={<Profile />} />
                </Route>
 
-             
+
               <Route path="/hospital/:hospitalId/patients/add" element={<AddPatientPage />} />
               {/* <Route path="/profile" element={<Profile />} />  */}
                {/* <Route element={<PatientLayout />}> */}
@@ -290,13 +291,13 @@ export function App() {
               <Route path="/hospitals" element={<ListHospitals />} />
               <Route path="/hospitals/:hospitalId/edit" element={<EditHospitalPage />}/>
               <Route  path="/hospitals/:hospitalId/details"  element={<ViewHospitalPage />}/>
-              
+
               <Route  path="/hospitals/:hospitalId/appointments"  element={<HospitalListAppointment />}/> */}
               {/* <Route
                 path="/hospitals/:hospitalId/doctors/:doctorId/patients"
                 element={<ListPatients />}
               /> */}
-          
+
               {/* <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/add"  element={<AddPatientPage />}/> */}
               {/* <Route  path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/edit"  element={<EditPatientPage />}/> */}
               {/* <Route  path="/hospitals/:hospitalId/edit"  element={<EditHospitalPage />}/>
@@ -305,15 +306,15 @@ export function App() {
               <Route  path="/hospitals/:hospitalId/patients"  element={<ListPatients />}/> */}
               {/* <Route  path="/hospitals/:hospitalId/patients/add"  element={<AddPatientPage />}/> */}
               {/* <Route  path="/hospitals/:hospitalId/patients/edit/:patientId"  element={<EditPatientPage />}/> */}
-              
-            <Route path="/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline patient={null} />} /> 
+
+            <Route path="/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline patient={null} />} />
               {/* <Route path="/patient-detail" element={<PatientDetail />} /> */}
               {/* <Route path="/doctor-appointment-calender" element={<DoctorAppointmentCalender />} /> */}
-              
-             
 
-            
-              
+
+
+
+
            {/* doc portal */}
             <Route path="/hospitals/:hospitalId/doctors/:doctorId" element={<DoctorLayout/>}>
               <Route path="/hospitals/:hospitalId/doctors/:doctorId" index element={<Dashboard />} />
@@ -355,15 +356,16 @@ export function App() {
               </Route>
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointmentsview" element={<AppointmentPage/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/medical-report" element={<MedicalReport/>} />
+              <Route path="/hospitals/:hospitalId/patients/:patientId/patient-detail-card" element={<PatientDetailCardd patientId={undefined}/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/ai-summarizer" element={<Summarizer />} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/settings" element={<SettingPage />} />
               {/* <Route path="/profile" element={<Profile />} />  */}
               <Route path="/hospitals/:hospitalId/patients/:patientId/profile" element={<Profile />} />
             </Route>
 
-              
+
             {/* </Route> */}
-            
+
           {/* </Route> */}
           <Route path="/selectHospital" element={<SelectHospital />} />
           {/* <Route path="/profile" element={<Profile />} /> */}
@@ -375,7 +377,7 @@ export function App() {
           <Route path="*" element={<PageNotFound />} />
 
           </Route>
-          
+
         </Routes>
       </SnackbarProvider>
       </HospitalContext.Provider>
