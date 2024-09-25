@@ -34,7 +34,7 @@ const ActiveChip: React.FC<CustomActiveChipProps> = ({ label, children, ...props
     Error: '#FFDFDF',
     Warning: '#fec90f',
     Info: '#0bb2fb',
-    Success: '#D0F4FF',
+    Success: '#ebfaf2',
   };
 
   return (

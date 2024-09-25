@@ -130,7 +130,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
 
         <div>
           {patient.isActive ? (
-            <ActiveChip label="Primary">Active</ActiveChip>
+            <ActiveChip label="Success">Active</ActiveChip>
           ) : (
             <ActiveChip label="Error">Inactive</ActiveChip>
           )}
