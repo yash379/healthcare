@@ -1,5 +1,14 @@
 import React, { useContext, useState } from 'react';
-import { Avatar, Box, Button, IconButton, Menu, MenuItem, Typography, ListItemIcon } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  ListItemIcon,
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -70,7 +79,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
         alignItems: 'flex-start',
         backgroundColor: '#ffffff',
         margin: '10px',
-        height: '350px',
+        height: '375px',
         opacity: '0px',
         borderRadius: '20px',
       }}
@@ -160,91 +169,84 @@ const PatientCard: React.FC<PatientCardProps> = ({
         style={{ width: '100%', border: '1px solid #e0e0e0', margin: '8px 0' }}
       />{' '}
       {/* Line separator */}
-      <Box
-        sx={{
-          marginTop: '10px',
-        }}
-      >
-        <Typography
-          style={{
-            fontSize: '16px',
-            marginBottom: '5px',
+      <Box sx={{ width: '100%', marginTop: '10px', }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: '160px 1fr', // First column is for labels, second for data
+            columnGap: '60px',
+            rowGap: '2px',
+            alignItems: 'center',
+            height: '200px'
           }}
         >
-          Digital Health Code:
-          <strong
-            style={{
-              color: 'rgba(6,75,79,1)',
+          {/* Digital Health Code */}
+          <Typography sx={{ fontSize: '16px' }}>
+            Digital Health Code:
+          </Typography>
+          <Typography
+            sx={{
               fontSize: '16px',
-              marginBottom: '5px',
+              color: 'rgba(6,75,79,1)',
+              textAlign: 'left',
+              fontWeight: 'bold'
             }}
           >
             {patient.digitalHealthCode}
-          </strong>
-        </Typography>
-        <Typography
-          style={{
-            fontSize: '16px',
-            marginBottom: '5px',
-          }}
-        >
-          Contact :
-          <strong
-            style={{
-              color: 'rgba(6,75,79,1)',
+          </Typography>
+
+          {/* Contact */}
+          <Typography sx={{ fontSize: '16px' }}>Contact:</Typography>
+          <Typography
+            sx={{
               fontSize: '16px',
-              marginBottom: '5px',
+              color: 'rgba(6,75,79,1)',
+              textAlign: 'left',
+              fontWeight: 'bold'
             }}
           >
             {patient.phoneNumber}
-          </strong>
-        </Typography>
-        <Typography
-          style={{
-            fontSize: '16px',
-            marginBottom: '5px',
-          }}
-        >
-          Age:
-          <strong style={{ color: 'rgba(6,75,79,1)' }}>{patient.age}</strong>
-        </Typography>
-        <Typography
-          style={{
-            fontSize: '16px',
-            marginBottom: '5px',
-          }}
-        >
-          Gender:
-          <strong style={{ color: 'rgba(6,75,79,1)' }}>{patient.gender}</strong>
-        </Typography>
-        <Typography
-          style={{
-            fontSize: '16px',
-            marginBottom: '5px',
-          }}
-        >
-          Blood Group:
-          <strong style={{ color: 'rgba(6,75,79,1)' }}>
-            {patient.bloodGroup}
-          </strong>
-        </Typography>
-        <Typography
-          style={{
-            fontSize: '16px',
-            marginBottom: '5px',
-          }}
-        >
-          Gender :
-          <strong
-            style={{
-              color: 'rgba(6,75,79,1)',
+          </Typography>
+
+          {/* Age */}
+          <Typography sx={{ fontSize: '16px' }}>Age:</Typography>
+          <Typography
+            sx={{
               fontSize: '16px',
-              marginBottom: '5px',
+              color: 'rgba(6,75,79,1)',
+              textAlign: 'left',
+              fontWeight: 'bold'
+            }}
+          >
+            {patient.age}
+          </Typography>
+
+          {/* Blood Group */}
+          <Typography sx={{ fontSize: '16px' }}>Blood Group:</Typography>
+          <Typography
+            sx={{
+              fontSize: '16px',
+              color: 'rgba(6,75,79,1)',
+              textAlign: 'left',
+              fontWeight: 'bold'
+            }}
+          >
+            {patient.bloodGroup}
+          </Typography>
+
+          {/* Gender */}
+          <Typography sx={{ fontSize: '16px' }}>Gender:</Typography>
+          <Typography
+            sx={{
+              fontSize: '16px',
+              color: 'rgba(6,75,79,1)',
+              textAlign: 'left',
+              fontWeight: 'bold'
             }}
           >
             {patient.gender}
-          </strong>
-        </Typography>
+          </Typography>
+        </Box>
       </Box>
       <div
         style={{

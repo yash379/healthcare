@@ -647,7 +647,10 @@ export function ListAppointments(props: ListAppointmentsProps) {
           <Box
             sx={{
               display: 'flex',
+              backgroundColor: '#064B4F',
+              borderRadius: '10px',
               overflow: 'hidden',
+              height: '40px'
             }}
           >
              {/* Tune Icon on the left side */}
@@ -661,6 +664,7 @@ export function ListAppointments(props: ListAppointmentsProps) {
                 padding: '10px',
                 display: 'flex',
                 justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
               <Tune sx={{ color: 'white', pointer:'cursor' }} />

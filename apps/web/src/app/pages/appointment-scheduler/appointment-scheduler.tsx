@@ -287,6 +287,7 @@ export function AppointmentScheduler(props: AppointmentSchedulerProps) {
               backgroundColor: '#064B4F',
               borderRadius: '10px',
               overflow: 'hidden',
+              height: '40px'
             }}
           >
             <Box

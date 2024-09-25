@@ -299,7 +299,6 @@ export function PatientDetail(props: PatientDetailProps) {
                 height: 80,
                 fontSize: 24,
                 bgcolor: '#064B4F',
-                marginTop: '10px',
               }}
             >
               {`${patient?.firstName[0] || ''}${patient?.lastName?.[0] || ''}`}
@@ -311,7 +310,7 @@ export function PatientDetail(props: PatientDetailProps) {
             <Typography variant="h3" sx={{ marginTop: 3 }}>
               {appointmentcontext?.appointment?.status.name}
             </Typography>
-            <Typography variant="h3" sx={{ marginTop: 3 }}>
+            <Typography variant="h3" sx={{ marginTop: 3, marginBottom: 4 }}>
               {patient?.firstName} {patient?.lastName}
             </Typography>
             {/* Appointment and Completed status */}
@@ -371,41 +370,39 @@ export function PatientDetail(props: PatientDetailProps) {
               </Button> */}
             <Box
               sx={{
-                display: 'flex',
-                flexDirection: 'column', // Main axis is vertical
-                width: '100%',
-                padding: '5px 16px', // Horizontal padding for content
-                marginTop: '25px',
+                display: 'grid',
+                gridTemplateColumns: '150px 1fr', // Define two columns (label and value)
+                columnGap: '10px', // Gap between label and value
+                rowGap: '15px', // Gap between rows
+                width: '100%', // Full width
+                padding: '5px 16px', // Padding around the content
               }}
             >
               {[
                 { label: 'Number', value: `${patient?.phoneNumber}` },
                 { label: 'Email', value: `${patient?.email}` },
-                // { label: 'Blood Pressure', value: patient.bloodpressure },
                 {
                   label: 'Date of Birth',
                   value: patient?.dob && formatDate(patient?.dob),
                 },
                 { label: 'Address', value: address },
               ].map((item) => (
-                <Box
-                  key={item.label}
-                  sx={{
-                    display: 'flex', // Layout is horizontal
-                    justifyContent: 'space-between', // Space between label and value
-                    alignItems: 'center', // Center align items vertically
-                    marginBottom: 1, // Space between rows
-                  }}
-                >
+                <React.Fragment key={item.label}>
+                  {/* Label on the left */}
                   <Typography variant="h5" sx={{ color: '#000000' }}>
                     {item.label}:
                   </Typography>
-                  <Typography variant="h5" sx={{ color: '#064B4F' }}>
+                  {/* Value on the right */}
+                  <Typography
+                    variant="h5"
+                    sx={{ color: '#064B4F', textAlign: 'left' }} // Left aligned
+                  >
                     {item.value}
                   </Typography>
-                </Box>
+                </React.Fragment>
               ))}
             </Box>
+
             <AddAppointment
               open={isAddModalOpen}
               onClose={() => setIsAddModalOpen(false)}
@@ -416,7 +413,6 @@ export function PatientDetail(props: PatientDetailProps) {
               sx={{
                 marginTop: 2,
                 fontFamily: 'Poppins, sans-serif', // Use Poppins font
-                // backgroundColor: '#064B4F',
                 padding: '25px 80px', // Increase padding for larger button
                 fontSize: '12px', // Increase font size
                 width: '200px', // Optional: adjust width if needed
