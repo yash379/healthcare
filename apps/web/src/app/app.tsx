@@ -54,6 +54,7 @@ import AppointmentLayout from './layouts/appointment-layout/appointment-layout';
 import PatientView from './pages/patient-dashboard/patient-view/patient-view';
 import ListPatientsCards from './pages/list-patients-cards/list-patients-cards';
 import Callback from './Components/callback/callback';
+import SaranshAi from './pages/saransh-ai/saransh-ai';
 
 export function App() {
 
@@ -331,8 +332,10 @@ export function App() {
               {/* <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments/:id" element={<ViewAppointmentDetail />} /> */}
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline patient={null} />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/medical-history" element={<MedicalHistory />} />
+              {/* <Route path="/hospitals/:hospitalId/doctors/:doctorId/cancer-detection" element={<BrainTumor />} /> */}
+              {/* <Route path="/hospitals/:hospitalId/doctors/:doctorId/ai-summarizer" element={<Summarizer />} /> */}
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/cancer-detection" element={<BrainTumor />} />
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/ai-summarizer" element={<Summarizer />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/saransh-ai" element={<SaranshAi />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/settings" element={<SettingPage />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/scheduler" element={<AppointmentScheduler/>}/>
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/profile" element={<Profile />} />

@@ -30,6 +30,7 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import DoctorContext from '../../contexts/doctor-context';
 import PatientContext from '../../contexts/patient-context';
 import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined';
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 
 /* eslint-disable-next-line */
 export interface DoctorNavProps {}
@@ -228,6 +229,46 @@ export function DoctorNav(props: DoctorNavProps) {
           </Link> */}
           <Link
             style={{ textDecoration: 'none' }}
+            to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/cancer-detection`}
+            onClick={() => handleComponentChange('Prediction Model')}
+          >
+            <ListItemButton
+              sx={{ padding: '10px 20px', margin: '5px' }}
+              className={`${styles['button-tabs']} ${
+                selectedComponent === 'Prediction Model' && styles['active-tab']
+              }`}
+            >
+              <ListItemIcon sx={{ minWidth: '100px' }}>
+                <AssignmentOutlinedIcon className={styles['drawer-icons']} />
+              </ListItemIcon>
+              <ListItemText
+                className={styles['drawertab']}
+                primary="Forecasting"
+              />
+            </ListItemButton>
+          </Link>
+          <Link
+            style={{ textDecoration: 'none' }}
+            to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/saransh-ai`}
+            onClick={() => handleComponentChange('AI Summarizer')}
+          >
+            <ListItemButton
+              sx={{ padding: '10px 20px', margin: '5px' }}
+              className={`${styles['button-tabs']} ${
+                selectedComponent === 'AI Summarizer' && styles['active-tab']
+              }`}
+            >
+              <ListItemIcon sx={{ minWidth: '100px' }}>
+                <AutoAwesomeOutlinedIcon className={styles['drawer-icons']} />
+              </ListItemIcon>
+              <ListItemText
+                className={styles['drawertab']}
+                primary="AI Summarizer"
+              />
+            </ListItemButton>
+          </Link>
+          <Link
+            style={{ textDecoration: 'none' }}
             to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorContext?.doctor?.id}/settings`}
             onClick={() => handleComponentChange('settings')}
           >
@@ -246,6 +287,7 @@ export function DoctorNav(props: DoctorNavProps) {
               />
             </ListItemButton>
           </Link>
+          
           {/* <Link style={{ textDecoration: "none" }} to="/logout" onClick={() => handleComponentChange('logout')}>
             <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'logout' && styles['active-tab']
               }`}>
