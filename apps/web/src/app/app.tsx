@@ -55,6 +55,7 @@ import PatientView from './pages/patient-dashboard/patient-view/patient-view';
 import ListPatientsCards from './pages/list-patients-cards/list-patients-cards';
 import Callback from './Components/callback/callback';
 import SaranshAi from './pages/saransh-ai/saransh-ai';
+import { PatientDetailFromPatient } from './pages/patient-detail-from-patient/patient-detail-from-patient';
 
 export function App() {
 
@@ -329,7 +330,7 @@ export function App() {
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail" element={<PatientDetail />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/diagnosis" element={<DiagnosisPage />} />
               </Route>
-              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail-from-patient" element={<Patient />} />
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail-from-patient" element={<PatientDetailFromPatient />} />
               {/* <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments/:id" element={<ViewAppointmentDetail />} /> */}
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline patient={null} />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/medical-history" element={<MedicalHistory />} />

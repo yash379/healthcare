@@ -268,7 +268,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
           }}
           onClick={() =>
             navigate(
-              `/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${patient.id}/patient-detail`
+              `/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${patient.id}/patient-detail-from-patient`
             )
           }
         >

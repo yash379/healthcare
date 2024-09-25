@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Box, Card, Typography, Avatar, Button, Divider } from '@mui/material';
-import styles from './patient-detail.module.scss';
+import styles from './patient-detail-from-patient.module.scss';
 import ViewMedicalHistoryTimeline from '../../view-medical-history-timeline/view-medical-history-timeline';
 import axios from 'axios';
 import { environment } from '../../../environments/environment';
@@ -14,7 +14,8 @@ import {
 } from '@healthcare/data-transfer-types';
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined';
-import AddAppointment from './hospital-add-appointment/hospital-add-appointment';
+// import AddAppointment from '../hospital-add-appointment/hospital-add-appointment';
+import AddAppointment from '../hospital-list-appointment/hospital-add-appointment/hospital-add-appointment';
 import { enqueueSnackbar } from 'notistack';
 import StatusChip from '../../Components/chip/statusChip';
 import AppointmentContext from '../../contexts/appointment-context';
@@ -27,7 +28,7 @@ interface Form {
   statusId: number;
 }
 
-export interface PatientDetailProps {}
+export interface PatientDetailFromPatientProps {}
 
 // interface Patient {
 //   id: number;
@@ -41,7 +42,7 @@ export interface PatientDetailProps {}
 //   disease: string;
 // }
 
-export function PatientDetailFromPatient(props: PatientDetailProps) {
+export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
   const apiUrl = environment.apiUrl;
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loadingUserInfo, setLoadingUserInfo] = useState(true);
@@ -362,7 +363,7 @@ export function PatientDetailFromPatient(props: PatientDetailProps) {
             }}
           >
             <Typography variant="h2" sx={{ color: '#064B4F', marginBottom: 2 }}>
-              Patient Information
+              Patient Information-from patient cards
             </Typography>
 
             {/* Patient Details */}
@@ -416,4 +417,4 @@ export function PatientDetailFromPatient(props: PatientDetailProps) {
   );
 }
 
-export default PatientDetail;
+export default PatientDetailFromPatient;
