@@ -197,10 +197,8 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
               alignItems: 'center',
               width: '100%',
               marginLeft: '2%',
-              height: 'auto', // Changed to auto to fit content
+              height: 'auto',
               borderRadius: '10px',
-              // border:'none',
-              // boxShadow:'none'
             }}
           >
             <div style={{ position: 'relative', right: '-44%' }}>
@@ -342,7 +340,6 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
                 textWrap: 'nowrap',
               }}
               onClick={handleStartDiagnosisClick}
-              // Optionally add hover effect or other button styles
             >
               Start Diagnosis
             </Button>
@@ -363,7 +360,7 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
             }}
           >
             <Typography variant="h2" sx={{ color: '#064B4F', marginBottom: 2 }}>
-              Patient Information-from patient cards
+              Patient Information
             </Typography>
 
             {/* Patient Details */}

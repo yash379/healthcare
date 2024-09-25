@@ -173,7 +173,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: '160px 1fr', // First column is for labels, second for data
+            gridTemplateColumns: '160px 1fr', 
             columnGap: '60px',
             rowGap: '2px',
             alignItems: 'center',
