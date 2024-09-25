@@ -328,6 +328,7 @@ export function App() {
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail" element={<PatientDetail />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/diagnosis" element={<DiagnosisPage />} />
               </Route>
+              <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/patient-detail-from-patient" element={<Patient />} />
               {/* <Route path="/hospitals/:hospitalId/doctors/:doctorId/appointments/:id" element={<ViewAppointmentDetail />} /> */}
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/view-medical-history-timeline" element={<ViewMedicalHistoryTimeline patient={null} />} />
               <Route path="/hospitals/:hospitalId/doctors/:doctorId/patients/:patientId/medical-history" element={<MedicalHistory />} />

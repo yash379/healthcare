@@ -261,13 +261,14 @@ export function EditPatientPage(props: EditPatientPageProps) {
   return (
     <>
       <Breadcrumbs paths={breadcrumbs} />
-      <div className={styles['container']}>
-        <Typography variant="h1" sx={{ my: '20px' }}>
-          <Icon component={EditIcon} /> Edit Patient
+      <div className={styles['container']} style={{marginTop: '20px',}}>
+        <Typography variant="h1" style={{ marginTop: '30px', marginLeft: '35px' }}>
+          Edit Patient
         </Typography>
+        <div style={{marginRight: '40px', marginLeft: '20px'}}>
         <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+        <Grid container rowSpacing={3} columnSpacing={4}>
+        <Grid item lg={6} sm={5}>
               <Controller
                 name="digitalHealthCode"
                 control={control}
@@ -287,7 +288,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 )}
               />
        </Grid>
-       <Grid item xs={12} sm={6}>
+       <Grid item lg={6} sm={5}>
        <Controller
                 name="email"
                 control={control}
@@ -307,7 +308,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 )}
               />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item lg={6} sm={5}>
             <Controller
                 name="firstName"
                 control={control}
@@ -327,7 +328,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 )}
               />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item lg={6} sm={5}>
               <Controller
                 name="lastName"
                 control={control}
@@ -347,7 +348,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="phoneNumber"
                 control={control}
@@ -381,7 +382,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 )}
               />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item lg={6} sm={5}>
               <FormControl sx={{ width: '100%' }} error={!!errors.gender}>
                 <InputLabel htmlFor="type">Gender*</InputLabel>
                 <Controller
@@ -419,7 +420,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 <FormHelperText>{errors.gender?.message}</FormHelperText>
               </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item lg={6} sm={5}>
               <Controller
                 name="dob"
                 control={control}
@@ -442,7 +443,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 )}
               />
                </Grid>
-               <Grid item xs={12} sm={6}>
+               <Grid item lg={6} sm={5}>
               <Controller
                 name="bloodGroup"
                 control={control}
@@ -460,7 +461,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 )}
               />
              </Grid>
-             <Grid item xs={12} sm={6}>
+             <Grid item lg={6} sm={5}>
              <Controller
                 name="age"
                 control={control}
@@ -497,7 +498,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
               />
                  </Grid>
 
-<Grid item xs={12} sm={6}>
+<Grid item lg={6} sm={5}>
               <Controller
                 name="addressLine1"
                 control={control}
@@ -515,7 +516,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 )}
               />
                </Grid>
-               <Grid item xs={12} sm={6}>
+               <Grid item lg={6} sm={5}>
               <Controller
                 name="addressLine2"
                 control={control}
@@ -533,7 +534,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 )}
               />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item lg={6} sm={5}>
               <Controller
                 name="city"
                 control={control}
@@ -551,7 +552,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 )}
               />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item lg={6} sm={5}>
               <Controller
                 name="countryCode"
                 control={control}
@@ -578,7 +579,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 {errors.countryCode?.message}
               </FormHelperText>
               </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="stateCode"
                 control={control}
@@ -598,7 +599,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
               />
             </Grid>
 
-<Grid item xs={12} sm={6}>
+<Grid item lg={6} sm={5}>
               <Controller
                 name="postalCode"
                 control={control}
@@ -616,7 +617,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
             <FormControl
                 sx={{ width: '100%', marginBottom: 2 }}
                 error={!!errors.chronicDiseases}
@@ -661,7 +662,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
                 </FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <FormControl
                 sx={{ width: '100%', marginBottom: 2 }}
                 error={!!errors.acuteDiseases}
@@ -713,6 +714,7 @@ export function EditPatientPage(props: EditPatientPageProps) {
             </div>
           </div>
         </form>
+        </div>
       </div>
     </>
   );

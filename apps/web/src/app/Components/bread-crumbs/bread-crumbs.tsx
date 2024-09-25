@@ -10,6 +10,10 @@ interface BreadcrumbsProps {
 const CustomBreadcrumbs = ({ paths }: BreadcrumbsProps) => {
   return (
     <MuiBreadcrumbs
+    style={{
+      marginTop: '20px',
+      marginLeft: '40px',
+    }}
       separator={<NavigateNextIcon fontSize="small" />}
       aria-label="breadcrumb"
     >

@@ -205,13 +205,14 @@ export function AddPatientPage(props: AddPatientPageProps) {
   return (
     <>
       <Breadcrumbs paths={breadcrumbs} />
-      <div className={styles['container']}>
-        <Typography variant="h1" sx={{ my: '20px' }}>
-          <Icon component={AddIcon} /> Add Patient
+      <div className={styles['container']} style={{marginTop: '20px',}}>
+        <Typography variant="h1" style={{ marginTop: '30px', marginLeft: '35px' }}>
+          Add Patient
         </Typography>
+        <div style={{marginRight: '40px', marginLeft: '20px'}}>
         <form onSubmit={handleSubmit(handleAddPatient)}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+          <Grid container rowSpacing={3} columnSpacing={4} >
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="digitalHealthCode"
                 control={control}
@@ -233,7 +234,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="email"
                 control={control}
@@ -256,7 +257,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="firstName"
                 control={control}
@@ -279,7 +280,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="lastName"
                 control={control}
@@ -302,7 +303,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="phoneNumber"
                 control={control}
@@ -335,7 +336,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="gender"
                 control={control}
@@ -361,7 +362,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               {/* <Controller
                 name="dob"
                 control={control}
@@ -407,7 +408,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="bloodGroup"
                 control={control}
@@ -430,7 +431,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="age"
                 control={control}
@@ -467,7 +468,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="addressLine1"
                 control={control}
@@ -490,7 +491,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="addressLine2"
                 control={control}
@@ -510,7 +511,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="city"
                 control={control}
@@ -533,7 +534,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="countryCode"
                 control={control}
@@ -562,7 +563,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="stateCode"
                 control={control}
@@ -590,7 +591,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <Controller
                 name="postalCode"
                 control={control}
@@ -613,7 +614,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               {/* <Controller
                 name="chronicDisease"
                 control={control}
@@ -682,7 +683,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
                 </FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item lg={6} sm={5}>
               <FormControl
                 sx={{ width: '100%', marginBottom: 2 }}
                 error={!!errors.acuteDisease}
@@ -733,6 +734,7 @@ export function AddPatientPage(props: AddPatientPageProps) {
             Submit
           </Button>
         </form>
+        </div>
       </div>
     </>
   );
