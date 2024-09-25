@@ -36,7 +36,6 @@ const Callback: React.FC<CallbackProps> = ({ onLogin }) => {
         );
 
         onLogin(response.data);
-        // navigate('/');
       } catch (error) {
         if (!snackbarShownRef.current) {
           enqueueSnackbar('Error: Unable to fetch user information.', { variant: 'error' });

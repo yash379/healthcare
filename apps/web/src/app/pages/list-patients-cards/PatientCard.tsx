@@ -1,5 +1,14 @@
 import React, { useContext, useState } from 'react';
-import { Avatar, Box, Button, IconButton, Menu, MenuItem, Typography, ListItemIcon } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  ListItemIcon,
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -7,6 +16,7 @@ import { ViewPatient } from '@healthcare/data-transfer-types';
 import HospitalContext from '../../contexts/hospital-context';
 import DoctorContext from '../../contexts/doctor-context';
 import { useNavigate, useParams } from 'react-router-dom';
+import ActiveChip from '../../Components/chip/activeChip';
 
 interface PatientCardProps {
   //   name: string;
@@ -119,6 +129,11 @@ const PatientCard: React.FC<PatientCardProps> = ({
         </Box>
 
         <div>
+          {patient.isActive ? (
+            <ActiveChip label="Primary">Active</ActiveChip>
+          ) : (
+            <ActiveChip label="Error">Inactive</ActiveChip>
+          )}
           <IconButton
             aria-controls={open ? 'action-menu' : undefined}
             aria-haspopup="true"
@@ -136,6 +151,14 @@ const PatientCard: React.FC<PatientCardProps> = ({
             onClose={handleClose}
             MenuListProps={{
               'aria-labelledby': 'action-menu-button',
+            }}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
             }}
           >
             {/* Edit Option */}
