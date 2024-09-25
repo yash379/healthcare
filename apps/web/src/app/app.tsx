@@ -54,6 +54,7 @@ import AppointmentLayout from './layouts/appointment-layout/appointment-layout';
 import PatientView from './pages/patient-dashboard/patient-view/patient-view';
 import ListPatientsCards from './pages/list-patients-cards/list-patients-cards';
 import Callback from './Components/callback/callback';
+import PatientDetailCardd from './pages/patient-dashboard/Dashboard/PatientDetailCardd';
 
 export function App() {
 
@@ -350,6 +351,7 @@ export function App() {
               </Route>
               <Route path="/hospitals/:hospitalId/patients/:patientId/appointmentsview" element={<AppointmentPage/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/medical-report" element={<MedicalReport/>} />
+              <Route path="/hospitals/:hospitalId/patients/:patientId/patient-detail-card" element={<PatientDetailCardd patientId={undefined}/>} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/ai-summarizer" element={<Summarizer />} />
               <Route path="/hospitals/:hospitalId/patients/:patientId/settings" element={<SettingPage />} />
               {/* <Route path="/profile" element={<Profile />} />  */}

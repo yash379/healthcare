@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import MedicalHistory from '../medical-history/medical-history'
 import PatientDetailCardd from '../Dashboard/PatientDetailCardd'
 import DateCalendarServerRequest from '../Dashboard/DateCalendarServerRequest'
@@ -6,12 +6,34 @@ import { Box, Card } from '@mui/material'
 import MedicalCheckup from '../Dashboard/MedicalCheckup';
 import PatientContext from '../../../contexts/patient-context'
 import { Link, useParams } from 'react-router-dom'
+import axios from 'axios'
+import { Patient } from '@healthcare/data-transfer-types'
+import { environment } from '../../../../environments/environment';
 
 const Dashboard: React.FC = () => {
 
   const params=useParams();
+  const [patient, setPatient]=useState<Patient | null>(null);
+  const apiUrl = environment.apiUrl;
 
   const patientcontext=useContext(PatientContext);
+
+  const getPatient=async()=>{
+    const response = await axios.get(`${apiUrl}/hospitals/${params.hospitalId}/patients/${params.patientId}`,
+      {
+        withCredentials:true
+      }
+    );
+
+    setPatient(response.data[0]);
+    console.log("Patient history:", response.data);
+  }
+
+  useEffect(()=>{
+    getPatient();
+    patientcontext?.setPatient(patient);
+  },[apiUrl,params])
+ 
   
   return (
     <div>

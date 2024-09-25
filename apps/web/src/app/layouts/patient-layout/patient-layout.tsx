@@ -60,6 +60,8 @@ export function PatientLayout({ children }: PatientLayoutProps) {
 
     getHospital();
   }, [usercontext?.user, params.hospitalId, params.doctorId,params.patientId,apiUrl]);
+
+
   
   console.log('params', params);
 
