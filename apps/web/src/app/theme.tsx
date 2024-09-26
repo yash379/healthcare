@@ -269,6 +269,7 @@ const componentThemeOptions: ThemeOptions = {
         },
       },
     },
+    
   },
 };
 
