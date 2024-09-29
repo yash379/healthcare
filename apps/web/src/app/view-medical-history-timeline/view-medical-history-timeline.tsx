@@ -77,13 +77,16 @@ interface MedicalHistoryResponse {
   groupedData: GroupedData[];
 }
 
-export function ViewMedicalHistoryTimeline({ patient }: ViewMedicalHistoryTimelineProps) {
-  const [medicalHistory, setMedicalHistory] = useState<MedicalHistoryResponse | null>(null);
+export function ViewMedicalHistoryTimeline({
+  patient,
+}: ViewMedicalHistoryTimelineProps) {
+  const [medicalHistory, setMedicalHistory] =
+    useState<MedicalHistoryResponse | null>(null);
   const apiUrl = environment.apiUrl;
 
-  const hospitalcontext=useContext(HospitalContext);
-  const doctorcontext=useContext(DoctorContext);
-  const params=useParams();
+  const hospitalcontext = useContext(HospitalContext);
+  const doctorcontext = useContext(DoctorContext);
+  const params = useParams();
 
   const getHistory = async () => {
     try {

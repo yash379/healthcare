@@ -30,6 +30,7 @@ interface Form {
   statusId: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface PatientDetailFromPatientProps {}
 
 // interface Patient {
@@ -133,7 +134,7 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
 
   const handleStartDiagnosisClick = () => {
     navigate(
-      `/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${params.patientId}/diagnosis`
+      `/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/appointments`
     );
   };
 
@@ -277,24 +278,7 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
                 </div>
               </div>
             </div>
-            {/* Avatar with initials */}
-            <Avatar
-              sx={{
-                width: 80,
-                height: 80,
-                fontSize: 24,
-                bgcolor: '#064B4F',
-              }}
-            >
-              {`${patient?.firstName[0] || ''}${patient?.lastName?.[0] || ''}`}
-            </Avatar>
-            {/* Patient ID */}
-            <Typography variant="h3" sx={{ marginTop: 3 }}>
-              Digital Health Code : {patient?.digitalHealthCode}
-            </Typography>
-            <Typography variant="h3" sx={{ marginTop: 3, marginBottom: 4 }}>
-              {patient?.firstName} {patient?.lastName}
-            </Typography>
+
             {/* Appointment and Completed status */}
             {/* <Box
                 sx={{
@@ -371,13 +355,17 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
               ].map((item) => (
                 <React.Fragment key={item.label}>
                   {/* Label on the left */}
-                  <Typography variant="h5" sx={{ color: '#000000' }}>
+                  <Typography variant="h5" style={{ color: '#000000' }}>
                     {item.label}:
                   </Typography>
                   {/* Value on the right */}
                   <Typography
                     variant="h5"
-                    sx={{ color: '#064B4F', textAlign: 'left' }} // Left aligned
+                    style={{
+                      color: '#064B4F',
+                      textAlign: 'left',
+                      marginRight: '30px',
+                    }} // Left aligned
                   >
                     {item.value}
                   </Typography>
@@ -428,7 +416,6 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
                 marginBottom: 3,
                 marginTop: 2,
                 marginLeft: 3,
-
               }}
             >
               Patient Information
