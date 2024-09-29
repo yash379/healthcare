@@ -86,11 +86,20 @@ export function ViewMedicalHistoryTimeline({ patient }: ViewMedicalHistoryTimeli
   const params=useParams();
 
   const getHistory = async () => {
-    const response = await axios.get(`${apiUrl}/medical-history/${patient?.id}`, {
-      withCredentials: true,
-    });
-    setMedicalHistory(response.data);
-    console.log("Medical history:", response.data);
+    try {
+      const response = await axios.get(
+        `${apiUrl}/medical-history/${patient?.id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.data) {
+        setMedicalHistory(response.data);
+        console.log('Medical history:', response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch medical history:', error);
+    }
   };
 
   useEffect(() => {
@@ -105,75 +114,165 @@ export function ViewMedicalHistoryTimeline({ patient }: ViewMedicalHistoryTimeli
 
   return (
     <div>
-      <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: 'center', marginBottom: 2 }}>
-        <h3 style={{marginInline:'50px'}}>Medical History</h3>
-        {/* <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button variant="contained" color="primary" sx={{ padding: '12px 24px' }}>
-            Generate Summary
-          </Button>
-          <Button variant="outlined" color="primary" sx={{ padding: '12px 24px' }}>
-            <PrintIcon sx={{ marginRight: 1 }} /> Print
-          </Button>
-        </Box> */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 2,
+          width: '100%',
+        }}
+      >
+        <h3 style={{ margin: '0', fontFamily: 'Inter, sans-serif' }}>
+          Medical History
+        </h3>
       </Box>
 
-      <Timeline sx={{position:'relative', height:'72vh'}}>
-        {medicalHistory?.groupedData.length ? (
-          medicalHistory.groupedData.sort((a,b)=>b.diagnosisDetails.id-a.diagnosisDetails.id).slice(0,3).map((item)=>(
-            <TimelineItem key={item.diagnosisDetails.id} position="right" sx={{minHeight:'fit-content'}}>
+      <Card
+        style={{
+          width: '100%',
+          height: '100%',
+          marginRight: '20px',
+        }}
+      >
+        <Timeline
+          sx={{
+            minHeight: 'fit-content',
+            padding: 0,
+            '& .MuiTimelineItem-root::before': {
+              content: '""',
+              flex: 0,
+              padding: 0,
+              marginLeft: '5%',
+            },
+          }}
+        >
+          {medicalHistory?.groupedData?.length ? (
+            medicalHistory.groupedData
+              .sort((a, b) => b.diagnosisDetails.id - a.diagnosisDetails.id)
+              .slice(0, 3)
+              .map((item) => (
+                <TimelineItem
+                  key={item.diagnosisDetails.id}
+                  position="right"
+                  sx={{ minHeight: 'fit-content', padding: 0 }}
+                >
+                  <TimelineSeparator sx={{ marginRight: '3%' }}>
+                    <TimelineDot sx={{ backgroundColor: '#064B4F' }} />
+                    <TimelineConnector />
+                  </TimelineSeparator>
+                  <Box sx={{ width: '85%' }}>
+                    <Typography color="textSecondary" sx={{ marginBottom: 1 }}>
+                      Date: {formatDate(item.diagnosisDate)}
+                    </Typography>
+                    <Card
+                      style={{
+                        border: '1px solid #064B4F',
+                        marginBottom: 2,
+                        width: '100%',
+                        alignContent: 'flex-start',
+                      }}
+                    >
+                      <CardContent>
+                        <Typography
+                          variant="subtitle1"
+                          sx={{
+                            padding: '8px',
+                            borderRadius: '4px',
+                            display: 'inline',
+                            backgroundColor: '#e0f7fa',
+                          }}
+                        >
+                          Vitals:
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{ display: 'inline', marginLeft: '4px' }}
+                        >
+                          Height: {item.diagnosisDetails.height} cm, Weight:{' '}
+                          {item.diagnosisDetails.weight} kg, Pulse:{' '}
+                          {item.diagnosisDetails.pulse} bpm
+                        </Typography>
+                        <Divider sx={{ marginY: 2 }} />
+                        <Typography
+                          variant="subtitle1"
+                          sx={{
+                            backgroundColor: '#ffe6e6',
+                            padding: '8px',
+                            borderRadius: '4px',
+                            display: 'inline',
+                          }}
+                        >
+                          Diagnosis:
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{ padding: '8px', marginLeft: '4px' }}
+                        >
+                          <Typography
+                            variant="body1"
+                            sx={{ fontWeight: 'bold', display: 'inline' }}
+                          >
+                            Details:
+                          </Typography>{' '}
+                          {item.diagnosisDetails.details}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{ padding: '8px', marginLeft: '4px' }}
+                        >
+                          <Typography
+                            variant="body1"
+                            sx={{ fontWeight: 'bold', display: 'inline' }}
+                          >
+                            Chief Complaints:
+                          </Typography>{' '}
+                          {item.diagnosisDetails.chiefComplaints.join(', ')}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Box>
+                </TimelineItem>
+              ))
+          ) : (
+            <TimelineItem position="left">
               <TimelineSeparator>
                 <TimelineDot sx={{ backgroundColor: '#064B4F' }} />
                 <TimelineConnector />
               </TimelineSeparator>
               <TimelineContent>
-                <Typography color="textSecondary" sx={{ marginBottom: 1 }}>
-                  Date: {formatDate(item.diagnosisDate)}
-                  {/* {item.diagnosisDetails.chiefComplaints.join(', ')} */}
-                </Typography>
-                <Card sx={{ backgroundColor: 'rgba(6, 75, 79, 0.55)', marginBottom: 2 , width:'30vw'}}>
+                <Card sx={{ marginBottom: 2 }}>
                   <CardContent>
-                    <Typography variant="h5" color="#000000">
-                      {item.diagnosisDetails.details}
+                    <Typography variant="h6" color="textSecondary">
+                      No Data Available
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#454C73', marginBottom: 2 }}>
-                      Height: {item.diagnosisDetails.height} cm, Weight: {item.diagnosisDetails.weight} kg
-                    </Typography>
-                    <Divider sx={{ marginY: 1, backgroundColor: '#F4F6FA' }} />
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body2" color="white">
-                      {item.diagnosisDetails.chiefComplaints.join(', ')} 
-                      </Typography>
-                      <Typography variant="body2" color="white">
-                        Pulse: {item.diagnosisDetails.pulse} bpm
-                      </Typography>
-                    </div>
                   </CardContent>
                 </Card>
               </TimelineContent>
             </TimelineItem>
-          ))
-        ) : (
-          // Render a placeholder item if no diagnoses exist
-          <TimelineItem position="right">
-            <TimelineSeparator>
-              <TimelineDot sx={{ backgroundColor: '#064B4F' }} /> {/* Optional: Different color for 'No Data' */}
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>
-              <Card sx={{ marginBottom: 2 }}>
-                <CardContent>
-                  <Typography variant="h6" color="textSecondary">
-                    No Data Available
-                  </Typography>
-                </CardContent>
-              </Card>
-            </TimelineContent>
-          </TimelineItem>
+          )}
+        </Timeline>
+
+        {medicalHistory?.groupedData?.length > 3 && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginTop: 2,
+            }}
+          >
+            <Button
+              component={Link}
+              to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${params.patientId}/medical-history`}
+              variant="contained"
+              color="primary"
+              sx={{ textDecoration: 'none', marginBottom: 2 }}
+            >
+              View All History
+            </Button>
+          </Box>
         )}
-      </Timeline>
-      <div style={{display:'flex', position:'relative', justifyContent:'end', marginTop:'-14px'}}>
-      <Link to={`/hospitals/${hospitalcontext?.hospital?.id}/doctors/${doctorcontext?.doctor?.id}/patients/${params.patientId}/medical-history`}>View More</Link>
-      </div>
+      </Card>
     </div>
   );
 }

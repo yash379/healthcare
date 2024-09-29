@@ -20,6 +20,8 @@ import { enqueueSnackbar } from 'notistack';
 import StatusChip from '../../Components/chip/statusChip';
 import AppointmentContext from '../../contexts/appointment-context';
 import { format, formatDate } from 'date-fns';
+import { Margin } from '@mui/icons-material';
+import doctorContext from '../../contexts/doctor-context';
 /* eslint-disable-next-line */
 
 interface Form {
@@ -47,6 +49,7 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loadingUserInfo, setLoadingUserInfo] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const doctorContext = useContext(DoctorContext);
   const [appointment, setAppointment] = useState<ViewAppointment>();
   const [appointmentCount, setAppointmentCount] = useState({
     total: 0,
@@ -182,39 +185,97 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
   };
 
   return (
-    <div className={styles['container']}>
+    <Box className={styles['container']}>
+      {/* Page Header */}
+      <Typography
+        variant="h2"
+        sx={{
+          fontWeight: 'bold',
+          marginLeft: 5,
+          marginTop: 3,
+          color: '#064B4F',
+          textAlign: 'left',
+        }}
+      >
+        Patient Details
+      </Typography>
       {/* {patients && patients.map((patient) => ( */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+      <Box sx={{ display: 'flex' }}>
         <Box
           key={patient?.id}
-          sx={{ marginBottom: 2, marginTop: 1, marginLeft: -2, width: '40%' }}
+          sx={{
+            marginBottom: 2,
+            marginTop: 2,
+            width: '48%',
+            height: '100%',
+            marginRight: '1%',
+          }}
         >
           <Card
             sx={{
-              padding: 3,
+              padding: 1.5,
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',
-              width: '100%',
-              marginLeft: '2%',
-              height: 'auto',
+              alignItems: 'left',
+              height: '50%',
               borderRadius: '10px',
+              marginLeft: '30px',
             }}
           >
-            <div style={{ position: 'relative', right: '-44%' }}>
-              {patient?.isActive ? (
-                <StatusChip
-                  label={'Success'}
-                  children={'Active'}
-                  width={'80px'}
-                ></StatusChip>
-              ) : (
-                <StatusChip
-                  label={'Success'}
-                  children={'InActive'}
-                  width={'80px'}
-                ></StatusChip>
-              )}
+            {/* Avatar with initials */}
+            <div
+              style={{
+                display: 'flex',
+                gap: '15px',
+              }}
+            >
+              <div>
+                <Avatar
+                  sx={{
+                    width: 70,
+                    height: 70,
+                    fontSize: 24,
+                    bgcolor: '#064B4F',
+                    marginBottom: '10px',
+                  }}
+                >
+                  {`${patient?.firstName[0] || ''}${
+                    patient?.lastName?.[0] || ''
+                  }`}
+                </Avatar>
+              </div>
+              {/* Patient ID */}
+              <div
+                style={{
+                  marginTop: '2px',
+                }}
+              >
+                <Typography variant="h4">
+                  {patient?.firstName} {patient?.lastName}
+                </Typography>
+                <Typography variant="h5" sx={{ marginTop: 1, marginBottom: 2 }}>
+                  Digital Health Code : {patient?.digitalHealthCode}
+                </Typography>
+                <div
+                  style={{
+                    marginBottom: '40px',
+                  }}
+                >
+                  {patient?.isActive ? (
+                    <StatusChip
+                      label={'Success'}
+                      children={'Active'}
+                      width={'80px'}
+                    ></StatusChip>
+                  ) : (
+                    <StatusChip
+                      label={'Success'}
+                      children={'InActive'}
+                      width={'80px'}
+                    ></StatusChip>
+                  )}
+                </div>
+              </div>
             </div>
             {/* Avatar with initials */}
             <Avatar
@@ -292,11 +353,11 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: '150px 1fr', // Define two columns (label and value)
-                columnGap: '10px', // Gap between label and value
-                rowGap: '15px', // Gap between rows
-                width: '100%', // Full width
-                padding: '5px 16px', // Padding around the content
+                gridTemplateColumns: '1fr 1fr',
+                rowGap: 2,
+                columnGap: 1,
+                marginTop: 1,
+                marginLeft: 11,
               }}
             >
               {[
@@ -330,79 +391,97 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
               onSubmit={handleAddAppointment}
             />
             <Button
-              variant="outlined"
+              variant="contained"
               sx={{
                 marginTop: 2,
-                fontFamily: 'Poppins, sans-serif', // Use Poppins font
-                padding: '25px 80px', // Increase padding for larger button
-                fontSize: '12px', // Increase font size
-                width: '200px', // Optional: adjust width if needed
+                marginBottom: 2,
+                marginLeft: 21,
+                fontFamily: 'Inter, sans-serif',
+                padding: '25px 80px',
+                fontSize: '16px',
+                width: '200px',
                 textWrap: 'nowrap',
               }}
               onClick={handleStartDiagnosisClick}
             >
-              Start Diagnosis
+              Book Appointment
             </Button>
             {/* </Box> */}
           </Card>
-          {/* Patient Information Card */}
+
           <Card
-            sx={{
-              padding: 3,
+            style={{
+              padding: 1.5,
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',
-              width: '100%',
-              marginLeft: '2%',
-              height: '30vh', // Changed to auto to fit content
+              alignItems: 'left',
+              height: '50%',
               borderRadius: '10px',
-              marginTop: 2, // Added marginTop for spacing
+              marginLeft: '30px',
+              marginTop: '2%',
             }}
           >
-            <Typography variant="h2" sx={{ color: '#064B4F', marginBottom: 2 }}>
+            <Typography
+              variant="h2"
+              sx={{
+                color: '#064B4F',
+                marginBottom: 3,
+                marginTop: 2,
+                marginLeft: 3,
+
+              }}
+            >
               Patient Information
             </Typography>
 
             {/* Patient Details */}
             <Box
               sx={{
-                display: 'flex',
-                flexDirection: 'column', 
-                width: '100%',
-                padding: '5px 16px',
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                columnGap: 10,
+                rowGap: 3,
+                marginTop: '3%',
+                marginLeft: '11%',
+                marginBottom: '3%',
+                width: '48%',
               }}
             >
               {[
                 { label: 'Weight', value: `${patient?.age} kg` },
-           
                 { label: 'Blood Group', value: `${patient?.bloodGroup}` },
-              
                 { label: 'Disease', value: patient?.acuteDisease },
                 { label: 'Age', value: patient?.age },
                 { label: 'Gender', value: patient?.gender },
                 { label: 'Chronic Diseases', value: patient?.chronicDisease },
               ].map((item) => (
-                <Box
-                  key={item.label}
-                  sx={{
-                    display: 'flex', // Layout is horizontal
-                    justifyContent: 'space-between', // Space between label and value
-                    alignItems: 'center', // Center align items vertically
-                    marginBottom: 1, // Space between rows
-                  }}
-                >
-                  <Typography variant="h5" sx={{ color: '#000000' }}>
+                <React.Fragment key={item.label}>
+                  <Typography
+                    variant="h5"
+                    sx={{ color: '#000000', textAlign: 'left' }}
+                  >
                     {item.label}:
                   </Typography>
-                  <Typography variant="h5" sx={{ color: '#064B4F' }}>
+                  <Typography
+                    variant="h5"
+                    sx={{ color: '#064B4F', textAlign: 'left' }} // Align value to the right
+                  >
                     {item.value}
                   </Typography>
-                </Box>
+                </React.Fragment>
               ))}
             </Box>
           </Card>
         </Box>
-        <Box sx={{ width: '50%' }}>
+
+        <Box
+          style={{
+            width: '48%',
+            height: '100%',
+            marginRight: '1%',
+            marginLeft: '1%',
+          }}
+        >
           <ViewMedicalHistoryTimeline
             patient={patient}
           ></ViewMedicalHistoryTimeline>
@@ -410,7 +489,7 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
       </Box>
 
       {/* ))} */}
-    </div>
+    </Box>
   );
 }
 
