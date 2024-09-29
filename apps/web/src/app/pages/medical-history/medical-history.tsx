@@ -501,7 +501,7 @@ useEffect(() => {
             <Typography variant="subtitle1" sx={{backgroundColor: '#fffde7', padding: '8px',
                 borderRadius: '4px',
                 display: 'inline',}}>Prescriptions</Typography>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{marginTop: 2}}>
               <Table size="small">
                 <TableHead>
                   <TableRow>

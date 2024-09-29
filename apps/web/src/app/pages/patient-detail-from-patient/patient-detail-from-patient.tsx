@@ -21,6 +21,7 @@ import StatusChip from '../../Components/chip/statusChip';
 import AppointmentContext from '../../contexts/appointment-context';
 import { format, formatDate } from 'date-fns';
 import { Margin } from '@mui/icons-material';
+import doctorContext from '../../contexts/doctor-context';
 /* eslint-disable-next-line */
 
 interface Form {
@@ -48,6 +49,7 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loadingUserInfo, setLoadingUserInfo] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const doctorContext = useContext(DoctorContext);
   const [appointment, setAppointment] = useState<ViewAppointment>();
   const [appointmentCount, setAppointmentCount] = useState({
     total: 0,
@@ -183,26 +185,41 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
   };
 
   return (
-    <Box
-      className={styles['container']}
-      
-    >
+    <Box className={styles['container']}>
+      {/* Page Header */}
+      <Typography
+        variant="h2"
+        sx={{
+          fontWeight: 'bold',
+          marginLeft: 5,
+          marginTop: 3,
+          color: '#064B4F',
+          textAlign: 'left',
+        }}
+      >
+        Patient Details
+      </Typography>
       {/* {patients && patients.map((patient) => ( */}
-      <Box sx={{ display: 'flex', }}>
-      
+      <Box sx={{ display: 'flex' }}>
         <Box
           key={patient?.id}
-          sx={{ marginBottom: 2, marginTop: '2%', width: '48%', marginRight: '1%' }}
+          sx={{
+            marginBottom: 2,
+            marginTop: 2,
+            width: '48%',
+            height: '100%',
+            marginRight: '1%',
+          }}
         >
           <Card
             sx={{
-            padding: 1.5,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'left',
-            height: '365px', 
-            borderRadius: '10px',
-            marginLeft: '30px'
+              padding: 1.5,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'left',
+              height: '50%',
+              borderRadius: '10px',
+              marginLeft: '30px',
             }}
           >
             {/* Avatar with initials */}
@@ -233,10 +250,10 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
                   marginTop: '2px',
                 }}
               >
-                <Typography variant="h2">
+                <Typography variant="h4">
                   {patient?.firstName} {patient?.lastName}
                 </Typography>
-                <Typography variant="h5" sx={{ marginTop: 2, marginBottom: 2 }}>
+                <Typography variant="h5" sx={{ marginTop: 1, marginBottom: 2 }}>
                   Digital Health Code : {patient?.digitalHealthCode}
                 </Typography>
                 <div
@@ -318,11 +335,12 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
               </Button> */}
             <Box
               sx={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr', 
-              columnGap: '40px', 
-              rowGap: '16px', 
-              marginTop: '10px'
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                rowGap: 2,
+                columnGap: 1,
+                marginTop: 1,
+                marginLeft: 11,
               }}
             >
               {[
@@ -359,66 +377,12 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
               onClose={() => setIsAddModalOpen(false)}
               onSubmit={handleAddAppointment}
             />
-
-            {/* </Box> */}
-          </Card>
-        
-        <Card
-          sx={{
-            padding: 3,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'left',
-            height: '345px', 
-            borderRadius: '10px',
-            marginTop: '2%',
-            width: '90%',
-            marginRight: '1%',
-            marginLeft: '1%'
-          }}
-        >
-          <Typography variant="h2" sx={{ color: '#064B4F', marginBottom: 2 }}>
-            Patient Information
-          </Typography>
-
-          {/* Patient Details */}
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr', 
-              columnGap: '60px', 
-              rowGap: '16px', 
-              marginTop: '10px'
-            }}
-          >
-            {[
-              { label: 'Weight', value: `${patient?.age} kg` },
-              { label: 'Blood Group', value: `${patient?.bloodGroup}` },
-              { label: 'Disease', value: patient?.acuteDisease },
-              { label: 'Age', value: patient?.age },
-              { label: 'Gender', value: patient?.gender },
-              { label: 'Chronic Diseases', value: patient?.chronicDisease },
-            ].map((item) => (
-              <React.Fragment key={item.label}>
-                <Typography
-                  variant="h5"
-                  sx={{ color: '#000000', textAlign: 'left' }}
-                >
-                  {item.label}:
-                </Typography>
-                <Typography
-                  variant="h5"
-                  sx={{ color: '#064B4F', textAlign: 'left' }} // Align value to the right
-                >
-                  {item.value}
-                </Typography>
-              </React.Fragment>
-            ))}
             <Button
               variant="contained"
               sx={{
                 marginTop: 2,
-                marginBottom: 3,
+                marginBottom: 2,
+                marginLeft: 21,
                 fontFamily: 'Inter, sans-serif',
                 padding: '25px 80px',
                 fontSize: '16px',
@@ -429,25 +393,86 @@ export function PatientDetailFromPatient(props: PatientDetailFromPatientProps) {
             >
               Book Appointment
             </Button>
-          </Box>
-        </Card>
+            {/* </Box> */}
+          </Card>
+
+          <Card
+            style={{
+              padding: 1.5,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'left',
+              height: '50%',
+              borderRadius: '10px',
+              marginLeft: '30px',
+              marginTop: '2%',
+            }}
+          >
+            <Typography
+              variant="h2"
+              sx={{
+                color: '#064B4F',
+                marginBottom: 3,
+                marginTop: 2,
+                marginLeft: 3,
+                
+              }}
+            >
+              Patient Information
+            </Typography>
+
+            {/* Patient Details */}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                columnGap: 10,
+                rowGap: 3,
+                marginTop: '3%',
+                marginLeft: '11%',
+                marginBottom: '3%',
+                width: '48%',
+              }}
+            >
+              {[
+                { label: 'Weight', value: `${patient?.age} kg` },
+                { label: 'Blood Group', value: `${patient?.bloodGroup}` },
+                { label: 'Disease', value: patient?.acuteDisease },
+                { label: 'Age', value: patient?.age },
+                { label: 'Gender', value: patient?.gender },
+                { label: 'Chronic Diseases', value: patient?.chronicDisease },
+              ].map((item) => (
+                <React.Fragment key={item.label}>
+                  <Typography
+                    variant="h5"
+                    sx={{ color: '#000000', textAlign: 'left' }}
+                  >
+                    {item.label}:
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{ color: '#064B4F', textAlign: 'left' }} // Align value to the right
+                  >
+                    {item.value}
+                  </Typography>
+                </React.Fragment>
+              ))}
+            </Box>
+          </Card>
         </Box>
 
-      
-        <Card
-        style={{
-          marginTop: '2%',
-          width: '48%',
-height: '400px',
-          marginRight: '1%',
-          marginLeft: '1%'
-        }}>
+        <Box
+          style={{
+            width: '48%',
+            height: '100%',
+            marginRight: '1%',
+            marginLeft: '1%',
+          }}
+        >
           <ViewMedicalHistoryTimeline
             patient={patient}
           ></ViewMedicalHistoryTimeline>
-        </Card>
-        
-
+        </Box>
       </Box>
 
       {/* ))} */}
