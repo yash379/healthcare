@@ -5,17 +5,15 @@ import { useNavigate } from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Radio from '@mui/material/Radio';
-import Checkbox from '@mui/material/Checkbox';
-import { Box } from '@mui/material';
+import { Box, Card } from '@mui/material';
 import { HospitalContext } from '../../contexts/hospital-context';
 import axios from 'axios';
 import { environment } from '../../../environments/environment';
 import { Gender } from '@prisma/client';
 import { HospitalRoleDto } from '@healthcare/data-transfer-types';
-
+import Doctors from '../../../assets/Doctors.svg';
+import Patients from '../../../assets/Patients.svg';
 /* eslint-disable-next-line */
 export interface SelectHospitalProps {}
 
@@ -42,7 +40,6 @@ interface PatientResponse {
   isActive: boolean;
 }
 
-
 interface Doctor {
   doctorId: number;
   doctorGender: Gender;
@@ -54,182 +51,161 @@ interface Doctor {
   doctorPhoneNumber: string;
 }
 export function SelectHospital(props: SelectHospitalProps) {
-  const [selected, setSelected] = useState<number | null>(null);
-  const [checked, setChecked] = useState([0]);
-  const usercontext=useContext(UserContext);
-  const [patientdoctorId, setPatientDoctorId]=useState(0);
-  const [patient, setPatient]=useState<PatientResponse | null>(null);
-  const [hospitalId, setHospitalId]=useState<number | null>(null);
-  const [roles,setRoles]=useState<HospitalRoleDto[]>();
-  const navigate=useNavigate();
+  const [hospitalId, setHospitalId] = useState<number | null>(null);
+  const [roles, setRoles] = useState<HospitalRoleDto[]>();
+  const navigate = useNavigate();
+  const usercontext = useContext(UserContext);
+  const hospitalContext = useContext(HospitalContext);
   const apiUrl = environment.apiUrl;
 
-  const hospitalcontext=useContext(HospitalContext);
-  console.log("user context:", usercontext);
-
-  // useEffect(()=>{
-  //   if(usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles.length > 1){
-  //     return;
-  //   }else{
-  //     navigate(`/dashboard/${usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles[0].hospitalId}`);
-  //     // navigate('/dashboard');
-  //   }
-  // },[usercontext?.user && usercontext?.user?.hospitalRoles && usercontext?.user?.hospitalRoles.length, navigate, usercontext?.user && usercontext?.user?.hospitalRoles]);
-
-
-  const getHospital=async()=>{
-     const response=await axios.get(
-      `${apiUrl}/hospitals/${hospitalId}`,
-      {
-        withCredentials: true,
-      }
-    );
+  const getHospital = async () => {
+    const response = await axios.get(`${apiUrl}/hospitals/${hospitalId}`, {
+      withCredentials: true,
+    });
     hospitalContext?.setHospital(response.data);
-    console.log("response hospitalId:", response.data);
-  }
+  };
 
-
-
-  useEffect(()=>{
+  useEffect(() => {
     getHospital();
     setRoles(usercontext?.user?.hospitalRoles);
     localStorage.removeItem('doctor');
     localStorage.removeItem('patient');
-  },[hospitalId,hospitalcontext,usercontext]);
+  }, [hospitalId, hospitalContext, usercontext]);
 
-  console.log("roles:", roles);
-  
-  
-  const handleToggle = (value: number) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
-    console.log("value:",value)
-
-    // Navigate to hospital dashboard when the checkbox is checked
-    if (currentIndex === -1) {
-      navigate(`/dashboard/${value}`); // Adjust the route as needed
-      // navigate('/dashboard')
-    }
-  };
-
-  // useEffect(()=>{
-  //   console.log("patient doctor id:",patient?.doctors?.flatMap((item)=>{return item.doctorId}))
-  //   console.log("patient doctor id:",patient?.doctors[0]?.doctorId);
-  //   setPatientDoctorId(Number(patient?.doctors[0]?.doctorId));
-  // },[patient]);
-
-  // useEffect(()=>{
-  //   const getPatient=
-  // },[usercontext?.user?.patientId])
-
-  const handleRadioChange = (Id: any, value:any) => () => {
-    // setSelected(value);
-    // hospitalcontext?.setHospital(value);
-    // navigate(`/dashboard/${value}`);
-    // navigate('/dashboard')
+  const handleRadioChange = (Id: any, value: any) => () => {
     setHospitalId(Id);
-    console.log("id selected:", Id)
-    // const getHospital=async()=>{
-    //   try{
-    //     const response=await axios.get(`${apiUrl}/hospitals/${Id}`,
-    //       {
-    //         withCredentials: true,
-    //       }
-    //     );
-    //     console.log("Hospital:",response.data);
-    //     hospitalcontext?.setHospital(response.data);
-    //   }catch(error){
-    //     console.error("Error in fecthing hospital:", error);
-    //   }
-    // }
 
-    // getHospital();
-
-    const getPatient=async()=>{
-      const response=await axios.get(`${apiUrl}/hospitals/${Id}/patients/${usercontext?.user?.patientId}`,
-        {
-          withCredentials: true,
-         }
-      );
-      const doctorid=response.data.map((item: { doctors: { doctorId: any; }[]; })=>{item.doctors.map((seconditem: { doctorId: any; })=> {setPatientDoctorId(seconditem.doctorId)})});
-      // console.log("patient detail:", response.data, "doctorid:",doctorid,patientdoctorId);
-      // response.data.map((item: any)=>{console.log(item)})
-      setPatient(response.data)
-      
-    }
-    getPatient();
-    
-    console.log("patient doctor id:",patient?.doctors?.flatMap((item)=>{console.log(item.doctorId)}))
-
-    if(value==='ADMIN'){
+    if (value === 'ADMIN') {
       navigate(`/hospitals/${Id}/admin/${usercontext?.user?.id}`);
-    }
-    if(value==='DOCTOR'){
+    } else if (value === 'DOCTOR') {
       navigate(`/hospitals/${Id}/doctors/${usercontext?.user?.doctorId}`);
-    }
-    if(value==='PATIENT'){
-      navigate(`/hospitals/${Id}/patients/${usercontext?.user?.patientId}`)
+    } else if (value === 'PATIENT') {
+      navigate(`/hospitals/${Id}/patients/${usercontext?.user?.patientId}`);
     }
   };
-
-  console.log("user context:",usercontext);
-  console.log("user context scoietty:",usercontext?.user?.hospitalRoles);
-  console.log("patiendoctotId:", patientdoctorId);
-  // console.log("user context scoietty length:",usercontext?.user?.hospitalRoles length);
-
-  const hospitalContext=useContext(HospitalContext);
-
-  // useEffect(()=>{
-  //   const id=usercontext?.user?.hospitalRoles?.map((item)=>{
-  //     return item.hospitalId;
-  //   })
-  //  },[usercontext?.user]);
-
 
   return (
-    
-      <div className={styles['login-page']}>
-        {/* <h1>Welcome to SelectHospital!</h1> */}
-        <div className={styles['form-container']}>
-          <Box className={styles['hospital-header']}>
-             <h1>Select Hospital</h1>
-          </Box>
-          <div className={styles['hospital-list']}>
-            <List sx={{ bgcolor: 'background.paper' }}>
-                {roles?.map((value) => {
-                    const labelId = `checkbox-list-label-${value.hospitalId}`;
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#f5f7fb',
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: 'white',
+          padding: '2rem',
+          borderRadius: '12px',
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+          textAlign: 'center',
+          width: '800px',
+        }}
+      >
+        <Box style={{ marginBottom: '2rem' }}>
+          <h1 style={{ fontFamily: 'Inter, sans-serif' }}>Select Your Role</h1>
+        </Box>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '40px' }}>
+          <List sx={{ display: 'flex', gap: '40px' }}>
+            {roles?.map((value) => {
+              const labelId = `checkbox-list-label-${value.hospitalId}`;
+              const imageUrl =
+                value.hospitalRole === 'DOCTOR' ? Doctors : Patients;
 
-                    return (
-                      <ListItem key={value.hospitalId} disablePadding className={styles['hospital-list-item']}>
-                        <ListItemButton role={undefined} onClick={handleRadioChange(value.hospitalId,value.hospitalRole)} dense>
-                          <ListItemIcon>
-                          <Radio
-                            checked={selected === value.hospitalId}
-                            tabIndex={-1}
-                            disableRipple
-                            inputProps={{ 'aria-labelledby': labelId }}
-                          />
-                          </ListItemIcon>
-                          <ListItemText id={labelId} primary={` ${value.hospitalId} ${value.hospitalName} ${value.hospitalRole}`} />
-                        </ListItemButton>
-                      </ListItem>
-                    );
-                  })}
-            </List>
-            </div>
+              return (
+                <ListItem
+                  key={value.hospitalId}
+                  disablePadding
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    width: '250px',
+                    margin: '0 10px',
+                  }}
+                >
+                  {/* Card with image */}
+                  <Box
+                    style={{
+                      width: '290px',
+                      height: '200px',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                      borderRadius: '12px',
+                      backgroundColor: '#fff',
+                      marginBottom: '15px', 
+                    }}
+                  >
+                    <div
+                      onClick={handleRadioChange(
+                        value.hospitalId,
+                        value.hospitalRole
+                      )}
+                      style={{
+                        cursor: 'pointer',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={
+                          value.hospitalRole === 'DOCTOR' ? 'Doctor' : 'Patient'
+                        }
+                        style={{
+                          width: '250px',
+                          height: '200px',
+                          transition:
+                            'transform 0.3s ease, box-shadow 0.3s ease',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'scale(1.1)';
+                          e.currentTarget.style.boxShadow =
+                            '0 4px 12px rgba(0, 0, 0, 0.15)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                          e.currentTarget.style.boxShadow = 'none';
+                        }}
+                      />
+                    </div>
+                  </Box>
+
+                  {/* Hospital name and role outside the card */}
+                  <ListItemText
+                    id={labelId}
+                    primaryTypographyProps={{
+                      sx: {
+                        textAlign: 'center',
+                        marginTop: '5px',
+                        fontSize: '16px',
+                        fontWeight: 700, 
+                        color: '#6c757d',
+                      },
+                    }}
+                    secondaryTypographyProps={{
+                      sx: {
+                        textAlign: 'center',
+                        fontSize: '14px',
+                        fontWeight: 700, 
+                        color: '#6c757d',
+                      },
+                    }}
+                    primary={value.hospitalName}
+                    secondary={value.hospitalRole}
+                  />
+                </ListItem>
+              );
+            })}
+          </List>
         </div>
       </div>
-  
+    </div>
   );
-
 }
 
 export default SelectHospital;
