@@ -1,88 +1,100 @@
-/*
- * Replace this with your own classes
- *
- * e.g.
- * .container {
- * }
-*/
-.Nav{
-    display:flex;
-    flex-direction:column;
-    color: white;
- }
+.logo-divider {
+  width: 121px;
+  align-self: center;
+}
 
- .button-tabs{
-  color:#B6C2FF !important;
+.Nav {
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+.button-tabs {
+  color: #b6c2ff !important;
   font-size: 1rem;
-  font-family: "Poppins"
+  font-family: 'Roboto';
 }
 
-.button-tabs:hover{
+.button-tabs:hover {
   border-radius: 5px;
-  border: 1px solid;
-  background-color: #6B7587 !important;
-
-  .drawertab{
-    color:#A0AEC0;
+  // border: 1px solid;
+  background-color: hsla(180, 80%, 17%, 0.1) !important;
+  .drawertab {
+    color: #064B4F !important;
   }
 
-  .drawer-icons{
-    color: white;
+  .drawer-icons {
+    color:#064B4F;
   }
 }
 
-.active-tab{
-  border-radius: 5px !important;
-  border: 1px solid !important;
-  background-color: #6B7587 !important;
+// .active-tab{
+//   border-radius: 50px !important;
+//   border: 1px solid !important;
+//   background-color: #6B7587 !important;
+
+// .drawertab{
+//   color:white;
+// }
+
+// .drawer-icons{
+//   color:white;
+// }
+// }
+
+.side-drawer {
+  margin-top: 60px;
+  position: absolute;
+}
+
+.drawertab {
+  margin-left: -60px;
   color: black !important;
-  // .drawertab{
-  //   color:white;
-  // }
-
-//   .drawer-icons{
-//     color:white;
-//   }
 }
 
- .side-drawer{
-   margin-top:60px;
-   position:absolute;
- }
+.drawer-icons {
+  color: black;
+}
 
- .drawertab{
-   color:black !important;
- }
-
- .drawer-icons{
-   color: black;
- }
-
- .active-tab {
-
-  background:  #EBFAF9  !important;
-  border-top: var(--none, 0px) solid #054B7D !important;
-  border-right: var(--none, 0px) solid #054B7D !important;
-  border-bottom: var(--none, 0px) solid #054B7D !important;
-  border-left: var(--none, 0px) solid #054B7D !important;
+.active-tab {
+  border-radius: 8px !important;
+  // background: linear-gradient(90deg, #139c94 95%, #94127f 5%) !important;
+  background: linear-gradient(180deg, #064B4F 100%, #131439 1%) !important;
+  border-top: var(--none, 0px) solid #054b7d !important;
+  border-right: var(--none, 0px) solid #054b7d !important;
+  border-bottom: var(--none, 0px) solid #054b7d !important;
+  border-left: var(--none, 0px) solid #054b7d !important;
   // border-left: 7px solid #054B7D !important;
 
-
-  .drawertab{
-    color:black !important;
+  .drawertab {
+    color: white !important;
   }
- 
-  .drawer-icons{
+
+  .drawer-icons {
     color: white;
-    align-items: center;
+  }
+}
+
+.active-tab:hover {
+  border-radius: 15px !important;
+  // background: linear-gradient(90deg, #139c94 95%, #94127f 5%) !important;
+  background: linear-gradient(180deg, #064B4F 100%, #131439 1%) !important;
+  border-top: var(--none, 0px) solid #054b7d !important;
+  border-right: var(--none, 0px) solid #054b7d !important;
+  border-bottom: var(--none, 0px) solid #054b7d !important;
+  border-left: var(--none, 0px) solid #054b7d !important;
+  // border-left: 7px solid #054B7D !important;
+
+  .drawertab {
+    color: white !important;
   }
 
-  .icon-bg{
-    background-color: #4FD1C5;
-    background-size: 100px;
-    border-radius: 50%;
-    background-size: 100px;
+  .drawer-icons {
+    color: white;
   }
+}
 
-  
+@media only screen and (max-width: '768px') {
+  .drawer-icons {
+    margin-left: -17px;
+  }
 }

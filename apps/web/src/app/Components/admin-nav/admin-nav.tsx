@@ -7,6 +7,8 @@ import { useContext, useState } from 'react';
 import HospitalContext from '../../contexts/hospital-context';
 import digimedic from "../../../assets/digimedic.png";
 import UserContext from '../../contexts/user-context';
+import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 
 
 /* eslint-disable-next-line */
@@ -54,39 +56,47 @@ export function AdminNav(props: AdminNavProps) {
         {/* {(!doctorContext?.doctor) ? */}
          <List sx={{ mt: "30px", mr: "10px", ml:"10px" }} className={styles['Nav']}>
           <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/admin/${usercontext?.user?.id}`} onClick={() => handleComponentChange('dashboard')}>
-          <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
+          <ListItemButton 
+          sx={{ padding: '10px 20px', margin: '5px' }}
+          className={`${styles['button-tabs']} ${selectedComponent === 'dashboard' && styles['active-tab']
             }`}>
-            <ListItemIcon>
-              <div className={styles['icon-bg']}>
+            <ListItemIcon sx={{ minWidth: '100px' }}>
+              {/* <div className={styles['icon-bg']}> */}
               <DashboardIcon className={styles['drawer-icons']} />
-              </div>
+              {/* </div> */}
             </ListItemIcon>
             <ListItemText className={styles["drawertab"]} primary="Dashboard" />
           </ListItemButton>
         </Link>
           <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/admin/${usercontext?.user?.id}/doctors`} onClick={() => handleComponentChange('doctors')}>
-            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'doctors' && styles['active-tab']
+            <ListItemButton 
+            sx={{ padding: '10px 20px', margin: '5px' }}
+            className={`${styles['button-tabs']} ${selectedComponent === 'doctors' && styles['active-tab']
               }`}>
-              <ListItemIcon>
+              <ListItemIcon sx={{ minWidth: '100px' }}>
                 <MedicalServicesOutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon> 
               <ListItemText className={styles["drawertab"]} primary="Doctors" />
             </ListItemButton>
           </Link> 
           <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/admin/${usercontext?.user?.id}/patients`} onClick={() => handleComponentChange('patients')}>
-            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'patients' && styles['active-tab']
+            <ListItemButton 
+            sx={{ padding: '10px 20px', margin: '5px' }}
+            className={`${styles['button-tabs']} ${selectedComponent === 'patients' && styles['active-tab']
               }`}>
-              <ListItemIcon>
-                <MedicalServicesOutlinedIcon className={styles['drawer-icons']} />
+              <ListItemIcon sx={{ minWidth: '100px' }}>
+                <Groups2OutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon> 
               <ListItemText className={styles["drawertab"]} primary="Patients" />
             </ListItemButton>
           </Link> 
           <Link style={{ textDecoration: "none" }} to={`/hospitals/${hospitalcontext?.hospital?.id}/admin/${usercontext?.user?.id}/appointments`} onClick={() => handleComponentChange('appointments')}>
-            <ListItemButton className={`${styles['button-tabs']} ${selectedComponent === 'appointments' && styles['active-tab']
+            <ListItemButton
+            sx={{ padding: '10px 20px', margin: '5px' }}
+            className={`${styles['button-tabs']} ${selectedComponent === 'appointments' && styles['active-tab']
               }`}>
-              <ListItemIcon>
-                <MedicalServicesOutlinedIcon className={styles['drawer-icons']} />
+              <ListItemIcon sx={{ minWidth: '100px' }}>
+                <AssignmentOutlinedIcon className={styles['drawer-icons']} />
               </ListItemIcon> 
               <ListItemText className={styles["drawertab"]} primary="Appointments" />
             </ListItemButton>
